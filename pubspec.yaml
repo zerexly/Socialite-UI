@@ -1,0 +1,182 @@
+name: foap
+description: A new Flutter project.
+
+# The following line prevents the package from being accidentally published to
+# pub.dev using `flutter pub publish`. This is preferred for private packages.
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+# The following defines the version and build number for your application.
+# A version number is three numbers separated by dots, like 1.2.43
+# followed by an optional build number separated by a +.
+# Both the version and the builder number may be overridden in flutter
+# build by specifying --build-name and --build-number, respectively.
+# In Android, build-name is used as versionName while build-number used as versionCode.
+# Read more about Android versioning at https://developer.android.com/studio/publish/versioning
+# In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
+# Read more about iOS versioning at
+# https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.16.1 <3.0.0"
+
+# Dependencies specify other packages that your package needs in order to work.
+# To automatically upgrade your package dependencies to the latest versions
+# consider running `flutter pub upgrade --major-versions`. Alternatively,
+# dependencies can be manually updated by changing the version numbers below to
+# the latest version available on pub.dev. To see which dependencies have newer
+# versions available, run `flutter pub outdated`.
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  # The following adds the Cupertino Icons font to your application.
+  # Use with the CupertinoIcons class for iOS style icons.
+  cached_network_image: ^3.2.1
+  carousel_slider: ^4.1.1
+  connectivity: ^3.0.4
+  cupertino_icons: ^1.0.3
+  another_flushbar: ^1.10.29
+  flutter_login_facebook: ^1.5.0
+  sign_in_with_apple: ^4.1.0
+  flutter_staggered_grid_view: ^0.6.1
+  flutter_phoenix: ^1.0.0
+  http: ^0.13.3
+  image_picker: ^0.8.4+11
+  in_app_purchase: ^3.0.2
+  photo_view: ^0.14.0
+  share: ^2.0.1
+  shared_preferences: ^2.0.5
+  webview_flutter: ^3.0.1
+  intl: ^0.17.0
+  local_auth: ^1.1.11
+  pin_code_text_field: ^1.8.0
+  currency_picker: ^2.0.8
+  country_picker: ^2.0.12
+  timer_count_down: ^2.2.1
+  timeago: ^3.2.2
+  adaptive_action_sheet: ^2.0.1
+  video_compress: ^3.1.0
+  video_player: ^2.4.5
+  google_mobile_ads: ^1.2.0
+  firebase_messaging: ^11.4.0
+  firebase_core: ^1.17.0
+  easy_localization: ^3.0.1
+  get: ^4.6.5
+  dots_indicator: ^2.1.0
+  flutter_easyloading: ^3.0.5
+  story_view: ^0.13.2
+  keyboard_attachable: ^2.1.0
+  detectable_text_field: ^2.0.3
+  firebase_crashlytics: ^2.8.2
+  chewie: ^1.3.4
+  dropdown_button2: ^1.6.2
+  visibility_detector: ^0.3.3
+  scrollable_positioned_list: ^0.3.2
+  shimmer: ^2.0.0
+  flutter_linkify: ^5.0.2
+  giphy_get: ^3.1.0
+  audio_waveforms:
+    git:
+      url: http://github.com/SimformSolutionsPvtLtd/audio_waveforms.git
+      ref: main # branch name
+  get_it: ^7.2.0
+  just_audio: ^0.9.27
+  audio_service: ^0.18.6
+  audio_video_progress_bar: ^0.10.0
+  agora_rtc_engine: ^5.3.0
+  permission_handler: ^10.0.0
+  flutter_ringtone_player: ^3.2.0
+  wakelock: ^0.6.1+2
+  socket_io_client: ^2.0.0-beta.3-nullsafety.0
+  focused_menu: ^1.0.5
+  localstore: ^1.2.3
+  flutter_fgbg: ^0.2.0
+  flutter_sticky_header: ^0.6.4
+  gallery_saver: ^2.3.2
+  pip_view: ^0.9.7
+  google_sign_in: ^5.4.0
+  flutter_callkit_incoming: ^1.0.2+1
+  link_preview_generator: ^1.2.0
+  video_thumbnail_imageview: ^0.0.5
+  uuid: ^3.0.6
+  #  custom_gallery_display: ^0.3.8
+  mime_type: ^1.0.0
+  photo_manager: ^2.2.1
+  share_plus: ^4.0.10+1
+  google_mlkit_smart_reply: ^0.4.0
+#  smart_reply: ^0.1.0
+  flutter_archive: ^5.0.0
+  push: ^0.1.3
+  overlay_support: ^2.0.1
+  sliding_up_panel: ^2.0.0+1
+#  flutter_local_notifications: ^9.9.1
+  awesome_notifications: ^0.6.21
+  camera: ^0.10.0+1
+  profanity_filter: ^2.0.0
+  flutter_contacts: ^1.1.5
+#  place_picker: ^0.9.20-nullsafety
+  google_maps_flutter: ^2.2.0
+  location: ^4.4.0
+  google_static_maps_controller: ^1.0.0
+  progress_state_button: ^1.0.4
+  map_launcher: ^2.3.0+1
+  flutter_svg: ^1.1.5
+  flutter_switch: ^0.3.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  # The "flutter_lints" package below contains a set of recommended lints to
+  # encourage good coding practices. The lint set provided by the package is
+  # activated in the `analysis_options.yaml` file located at the root of your
+  # package. See that file for information about deactivating specific lint
+  # rules and activating additional ones.
+  flutter_lints: ">=1.0.4"
+
+# For information on the generic Dart part of this file, see the
+# following page: https://dart.dev/tools/pub/pubspec
+
+# The following section is specific to Flutter.
+flutter:
+
+  # The following line ensures that the Material Icons font is
+  # included with your application, so that you can use the icons in
+  # the material Icons class.
+  uses-material-design: true
+
+  # To add assets to your application, add an assets section, like this:
+  assets:
+    - assets/resources/
+    - assets/
+    - assets/chatbg/
+
+
+  # An image asset can refer to one or more resolution-specific "variants", see
+  # https://flutter.dev/assets-and-images/#resolution-aware.
+
+  # For details regarding adding assets from package dependencies, see
+  # https://flutter.dev/assets-and-images/#from-packages
+
+  # To add custom fonts to your application, add a fonts section here,
+  # in this "flutter" section. Each entry in this list should have a
+  # "family" key with the font family name, and a "fonts" key with a
+  # list giving the asset and other descriptors for the font. For
+  # example:
+  # fonts:
+  #   - family: Schyler
+  #     fonts:
+  #       - asset: fonts/Schyler-Regular.ttf
+  #       - asset: fonts/Schyler-Italic.ttf
+  #         style: italic
+  #   - family: Trajan Pro
+  #     fonts:
+  #       - asset: fonts/TrajanPro.ttf
+  #       - asset: fonts/TrajanPro_Bold.ttf
+  #         weight: 700
+  #
+  # For details regarding fonts from package dependencies,
+  # see https://flutter.dev/custom-fonts/#from-packages
