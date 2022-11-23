@@ -1,10 +1,9 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:foap/helper/common_import.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:foap/manager/notification_manager.dart';
 import 'package:get/get.dart';
 import 'package:giphy_get/l10n.dart';
-import 'package:easy_localization/easy_localization.dart';
+// import 'package:easy_localization/easy_localization.dart';
 
 class MyHttpOverrides extends HttpOverrides {
   @override
@@ -18,8 +17,13 @@ class MyHttpOverrides extends HttpOverrides {
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  await EasyLocalization.ensureInitialized();
-
+  // await EasyLocalization.ensureInitialized();
+  await FlutterDownloader.initialize(
+      debug: true,
+      // optional: set to false to disable printing logs to console (default: true)
+      ignoreSsl:
+          true // option: set to false to disable working with http links (default: false)
+      );
   // await CustomGalleryPermissions.requestPermissionExtend();
 
   final firebaseMessaging = FCM();
@@ -29,10 +33,14 @@ Future<void> main() async {
     SharedPrefs().setVoipToken(token);
   }
 
+  AutoOrientation.portraitAutoMode();
+
   bool isDarkTheme = await SharedPrefs().isDarkMode();
   Get.changeThemeMode(isDarkTheme ? ThemeMode.dark : ThemeMode.light);
   // Get.changeThemeMode(ThemeMode.dark);
 
+  Get.put(DashboardController());
+  Get.put(SubscriptionPackageController());
   Get.put(AgoraCallController());
   Get.put(AgoraLiveController());
   Get.put(LoginController());
@@ -46,10 +54,9 @@ Future<void> main() async {
   Get.put(ChatDetailController());
   Get.put(ProfileController());
   Get.put(NotificationSettingController());
-  Get.put(SubscriptionPackageController());
   Get.put(CompetitionController());
   Get.put(SettingsController());
-  Get.put(ChatController());
+  Get.put(ChatHistoryController());
   Get.put(BlockedUsersController());
   Get.put(MediaListViewerController());
   Get.put(SelectMediaController());
@@ -59,6 +66,22 @@ Future<void> main() async {
   Get.put(CallHistoryController());
   Get.put(VideoPostTileController());
   Get.put(ContactsController());
+  Get.put(SelectUserForChatController());
+  Get.put(SelectUserForGroupChatController());
+  Get.put(EnterGroupInfoController());
+  Get.put(ClubsController());
+  Get.put(ClubDetailController());
+  Get.put(CreateClubController());
+  Get.put(NotificationController());
+  Get.put(UserNetworkController());
+  Get.put(RandomLivesController());
+  Get.put(RandomChatAndCallController());
+  Get.put(SearchClubsController());
+  Get.put(TvStreamingController());
+  Get.put(MapScreenController());
+  Get.put(GiftController());
+  Get.put(LiveHistoryController());
+  Get.put(RequestVerificationController());
 
   setupServiceLocator();
   await getIt<UserProfileManager>().refreshProfile();
@@ -97,52 +120,72 @@ Future<void> main() async {
       ],
       debug: true);
 
-  runApp(EasyLocalization(
-      useOnlyLangCode: true,
-      supportedLocales: const [
-        Locale('en', 'US'),
-        Locale('ar', 'AE'),
-        Locale('ar', 'SA'),
-        Locale('ar', 'DZ'),
-        Locale('de', 'DE'),
-        Locale('fr', 'FR'),
-        Locale('ru', 'RU')
-      ],
-      path: 'assets/resources',
-      fallbackLocale: const Locale('en', 'US'),
-      child: Phoenix(child: const PhotoSellApp())));
+  runApp(Phoenix(child: const SocialifiedApp()));
 }
 
-class PhotoSellApp extends StatelessWidget {
-  const PhotoSellApp({Key? key}) : super(key: key);
+class SocialifiedApp extends StatefulWidget {
+  const SocialifiedApp({Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
   @override
-  Widget build(BuildContext context) {
+  State<SocialifiedApp> createState() => _SocialifiedAppState();
+}
+
+class _SocialifiedAppState extends State<SocialifiedApp> {
+  final SettingsController _settingsController = Get.find();
+
+  @override
+  void initState() {
+    super.initState();
+    _settingsController.getSettings();
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
     ]);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // SystemChrome.setPreferredOrientations([
+    //   DeviceOrientation.portraitUp,
+    // ]);
 
     return OverlaySupport.global(
-        child: GetMaterialApp(
-      debugShowCheckedModeBanner: false,
-      // navigatorKey: navigationKey,
-      home: const SplashScreen(),
-      builder: EasyLoading.init(),
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.dark,
-      localizationsDelegates: context.localizationDelegates,
-      // localizationsDelegates: [
-      //   GlobalMaterialLocalizations.delegate,
-      //   GlobalWidgetsLocalizations.delegate,
-      //   // GlobalCupertinoLocalizations.delegate,
-      //   // Add this line
-      //   GiphyGetUILocalizations.delegate,
-      // ],
-      locale: context.locale,
-
-      supportedLocales: context.supportedLocales,
-    ));
+        child: FutureBuilder<String>(
+            future: SharedPrefs().getLanguage(),
+            builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+              List<Widget> children;
+              if (snapshot.hasData) {
+                return GetMaterialApp(
+                  translations: Languages(),
+                  locale: Locale(snapshot.data!),
+                  fallbackLocale: const Locale('en', 'US'),
+                  debugShowCheckedModeBanner: false,
+                  // navigatorKey: navigationKey,
+                  home: const SplashScreen(),
+                  builder: EasyLoading.init(),
+                  theme: AppTheme.lightTheme,
+                  darkTheme: AppTheme.darkTheme,
+                  themeMode: ThemeMode.dark,
+                  // localizationsDelegates: context.localizationDelegates,
+                  localizationsDelegates: [
+                    GlobalMaterialLocalizations.delegate,
+                    GlobalWidgetsLocalizations.delegate,
+                    // GlobalCupertinoLocalizations.delegate,
+                    // Add this line
+                    GiphyGetUILocalizations.delegate,
+                  ],
+                  supportedLocales: const <Locale>[
+                    Locale('hi', 'US'),
+                    Locale('en', 'SA'),
+                    Locale('ar', 'SA'),
+                    Locale('tr', 'SA'),
+                    Locale('ru', 'SA'),
+                    Locale('es', 'SA'),
+                    Locale('fr', 'SA')
+                  ],
+                );
+              } else {
+                return Container();
+              }
+            }));
   }
 }

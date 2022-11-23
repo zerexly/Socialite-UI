@@ -77,13 +77,16 @@ class HighlightsController extends GetxController {
                 .join(','))
         .then((value) async {
       EasyLoading.dismiss();
-      Get.offAll(const DashboardScreen(selectedTab: 4));
+      Get.back();
+      // Get.offAll(const DashboardScreen(selectedTab: 4));
     });
   }
 
   Future uploadCoverImage() async {
+    Uint8List compressedData = await pickedImage!.compress();
+    File file = File.fromRawPath(compressedData);
     await ApiController()
-        .uploadFile(file: pickedImage!.path, type: UploadMediaType.storyOrHighlights)
+        .uploadFile(file: file.path, type: UploadMediaType.storyOrHighlights)
         .then((response) async {
       coverImageName = response.postedMediaFileName!;
     });

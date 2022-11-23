@@ -1,5 +1,4 @@
 import 'package:foap/helper/common_import.dart';
-import 'package:foap/manager/file_manager.dart';
 
 class MessageImage extends StatelessWidget {
   final ChatMessageModel message;
@@ -34,7 +33,7 @@ class MessageImage extends StatelessWidget {
             if (snapshot.connectionState == ConnectionState.done) {
               return imageFromUrl();
             } else {
-              return AppUtil.addProgressIndicator(context);
+              return AppUtil.addProgressIndicator(context,100);
             }
           }
         });
@@ -53,7 +52,7 @@ class MessageImage extends StatelessWidget {
           : BoxFit.contain,
       width: double.infinity,
       height: double.infinity,
-      placeholder: (context, url) => AppUtil.addProgressIndicator(context),
+      placeholder: (context, url) => AppUtil.addProgressIndicator(context,100),
       errorWidget: (context, url, error) => const Icon(Icons.error),
     ).round(disableRoundCorner == false ? 10 : 0);
   }

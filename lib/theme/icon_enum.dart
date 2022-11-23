@@ -3,6 +3,7 @@ enum ThemeIcon {
   cart,
   setting,
   account,
+  group,
   camera,
   gallery,
   wallpaper,
@@ -15,16 +16,17 @@ enum ThemeIcon {
 
   emptyCheckbox,
   selectedCheckbox,
-
   search,
   downArrow,
   star,
+  filledStar,
   checkMark,
   sending,
   sent,
   delivered,
   read,
   edit,
+  eye,
   filterIcon,
   sort,
   logout,
@@ -42,6 +44,7 @@ enum ThemeIcon {
   security,
   bike,
   clock,
+  calendar,
   offer,
   orders,
   privacyPolicy,
@@ -53,6 +56,8 @@ enum ThemeIcon {
   wallet,
   dashboard,
   nextArrow,
+  download,
+  pause,
   backArrow,
   menuIcon,
   password,
@@ -79,7 +84,10 @@ enum ThemeIcon {
   helpHand,
   about,
   contacts,
+  files,
   location,
+  drawing,
+  fullScreen,
 
   play,
   stop,
@@ -88,6 +96,7 @@ enum ThemeIcon {
   delete,
   message,
   chat,
+  randomChat,
   closeCircle,
 
   bed,
@@ -103,5 +112,15 @@ enum ThemeIcon {
   lock,
 
   selectionType,
+
+
+  report,
+  hide,
+  addCircle,
+  userGroup,
+  public,
+  request,
+  unSelectedRadio,
+  diamond,
 
 }

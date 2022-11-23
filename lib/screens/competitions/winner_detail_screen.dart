@@ -51,12 +51,11 @@ class WinnerDetailState extends State<WinnerDetailScreen> {
                     style: Theme.of(context).textTheme.bodyLarge!.copyWith(color: Theme.of(context).backgroundColor,fontWeight: FontWeight.w600))),
             InkWell(
                 onTap: () async {
-                  File path =
-                      await AppUtil.findPath(model.gallery.first.filePath);
+                  // File path =
+                  //     await AppUtil.findPath(model.gallery.first.filePath);
 
                   Get.to(() => EnlargeImageViewScreen(
                           model: model,
-                          file: path,
                           handler: () {
                             setState(() {});
                           }));
@@ -68,7 +67,7 @@ class WinnerDetailState extends State<WinnerDetailScreen> {
                       fit: BoxFit.fill,
                       width: MediaQuery.of(context).size.width,
                       placeholder: (context, url) =>
-                          AppUtil.addProgressIndicator(context),
+                          AppUtil.addProgressIndicator(context,100),
                       errorWidget: (context, url, error) =>
                           const Icon(Icons.error),
                     ))),
@@ -134,7 +133,7 @@ class WinnerDetailState extends State<WinnerDetailScreen> {
                         imageUrl: model.user.picture!,
                         fit: BoxFit.fill,
                         placeholder: (context, url) =>
-                            AppUtil.addProgressIndicator(context),
+                            AppUtil.addProgressIndicator(context,100),
                         errorWidget: (context, url, error) =>
                             const Icon(Icons.error),
                       ))

@@ -7,7 +7,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Phozio</string>
+	<string>Socialified</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -29,7 +29,7 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.googleusercontent.apps.500884745411-co520q9prbopgeqjaki0j51o2m8s7crs</string>
+				<string>com.googleusercontent.apps.258656413911-5bqj5jcr6oqledsen49qf9oba5l8tcm8</string>
 			</array>
 		</dict>
 		<dict>
@@ -37,7 +37,7 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>fb1163996274338177</string>
+				<string>fb518019800216421</string>
 			</array>
 		</dict>
 		<dict>
@@ -51,10 +51,14 @@
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>FDAllFilesDownloadedMessage</key>
+	<string>All files have been downloaded</string>
 	<key>FacebookAppID</key>
-	<string>1163996274338177</string>
+	<string>518019800216421</string>
 	<key>FacebookClientToken</key>
-	<string>f3908a70ebae8bf2f7ca68e41ea69da2</string>
+	<string>3c9b3df9138f5999d7acc01bd9983af3</string>
+	<key>FirebaseAppDelegateProxyEnabled</key>
+	<false/>
 	<key>FirebaseMessagingAutoInitEnabled</key>
 	<false/>
 	<key>GADApplicationIdentifier</key>
@@ -64,18 +68,19 @@
 		<string>twitter</string>
 		<string>twitterauth</string>
 		<string>comgooglemaps</string>
-        <string>baidumap</string>
-        <string>iosamap</string>
-        <string>waze</string>
-        <string>yandexmaps</string>
-        <string>yandexnavi</string>
-        <string>citymapper</string>
-        <string>mapswithme</string>
-        <string>osmandmaps</string>
-        <string>dgis</string>
-        <string>qqmap</string>
-        <string>here-location</string>
-        <string>tomtomgo</string>
+		<string>baidumap</string>
+		<string>iosamap</string>
+		<string>waze</string>
+		<string>yandexmaps</string>
+		<string>yandexnavi</string>
+		<string>citymapper</string>
+		<string>mapswithme</string>
+		<string>osmandmaps</string>
+		<string>dgis</string>
+		<string>qqmap</string>
+		<string>here-location</string>
+		<string>tomtomgo</string>
+		<string>itms</string>
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
@@ -267,14 +272,16 @@
 	<string>Main</string>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
-		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>

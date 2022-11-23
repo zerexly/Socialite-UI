@@ -13,7 +13,7 @@ class SocketConstants {
   static const String connectCall = "connectCall";
 
   // callType:   1=audio,2=video
-  static const String onCallRequest = "callCreate";
+  static const String callCreate = "callCreate";
   static const String onCallRequestConfirm = "callCreateConfirm";
   static const String incomingCall = "callIncoming";
 
@@ -36,14 +36,24 @@ class SocketConstants {
   static const String offlineStatusEvent = "userOffline";
   static const String deleteMessage = "deleteMessage";
 
-  // live
+  // group chat
+  static const String leaveGroupChat = "leftRoom";
+  static const String removeUserFromGroupChat = "removeUserFromRoom";
+  static const String makeUserAdmin = "makeRoomAdmin";
+  static const String removeUserAdmin = "removeRoomAdmin";
+  static const String updateChatAccessGroup = "updateChatAccessGroup";
 
+  // live
   static const String goLive = "goLive";
   static const String liveCreatedConfirmation = "goLiveConfirm";
   static const String joinLive = "addUserLiveCall";
   static const String sendMessageInLive = "sendMessageLiveCall";
   static const String endLive = "endLiveCall";
   static const String leaveLive = "leaveUserLiveCall";
+
+  // livetv
+  static const String joinLiveTv = "addUserLiveTv";
+  static const String sendMessageInLiveTv = "sendMessageLiveTv";
 
 //Message types
 // Text - 1

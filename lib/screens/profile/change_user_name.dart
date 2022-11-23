@@ -53,8 +53,7 @@ class _ChangeUserNameState extends State<ChangeUserName> {
                     showDivider: true,
                     textStyle: Theme.of(context)
                         .textTheme
-                        .titleMedium!
-                        .copyWith(color: Theme.of(context).backgroundColor),
+                        .titleMedium,
                     onChanged: (value) {
                       if (value.length > 3) {
                         profileController.verifyUsername(userName: value);

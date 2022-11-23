@@ -22,6 +22,7 @@ class PostModel {
 
   String postTime = '';
   DateTime? createDate;
+  ClubModel? club;
 
   PostModel();
 
@@ -61,6 +62,10 @@ class PostModel {
           json['mentionUsers'].map((x) => MentionedUsers.fromJson(x)));
     }
 
+    model.club = json['clubDetail'] == null
+        ? null
+        : ClubModel.fromJson(json['clubDetail']);
+
     model.createDate =
         DateTime.fromMillisecondsSinceEpoch(json['created_at'] * 1000).toUtc();
 
@@ -84,7 +89,11 @@ class PostModel {
     return model;
   }
 
-  bool get isMyPost{
+  bool get containVideoPost {
+    return gallery.where((element) => element.isVideoPost()).isNotEmpty;
+  }
+
+  bool get isMyPost {
     return user.id == getIt<UserProfileManager>().user!.id;
   }
 }

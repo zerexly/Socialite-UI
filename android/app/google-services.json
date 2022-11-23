@@ -1,254 +1,34 @@
 {
   "project_info": {
-    "project_number": "500884745411",
-    "firebase_url": "https://quizerica-be083.firebaseio.com",
-    "project_id": "quizerica-be083",
-    "storage_bucket": "quizerica-be083.appspot.com"
+    "project_number": "258656413911",
+    "project_id": "socialified-23223",
+    "storage_bucket": "socialified-23223.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:500884745411:android:a2a4066962a38f73f6c676",
+        "mobilesdk_app_id": "1:258656413911:android:bfa88e695cffd921626892",
         "android_client_info": {
-          "package_name": "com.baljit.apptesting"
+          "package_name": "com.socialified"
         }
       },
       "oauth_client": [
         {
-          "client_id": "500884745411-0sp10i7dnbn67a5nh0acvdoltqbeknb9.apps.googleusercontent.com",
+          "client_id": "258656413911-iv8cgfsd2khapjnbpse2ef2oan4d1hjt.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBD1Ob92EjeV3rh4aPmyZ-UWQdmMnLtZwg"
+          "current_key": "AIzaSyDWN8fMFHp-PFXbY9Duu0uDsXJ-_DGSI9w"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "500884745411-0sp10i7dnbn67a5nh0acvdoltqbeknb9.apps.googleusercontent.com",
+              "client_id": "258656413911-iv8cgfsd2khapjnbpse2ef2oan4d1hjt.apps.googleusercontent.com",
               "client_type": 3
-            },
-            {
-              "client_id": "500884745411-co520q9prbopgeqjaki0j51o2m8s7crs.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.baljit.apptesting"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:500884745411:android:ebd5a642804e42caf6c676",
-        "android_client_info": {
-          "package_name": "com.example.image_contest_flutter_app"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "500884745411-uivte8okgq2r7ep6b82g3d0m2sroqkvf.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.image_contest_flutter_app",
-            "certificate_hash": "d663e775b091bb03ea8b70b0be4db50f716f4667"
-          }
-        },
-        {
-          "client_id": "500884745411-0sp10i7dnbn67a5nh0acvdoltqbeknb9.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyBD1Ob92EjeV3rh4aPmyZ-UWQdmMnLtZwg"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "500884745411-0sp10i7dnbn67a5nh0acvdoltqbeknb9.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "500884745411-co520q9prbopgeqjaki0j51o2m8s7crs.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.baljit.apptesting"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:500884745411:android:41fc407007678aadf6c676",
-        "android_client_info": {
-          "package_name": "com.example.music_streaming_mobile"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "500884745411-5e8kna1gorqnd3i2doqj9f2ss6cdjbuk.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.music_streaming_mobile",
-            "certificate_hash": "d663e775b091bb03ea8b70b0be4db50f716f4667"
-          }
-        },
-        {
-          "client_id": "500884745411-0sp10i7dnbn67a5nh0acvdoltqbeknb9.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyBD1Ob92EjeV3rh4aPmyZ-UWQdmMnLtZwg"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "500884745411-0sp10i7dnbn67a5nh0acvdoltqbeknb9.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "500884745411-co520q9prbopgeqjaki0j51o2m8s7crs.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.baljit.apptesting"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:500884745411:android:9325f2bd52dd80d8f6c676",
-        "android_client_info": {
-          "package_name": "com.jasspj.baapapp"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "500884745411-574mdi8echntnlk2743kpfqglu84get3.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.jasspj.baapapp",
-            "certificate_hash": "d663e775b091bb03ea8b70b0be4db50f716f4667"
-          }
-        },
-        {
-          "client_id": "500884745411-0sp10i7dnbn67a5nh0acvdoltqbeknb9.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyBD1Ob92EjeV3rh4aPmyZ-UWQdmMnLtZwg"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "500884745411-0sp10i7dnbn67a5nh0acvdoltqbeknb9.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "500884745411-co520q9prbopgeqjaki0j51o2m8s7crs.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.baljit.apptesting"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:500884745411:android:3fc025f9e14da1aef6c676",
-        "android_client_info": {
-          "package_name": "com.learning.videos"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "500884745411-p7r63ps5ck4nmkv77rtiv7e7jsriqkou.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.learning.videos",
-            "certificate_hash": "d663e775b091bb03ea8b70b0be4db50f716f4667"
-          }
-        },
-        {
-          "client_id": "500884745411-0sp10i7dnbn67a5nh0acvdoltqbeknb9.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyBD1Ob92EjeV3rh4aPmyZ-UWQdmMnLtZwg"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "500884745411-0sp10i7dnbn67a5nh0acvdoltqbeknb9.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "500884745411-co520q9prbopgeqjaki0j51o2m8s7crs.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.baljit.apptesting"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:500884745411:android:747a44d0aab62b05f6c676",
-        "android_client_info": {
-          "package_name": "com.topiosappsworld.radiomaster"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "500884745411-0sp10i7dnbn67a5nh0acvdoltqbeknb9.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyBD1Ob92EjeV3rh4aPmyZ-UWQdmMnLtZwg"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "500884745411-0sp10i7dnbn67a5nh0acvdoltqbeknb9.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "500884745411-co520q9prbopgeqjaki0j51o2m8s7crs.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.baljit.apptesting"
-              }
             }
           ]
         }

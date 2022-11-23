@@ -8,22 +8,22 @@ Widget messageTypeShortInfo({
       ? Text(
           model.messageContent,
           maxLines: 1,
-          style: Theme.of(context).textTheme.titleMedium,
+          style: Theme.of(context).textTheme.bodyMedium,
         )
       : model.messageContentType == MessageContentType.photo
           ? Row(
               children: [
                 const ThemeIconWidget(
                   ThemeIcon.camera,
-                  size: 15,
+                  size: 12,
                 ).rP4,
                 Text(
                   LocalizationString.photo,
                   maxLines: 1,
                   style: Theme.of(context)
                       .textTheme
-                      .titleSmall!
-                      .copyWith(fontWeight: FontWeight.w900),
+                      .bodyMedium!
+                      .copyWith(fontWeight: FontWeight.w300),
                 ),
               ],
             )
@@ -36,8 +36,8 @@ Widget messageTypeShortInfo({
                       maxLines: 1,
                       style: Theme.of(context)
                           .textTheme
-                          .titleSmall!
-                          .copyWith(fontWeight: FontWeight.w900),
+                          .bodyMedium!
+                          .copyWith(fontWeight: FontWeight.w300),
                     ),
                   ],
                 )
@@ -51,8 +51,8 @@ Widget messageTypeShortInfo({
                           maxLines: 1,
                           style: Theme.of(context)
                               .textTheme
-                              .titleSmall!
-                              .copyWith(fontWeight: FontWeight.w900),
+                              .bodyMedium!
+                              .copyWith(fontWeight: FontWeight.w300),
                         ),
                       ],
                     )
@@ -78,9 +78,9 @@ Widget messageTypeShortInfo({
                                       maxLines: 1,
                                       style: Theme.of(context)
                                           .textTheme
-                                          .titleSmall!
+                                          .bodyMedium!
                                           .copyWith(
-                                              fontWeight: FontWeight.w900),
+                                              fontWeight: FontWeight.w300),
                                     ),
                                   ],
                                 )
@@ -96,9 +96,9 @@ Widget messageTypeShortInfo({
                                           maxLines: 1,
                                           style: Theme.of(context)
                                               .textTheme
-                                              .titleSmall!
+                                              .bodyMedium!
                                               .copyWith(
-                                                  fontWeight: FontWeight.w900),
+                                                  fontWeight: FontWeight.w300),
                                         ),
                                       ],
                                     )
@@ -115,10 +115,10 @@ Widget messageTypeShortInfo({
                                               maxLines: 1,
                                               style: Theme.of(context)
                                                   .textTheme
-                                                  .titleSmall!
+                                                  .bodyMedium!
                                                   .copyWith(
                                                       fontWeight:
-                                                          FontWeight.w600),
+                                                          FontWeight.w300),
                                             ),
                                           ],
                                         )
@@ -135,14 +135,35 @@ Widget messageTypeShortInfo({
                                                   maxLines: 1,
                                                   style: Theme.of(context)
                                                       .textTheme
-                                                      .titleSmall!
+                                                      .bodyMedium!
                                                       .copyWith(
                                                           fontWeight:
-                                                              FontWeight.w600),
+                                                              FontWeight.w300),
                                                 ),
                                               ],
                                             )
-                                          : Container();
+                                          : model.messageContentType ==
+                                                  MessageContentType.file
+                                              ? Row(
+                                                  children: [
+                                                    const ThemeIconWidget(
+                                                            ThemeIcon.files,
+                                                            size: 15)
+                                                        .rP4,
+                                                    Text(
+                                                      LocalizationString.file,
+                                                      maxLines: 1,
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bodyMedium!
+                                                          .copyWith(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w300),
+                                                    ),
+                                                  ],
+                                                )
+                                              : Container();
 }
 
 Widget messageMainContent(ChatMessageModel message) {
@@ -179,7 +200,6 @@ Widget messageMainContent(ChatMessageModel message) {
                           ? SizedBox(
                               height: 60,
                               width: 60,
-                              child: LocationChatTile(message: message)
-                                  .p8)
+                              child: LocationChatTile(message: message).p8)
                           : Container();
 }

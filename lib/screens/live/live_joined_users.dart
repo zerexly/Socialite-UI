@@ -40,14 +40,14 @@ class _LiveJoinedUsersState extends State<LiveJoinedUsers> {
                     padding: const EdgeInsets.only(top: 20),
                     itemBuilder: (ctx, index) {
                       return UserTile(
-                          profile: agoraLiveController.joinedUsers[index]);
+                          profile: agoraLiveController.currentJoinedUsers[index]);
                     },
                     separatorBuilder: (ctx, index) {
                       return const SizedBox(
                         height: 20,
                       );
                     },
-                    itemCount: agoraLiveController.joinedUsers.length);
+                    itemCount: agoraLiveController.currentJoinedUsers.length);
               }),
         ),
       ],

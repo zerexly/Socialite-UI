@@ -1,20 +1,33 @@
+import 'dart:convert';
+
 import 'package:agora_rtc_engine/rtc_engine.dart';
 import 'package:foap/helper/common_import.dart';
-import 'package:foap/util/constant_util.dart';
 import 'package:get/get.dart';
 
 class AgoraLiveController extends GetxController {
+  final SubscriptionPackageController packageController = Get.find();
+
   Rx<TextEditingController> messageTf = TextEditingController().obs;
   RxList<ChatMessageModel> messages = <ChatMessageModel>[].obs;
+  RxList<ReceivedGiftModel> giftsReceived = <ReceivedGiftModel>[].obs;
+
   RxInt remoteUserId = 0.obs;
+  Rx<GiftModel?> sendingGift = Rx<GiftModel?>(null);
 
   RxList<String> infoStrings = <String>[].obs;
   late RtcEngine _engine;
   late int liveId;
   late String localLiveId;
 
-  RxList<UserModel> joinedUsers = <UserModel>[].obs;
+  RxList<UserModel> currentJoinedUsers = <UserModel>[].obs;
+  RxList<UserModel> allJoinedUsers = <UserModel>[].obs;
+
   UserModel? host;
+
+  RxInt canLive = 0.obs;
+  String? errorMessage;
+
+  RxBool askLiveEndConformation = false.obs;
 
   RxBool isFront = false.obs;
   RxBool reConnectingRemoteView = false.obs;
@@ -22,7 +35,38 @@ class AgoraLiveController extends GetxController {
   RxBool mutedVideo = false.obs;
   RxBool videoPaused = false.obs;
   RxBool liveEnd = false.obs;
-  RxBool isHost = false.obs;
+
+  DateTime? liveStartTime;
+  DateTime? liveEndTime;
+
+  String get liveTime {
+    int totalSeconds = liveEndTime!.difference(liveStartTime!).inSeconds;
+    int h, m, s;
+
+    h = totalSeconds ~/ 3600;
+
+    m = ((totalSeconds - h * 3600)) ~/ 60;
+
+    s = totalSeconds - (h * 3600) - (m * 60);
+
+    if (h > 0) {
+      return "${h}h:${m}m:${s}s";
+    } else if (m > 0) {
+      return "${m}m:${s}s";
+    }
+
+    return "$s sec";
+  }
+
+  int get totalCoinsEarned {
+    if (giftsReceived.isNotEmpty) {
+      return giftsReceived
+          .map((element) => element.giftDetail.coins)
+          .reduce((a, b) => a + b);
+    } else {
+      return 0;
+    }
+  }
 
   clear() {
     isFront.value = false;
@@ -31,7 +75,56 @@ class AgoraLiveController extends GetxController {
     mutedVideo.value = false;
     videoPaused.value = false;
     liveEnd.value = false;
-    isHost.value = false;
+    canLive.value = 0;
+
+    currentJoinedUsers.clear();
+    allJoinedUsers.clear();
+    messages.clear();
+    giftsReceived.clear();
+
+    askLiveEndConformation.value = false;
+  }
+
+  checkFeasibilityToLive(
+      {required BuildContext context, required bool isOpenSettings}) {
+    AppUtil.checkInternet().then((value) {
+      Timer(const Duration(seconds: 2), () {
+        if (value) {
+          PermissionUtils.requestPermission(
+              [Permission.camera, Permission.microphone], context,
+              isOpenSettings: isOpenSettings, permissionGrant: () async {
+            canLive.value = 1;
+            errorMessage = null;
+          }, permissionDenied: () {
+            canLive.value = -1;
+
+            errorMessage = LocalizationString.pleaseAllowAccessToCameraForLive;
+
+            // AppUtil.showToast(
+            //     context: context,
+            //     message: LocalizationString.pleaseAllowAccessToCameraForLive,
+            //     isSuccess: false);
+          }, permissionNotAskAgain: () {
+            canLive.value = -1;
+            errorMessage = LocalizationString.pleaseAllowAccessToCameraForLive;
+
+            // AppUtil.showToast(
+            //     context: context,
+            //     message: LocalizationString.pleaseAllowAccessToCameraForLive,
+            //     isSuccess: false);
+          });
+        } else {
+          canLive.value = value == true ? 1 : -1;
+        }
+      });
+    });
+  }
+
+  closeLive() {
+    clear();
+    Get.back();
+    Get.back();
+    // InterstitialAds().show();
   }
 
   //Initialize All The Setup For Agora Video Call
@@ -64,7 +157,7 @@ class AgoraLiveController extends GetxController {
       'liveCallId': liveId,
     });
     sendTextMessage('Joined');
-    joinedUsers.add(getIt<UserProfileManager>().user!);
+    currentJoinedUsers.add(getIt<UserProfileManager>().user!);
     _joinLive(live: live);
   }
 
@@ -96,6 +189,8 @@ class AgoraLiveController extends GetxController {
           : await _engine.setClientRole(ClientRole.Audience);
       await _engine.joinChannel(live.token, live.channelName, null,
           getIt<UserProfileManager>().user!.id);
+
+      liveStartTime = DateTime.now();
 
       Get.to(() => LiveBroadcastScreen(
             live: live,
@@ -169,12 +264,20 @@ class AgoraLiveController extends GetxController {
       },
       remoteVideoStats: (remoteVideoStats) {
         if (remoteVideoStats.receivedBitrate == 0) {
-          reConnectingRemoteView.value = true;
+          videoPaused.value = true;
         } else {
-          reConnectingRemoteView.value = false;
+          videoPaused.value = false;
         }
       },
     ));
+  }
+
+  dontEndLiveCall() {
+    askLiveEndConformation.value = false;
+  }
+
+  askConfirmationForEndCall() {
+    askLiveEndConformation.value = true;
   }
 
   //Use This Method To End Call
@@ -182,7 +285,6 @@ class AgoraLiveController extends GetxController {
     _engine.leaveChannel();
     _engine.destroy();
     Wakelock.disable(); // Turn off wakelock feature after call end
-    clear();
     // Emit End live Event Into Socket
 
     if (isHost) {
@@ -192,6 +294,10 @@ class AgoraLiveController extends GetxController {
             'userId': getIt<UserProfileManager>().user!.id,
             'liveCallId': liveId
           }));
+      liveEndTime = DateTime.now();
+      liveEnd.value = true;
+
+      // Get.back();
     } else {
       sendTextMessage('Left');
       getIt<SocketManager>().emit(
@@ -200,10 +306,10 @@ class AgoraLiveController extends GetxController {
             'userId': getIt<UserProfileManager>().user!.id,
             'liveCallId': liveId
           }));
+      clear();
+      Get.back();
+      InterstitialAds().show();
     }
-    joinedUsers.clear();
-    messages.clear();
-    Get.back();
   }
 
   messageChanges() {
@@ -233,7 +339,7 @@ class AgoraLiveController extends GetxController {
     ChatMessageModel localMessageModel = ChatMessageModel();
     localMessageModel.localMessageId = localMessageId;
     localMessageModel.roomId = liveId;
-    localMessageModel.messageTime = LocalizationString.justNow;
+    // localMessageModel.messageTime = LocalizationString.justNow;
     localMessageModel.userName = LocalizationString.you;
     // localMessageModel.userPicture = getIt<UserProfileManager>().user!.picture;
     localMessageModel.senderId = getIt<UserProfileManager>().user!.id;
@@ -249,15 +355,121 @@ class AgoraLiveController extends GetxController {
     // }
   }
 
+  sendGiftMessage(String giftImage, int coins) {
+    String localMessageId = randomId();
+    var content = {'giftImage': giftImage, 'coins': coins.toString()};
+
+    var message = {
+      'userId': getIt<UserProfileManager>().user!.id,
+      'liveCallId': liveId,
+      'messageType': messageTypeId(MessageContentType.gift),
+      'message': json.encode(content),
+      'localMessageId': localMessageId,
+      'picture': getIt<UserProfileManager>().user!.picture,
+      'username': getIt<UserProfileManager>().user!.userName,
+      'created_at': (DateTime.now().millisecondsSinceEpoch / 1000).round()
+    };
+
+    //save message to socket server
+    getIt<SocketManager>().emit(SocketConstants.sendMessageInLive, message);
+
+    ChatMessageModel localMessageModel = ChatMessageModel();
+    localMessageModel.localMessageId = localMessageId;
+    localMessageModel.roomId = liveId;
+    // localMessageModel.messageTime = LocalizationString.justNow;
+    localMessageModel.userName = LocalizationString.you;
+    // localMessageModel.userPicture = getIt<UserProfileManager>().user!.picture;
+    localMessageModel.senderId = getIt<UserProfileManager>().user!.id;
+    localMessageModel.messageType = messageTypeId(MessageContentType.gift);
+    localMessageModel.messageContent = json.encode(content);
+
+    localMessageModel.createdAt =
+        (DateTime.now().millisecondsSinceEpoch / 1000).round();
+
+    messages.add(localMessageModel);
+    messageTf.value.text = '';
+    update();
+  }
+
+  sendGift(GiftModel gift, BuildContext context) {
+    if (getIt<UserProfileManager>().user!.coins > gift.coins) {
+      sendingGift.value = gift;
+      ApiController()
+          .sendGift(gift: gift, liveId: liveId, userId: host!.id, postId: null)
+          .then((value) {
+        Timer(const Duration(seconds: 1), () {
+          sendingGift.value = null;
+        });
+
+        //send gift message
+        sendGiftMessage(gift.logo, gift.coins);
+
+        // refresh profile to get updated wallet info
+        getIt<UserProfileManager>().refreshProfile();
+      });
+    } else {
+      List<PackageModel> availablePackages = packageController.packages
+          .where((package) => package.coin >= gift.coins)
+          .toList();
+      PackageModel package = availablePackages.first;
+      buyPackage(package, context);
+    }
+  }
+
+  buyPackage(PackageModel package, BuildContext context) {
+    if (AppConfigConstants.isDemoApp) {
+      AppUtil.showDemoAppConfirmationAlert(
+          title: 'Demo app',
+          subTitle:
+              'This is demo app so you can not make payment to test it, but still you will get some coins',
+          cxt: context,
+          okHandler: () {
+            packageController.subscribeToDummyPackage(context, randomId());
+          });
+      return;
+    }
+    if (packageController.isAvailable.value) {
+      // For production build
+      packageController.selectedPurchaseId.value = Platform.isIOS
+          ? package.inAppPurchaseIdIOS
+          : package.inAppPurchaseIdAndroid;
+      List<ProductDetails> matchedProductArr = packageController.products
+          .where((element) =>
+              element.id == packageController.selectedPurchaseId.value)
+          .toList();
+      if (matchedProductArr.isNotEmpty) {
+        ProductDetails matchedProduct = matchedProductArr.first;
+        PurchaseParam purchaseParam = PurchaseParam(
+            productDetails: matchedProduct, applicationUserName: null);
+        packageController.inAppPurchase.buyConsumable(
+            purchaseParam: purchaseParam,
+            autoConsume: packageController.kAutoConsume || Platform.isIOS);
+      } else {
+        AppUtil.showToast(
+            context: context,
+            message: LocalizationString.noProductAvailable,
+            isSuccess: false);
+      }
+    } else {
+      AppUtil.showToast(
+          context: context,
+          message: LocalizationString.storeIsNotAvailable,
+          isSuccess: false);
+    }
+  }
+
   //*************** updates from socket *******************//
 
   onNewUserJoined(UserModel user) {
-    joinedUsers.add(user);
+    currentJoinedUsers.add(user);
+    if (!allJoinedUsers.contains(user)) {
+      allJoinedUsers.add(user);
+    }
     update();
   }
 
   onUserLeave(int userId) {
-    joinedUsers.removeWhere((element) => element.id == userId);
+    currentJoinedUsers.removeWhere((element) => element.id == userId);
     update();
   }
 
@@ -266,7 +478,7 @@ class AgoraLiveController extends GetxController {
     _engine.destroy();
     Wakelock.disable();
 
-    joinedUsers.clear();
+    currentJoinedUsers.clear();
     messages.clear();
     update();
     if (this.liveId == liveId) {
@@ -277,6 +489,28 @@ class AgoraLiveController extends GetxController {
   }
 
   onNewMessageReceived(ChatMessageModel message) {
+    if (host!.isMe == true &&
+        message.messageContentType == MessageContentType.gift) {
+      GiftModel gift = GiftModel(
+          id: 1,
+          name: '',
+          logo: message.giftContent.image,
+          coins: message.giftContent.coins);
+
+      UserModel sender = UserModel();
+      sender.id = message.senderId;
+      sender.userName = message.userName;
+      sender.picture = message.userPicture;
+      ReceivedGiftModel receivedGiftDetail =
+          ReceivedGiftModel(giftDetail: gift, sender: sender);
+
+      sendingGift.value = gift;
+      giftsReceived.add(receivedGiftDetail);
+
+      Timer(const Duration(seconds: 1), () {
+        sendingGift.value = null;
+      });
+    }
     messages.add(message);
     update();
   }
@@ -288,15 +522,28 @@ class AgoraLiveController extends GetxController {
     String agoraToken = data['token'];
     String channelName = data['channelName'];
 
+    host = getIt<UserProfileManager>().user!;
     Live live = Live(
         channelName: channelName,
         isHosting: true,
-        host: getIt<UserProfileManager>().user!,
+        host: host!,
         token: agoraToken,
         liveId: liveId);
 
     _joinLive(live: live);
 
     update();
+  }
+
+  // gifts
+
+  loadGiftsReceived() {
+    ApiController()
+        .receivedGifts(sendOnType: 1, liveId: liveId, postId: null)
+        .then((response) {
+      giftsReceived.value = response.giftReceived;
+
+      update();
+    });
   }
 }

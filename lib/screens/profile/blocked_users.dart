@@ -32,7 +32,7 @@ class BlockedUsersListState extends State<BlockedUsersList> {
           const SizedBox(
             height: 55,
           ),
-          backNavigationBar(context, LocalizationString.blockedUser),
+          backNavigationBar(context:context, title:LocalizationString.blockedUser),
           divider(context: context).vP8,
           Expanded(
             child: GetBuilder<BlockedUsersController>(
@@ -59,9 +59,7 @@ class BlockedUsersListState extends State<BlockedUsersList> {
                           children: [
                             blockedUsersController.usersList.isEmpty
                                 ? blockedUsersController.isLoading == false
-                                    ? Center(
-                                        child: Text(LocalizationString.noData,
-                                            style: Theme.of(context).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.w900,color: Theme.of(context).primaryColor)))
+                                    ? noUserFound(context)
                                     : Container()
                                 : Expanded(
                                     child: ListView.separated(

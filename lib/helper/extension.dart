@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:foap/helper/pub_import.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:foap/helper/common_import.dart';
 
 extension RoundedHelper on Widget {
   ClipRRect round(double value) => ClipRRect(
@@ -213,7 +213,8 @@ extension ShadowView on Widget {
           {required BuildContext context, Color? foregroundColor}) =>
       Container(
           decoration: BoxDecoration(
-            color: foregroundColor ?? Theme.of(context).backgroundColor.lighten(0.02),
+            color: foregroundColor ??
+                Theme.of(context).backgroundColor.lighten(0.02),
             boxShadow: <BoxShadow>[
               BoxShadow(
                 offset: const Offset(4, 4),
@@ -264,7 +265,7 @@ extension ShadowView on Widget {
               )
             ],
           ),
-          child: round(radius));
+          child: round(radius - (borderWidth ?? 0.5)));
 }
 
 extension FixedHeightBox on Widget {
@@ -378,4 +379,66 @@ extension ColorExtension on Color {
 
     return hslLight.toColor();
   }
+}
+
+extension PulltoRefresh on Widget {
+  Widget addPullToRefresh({
+    required RefreshController refreshController,
+    required VoidCallback onRefresh,
+    required VoidCallback onLoading,
+    required bool enablePullUp,
+  }) =>
+      SmartRefresher(
+        enablePullDown: true,
+        enablePullUp: enablePullUp,
+        header: const WaterDropHeader(),
+        controller: refreshController,
+        onRefresh: onRefresh,
+        onLoading: onLoading,
+        child: this,
+      );
+}
+
+extension GradietBackground on Widget {
+  Widget addGradientBackground() => Container(
+      decoration: const BoxDecoration(
+          gradient: LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [
+          Color(0xff6f0000),
+          Color(0xff200122),
+        ],
+      )),
+      child: this);
+}
+
+extension PinchZoomImage on Widget {
+  Widget addPinchAndZoom() => PinchZoom(
+        resetDuration: const Duration(milliseconds: 100),
+        maxScale: 2.5,
+        onZoomStart: () {
+        },
+        onZoomEnd: () {
+        },
+        child: this,
+      );
+
+  Widget overlay(Color color) => Stack(
+        fit: StackFit.expand,
+        children: [
+          this,
+          Container(
+              decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: const Alignment(-1.0, -2.0),
+              end: const Alignment(1.0, 2.0),
+              colors: [
+                color.darken(0.10),
+                color.darken(0.50),
+              ],
+            ),
+          ))
+        ],
+      );
 }

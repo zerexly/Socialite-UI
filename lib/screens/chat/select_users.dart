@@ -2,87 +2,200 @@ import 'package:foap/helper/common_import.dart';
 import 'package:get/get.dart';
 
 class SelectUserForChat extends StatefulWidget {
-  const SelectUserForChat({Key? key}) : super(key: key);
+  final Function(UserModel) userSelected;
+
+  const SelectUserForChat({Key? key, required this.userSelected})
+      : super(key: key);
 
   @override
   SelectUserForChatState createState() => SelectUserForChatState();
 }
 
 class SelectUserForChatState extends State<SelectUserForChat> {
-  final ProfileController profileController = Get.find();
-  final AgoraCallController agoraCallController = Get.find();
+  final SelectUserForChatController _selectUserForChatController = Get.find();
+  final AgoraCallController _agoraCallController = Get.find();
 
   @override
   void initState() {
     super.initState();
 
-    profileController.clear();
-    profileController.getFollowingUsers();
+    _selectUserForChatController.clear();
+    _selectUserForChatController.getFollowingUsers();
   }
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Container(
-          height: 340,
-          color: Theme.of(context).cardColor,
-          child: GetBuilder<ProfileController>(
-              init: profileController,
-              builder: (ctx) {
-                ScrollController scrollController = ScrollController();
-                scrollController.addListener(() {
-                  if (scrollController.position.maxScrollExtent ==
-                      scrollController.position.pixels) {
-                    if (!profileController.followingIsLoading) {
-                      profileController.getFollowingUsers();
-                    }
-                  }
-                });
+        Expanded(
+          child: Container(
+            color: Theme.of(context).cardColor,
+            width: double.infinity,
+            child: Column(
+              children: [
+                // const SizedBox(
+                //   height: 20,
+                // ),
+                // SearchBar(
+                //         showSearchIcon: true,
+                //         iconColor: Theme.of(context).primaryColor,
+                //         onSearchChanged: (value) {
+                //           selectUserForChatController.searchTextChanged(value);
+                //         },
+                //         onSearchStarted: () {
+                //           //controller.startSearch();
+                //         },
+                //         onSearchCompleted: (searchTerm) {})
+                //     .hP8,
+                // divider(context: context).tP16,
+                Expanded(
+                  child: GetBuilder<SelectUserForChatController>(
+                      init: _selectUserForChatController,
+                      builder: (ctx) {
+                        ScrollController scrollController = ScrollController();
+                        scrollController.addListener(() {
+                          if (scrollController.position.maxScrollExtent ==
+                              scrollController.position.pixels) {
+                            if (!_selectUserForChatController
+                                .followingIsLoading) {
+                              _selectUserForChatController.getFollowingUsers();
+                            }
+                          }
+                        });
 
-                List<UserModel> usersList = profileController.following;
-                return profileController.followingIsLoading
-                    ? const ShimmerUsers().hP16
-                    : ListView.separated(
-                        padding: const EdgeInsets.only(top: 20, bottom: 50),
-                        controller: scrollController,
-                        itemCount: usersList.length,
-                        itemBuilder: (context, index) {
-                          return UserTile(
-                            profile: usersList[index],
-                            viewCallback: () {
-                              Get.back();
-                              // widget.selectedUser(usersList[index]);
-                              Get.to(() => ChatDetail(
-                                    opponent: usersList[index],
-                                    chatRoom: null,
-                                  ));
-                            },
-                            audioCallCallback: () {
-                              Get.back();
-                              initiateAudioCall(context, usersList[index]);
-                            },
-                            chatCallback: () {
-                              Get.back();
-                              Get.to(() => ChatDetail(
-                                    opponent: usersList[index],
-                                    chatRoom: null,
-                                  ));
-                            },
-                            videoCallCallback: () {
-                              Get.back();
-                              initiateVideoCall(context, usersList[index]);
-                            },
-                          );
-                        },
-                        separatorBuilder: (context, index) {
-                          return const SizedBox(
-                            height: 20,
-                          );
-                        },
-                      ).hP16;
-              }),
-        ).round(20).p16,
+                        List<UserModel> usersList =
+                            _selectUserForChatController.following;
+                        return _selectUserForChatController.followingIsLoading
+                            ? const ShimmerUsers().hP16
+                            : usersList.isNotEmpty
+                                ? ListView.separated(
+                                    padding: const EdgeInsets.only(
+                                        top: 20, bottom: 50),
+                                    controller: scrollController,
+                                    itemCount: usersList.length + 2,
+                                    itemBuilder: (context, index) {
+                                      if (index == 0) {
+                                        return SizedBox(
+                                          height: 40,
+                                          child: Row(
+                                            children: [
+                                              Container(
+                                                      color: Theme.of(context)
+                                                          .primaryColor
+                                                          .withOpacity(0.2),
+                                                      child: ThemeIconWidget(
+                                                        ThemeIcon.group,
+                                                        size: 20,
+                                                        color: Theme.of(context)
+                                                            .primaryColor,
+                                                      ).p8)
+                                                  .circular,
+                                              const SizedBox(
+                                                width: 16,
+                                              ),
+                                              Text(
+                                                LocalizationString.createGroup,
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .titleMedium!
+                                                    .copyWith(
+                                                        fontWeight:
+                                                            FontWeight.w900),
+                                              )
+                                            ],
+                                          ),
+                                        ).ripple(() {
+                                          Get.to(() =>
+                                              const SelectUserForGroupChat());
+                                        }).hP16;
+                                      } else if (index == 1) {
+                                        return SizedBox(
+                                          height: 40,
+                                          child: Row(
+                                            children: [
+                                              Container(
+                                                      color: Theme.of(context)
+                                                          .primaryColor
+                                                          .withOpacity(0.2),
+                                                      child: ThemeIconWidget(
+                                                        ThemeIcon.randomChat,
+                                                        size: 20,
+                                                        color: Theme.of(context)
+                                                            .primaryColor,
+                                                      ).p8)
+                                                  .circular,
+                                              const SizedBox(
+                                                width: 16,
+                                              ),
+                                              Text(
+                                                LocalizationString.strangerChat,
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .titleMedium!
+                                                    .copyWith(
+                                                        fontWeight:
+                                                            FontWeight.w900),
+                                              )
+                                            ],
+                                          ),
+                                        ).ripple(() {
+                                          Get.to(() => const FindRandomUser(
+                                                isCalling: false,
+                                              ));
+                                        }).hP16;
+                                      } else {
+                                        return UserTile(
+                                          profile: usersList[index - 2],
+                                          viewCallback: () {
+                                            EasyLoading.show(
+                                                status:
+                                                    LocalizationString.loading);
+
+                                            widget.userSelected(
+                                                usersList[index - 2]);
+                                          },
+                                          audioCallCallback: () {
+                                            Get.back();
+                                            initiateAudioCall(
+                                                context, usersList[index - 2]);
+                                          },
+                                          chatCallback: () {
+                                            EasyLoading.show(
+                                                status:
+                                                    LocalizationString.loading);
+
+                                            widget.userSelected(
+                                                usersList[index - 2]);
+                                          },
+                                          videoCallCallback: () {
+                                            Get.back();
+                                            initiateVideoCall(
+                                                context, usersList[index - 2]);
+                                          },
+                                        ).hP16;
+                                      }
+                                    },
+                                    separatorBuilder: (context, index) {
+                                      if (index < 2) {
+                                        return divider(context: context).vP16;
+                                      }
+
+                                      return const SizedBox(
+                                        height: 20,
+                                      );
+                                    },
+                                  )
+                                : emptyUser(
+                                    title: LocalizationString.noUserFound,
+                                    subTitle:
+                                        LocalizationString.followSomeUserToChat,
+                                    context: context);
+                      }),
+                ),
+              ],
+            ),
+          ).round(20).p16,
+        ),
         const SizedBox(
           height: 10,
         ),
@@ -123,8 +236,18 @@ class SelectUserForChatState extends State<SelectUserForChat> {
           callType: 2,
           opponent: opponent);
 
-      agoraCallController.makeCallRequest(call: call);
-    }, permissionDenied: () {}, permissionNotAskAgain: () {});
+      _agoraCallController.makeCallRequest(call: call);
+    }, permissionDenied: () {
+      AppUtil.showToast(
+          context: context,
+          message: LocalizationString.pleaseAllowAccessToCameraForVideoCall,
+          isSuccess: false);
+    }, permissionNotAskAgain: () {
+      AppUtil.showToast(
+          context: context,
+          message: LocalizationString.pleaseAllowAccessToCameraForVideoCall,
+          isSuccess: false);
+    });
   }
 
   void initiateAudioCall(BuildContext context, UserModel opponent) {
@@ -139,35 +262,50 @@ class SelectUserForChatState extends State<SelectUserForChat> {
           callType: 1,
           opponent: opponent);
 
-      agoraCallController.makeCallRequest(call: call);
-    }, permissionDenied: () {}, permissionNotAskAgain: () {});
+      _agoraCallController.makeCallRequest(call: call);
+    }, permissionDenied: () {
+      AppUtil.showToast(
+          context: context,
+          message: LocalizationString.pleaseAllowAccessToMicrophoneForAudioCall,
+          isSuccess: false);
+    }, permissionNotAskAgain: () {
+      AppUtil.showToast(
+          context: context,
+          message: LocalizationString.pleaseAllowAccessToMicrophoneForAudioCall,
+          isSuccess: false);
+    });
   }
 }
 
-class SelectUserToSendMessage extends StatefulWidget {
-  final PostModel? post;
-  final Function(UserModel) selectedUser;
+class SelectFollowingUserForMessageSending extends StatefulWidget {
   final Function(UserModel) sendToUserCallback;
 
-  const SelectUserToSendMessage({
+  const SelectFollowingUserForMessageSending({
     Key? key,
-    required this.selectedUser,
     required this.sendToUserCallback,
-    this.post,
+    // this.post,
   }) : super(key: key);
 
   @override
-  SelectUserToSendMessageState createState() => SelectUserToSendMessageState();
+  SelectFollowingUserForMessageSendingState createState() =>
+      SelectFollowingUserForMessageSendingState();
 }
 
-class SelectUserToSendMessageState extends State<SelectUserToSendMessage> {
-  final ProfileController profileController = Get.find();
+class SelectFollowingUserForMessageSendingState
+    extends State<SelectFollowingUserForMessageSending> {
+  final SelectUserForChatController selectUserForChatController = Get.find();
 
   @override
   void initState() {
     super.initState();
-    profileController.clear();
-    profileController.getFollowingUsers();
+    selectUserForChatController.getFollowingUsers();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    selectUserForChatController.clear();
+    super.dispose();
   }
 
   @override
@@ -177,44 +315,45 @@ class SelectUserToSendMessageState extends State<SelectUserToSendMessage> {
         Container(
           height: 340,
           color: Theme.of(context).backgroundColor,
-          child: GetBuilder<ProfileController>(
-              init: profileController,
+          child: GetBuilder<SelectUserForChatController>(
+              init: selectUserForChatController,
               builder: (ctx) {
                 ScrollController scrollController = ScrollController();
                 scrollController.addListener(() {
                   if (scrollController.position.maxScrollExtent ==
                       scrollController.position.pixels) {
-                    if (!profileController.followingIsLoading) {
-                      profileController.getFollowingUsers();
+                    if (!selectUserForChatController.followingIsLoading) {
+                      selectUserForChatController.getFollowingUsers();
                     }
                   }
                 });
 
-                List<UserModel> usersList = profileController.following;
-                return profileController.followingIsLoading
+                List<UserModel> usersList =
+                    selectUserForChatController.following;
+                return selectUserForChatController.followingIsLoading
                     ? const ShimmerUsers().hP16
                     : ListView.separated(
-                        padding: const EdgeInsets.only(top: 20),
+                        padding: const EdgeInsets.only(top: 20, bottom: 50),
                         controller: scrollController,
                         itemCount: usersList.length,
                         itemBuilder: (context, index) {
                           UserModel user = usersList[index];
-                          return ForwardMessageUserTile(
-                            state: profileController.completedActionUsers
+                          return SendMessageUserTile(
+                            state: selectUserForChatController
+                                    .completedActionUsers
                                     .contains(user)
                                 ? ButtonState.success
-                                : profileController.failedActionUsers
+                                : selectUserForChatController.failedActionUsers
                                         .contains(user)
                                     ? ButtonState.fail
-                                    : profileController.processingActionUsers
+                                    : selectUserForChatController
+                                            .processingActionUsers
                                             .contains(user)
                                         ? ButtonState.loading
                                         : ButtonState.idle,
                             profile: usersList[index],
                             sendCallback: () {
-                              profileController.sendMessage(
-                                  toUser: user, post: widget.post);
-                              // widget.sendToUserCallback(usersList[index]);
+                              widget.sendToUserCallback(usersList[index]);
                             },
                           );
                         },

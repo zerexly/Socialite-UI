@@ -1,22 +1,23 @@
 import 'package:foap/helper/common_import.dart';
 import 'package:get/get.dart';
 
-Widget backNavigationBar(BuildContext context, String title) {
+Widget backNavigationBar(
+    {required BuildContext context, required String title}) {
   return Row(
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
     children: [
       ThemeIconWidget(
         ThemeIcon.backArrow,
-        size: 20,
+        size: 18,
         color: Theme.of(context).iconTheme.color,
       ).ripple(() {
         Get.back();
       }),
       Text(
-        title,
+        title.tr,
         style: Theme.of(context)
             .textTheme
-            .titleMedium!
+            .bodyLarge!
             .copyWith(fontWeight: FontWeight.w600),
       ),
       const SizedBox(
@@ -26,38 +27,92 @@ Widget backNavigationBar(BuildContext context, String title) {
   ).setPadding(left: 16, right: 16, top: 8, bottom: 16);
 }
 
+Widget backNavigationBarWithIcon(
+    {required BuildContext context,
+    required ThemeIcon icon,
+    required String title,
+    required VoidCallback iconBtnClicked}) {
+  return Stack(
+    children: [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          ThemeIconWidget(
+            ThemeIcon.backArrow,
+            size: 18,
+            color: Theme.of(context).iconTheme.color,
+          ).ripple(() {
+            Get.back();
+          }),
+          ThemeIconWidget(
+            icon,
+            size: 20,
+            color: Theme.of(context).iconTheme.color,
+          ).ripple(() {
+            iconBtnClicked();
+          }),
+        ],
+      ),
+      Positioned(
+        left: 0,
+        right: 0,
+        child: Center(
+          child: Text(
+            title.tr,
+            style: Theme.of(context)
+                .textTheme
+                .bodyLarge!
+                .copyWith(fontWeight: FontWeight.w600),
+          ),
+        ),
+      ),
+    ],
+  ).setPadding(left: 16, right: 16, top: 8, bottom: 16);
+}
+
 Widget profileScreensNavigationBar(
     {required BuildContext context,
     required String title,
     required VoidCallback completion}) {
-  return Row(
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  return Stack(
+    alignment: AlignmentDirectional.center,
     children: [
-      ThemeIconWidget(
-        ThemeIcon.backArrow,
-        size: 20,
-        color: Theme.of(context).iconTheme.color,
-      ).ripple(() {
-        Get.back();
-      }),
-      Text(
-        title,
-        style: Theme.of(context)
-            .textTheme
-            .titleMedium!
-            .copyWith(fontWeight: FontWeight.w600),
-      ),
-      Text(
-        LocalizationString.done,
-        style: Theme.of(context)
-            .textTheme
-            .titleMedium!
-            .copyWith(fontWeight: FontWeight.w600),
-      ).ripple(() {
-        completion();
-      }),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          ThemeIconWidget(
+            ThemeIcon.backArrow,
+            size: 18,
+            color: Theme.of(context).iconTheme.color,
+          ).ripple(() {
+            Get.back();
+          }),
+          Text(
+            LocalizationString.done.tr,
+            style: Theme.of(context)
+                .textTheme
+                .bodyLarge!
+                .copyWith(fontWeight: FontWeight.w600),
+          ).ripple(() {
+            completion();
+          }),
+        ],
+      ).setPadding(left: 16, right: 16),
+      Positioned(
+        left: 0,
+        right: 0,
+        child: Center(
+          child: Text(
+            title.tr,
+            style: Theme.of(context)
+                .textTheme
+                .bodyLarge!
+                .copyWith(fontWeight: FontWeight.w600),
+          ),
+        ),
+      )
     ],
-  ).setPadding(left: 16, right: 16, top: 8, bottom: 16);
+  ).bP16;
 }
 
 Widget titleNavigationBarWithIcon(
@@ -72,10 +127,10 @@ Widget titleNavigationBarWithIcon(
         width: 25,
       ),
       Text(
-        title,
+        title.tr,
         style: Theme.of(context)
             .textTheme
-            .titleMedium!
+            .bodyLarge!
             .copyWith(fontWeight: FontWeight.w600),
       ),
       ThemeIconWidget(
@@ -94,10 +149,10 @@ Widget titleNavigationBar({
   required String title,
 }) {
   return Text(
-    title,
+    title.tr,
     style: Theme.of(context)
         .textTheme
-        .titleMedium!
+        .bodyLarge!
         .copyWith(fontWeight: FontWeight.w600),
   ).setPadding(left: 16, right: 16, top: 8, bottom: 16);
 }

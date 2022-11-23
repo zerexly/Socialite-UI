@@ -38,11 +38,11 @@ class VerifyOTPPhoneNumberChangeState
               ).ripple(() {
                 Get.back();
               }),
-              Image.asset(
-                'assets/logo.png',
-                width: 80,
-                height: 25,
-              ),
+              // Image.asset(
+              //   'assets/logo.png',
+              //   width: 80,
+              //   height: 25,
+              // ),
               const SizedBox(
                 width: 20,
               )

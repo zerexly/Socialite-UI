@@ -20,32 +20,34 @@ class NotificationTileType4 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                  notification.title,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: Text(notification.title,
                   style: subTitleTextStyle ??
-                      Theme.of(context).textTheme.bodyLarge!
+                      Theme.of(context)
+                          .textTheme
+                          .bodyLarge!
                           .copyWith(fontWeight: FontWeight.w900)),
-              Text(notification.notificationTime(),
-                  style: dateTextStyle ?? Theme.of(context).textTheme.bodyMedium),
-            ],
-          ).bP8,
-          Text(notification.message, style: titleTextStyle ??
-              Theme.of(context).textTheme.bodyLarge),
-        ],
-      ).setPadding(top: 16, bottom: 16, left: 8, right: 8).shadowWithBorder(context:context,
-          borderWidth: 0.2,
-          shadowOpacity: 0.5,
-          borderColor: borderColor,
-          radius: 10,
-          fillColor: backgroundColor ?? Theme.of(context).backgroundColor),
-    );
+            ),
+            Text(notification.notificationTime(),
+                style: dateTextStyle ?? Theme.of(context).textTheme.bodyMedium),
+          ],
+        ).bP8,
+        Text(notification.message,
+            style: titleTextStyle ?? Theme.of(context).textTheme.bodyLarge),
+      ],
+    ).setPadding(top: 16, bottom: 16, left: 8, right: 8).shadowWithBorder(
+        context: context,
+        borderWidth: 0.2,
+        shadowOpacity: 0.5,
+        borderColor: borderColor,
+        radius: 10,
+        fillColor: backgroundColor ?? Theme.of(context).backgroundColor);
   }
 }

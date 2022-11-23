@@ -35,17 +35,26 @@ class _CreateHighlightState extends State<CreateHighlight> {
               ThemeIconWidget(
                 ThemeIcon.close,
                 color: Theme.of(context).primaryColor,
-                size: 27,
+                size: 20,
               ).ripple(() {
                 Get.back();
               }),
               const Spacer(),
               Text(
                 LocalizationString.create,
-                style: Theme.of(context).textTheme.titleSmall!.copyWith(color: Theme.of(context).primaryColor).copyWith(fontWeight: FontWeight.w900),
+                style: Theme.of(context)
+                    .textTheme
+                    .titleSmall!
+                    .copyWith(color: Theme.of(context).primaryColor)
+                    .copyWith(fontWeight: FontWeight.w600),
               ).ripple(() {
                 // create highlights
-                highlightsController.createHighlights(name: nameText.text);
+                if (nameText.text.isNotEmpty) {
+                  highlightsController.createHighlights(name: nameText.text);
+                }
+                else{
+                  AppUtil.showToast(context: context, message: LocalizationString.pleaseEnterTitle, isSuccess: false);
+                }
               }),
             ],
           ),
@@ -55,7 +64,11 @@ class _CreateHighlightState extends State<CreateHighlight> {
           addProfileView(),
           Text(
             LocalizationString.chooseCoverImage,
-            style: Theme.of(context).textTheme.bodyLarge!.copyWith(color: Theme.of(context).primaryColor).copyWith(fontWeight: FontWeight.w900),
+            style: Theme.of(context)
+                .textTheme
+                .bodyLarge!
+                .copyWith(color: Theme.of(context).primaryColor)
+                .copyWith(fontWeight: FontWeight.w900),
           ).ripple(() {
             openImagePickingPopup();
           }),
@@ -66,15 +79,23 @@ class _CreateHighlightState extends State<CreateHighlight> {
             child: TextField(
               controller: nameText,
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.displaySmall!.copyWith(color: Theme.of(context).primaryColor),
+              style: Theme.of(context)
+                  .textTheme
+                  .displaySmall,
               maxLines: 5,
               onChanged: (text) {},
               decoration: InputDecoration(
                   border: InputBorder.none,
                   contentPadding: const EdgeInsets.only(left: 10, right: 10),
                   counterText: "",
-                  labelStyle: Theme.of(context).textTheme.bodyLarge!.copyWith(color: Theme.of(context).primaryColor),
-                  hintStyle: Theme.of(context).textTheme.titleMedium!.copyWith(color: Theme.of(context).primaryColor),
+                  labelStyle: Theme.of(context)
+                      .textTheme
+                      .bodyLarge!
+                      .copyWith(color: Theme.of(context).primaryColor),
+                  hintStyle: Theme.of(context)
+                      .textTheme
+                      .titleMedium!
+                      .copyWith(color: Theme.of(context).primaryColor),
                   hintText: LocalizationString.enterHighlightName),
             ),
           )
@@ -103,7 +124,8 @@ class _CreateHighlightState extends State<CreateHighlight> {
                             ).circular
                           : highlightsController.model == null ||
                                   highlightsController.model?.picture == null
-                              ? Image.network(
+                              ? CachedNetworkImage(
+  imageUrl:
                                   highlightsController
                                       .selectedStoriesMedia.first.image!,
                                   fit: BoxFit.cover,
@@ -119,7 +141,7 @@ class _CreateHighlightState extends State<CreateHighlight> {
                                     height: 64.0,
                                     width: 64.0,
                                     placeholder: (context, url) =>
-                                        AppUtil.addProgressIndicator(context),
+                                        AppUtil.addProgressIndicator(context,100),
                                     errorWidget: (context, url, error) => Icon(
                                       Icons.error,
                                       color: Theme.of(context).iconTheme.color,
@@ -128,7 +150,11 @@ class _CreateHighlightState extends State<CreateHighlight> {
                     ).p4,
                   );
                 })
-            .borderWithRadius(context: context, value: 2, radius: 40, color: Theme.of(context).primaryColor)
+            .borderWithRadius(
+                context: context,
+                value: 2,
+                radius: 40,
+                color: Theme.of(context).primaryColor)
             .ripple(() {
           openImagePickingPopup();
         })

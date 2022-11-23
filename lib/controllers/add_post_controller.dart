@@ -2,10 +2,18 @@ import 'package:foap/helper/common_import.dart';
 import 'package:get/get.dart';
 
 class AddPostController extends GetxController {
-  RxInt currentIndex = 0.obs;
+  final HomeController _homeController = Get.find();
+
   RxInt isEditing = 0.obs;
   RxString currentHashtag = ''.obs;
   RxString currentUserTag = ''.obs;
+  RxInt currentIndex = 0.obs;
+
+  RxBool isPosting = false.obs;
+  RxBool isErrorInPosting = false.obs;
+
+  List<Media> postingMedia = [];
+  late String postingTitle;
 
   RxList<Hashtag> hashTags = <Hashtag>[].obs;
   RxList<UserModel> searchedUsers = <UserModel>[].obs;
@@ -16,19 +24,6 @@ class AddPostController extends GetxController {
 
   RxString searchText = ''.obs;
   RxInt position = 0.obs;
-
-  RxList<Media> mediaList = <Media>[].obs;
-  Rx<MediaCount> mediaCount = MediaCount.single.obs;
-
-  // final _channel = const MethodChannel("/gallery");
-
-  // final Map itemCache = <int, GalleryMedia>{};
-  // final Map originalItemCache = <String, GalleryMedia>{};
-
-  // final RxList<GalleryMedia> selectedItems = <GalleryMedia>[].obs;
-
-  // RxInt numberOfItems = 0.obs;
-  // RxList<GalleryMedia> mediaList = <GalleryMedia>[].obs;
 
   RxBool isPreviewMode = false.obs;
 
@@ -48,24 +43,16 @@ class AddPostController extends GetxController {
     accountsPage = 1;
     canLoadMoreAccounts = true;
     accountsIsLoading = false;
-  }
-
-  togglePreviewMode() {
-    isPreviewMode.value = !isPreviewMode.value;
     update();
-  }
-
-  mediaSelected(List<Media> media) {
-    mediaList.value = media;
-    mediaList.refresh();
-  }
-
-  mediaCountSelected(MediaCount count) {
-    mediaCount.value = count;
   }
 
   updateGallerySlider(int index) {
     currentIndex.value = index;
+    update();
+  }
+
+  togglePreviewMode() {
+    isPreviewMode.value = !isPreviewMode.value;
     update();
   }
 
@@ -89,8 +76,8 @@ class AddPostController extends GetxController {
         hashTags.value = response.hashtags;
 
         hashtagsIsLoading = false;
+        hashtagsPage += 1;
         if (response.hashtags.length == response.metaData?.perPage) {
-          hashtagsPage += 1;
           canLoadMoreHashtags = true;
         } else {
           canLoadMoreHashtags = false;
@@ -137,8 +124,8 @@ class AddPostController extends GetxController {
         searchedUsers.value = response.users;
         accountsIsLoading = false;
 
+        accountsPage += 1;
         if (response.topUsers.length == response.metaData?.perPage) {
-          accountsPage += 1;
           canLoadMoreAccounts = true;
         } else {
           canLoadMoreAccounts = false;
@@ -197,11 +184,35 @@ class AddPostController extends GetxController {
     allowComments.value = !allowComments.value;
   }
 
-  void uploadAllPostImages(
+  discardFailedPost() {
+    postingMedia = [];
+    postingTitle = '';
+    isPosting.value = false;
+    isErrorInPosting.value = false;
+    clear();
+  }
+
+  retryPublish(BuildContext context) {
+    uploadAllPostFiles(
+        items: postingMedia, title: postingTitle, context: context);
+  }
+
+  void uploadAllPostFiles(
       {required List<Media> items,
       required String title,
       required BuildContext context,
-      int? competitionId}) async {
+      int? competitionId,
+      int? clubId}) async {
+    // do this to show posting indicator in home screen
+    postingMedia = items;
+    postingTitle = title;
+    isPosting.value = true;
+
+    if (competitionId == null && clubId == null) {
+      Get.offAll(() => const DashboardScreen());
+    } else {
+      EasyLoading.show(status: LocalizationString.loading);
+    }
 
     var responses = await Future.wait([
       for (Media media in items) uploadMedia(media, competitionId, context)
@@ -213,6 +224,7 @@ class AddPostController extends GetxController {
         tags: title.getHashtags(),
         mentions: title.getMentions(),
         competitionId: competitionId,
+        clubId: clubId,
         context: context);
   }
 
@@ -222,18 +234,21 @@ class AddPostController extends GetxController {
 
     await AppUtil.checkInternet().then((value) async {
       if (value) {
-        Uint8List mainFileData = media.mediaByte!;
         final tempDir = await getTemporaryDirectory();
         File file;
         String? videoThumbnailPath;
 
-        if (media.mediaType == GalleryMediaType.image) {
+        if (media.mediaType == GalleryMediaType.photo) {
+          Uint8List mainFileData = await media.file!.compress();
+
           //image media
           file =
               await File('${tempDir.path}/${media.id!.replaceAll('/', '')}.png')
                   .create();
           file.writeAsBytesSync(mainFileData);
         } else {
+          Uint8List mainFileData = media.file!.readAsBytesSync();
+
           // video
           file =
               await File('${tempDir.path}/${media.id!.replaceAll('/', '')}.mp4')
@@ -243,13 +258,6 @@ class AddPostController extends GetxController {
           File videoThumbnail = await File(
                   '${tempDir.path}/${media.id!.replaceAll('/', '')}_thumbnail.png')
               .create();
-
-          // final videoThumbnailData = await VideoThumbnail.thumbnailData(
-          //   video: file.path,
-          //   imageFormat: ImageFormat.JPEG,
-          //   maxWidth: 200,
-          //   quality: 25,
-          // );
 
           videoThumbnail.writeAsBytesSync(media.thumbnail!);
 
@@ -261,7 +269,7 @@ class AddPostController extends GetxController {
           });
         }
 
-        EasyLoading.show(status: LocalizationString.loading);
+        // EasyLoading.show(status: LocalizationString.loading);
         await ApiController().uploadPostMedia(file.path).then((response) async {
           String imagePath = response.postedMediaFileName!;
 
@@ -271,11 +279,12 @@ class AddPostController extends GetxController {
             'filename': imagePath,
             'video_thumb': videoThumbnailPath ?? '',
             'type': competitionId == null ? '1' : '2',
-            'media_type': media.mediaType == GalleryMediaType.image ? '1' : '2',
+            'media_type': media.mediaType == GalleryMediaType.photo ? '1' : '2',
             'is_default': '1',
           };
         });
       } else {
+        isErrorInPosting.value = true;
         AppUtil.showToast(
             context: context,
             message: LocalizationString.noInternet,
@@ -291,27 +300,49 @@ class AddPostController extends GetxController {
       required List<String> tags,
       required List<String> mentions,
       required BuildContext context,
-      int? competitionId}) {
+      int? competitionId,
+      int? clubId}) {
     AppUtil.checkInternet().then((value) async {
-      EasyLoading.dismiss();
+      // EasyLoading.dismiss();
       if (value) {
         ApiController()
             .addPost(
-                postType: competitionId == null ? 1 : 2,
-                title: title,
-                gallery: galleryItems,
-                hashTag: tags.join(','),
-                mentions: mentions.join(','),
-                competitionId: competitionId)
+          postType: competitionId != null
+              ? 2
+              : clubId != null
+                  ? 3
+                  : 1,
+          title: title,
+          gallery: galleryItems,
+          hashTag: tags.join(','),
+          mentions: mentions.join(','),
+          competitionId: competitionId,
+          clubId: clubId,
+        )
             .then((response) async {
-          Get.offAll(const DashboardScreen());
+          // Get.offAll(() => const DashboardScreen());
 
+          if (competitionId != null || clubId != null) {
+            EasyLoading.dismiss();
+            Get.offAll(() => const DashboardScreen());
+          }
+
+          postingMedia = [];
+          postingTitle = '';
+
+          ApiController()
+              .getPostDetail(response.createdPostId)
+              .then((response) {
+            if (response.post != null) {
+              _homeController.addNewPost(response.post!);
+            }
+            isPosting.value = false;
+          });
           clear();
-          // clear controller
-          // Get.delete<AddPostController>();
-          // Get.put(AddPostController());
         });
       } else {
+        isErrorInPosting.value = true;
+
         AppUtil.showToast(
             context: context,
             message: LocalizationString.noInternet,

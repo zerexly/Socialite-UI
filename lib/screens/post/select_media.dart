@@ -3,9 +3,10 @@ import 'package:get/get.dart';
 
 class SelectMedia extends StatefulWidget {
   final int? competitionId;
+  final int? clubId;
   final PostMediaType? mediaType;
 
-  const SelectMedia({Key? key, this.competitionId, this.mediaType})
+  const SelectMedia({Key? key, this.competitionId, this.mediaType, this.clubId})
       : super(key: key);
 
   @override
@@ -13,23 +14,24 @@ class SelectMedia extends StatefulWidget {
 }
 
 class _SelectMediaState extends State<SelectMedia> {
-  final AddPostController addPostController = Get.find();
+  final SelectPostMediaController _selectPostMediaController =
+      SelectPostMediaController();
   late PostMediaType mediaType;
 
   @override
   void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _selectPostMediaController.clear();
+    });
     mediaType = widget.mediaType ?? PostMediaType.all;
-    // addPostController.loadMedia(
-    //     context: context,
-    //     mediaType: mediaType,
-    //     canSelectMultiple: widget.competitionId == null);
 
     super.initState();
+  }
 
-    // Timer(const Duration(seconds: 1), () {
-    //   addPostController.selectItem(
-    //       index: 0, canSelectMultiple: widget.competitionId == null);
-    // });
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
   }
 
   @override
@@ -44,23 +46,30 @@ class _SelectMediaState extends State<SelectMedia> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const SizedBox(width: 20),
+              ThemeIconWidget(
+                ThemeIcon.close,
+                color: Theme.of(context).primaryColor,
+                size: 27,
+              ).ripple(() {
+                Get.back();
+              }),
               const Spacer(),
-              Image.asset(
-                'assets/logo.png',
-                width: 80,
-                height: 25,
-              ),
+              // Image.asset(
+              //   'assets/logo.png',
+              //   width: 80,
+              //   height: 25,
+              // ),
               const Spacer(),
               ThemeIconWidget(
                 ThemeIcon.nextArrow,
                 color: Theme.of(context).primaryColor,
                 size: 27,
               ).ripple(() {
-                if (addPostController.mediaList.isNotEmpty) {
+                if (_selectPostMediaController.selectedMediaList.isNotEmpty) {
                   Get.to(() => AddPostScreen(
-                        items: addPostController.mediaList,
+                        items: _selectPostMediaController.selectedMediaList,
                         competitionId: widget.competitionId,
+                        clubId: widget.clubId,
                       ));
                 }
               }),
@@ -70,12 +79,13 @@ class _SelectMediaState extends State<SelectMedia> {
           Stack(
             children: [
               AspectRatio(
-                  aspectRatio: 1.1,
+                  aspectRatio: 1.2,
                   child: Obx(() {
                     return CarouselSlider(
                       items: [
-                        for (Media media in addPostController.mediaList)
-                          media.mediaType == GalleryMediaType.image
+                        for (Media media
+                            in _selectPostMediaController.selectedMediaList)
+                          media.mediaType == GalleryMediaType.photo
                               ? Image.file(media.file!, fit: BoxFit.cover)
                               : VideoPostTile(
                                   url: media.file!.path,
@@ -90,13 +100,13 @@ class _SelectMediaState extends State<SelectMedia> {
                         height: double.infinity,
                         viewportFraction: 1,
                         onPageChanged: (index, reason) {
-                          addPostController.updateGallerySlider(index);
+                          _selectPostMediaController.updateGallerySlider(index);
                         },
                       ),
                     );
                   })),
               Obx(() {
-                return addPostController.mediaList.length > 1
+                return _selectPostMediaController.selectedMediaList.length > 1
                     ? Positioned(
                         bottom: 10,
                         left: 0,
@@ -104,8 +114,10 @@ class _SelectMediaState extends State<SelectMedia> {
                         child: Align(
                             alignment: Alignment.center,
                             child: DotsIndicator(
-                              dotsCount: addPostController.mediaList.length,
-                              position: addPostController.currentIndex.value
+                              dotsCount: _selectPostMediaController
+                                  .selectedMediaList.length,
+                              position: _selectPostMediaController
+                                  .currentIndex.value
                                   .toDouble(),
                               decorator: DotsDecorator(
                                   activeColor: Theme.of(context).primaryColor),
@@ -115,87 +127,22 @@ class _SelectMediaState extends State<SelectMedia> {
             ],
           ).p16,
           Expanded(
-              child: Obx(() => MediaPicker(
-                    onPick: (selectedList) {
-                      if (addPostController.mediaList.length < 10) {
-                        addPostController.mediaSelected(selectedList);
-                      }
-                    },
-                    onSelectMediaCount: (count) {
-                      addPostController.mediaCountSelected(count);
-                    },
-                    capturedMedia: (media) async {
-                      Get.to(() => AddPostScreen(
-                            items: [media],
-                            competitionId: widget.competitionId,
-                          ));
-                    },
-                    mediaCount: addPostController.mediaCount.value,
-                    mediaType: GalleryMediaType.all,
-                    decoration: PickerDecoration(
-                      actionBarPosition: ActionBarPosition.top,
-                      blurStrength: 2,
-                      completeText: 'Next',
-                    ),
-                  )))
-          // Expanded(
-          //   child: Obx(() => GridView.builder(
-          //       padding: EdgeInsets.zero,
-          //       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          //           crossAxisCount: _numberOfColumns),
-          //       itemCount: addPostController.numberOfItems.value,
-          //       itemBuilder: (context, index) {
-          //         return _buildItem(index);
-          //       }).hP16),
-          // )
+              child: CustomGalleryPicker(
+            hideMultiSelection: widget.competitionId != null,
+            mediaType: mediaType,
+            mediaSelectionCompletion: (medias) {
+              _selectPostMediaController.mediaSelected(medias);
+            },
+            mediaCapturedCompletion: (media) {
+              Get.to(() => AddPostScreen(
+                    items: [media],
+                    competitionId: widget.competitionId,
+                    clubId: widget.clubId,
+                  ));
+            },
+          ))
         ],
       ),
     );
   }
-
-// _buildItem(int index) {
-//   GalleryMedia item = addPostController.mediaList[index];
-//   return GestureDetector(
-//       onTap: () {
-//         addPostController.selectItem(
-//             index: index, canSelectMultiple: widget.competitionId == null);
-//       },
-//       child: Card(
-//         elevation: 2.0,
-//         child: Obx(() => Stack(children: [
-//               Image.memory(
-//                 item.mediaType == 1 ? item.bytes : item.thumbnailBytes!,
-//                 fit: BoxFit.cover,
-//                 height: double.infinity,
-//                 width: double.infinity,
-//               ).round(5),
-//               item.mediaType == 2
-//                   ? Positioned(
-//                       top: 0,
-//                       right: 0,
-//                       left: 0,
-//                       bottom: 0,
-//                       child: Container(
-//                         color: Colors.black38,
-//                         child: const ThemeIconWidget(
-//                           ThemeIcon.play,
-//                           size: 40,
-//                           color: Colors.white,
-//                         ),
-//                       ).round(5))
-//                   : Container(),
-//               addPostController.isSelected(item.id)
-//                   ? Positioned(
-//                       top: 5,
-//                       right: 5,
-//                       child: Container(
-//                         height: 20,
-//                         width: 20,
-//                         color: Theme.of(context).primaryColor,
-//                         child: const ThemeIconWidget(ThemeIcon.checkMark),
-//                       ).circular)
-//                   : Container(),
-//             ])),
-//       ));
-// }
 }

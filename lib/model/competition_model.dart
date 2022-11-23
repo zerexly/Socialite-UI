@@ -11,6 +11,7 @@ class CompetitionPositionModel {
   int? winnerPostId;
 
   int? awardedAt;
+  PostModel? post;
 
   CompetitionPositionModel();
 
@@ -23,6 +24,7 @@ class CompetitionPositionModel {
     model.winnerUserId = json['winner_user_id'];
     model.winnerPostId = json['winner_post_id'];
     model.awardedAt = json['awarded_at'];
+    model.post = json['post'] == null ? null : PostModel.fromJson(json['post']);
 
     return model;
   }

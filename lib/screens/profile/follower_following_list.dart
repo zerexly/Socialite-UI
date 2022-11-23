@@ -3,8 +3,10 @@ import 'package:get/get.dart';
 
 class FollowerFollowingList extends StatefulWidget {
   final bool isFollowersList;
+  final int userId;
 
-  const FollowerFollowingList({Key? key, required this.isFollowersList})
+  const FollowerFollowingList(
+      {Key? key, required this.isFollowersList, required this.userId})
       : super(key: key);
 
   @override
@@ -12,17 +14,35 @@ class FollowerFollowingList extends StatefulWidget {
 }
 
 class FollowerFollowingState extends State<FollowerFollowingList> {
-  final ProfileController profileController = Get.find();
+  final UserNetworkController _userNetworkController = Get.find();
 
   @override
   void initState() {
     super.initState();
+    loadData();
+  }
 
+  loadData() {
+    _userNetworkController.clear();
     if (widget.isFollowersList == true) {
-      profileController.getFollowers();
+      _userNetworkController.getFollowers(widget.userId);
     } else {
-      profileController.getFollowingUsers();
+      _userNetworkController.getFollowingUsers(widget.userId);
     }
+  }
+
+  @override
+  void didUpdateWidget(covariant FollowerFollowingList oldWidget) {
+    // TODO: implement didUpdateWidget
+    loadData();
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _userNetworkController.clear();
+    super.dispose();
   }
 
   @override
@@ -35,67 +55,65 @@ class FollowerFollowingState extends State<FollowerFollowingList> {
               height: 55,
             ),
             backNavigationBar(
-                context,
-                widget.isFollowersList
+                context: context,
+                title: widget.isFollowersList
                     ? LocalizationString.followers
                     : LocalizationString.following),
-            divider(context: context).vP8,
+            divider(context: context).tP8,
             Expanded(
-              child: GetBuilder<ProfileController>(
-                  init: profileController,
+              child: GetBuilder<UserNetworkController>(
+                  init: _userNetworkController,
                   builder: (ctx) {
                     ScrollController scrollController = ScrollController();
                     scrollController.addListener(() {
                       if (scrollController.position.maxScrollExtent ==
                           scrollController.position.pixels) {
                         if (widget.isFollowersList == true) {
-                          if (!profileController.followersIsLoading) {
-                            profileController.getFollowers();
+                          if (!_userNetworkController.isLoading.value) {
+                            _userNetworkController.getFollowers(widget.userId);
                           }
                         } else {
-                          if (!profileController.followingIsLoading) {
-                            profileController.getFollowingUsers();
+                          if (!_userNetworkController.isLoading.value) {
+                            _userNetworkController
+                                .getFollowingUsers(widget.userId);
                           }
                         }
                       }
                     });
 
                     List<UserModel> usersList = widget.isFollowersList == true
-                        ? profileController.followers
-                        : profileController.following;
-                    return profileController.followingIsLoading &&
-                            profileController.followersIsLoading
+                        ? _userNetworkController.followers
+                        : _userNetworkController.following;
+                    return _userNetworkController.isLoading.value
                         ? const ShimmerUsers().hP16
                         : Column(
                             children: [
                               usersList.isEmpty
-                                  ? profileController.isLoading.value == false
-                                      ? Center(
-                                          child: Text(LocalizationString.noData,
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .titleMedium!
-                                                  .copyWith(
-                                                      fontWeight:
-                                                          FontWeight.w900,
-                                                      color: Theme.of(context)
-                                                          .primaryColor)))
-                                      : Container()
+                                  ? noUserFound(context)
                                   : Expanded(
                                       child: ListView.separated(
-                                        padding: const EdgeInsets.only(top: 20,bottom: 50 ),
+                                        padding: const EdgeInsets.only(
+                                            top: 20, bottom: 50),
                                         controller: scrollController,
                                         itemCount: usersList.length,
                                         itemBuilder: (context, index) {
                                           return UserTile(
                                             profile: usersList[index],
+                                            viewCallback: () {
+                                              Get.to(() => OtherUserProfile(
+                                                      userId:
+                                                          usersList[index].id))!
+                                                  .then(
+                                                      (value) => {loadData()});
+                                            },
                                             followCallback: () {
-                                              profileController
+                                              _userNetworkController
                                                   .followUser(usersList[index]);
                                             },
                                             unFollowCallback: () {
-                                              profileController.unFollowUser(
-                                                  usersList[index]);
+                                              _userNetworkController
+                                                  .unFollowUser(
+                                                      usersList[index]);
                                             },
                                           );
                                         },

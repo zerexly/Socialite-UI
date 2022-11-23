@@ -114,25 +114,32 @@ class _SocialLoginState extends State<SocialLogin> {
 
         AppUtil.checkInternet().then((value) {
           if (value) {
-            EasyLoading.show(status: LocalizationString.loading);
-            ApiController()
-                .socialLogin(name, 'fb', socialId, email!)
-                .then((response) async {
-              EasyLoading.dismiss();
-              if (response.success) {
-                SharedPrefs().setUserLoggedIn(true);
-                getIt<UserProfileManager>().refreshProfile();
-                SharedPrefs().setAuthorizationKey(response.authKey!);
+            // EasyLoading.show(status: LocalizationString.loading);
 
-                Get.offAll(() => const DashboardScreen());
-                getIt<SocketManager>().connect();
-              } else {
-                AppUtil.showToast(
-                    context: context,
-                    message: response.message,
-                    isSuccess: false);
-              }
-            });
+            socialLogin(
+                'fb', socialId, name, email!);
+
+            // ApiController()
+            //     .socialLogin(name, 'fb', socialId, email!)
+            //     .then((response) async {
+            //   EasyLoading.dismiss();
+            //   if (response.success) {
+            //     SharedPrefs().setUserLoggedIn(true);
+            //     getIt<UserProfileManager>().refreshProfile();
+            //     SharedPrefs().setAuthorizationKey(response.authKey!);
+            //
+            //     // ask for location
+            //     getIt<LocationManager>().postLocation();
+            //
+            //     Get.offAll(() => const DashboardScreen());
+            //     getIt<SocketManager>().connect();
+            //   } else {
+            //     AppUtil.showToast(
+            //         context: context,
+            //         message: response.message,
+            //         isSuccess: false);
+            //   }
+            // });
           } else {
             AppUtil.showToast(
                 context: context,
@@ -170,8 +177,13 @@ class _SocialLoginState extends State<SocialLogin> {
             await SharedPrefs().setAuthorizationKey(response.authKey!);
             await getIt<UserProfileManager>().refreshProfile();
 
-            Get.offAll(() => const DashboardScreen());
-            getIt<SocketManager>().connect();
+            if (getIt<UserProfileManager>().user != null) {
+              // ask for location
+              getIt<LocationManager>().postLocation();
+
+              Get.offAll(() => const DashboardScreen());
+              getIt<SocketManager>().connect();
+            }
           } else {
             AppUtil.showToast(
                 context: context, message: response.message, isSuccess: false);
@@ -204,26 +216,32 @@ class _SocialLoginState extends State<SocialLogin> {
     if (appleCredential.userIdentifier != null) {
       AppUtil.checkInternet().then((value) {
         if (value) {
-          EasyLoading.show(status: LocalizationString.loading);
-          ApiController()
-              .socialLogin('', 'apple', appleCredential.userIdentifier!,
-                  appleCredential.email ?? '')
-              .then((response) async {
-            EasyLoading.dismiss();
-            if (response.success) {
-              SharedPrefs().setUserLoggedIn(true);
-              getIt<UserProfileManager>().refreshProfile();
-              SharedPrefs().setAuthorizationKey(response.authKey!);
+          // EasyLoading.show(status: LocalizationString.loading);
+          socialLogin(
+              'apple', appleCredential.userIdentifier!, '', appleCredential.email ?? '');
 
-              Get.offAll(() => const DashboardScreen());
-              getIt<SocketManager>().connect();
-            } else {
-              AppUtil.showToast(
-                  context: context,
-                  message: response.message,
-                  isSuccess: false);
-            }
-          });
+          // ApiController()
+          //     .socialLogin('', 'apple', appleCredential.userIdentifier!,
+          //         appleCredential.email ?? '')
+          //     .then((response) async {
+          //   EasyLoading.dismiss();
+          //   if (response.success) {
+          //     SharedPrefs().setUserLoggedIn(true);
+          //     getIt<UserProfileManager>().refreshProfile();
+          //     SharedPrefs().setAuthorizationKey(response.authKey!);
+          //
+          //     // ask for location
+          //     getIt<LocationManager>().postLocation();
+          //
+          //     Get.offAll(() => const DashboardScreen());
+          //     getIt<SocketManager>().connect();
+          //   } else {
+          //     AppUtil.showToast(
+          //         context: context,
+          //         message: response.message,
+          //         isSuccess: false);
+          //   }
+          // });
         } else {
           AppUtil.showToast(
               context: context,

@@ -1,6 +1,7 @@
 import 'dart:math';
-
 import 'package:foap/helper/common_import.dart';
+
+bool isDarkMode = true;
 
 String randomId() {
   const chars =
@@ -37,6 +38,20 @@ int messageTypeId(MessageContentType type) {
       return 11;
     case MessageContentType.story:
       return 12;
+    case MessageContentType.drawing:
+      return 13;
+    case MessageContentType.profile:
+      return 14;
+    case MessageContentType.group:
+      return 15;
+    case MessageContentType.file:
+      return 16;
+
+    case MessageContentType.groupAction:
+      return 100;
+
+    case MessageContentType.gift:
+      return 200;
   }
 }
 
@@ -48,5 +63,9 @@ int uploadMediaTypeId(UploadMediaType type) {
       return 3;
     case UploadMediaType.chat:
       return 5;
+    case UploadMediaType.club:
+      return 5;
+    case UploadMediaType.verification:
+      return 12;
   }
 }

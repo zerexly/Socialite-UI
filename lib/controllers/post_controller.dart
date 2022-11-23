@@ -5,6 +5,8 @@ class PostController extends GetxController {
   RxList<PostModel> posts = <PostModel>[].obs;
   RxList<PostModel> mentions = <PostModel>[].obs;
 
+  int totalPages = 100;
+
   bool isLoadingPosts = false;
   int postsCurrentPage = 1;
   bool canLoadMorePosts = true;
@@ -18,6 +20,7 @@ class PostController extends GetxController {
   MentionedPostSearchQuery? mentionedPostSearchQuery;
 
   clearPosts() {
+    totalPages = 100;
     isLoadingPosts = false;
     postsCurrentPage = 1;
     canLoadMorePosts = true;
@@ -32,7 +35,11 @@ class PostController extends GetxController {
     update();
   }
 
-  addPosts(List<PostModel> postsList) {
+  addPosts(List<PostModel> postsList, int? startPage, int? totalPages) {
+    mentionsPostPage = startPage ?? 1;
+    postsCurrentPage = startPage ?? 1;
+    this.totalPages = totalPages ?? 100;
+
     posts.addAll(postsList);
     update();
   }
@@ -51,8 +58,16 @@ class PostController extends GetxController {
     getMyMentions();
   }
 
+  removePostFromList(PostModel post) {
+    posts.removeWhere((element) => element.id == post.id);
+    mentions.removeWhere((element) => element.id == post.id);
+
+    posts.refresh();
+    mentions.refresh();
+  }
+
   void getPosts() async {
-    if (canLoadMorePosts == true) {
+    if (canLoadMorePosts == true && totalPages > postsCurrentPage) {
       AppUtil.checkInternet().then((value) async {
         if (value) {
           isLoadingPosts = true;
@@ -77,9 +92,11 @@ class PostController extends GetxController {
             posts.sort((a, b) => b.createDate!.compareTo(a.createDate!));
             isLoadingPosts = false;
 
-            if (response.posts.length == response.metaData?.perPage) {
-              postsCurrentPage += 1;
+            postsCurrentPage += 1;
+
+            if (response.posts.length == response.metaData?.pageCount) {
               canLoadMorePosts = true;
+              totalPages = response.metaData!.pageCount;
             } else {
               canLoadMorePosts = false;
             }
@@ -103,8 +120,8 @@ class PostController extends GetxController {
             mentions.addAll(
                 response.success ? response.posts.reversed.toList() : []);
 
+            mentionsPostPage += 1;
             if (response.posts.length == response.metaData?.perPage) {
-              mentionsPostPage += 1;
               canLoadMoreMentionsPosts = true;
             } else {
               canLoadMoreMentionsPosts = false;
@@ -116,34 +133,38 @@ class PostController extends GetxController {
     }
   }
 
-  void reportPost(int postId,BuildContext context) {
+  void reportPost(int postId, BuildContext context) {
     AppUtil.checkInternet().then((value) async {
       if (value) {
         ApiController().reportPost(postId).then((response) async {});
       } else {
-        AppUtil.showToast(context:context,
-            message: LocalizationString.noInternet, isSuccess: true);
+        AppUtil.showToast(
+            context: context,
+            message: LocalizationString.noInternet,
+            isSuccess: true);
       }
     });
   }
 
-  void likeUnlikePost(PostModel post, BuildContext context) {
-    post.isLike = !post.isLike;
-    post.totalLike = post.isLike ? (post.totalLike) + 1 : (post.totalLike) - 1;
-    AppUtil.checkInternet().then((value) async {
-      if (value) {
-        ApiController()
-            .likeUnlike(post.isLike, post.id)
-            .then((response) async {});
-      } else {
-        AppUtil.showToast(context:context,
-            message: LocalizationString.noInternet, isSuccess: true);
-      }
-    });
-
-    posts.refresh();
-    update();
-  }
+  // void likeUnlikePost(PostModel post, BuildContext context) {
+  //   post.isLike = !post.isLike;
+  //   post.totalLike = post.isLike ? (post.totalLike) + 1 : (post.totalLike) - 1;
+  //   AppUtil.checkInternet().then((value) async {
+  //     if (value) {
+  //       ApiController()
+  //           .likeUnlike(post.isLike, post.id)
+  //           .then((response) async {});
+  //     } else {
+  //       AppUtil.showToast(
+  //           context: context,
+  //           message: LocalizationString.noInternet,
+  //           isSuccess: true);
+  //     }
+  //   });
+  //
+  //   posts.refresh();
+  //   update();
+  // }
 
   postTextTapHandler({required PostModel post, required String text}) {
     if (text.startsWith('#')) {
@@ -154,7 +175,7 @@ class PostController extends GetxController {
       // Get.to(() => Posts(
       //     hashTag: text.replaceAll('#', ''), source: PostSource.posts))!
       //     .then((value) {
-        getPosts();
+      getPosts();
       // });
     } else {
       String userTag = text.replaceAll('@', '');
@@ -168,8 +189,7 @@ class PostController extends GetxController {
         Get.to(() => OtherUserProfile(userId: mentionedUserId))!.then((value) {
           getPosts();
         });
-      }
-      else{
+      } else {
         // print('not found');
       }
     }

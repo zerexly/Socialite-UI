@@ -16,13 +16,23 @@ class ChatHistoryTile extends StatelessWidget {
             Flexible(
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
-                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  UserAvatarView(
-                    size: 50,
-                    user: model.opponent,
-                    onTapHandler: () {},
-                  ),
+                  model.isGroupChat
+                      ? Container(
+                          color: Theme.of(context).primaryColor,
+                          height: 45,
+                          width: 45,
+                          child: const ThemeIconWidget(
+                            ThemeIcon.group,
+                            color: Colors.white,
+                            size: 35,
+                          ),
+                        ).round(15)
+                      : UserAvatarView(
+                          size: 45,
+                          user: model.opponent.userDetail,
+                          onTapHandler: () {},
+                        ),
                   // AvatarView(size: 50, url: model.opponent.picture),
                   const SizedBox(
                     width: 8,
@@ -30,27 +40,34 @@ class ChatHistoryTile extends StatelessWidget {
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
+                        const Spacer(),
                         Text(
-                          model.opponent.userName,
+                          model.isGroupChat
+                              ? model.name!
+                              : model.opponent.userDetail.userName,
+                          maxLines: 1,
                           style: Theme.of(context)
                               .textTheme
-                              .titleMedium!
+                              .bodyLarge!
                               .copyWith(fontWeight: FontWeight.w600),
                         ),
                         const SizedBox(
-                          height: 5,
+                          height: 8,
                         ),
-                        model.isTyping == true
+                        model.whoIsTyping.isNotEmpty
                             ? Text(
-                                LocalizationString.typing,
+                                '${model.whoIsTyping.join(',')} ${LocalizationString.typing}',
                                 style: Theme.of(context).textTheme.bodyMedium,
                               )
-                            : messageTypeShortInfo(
-                                model: model.lastMessage,
-                                context: context,
-                              ),
+                            : model.lastMessage == null
+                                ? Container()
+                                : messageTypeShortInfo(
+                                    model: model.lastMessage!,
+                                    context: context,
+                                  ),
+                        const Spacer(),
                       ],
                     ),
                   )
@@ -79,13 +96,14 @@ class ChatHistoryTile extends StatelessWidget {
                         ),
                       ).circular.bP8
                     : Container(),
-                Text(
-                  model.lastMessage.messageTime,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyMedium!
-                      .copyWith(fontWeight: FontWeight.w900,color: Theme.of(context).primaryColor),
-                ),
+                model.lastMessage == null
+                    ? Container()
+                    : Text(
+                        model.lastMessage!.messageTime,
+                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                            fontWeight: FontWeight.w900,
+                            color: Theme.of(context).primaryColor),
+                      ),
               ],
             ),
           ],

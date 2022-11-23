@@ -58,8 +58,7 @@ class _ChangePaypalIdState extends State<ChangePaypalId> {
                       // showBorder: true,
                       textStyle: Theme.of(context)
                           .textTheme
-                          .titleMedium!
-                          .copyWith(color: Theme.of(context).backgroundColor),
+                          .titleMedium,
                       hintText: 'paypalId@gmail.com',
                     ),
                   ),

@@ -19,8 +19,6 @@ class LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     super.initState();
-
-    controller.checkBiometric();
   }
 
   @override
@@ -44,13 +42,15 @@ class LoginScreenState extends State<LoginScreen> {
                         style: Theme.of(context)
                             .textTheme
                             .displayMedium!
-                            .copyWith(color: Theme.of(context).primaryColor)
                             .copyWith(fontWeight: FontWeight.w900)),
                     SizedBox(
                       height: MediaQuery.of(context).size.height * 0.01,
                     ),
                     Text(LocalizationString.signInMessage,
-                        style: Theme.of(context).textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.w600)),
+                        style: Theme.of(context)
+                            .textTheme
+                            .headlineSmall!
+                            .copyWith(fontWeight: FontWeight.w600)),
 
                     SizedBox(
                       height: MediaQuery.of(context).size.height * 0.1,
@@ -58,10 +58,7 @@ class LoginScreenState extends State<LoginScreen> {
                     InputField(
                       controller: email,
                       showDivider: true,
-                      textStyle: Theme.of(context)
-                          .textTheme
-                          .titleSmall!
-                          .copyWith(color: Theme.of(context).primaryColor),
+                      textStyle: Theme.of(context).textTheme.titleSmall,
                       hintText: LocalizationString.emailOrUsername,
                       cornerRadius: 5,
                     ),
@@ -97,8 +94,8 @@ class LoginScreenState extends State<LoginScreen> {
                                 .textTheme
                                 .bodyMedium!
                                 .copyWith(
-                                fontWeight: FontWeight.w900,
-                                color: Theme.of(context).primaryColor)),
+                                    fontWeight: FontWeight.w900,
+                                    color: Theme.of(context).primaryColor)),
                       ),
                     ),
                     SizedBox(
@@ -156,59 +153,6 @@ class LoginScreenState extends State<LoginScreen> {
             )).setPadding(left: 25, right: 25),
       ),
     );
-  }
-
-  bioMetricView() {
-    return GetBuilder<LoginController>(
-        init: controller,
-        builder: (ctx) {
-          return controller.bioMetricType != -1
-              ? Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    controller.bioMetricType == 1
-                        ? Column(
-                            children: [
-                              Image.asset(
-                                'assets/faceID.png',
-                                width: 30,
-                                height: 30,
-                              ),
-                              Text(
-                                LocalizationString.faceId,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium!
-                                    .copyWith(
-                                        color: Theme.of(context).primaryColor),
-                              ).tP16
-                            ],
-                          ).ripple(() {
-                            controller.biometricLogin();
-                          })
-                        : Column(
-                            children: [
-                              Image.asset(
-                                'assets/fingerprint.png',
-                                width: 30,
-                                height: 30,
-                              ),
-                              Text(LocalizationString.touchId,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyMedium!
-                                          .copyWith(
-                                              color: Theme.of(context)
-                                                  .primaryColor))
-                                  .tP16
-                            ],
-                          ).ripple(() {
-                            controller.biometricLogin();
-                          })
-                  ],
-                )
-              : Container();
-        });
   }
 
   Widget addLoginBtn() {

@@ -70,7 +70,7 @@ class _ChangeLocationState extends State<ChangeLocation> {
                 child: InputField(
                   controller: city,
                   showDivider: true,
-                  textStyle: Theme.of(context).textTheme.titleMedium!.copyWith(color: Theme.of(context).backgroundColor),
+                  textStyle: Theme.of(context).textTheme.titleMedium,
                   hintText: LocalizationString.city,
                 ),
               ).vP8,

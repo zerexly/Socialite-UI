@@ -1,58 +1,45 @@
-import 'package:foap/components/place_picker/place_picker.dart';
 import 'package:foap/helper/common_import.dart';
 import 'package:get/get.dart';
 
 class ChatDetail extends StatefulWidget {
-  final ChatRoomModel? chatRoom;
-  final UserModel? opponent;
+  final ChatRoomModel chatRoom;
 
-  const ChatDetail({Key? key, required this.chatRoom, required this.opponent})
-      : super(key: key);
+  const ChatDetail({Key? key, required this.chatRoom}) : super(key: key);
 
   @override
   State<ChatDetail> createState() => _ChatDetailState();
 }
 
 class _ChatDetailState extends State<ChatDetail> {
-  final ChatController chatController = Get.find();
-  final ChatDetailController chatDetailController = Get.find();
-  final ItemScrollController itemScrollController = ItemScrollController();
-  final ItemPositionsListener itemPositionsListener =
+  // final ChatHistoryController _chatController = Get.find();
+  final ChatDetailController _chatDetailController = Get.find();
+  final ItemScrollController _itemScrollController = ItemScrollController();
+  final ItemPositionsListener _itemPositionsListener =
       ItemPositionsListener.create();
-  String? wallpaper;
 
   @override
   void initState() {
     loadChat();
-    loadWallpaper();
     super.initState();
   }
 
-  loadWallpaper() async {
-    wallpaper = await SharedPrefs().getWallpaper(
-        userId: widget.opponent == null
-            ? widget.chatRoom!.opponent.id
-            : widget.opponent!.id);
-    setState(() {});
-  }
-
   loadChat() {
-    chatDetailController.loadChat(widget.chatRoom, widget.opponent);
+    _chatDetailController.loadChat(widget.chatRoom);
     scrollToBottom();
   }
 
   @override
   void dispose() {
     super.dispose();
-    chatDetailController.clear();
+    _chatDetailController.clear();
   }
 
   scrollToBottom() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Timer(const Duration(milliseconds: 100), () {
-        if (chatDetailController.messages.isNotEmpty) {
-          itemScrollController.jumpTo(
-            index: chatDetailController.messages.length,
+        if (_chatDetailController.messages.isNotEmpty) {
+          _itemScrollController.jumpTo(
+            index: _chatDetailController.messages.length,
           );
         }
       });
@@ -71,82 +58,7 @@ class _ChatDetailState extends State<ChatDetail> {
             const SizedBox(
               height: 50,
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                ThemeIconWidget(
-                  ThemeIcon.backArrow,
-                  color: Theme.of(context).iconTheme.color,
-                  size: 20,
-                ).p8.ripple(() {
-                  Get.back();
-                }),
-                const SizedBox(
-                  width: 20,
-                ),
-                Column(
-                  children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text(
-                          widget.chatRoom?.opponent.userName ??
-                              widget.opponent!.userName,
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleMedium!
-                              .copyWith(fontWeight: FontWeight.w900),
-                        ),
-                        const SizedBox(width: 5),
-                        Obx(() => Container(
-                              height: 8,
-                              width: 8,
-                              color: chatDetailController
-                                          .opponent.value?.isOnline ==
-                                      true
-                                  ? Theme.of(context).primaryColor
-                                  : Theme.of(context).disabledColor,
-                            ).circular)
-                      ],
-                    ),
-                    Obx(() => chatDetailController.isTyping.value == true
-                        ? Text(
-                            LocalizationString.typing,
-                            style: Theme.of(context).textTheme.bodyMedium,
-                          )
-                        : Container()),
-                  ],
-                ).ripple(() {
-                  Get.to(() => ChatRoomDetail(
-                          chatRoom: chatDetailController.chatRoom))!
-                      .then((value) {
-                    loadChat();
-                    loadWallpaper();
-                  });
-                }),
-                Row(
-                  children: [
-                    ThemeIconWidget(
-                      ThemeIcon.mobile,
-                      color: Theme.of(context).iconTheme.color,
-                      size: 25,
-                    ).p4.ripple(() {
-                      audioCall();
-                    }),
-                    const SizedBox(
-                      width: 20,
-                    ),
-                    ThemeIconWidget(
-                      ThemeIcon.videoCamera,
-                      color: Theme.of(context).iconTheme.color,
-                      size: 25,
-                    ).p4.ripple(() {
-                      videoCall();
-                    })
-                  ],
-                ),
-              ],
-            ).hP16,
+            appBar(),
             divider(context: context).tP8,
             Expanded(child: messagesListView()),
             Obx(() {
@@ -154,7 +66,7 @@ class _ChatDetailState extends State<ChatDetail> {
                 children: [
                   SizedBox(
                     height:
-                        chatDetailController.smartReplySuggestions.isNotEmpty
+                        _chatDetailController.smartReplySuggestions.isNotEmpty
                             ? 50
                             : 0,
                     child: ListView.separated(
@@ -166,7 +78,7 @@ class _ChatDetailState extends State<ChatDetail> {
                             height: 0,
                             child: Center(
                               child: Text(
-                                chatDetailController
+                                _chatDetailController
                                     .smartReplySuggestions[index],
                                 style: Theme.of(context)
                                     .textTheme
@@ -178,10 +90,10 @@ class _ChatDetailState extends State<ChatDetail> {
                               .borderWithRadius(
                                   context: context, value: 1, radius: 10)
                               .ripple(() {
-                            chatDetailController.sendSmartMessage(
-                                smartMessage: chatDetailController
+                            _chatDetailController.sendSmartMessage(
+                                smartMessage: _chatDetailController
                                     .smartReplySuggestions[index],
-                                roomId: chatDetailController.chatRoomId);
+                                room: _chatDetailController.chatRoom.value!);
                           });
                         },
                         separatorBuilder: (ctx, index) {
@@ -190,22 +102,197 @@ class _ChatDetailState extends State<ChatDetail> {
                           );
                         },
                         itemCount:
-                            chatDetailController.smartReplySuggestions.length),
-                  ).vP8,
+                            _chatDetailController.smartReplySuggestions.length),
+                  ),
                 ],
               );
             }),
             Obx(() {
-              return chatDetailController.actionMode.value ==
-                          ChatMessageActionMode.none ||
-                      chatDetailController.actionMode.value ==
-                          ChatMessageActionMode.reply
-                  ? messageComposerView()
-                  : selectedMessageView();
+              return _chatDetailController.chatRoom.value?.amIMember == true
+                  ? _chatDetailController.actionMode.value ==
+                              ChatMessageActionMode.none ||
+                          _chatDetailController.actionMode.value ==
+                              ChatMessageActionMode.reply
+                      ? _chatDetailController.chatRoom.value!.canIChat
+                          ? messageComposerView()
+                          : cantChatView()
+                      : selectedMessageView()
+                  : cantChatView();
             })
           ],
         ),
       ),
+    );
+  }
+
+  Widget appBar() {
+    return Stack(
+      alignment: AlignmentDirectional.center,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            ThemeIconWidget(
+              ThemeIcon.backArrow,
+              color: Theme.of(context).iconTheme.color,
+              size: 20,
+            ).p8.ripple(() {
+              Timer(const Duration(milliseconds: 500), () {
+                _chatDetailController.clear();
+              });
+              Get.back();
+            }),
+            Obx(() => _chatDetailController.chatRoom.value?.isGroupChat == false
+                ? Row(
+                    children: [
+                      ThemeIconWidget(
+                        ThemeIcon.mobile,
+                        color: Theme.of(context).iconTheme.color,
+                        size: 25,
+                      ).p4.ripple(() {
+                        audioCall();
+                      }),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      ThemeIconWidget(
+                        ThemeIcon.videoCamera,
+                        color: Theme.of(context).iconTheme.color,
+                        size: 25,
+                      ).p4.ripple(() {
+                        videoCall();
+                      })
+                    ],
+                  )
+                : Container()),
+          ],
+        ).hP16,
+        Positioned(
+          left: 16,
+          right: 16,
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const Spacer(),
+                  Obx(() {
+                    return _chatDetailController.chatRoom.value == null ||
+                            _chatDetailController
+                                .chatRoom.value!.roomMembers.isEmpty
+                        ? Container()
+                        : Column(
+                            children: [
+                              Row(
+                                children: [
+                                  Text(
+                                    _chatDetailController
+                                                .chatRoom.value!.isGroupChat ==
+                                            true
+                                        ? _chatDetailController
+                                            .chatRoom.value!.name!
+                                        : _chatDetailController.chatRoom.value!
+                                            .opponent.userDetail.userName,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge!
+                                        .copyWith(fontWeight: FontWeight.w900),
+                                  ),
+                                  const SizedBox(width: 5),
+                                  _chatDetailController
+                                              .chatRoom.value!.isGroupChat ==
+                                          false
+                                      ? Container(
+                                          height: 8,
+                                          width: 8,
+                                          color: _chatDetailController
+                                                      .chatRoom
+                                                      .value!
+                                                      .opponent
+                                                      .userDetail
+                                                      .isOnline ==
+                                                  true
+                                              ? Theme.of(context).primaryColor
+                                              : Theme.of(context).disabledColor,
+                                        ).circular
+                                      : Container(),
+                                ],
+                              ),
+                              _chatDetailController
+                                          .chatRoom.value!.isGroupChat ==
+                                      false
+                                  ? _chatDetailController.isTypingMapping[
+                                              _chatDetailController
+                                                  .chatRoom
+                                                  .value!
+                                                  .opponent
+                                                  .userDetail
+                                                  .userName] ==
+                                          true
+                                      ? Text(
+                                          LocalizationString.typing,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium,
+                                        )
+                                      : Text(
+                                          _chatDetailController
+                                                      .chatRoom
+                                                      .value!
+                                                      .opponent
+                                                      .userDetail
+                                                      .isOnline ==
+                                                  true
+                                              ? LocalizationString.online
+                                              : '${LocalizationString.lastSeen}${_chatDetailController.chatRoom.value!.opponent.userDetail.lastSeenAtTime}',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium!
+                                              .copyWith(
+                                                  fontWeight: FontWeight.w500),
+                                        )
+                                  : SizedBox(
+                                      width: MediaQuery.of(context).size.width -
+                                          120,
+                                      child: Text(
+                                          _chatDetailController
+                                                  .whoIsTyping.isNotEmpty
+                                              ? '${_chatDetailController.whoIsTyping.join(',')} ${LocalizationString.typing}'
+                                              : _chatDetailController
+                                                  .chatRoom.value!.roomMembers
+                                                  .map((e) {
+                                                    if (e.userDetail.isMe) {
+                                                      return LocalizationString
+                                                          .you;
+                                                    }
+                                                    return e
+                                                        .userDetail.userName;
+                                                  })
+                                                  .toList()
+                                                  .join(','),
+                                          maxLines: 1,
+                                          textAlign: TextAlign.center,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium),
+                                    ),
+                            ],
+                          );
+                  }).ripple(() {
+                    Get.to(() => ChatRoomDetail(
+                            chatRoom: _chatDetailController.chatRoom.value!))!
+                        .then((value) {
+                      loadChat();
+                    });
+                  }),
+                  const Spacer(),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
@@ -217,16 +304,16 @@ class _ChatDetailState extends State<ChatDetail> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               ThemeIconWidget(
-                chatDetailController.actionMode.value ==
+                _chatDetailController.actionMode.value ==
                         ChatMessageActionMode.forward
                     ? ThemeIcon.fwd
-                    : chatDetailController.actionMode.value ==
+                    : _chatDetailController.actionMode.value ==
                             ChatMessageActionMode.delete
                         ? ThemeIcon.delete
                         : ThemeIcon.send,
                 color: Theme.of(context).primaryColor,
               ).ripple(() {
-                if (chatDetailController.actionMode.value ==
+                if (_chatDetailController.actionMode.value ==
                     ChatMessageActionMode.forward) {
                   selectUserForMessageForward();
                 } else {
@@ -234,7 +321,7 @@ class _ChatDetailState extends State<ChatDetail> {
                 }
               }),
               Text(
-                  '${chatDetailController.selectedMessages.length} ${LocalizationString.selected.toLowerCase()}',
+                  '${_chatDetailController.selectedMessages.length} ${LocalizationString.selected.toLowerCase()}',
                   style: Theme.of(context).textTheme.bodyLarge),
               Text(
                 LocalizationString.cancel,
@@ -243,7 +330,7 @@ class _ChatDetailState extends State<ChatDetail> {
                     .bodyLarge!
                     .copyWith(fontWeight: FontWeight.w900),
               ).ripple(() {
-                chatDetailController.setToActionMode(
+                _chatDetailController.setToActionMode(
                     mode: ChatMessageActionMode.none);
               })
             ],
@@ -252,11 +339,11 @@ class _ChatDetailState extends State<ChatDetail> {
   }
 
   Widget replyMessageView() {
-    return Obx(() => chatDetailController
+    return Obx(() => _chatDetailController
                 .selectedMessage.value!.messageContentType ==
             MessageContentType.text
-        ? replyTextMessageView(chatDetailController.selectedMessage.value!)
-        : replyMediaMessageView(chatDetailController.selectedMessage.value!));
+        ? replyTextMessageView(_chatDetailController.selectedMessage.value!)
+        : replyMediaMessageView(_chatDetailController.selectedMessage.value!));
   }
 
   Widget replyTextMessageView(ChatMessageModel message) {
@@ -289,7 +376,7 @@ class _ChatDetailState extends State<ChatDetail> {
             size: 28,
             color: Theme.of(context).iconTheme.color,
           ).ripple(() {
-            chatDetailController.setReplyMessage(message: null);
+            _chatDetailController.setReplyMessage(message: null);
           })
         ],
       ).setPadding(left: 16, right: 16, top: 8, bottom: 8),
@@ -306,9 +393,9 @@ class _ChatDetailState extends State<ChatDetail> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  chatDetailController.selectedMessage.value!.isMineMessage
+                  _chatDetailController.selectedMessage.value!.isMineMessage
                       ? LocalizationString.you
-                      : chatDetailController.selectedMessage.value!.userName,
+                      : _chatDetailController.selectedMessage.value!.userName,
                   style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                       color: Theme.of(context).primaryColor,
                       fontWeight: FontWeight.w600),
@@ -327,7 +414,7 @@ class _ChatDetailState extends State<ChatDetail> {
             size: 28,
             color: Theme.of(context).iconTheme.color,
           ).ripple(() {
-            chatDetailController.setToActionMode(
+            _chatDetailController.setToActionMode(
                 mode: ChatMessageActionMode.none);
           })
         ],
@@ -338,379 +425,287 @@ class _ChatDetailState extends State<ChatDetail> {
   Widget messageComposerView() {
     return Column(
       children: [
-        chatDetailController.actionMode.value == ChatMessageActionMode.reply
+        _chatDetailController.actionMode.value == ChatMessageActionMode.reply
             ? replyMessageView()
             : Container(),
-        GetBuilder<ChatDetailController>(
-            init: chatDetailController,
-            builder: (ctx) {
-              return Container(
-                color: Theme.of(context).backgroundColor.darken(0.02),
-                height: 70,
-                child: Column(
-                  children: [
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        Container(
+          color: Theme.of(context).backgroundColor.darken(0.02),
+          height: 70,
+          child: Column(
+            children: [
+              const SizedBox(
+                height: 10,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Row(
                       children: [
-                        Container(
-                          height: 30,
-                          width: 30,
-                          color: Theme.of(context).primaryColor,
-                          child: ThemeIconWidget(
-                            ThemeIcon.camera,
-                            color: Theme.of(context).iconTheme.color,
-                          ).p4,
-                        ).circular.ripple(() {
-                          openGallery();
-                        }),
+                        Expanded(
+                          child: SizedBox(
+                            height: 40,
+                            child: Obx(() => TextField(
+                                  controller:
+                                      _chatDetailController.messageTf.value,
+                                  textAlign: TextAlign.start,
+                                  style:
+                                      Theme.of(context).textTheme.titleMedium,
+                                  maxLines: 50,
+                                  onChanged: (text) {
+                                    _chatDetailController.messageChanges();
+                                  },
+                                  decoration: InputDecoration(
+                                      floatingLabelBehavior:
+                                          FloatingLabelBehavior.never,
+                                      border: InputBorder.none,
+                                      contentPadding: const EdgeInsets.only(
+                                          left: 10, right: 10, top: 5),
+                                      labelStyle: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge!
+                                          .copyWith(
+                                              color: Theme.of(context)
+                                                  .primaryColor),
+                                      hintStyle: Theme.of(context)
+                                          .textTheme
+                                          .titleMedium!
+                                          .copyWith(
+                                              color: Theme.of(context)
+                                                  .primaryColor),
+                                      hintText: LocalizationString
+                                          .pleaseEnterMessage),
+                                )),
+                          ),
+                        ),
                         const SizedBox(
                           width: 10,
                         ),
-                        Obx(() => chatDetailController.expandActions == true
-                            ? Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  Container(
-                                      height: 30,
-                                      width: 30,
-                                      color: Theme.of(context).primaryColor,
-                                      child: ThemeIconWidget(
-                                        ThemeIcon.contacts,
-                                        color:
-                                            Theme.of(context).iconTheme.color,
-                                        size: 20,
-                                      ).ripple(() {
-                                        openContactList();
-                                      })).circular,
-                                  const SizedBox(
-                                    width: 10,
+                        Obx(() {
+                          return _chatDetailController
+                                  .messageTf.value.text.isNotEmpty
+                              ? Text(
+                                  LocalizationString.send,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleMedium!
+                                      .copyWith(
+                                          color: Theme.of(context).primaryColor,
+                                          fontWeight: FontWeight.w900),
+                                ).ripple(() {
+                                  sendMessage();
+                                })
+                              : Container(
+                                  height: 30,
+                                  width: 30,
+                                  color: Theme.of(context).primaryColor,
+                                  child: ThemeIconWidget(
+                                    ThemeIcon.plus,
+                                    color: Theme.of(context).iconTheme.color,
                                   ),
-                                  Container(
-                                      height: 30,
-                                      width: 30,
-                                      color: Theme.of(context).primaryColor,
-                                      child: ThemeIconWidget(
-                                        ThemeIcon.location,
-                                        color:
-                                            Theme.of(context).iconTheme.color,
-                                        size: 20,
-                                      ).ripple(() {
-                                        openLocationPicker();
-                                      })).circular,
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
-                                  Container(
-                                      height: 30,
-                                      width: 30,
-                                      color: Theme.of(context).primaryColor,
-                                      child: ThemeIconWidget(
-                                        ThemeIcon.mic,
-                                        color:
-                                            Theme.of(context).iconTheme.color,
-                                        size: 20,
-                                      ).ripple(() {
-                                        openVoiceRecord();
-                                      })).circular,
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
-                                  Container(
-                                      height: 30,
-                                      width: 30,
-                                      color: Theme.of(context).primaryColor,
-                                      child: ThemeIconWidget(
-                                        ThemeIcon.sticker,
-                                        color:
-                                            Theme.of(context).iconTheme.color,
-                                        size: 20,
-                                      ).ripple(() {
-                                        openGiphy();
-                                      })).circular,
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
-                                  Container(
-                                    height: 30,
-                                    width: 30,
-                                    color: Theme.of(context).primaryColor,
-                                    child: ThemeIconWidget(
-                                      ThemeIcon.close,
-                                      color: Theme.of(context).iconTheme.color,
-                                    ).p4,
-                                  ).circular.ripple(() {
-                                    chatDetailController
-                                        .expandCollapseActions();
-                                  })
-                                ],
-                              )
-                            : Expanded(
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      child: SizedBox(
-                                        height: 40,
-                                        child: Obx(() => TextField(
-                                              controller: chatDetailController
-                                                  .messageTf.value,
-                                              textAlign: TextAlign.start,
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .titleMedium,
-                                              maxLines: 50,
-                                              onChanged: (text) {
-                                                chatDetailController
-                                                    .messageChanges();
-                                              },
-                                              decoration: InputDecoration(
-                                                  floatingLabelBehavior:
-                                                      FloatingLabelBehavior
-                                                          .never,
-                                                  border: InputBorder.none,
-                                                  contentPadding:
-                                                      const EdgeInsets.only(
-                                                          left: 10,
-                                                          right: 10,
-                                                          top: 5),
-                                                  labelStyle: Theme.of(context)
-                                                      .textTheme
-                                                      .bodyLarge!
-                                                      .copyWith(
-                                                          color:
-                                                              Theme.of(context)
-                                                                  .primaryColor),
-                                                  hintStyle: Theme.of(context)
-                                                      .textTheme
-                                                      .titleMedium!
-                                                      .copyWith(
-                                                          color:
-                                                              Theme.of(context)
-                                                                  .primaryColor),
-                                                  hintText: LocalizationString
-                                                      .pleaseEnterMessage),
-                                            )),
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      width: 10,
-                                    ),
-                                    chatDetailController
-                                            .messageTf.value.text.isNotEmpty
-                                        ? Text(
-                                            LocalizationString.send,
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .titleMedium!
-                                                .copyWith(
-                                                    color: Theme.of(context)
-                                                        .primaryColor,
-                                                    fontWeight:
-                                                        FontWeight.w900),
-                                          ).ripple(() {
-                                            sendMessage();
-                                          })
-                                        : Container(
-                                            height: 30,
-                                            width: 30,
-                                            color:
-                                                Theme.of(context).primaryColor,
-                                            child: ThemeIconWidget(
-                                              ThemeIcon.plus,
-                                              color: Theme.of(context)
-                                                  .iconTheme
-                                                  .color,
-                                            ),
-                                          ).circular.ripple(() {
-                                            chatDetailController
-                                                .expandCollapseActions();
-                                          }),
-                                  ],
-                                ),
-                              )),
+                                ).circular.ripple(() {
+                                  openMediaSharingOptionView();
+                                  // chatDetailController
+                                  //     .expandCollapseActions();
+                                });
+                        }),
                       ],
                     ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                  ],
-                ).hP16,
-              );
-            }),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+            ],
+          ).hP16,
+        )
       ],
     );
   }
 
-  openGiphy() async {
-    String randomId = 'hsvcewd78djhbejkd';
-
-    GiphyGif? gif = await GiphyGet.getGif(
-      context: context,
-      //Required
-      apiKey: AppConfigConstants.giphyApiKey,
-      //Required.
-      lang: GiphyLanguage.english,
-      //Optional - Language for query.
-      randomID: randomId,
-      // Optional - An ID/proxy for a specific user.
-      tabColor: Colors.teal, // Optional- default accent color.
+  Widget cantChatView() {
+    return Container(
+      color: Theme.of(context).backgroundColor.darken(0.02),
+      height: 70,
+      child: Center(
+        child: Text(
+          LocalizationString.onlyAdminCanSendMessage,
+          style: Theme.of(context).textTheme.bodyLarge,
+        ),
+      ),
     );
-
-    if (gif != null) {
-      chatDetailController.sendGifMessage(
-          gif: gif.images!.original!.url,
-          mode: chatDetailController.actionMode.value,
-          roomId: chatDetailController.chatRoomId);
-    }
-  }
-
-  sendMessage() {
-    // if (messageTf.text.removeAllWhitespace.trim().isNotEmpty) {
-    chatDetailController.sendTextMessage(
-        context: context,
-        mode: chatDetailController.actionMode.value,
-        roomId: chatDetailController.chatRoomId);
-    // messageTf.text = '';
-    //scrollToBottom();
-    // }
   }
 
   Widget messagesListView() {
-    return Container(
-      decoration: wallpaper == null
-          ? null
-          : BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage(wallpaper!),
-                fit: BoxFit.cover,
-              ),
-            ),
-      child: GetBuilder<ChatDetailController>(
-          init: chatDetailController,
-          builder: (ctx) {
-            return ScrollablePositionedList.builder(
-              itemScrollController: itemScrollController,
-              itemPositionsListener: itemPositionsListener,
-              padding: const EdgeInsets.only(
-                  top: 10, bottom: 50, left: 16, right: 16),
-              itemCount: chatDetailController.messages.length,
-              itemBuilder: (ctx, index) {
-                return chatDetailController.messages[index].isDeleted == 1 ||
-                        chatDetailController.messages[index].isDateSeparator
-                    ? messageTile(index)
-                    : FocusedMenuHolder(
-                        menuWidth: MediaQuery.of(context).size.width * 0.50,
-                        blurSize: 5.0,
-                        menuItemExtent: 45,
-                        menuBoxDecoration: BoxDecoration(
-                            color: Theme.of(context).backgroundColor,
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(15.0))),
-                        duration: const Duration(milliseconds: 100),
-                        animateMenuItems: false,
-                        blurBackgroundColor: Colors.black54,
-                        openWithTap: false,
-                        // Open Focused-Menu on Tap rather than Long Press
-                        menuOffset: 10.0,
-                        // Offset value to show menuItem from the selected item
-                        bottomOffsetHeight: 80.0,
-                        // Offset height to consider, for showing the menu item ( for example bottom navigation bar), so that the popup menu will be shown on top of selected item.
-                        menuItems: <FocusedMenuItem>[
-                          // Add Each FocusedMenuItem  for Menu Options
-                          FocusedMenuItem(
-                              backgroundColor:
-                                  Theme.of(context).backgroundColor,
-                              title: Text(
-                                LocalizationString.reply,
-                                style: Theme.of(context).textTheme.bodyLarge,
-                              ),
-                              trailingIcon: const Icon(Icons.reply, size: 18),
-                              onPressed: () {
-                                chatDetailController.setReplyMessage(
-                                    message:
-                                        chatDetailController.messages[index]);
-                              }),
-                          FocusedMenuItem(
-                              backgroundColor:
-                                  Theme.of(context).backgroundColor,
-                              title: Text(
-                                LocalizationString.fwd,
-                                style: Theme.of(context).textTheme.bodyLarge,
-                              ),
-                              trailingIcon: const Icon(
-                                Icons.send,
-                                size: 18,
-                              ),
-                              onPressed: () {
-                                chatDetailController.selectMessage(
-                                    chatDetailController.messages[index]);
-                                chatDetailController.setToActionMode(
-                                    mode: ChatMessageActionMode.forward);
-                              }),
-                          FocusedMenuItem(
-                              backgroundColor:
-                                  Theme.of(context).backgroundColor,
-                              title: Text(
-                                LocalizationString.delete,
-                                style: Theme.of(context).textTheme.bodyLarge,
-                              ),
-                              trailingIcon:
-                                  const Icon(Icons.delete_outline, size: 18),
-                              onPressed: () {
-                                chatDetailController.selectMessage(
-                                    chatDetailController.messages[index]);
+    return GetBuilder<ChatDetailController>(
+        init: _chatDetailController,
+        builder: (ctx) {
+          return _chatDetailController.messages.isEmpty
+              ? Container()
+              : Container(
+                  decoration: _chatDetailController.wallpaper.value.isEmpty
+                      ? null
+                      : BoxDecoration(
+                          image: DecorationImage(
+                            image: AssetImage(
+                                _chatDetailController.wallpaper.value),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                  child: ScrollablePositionedList.builder(
+                    itemScrollController: _itemScrollController,
+                    itemPositionsListener: _itemPositionsListener,
+                    padding: const EdgeInsets.only(
+                        top: 10, bottom: 50, left: 16, right: 16),
+                    itemCount: _chatDetailController.messages.length,
+                    itemBuilder: (ctx, index) {
+                      ChatMessageModel message =
+                          _chatDetailController.messages[index];
 
-                                chatDetailController.setToActionMode(
-                                    mode: ChatMessageActionMode.delete);
-                              }),
-                        ],
-                        onPressed: () {},
-                        child: messageTile(index),
-                      );
-              },
-            );
-          }),
+                      return message.isDeleted == 1 ||
+                              message.isDateSeparator ||
+                              message.messageContentType ==
+                                  MessageContentType.groupAction
+                          ? messageTile(message)
+                          : chatMessageFocusMenu(message);
+                    },
+                  ));
+        });
+  }
+
+  Widget chatMessageFocusMenu(ChatMessageModel message) {
+    return FocusedMenuHolder(
+      menuWidth: MediaQuery.of(context).size.width * 0.50,
+      blurSize: 5.0,
+      menuItemExtent: 45,
+      menuBoxDecoration: BoxDecoration(
+          color: Theme.of(context).backgroundColor,
+          borderRadius: const BorderRadius.all(Radius.circular(15.0))),
+      duration: const Duration(milliseconds: 100),
+      animateMenuItems: false,
+      blurBackgroundColor: Colors.black54,
+      openWithTap: false,
+      // Open Focused-Menu on Tap rather than Long Press
+      menuOffset: 10.0,
+      // Offset value to show menuItem from the selected item
+      bottomOffsetHeight: 80.0,
+      // Offset height to consider, for showing the menu item ( for example bottom navigation bar), so that the popup menu will be shown on top of selected item.
+      menuItems: [
+        if (message.copyContent != null)
+          FocusedMenuItem(
+              backgroundColor: Theme.of(context).backgroundColor,
+              title: Text(
+                LocalizationString.copy,
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
+              trailingIcon: const Icon(Icons.file_copy, size: 18),
+              onPressed: () async {
+                await Clipboard.setData(
+                    ClipboardData(text: message.messageContent));
+              }),
+        if (_chatDetailController.chatRoom.value?.canIChat == true)
+          FocusedMenuItem(
+              backgroundColor: Theme.of(context).backgroundColor,
+              title: Text(
+                LocalizationString.reply,
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
+              trailingIcon: const Icon(Icons.reply, size: 18),
+              onPressed: () {
+                _chatDetailController.setReplyMessage(message: message);
+              }),
+        FocusedMenuItem(
+            backgroundColor: Theme.of(context).backgroundColor,
+            title: Text(
+              LocalizationString.fwd,
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
+            trailingIcon: const Icon(
+              Icons.send,
+              size: 18,
+            ),
+            onPressed: () {
+              _chatDetailController.selectMessage(message);
+              _chatDetailController.setToActionMode(
+                  mode: ChatMessageActionMode.forward);
+            }),
+        FocusedMenuItem(
+            backgroundColor: Theme.of(context).backgroundColor,
+            title: Text(
+              LocalizationString.delete,
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
+            trailingIcon: const Icon(Icons.delete_outline, size: 18),
+            onPressed: () {
+              _chatDetailController.selectMessage(message);
+
+              _chatDetailController.setToActionMode(
+                  mode: ChatMessageActionMode.delete);
+            }),
+        FocusedMenuItem(
+            backgroundColor: Theme.of(context).backgroundColor,
+            title: Text(
+              message.isStar == 1
+                  ? LocalizationString.unStar
+                  : LocalizationString.star,
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
+            trailingIcon: Icon(
+              Icons.star,
+              size: 18,
+              color: message.isStar == 1
+                  ? Theme.of(context).primaryColor
+                  : Theme.of(context).iconTheme.color,
+            ),
+            onPressed: () {
+              if (message.isStar == 1) {
+                _chatDetailController.unStarMessage(message);
+              } else {
+                _chatDetailController.starMessage(message);
+              }
+            })
+      ],
+      onPressed: () {},
+      child: messageTile(message),
     );
   }
 
-  Widget messageTile(int index) {
-    return Obx(() {
-      ChatMessageModel chatMessage = chatDetailController.messages[index];
-      return Column(
-        children: [
-          chatMessage.isDateSeparator
-              ? Container(
-                  height: 25,
-                  color: Theme.of(context)
-                      .primaryColor
-                      .lighten(0.2)
-                      .withOpacity(0.5),
-                  width: 100,
-                  child: Center(
-                    child: Text(chatMessage.date),
-                  ),
-                ).round(15).bP25
-              : ChatMessageTile(
-                  message: chatMessage,
-                  actionMode: chatDetailController.actionMode.value ==
-                          ChatMessageActionMode.forward ||
-                      chatDetailController.actionMode.value ==
-                          ChatMessageActionMode.delete,
-                  replyMessageTapHandler: (message) {
-                    replyMessageTapped(chatMessage);
-                  },
-                  messageTapHandler: (message) {
-                    messageTapped(chatMessage);
-                  },
+  Widget messageTile(ChatMessageModel chatMessage) {
+    return Column(
+      children: [
+        chatMessage.isDateSeparator
+            ? Container(
+                color: Theme.of(context)
+                    .primaryColor
+                    .lighten(0.2)
+                    .withOpacity(0.5),
+                width: 120,
+                child: Center(
+                  child: Text(chatMessage.date)
+                      .setPadding(left: 8, right: 8, top: 4, bottom: 4),
                 ),
-          const SizedBox(
-            height: 20,
-          )
-        ],
-      );
-    });
+              ).round(15).bP25
+            : ChatMessageTile(
+                message: chatMessage,
+                showName:
+                    _chatDetailController.chatRoom.value?.isGroupChat == true,
+                actionMode: _chatDetailController.actionMode.value ==
+                        ChatMessageActionMode.forward ||
+                    _chatDetailController.actionMode.value ==
+                        ChatMessageActionMode.delete,
+                replyMessageTapHandler: (message) {
+                  replyMessageTapped(chatMessage);
+                },
+                messageTapHandler: (message) {
+                  messageTapped(chatMessage);
+                },
+              ),
+        const SizedBox(
+          height: 20,
+        )
+      ],
+    );
   }
 
   void messageTapped(ChatMessageModel model) async {
@@ -718,20 +713,22 @@ class _ChatDetailState extends State<ChatDetail> {
       messageTapped(model.originalMessage);
     }
     if (model.messageContentType == MessageContentType.photo) {
-      int index = chatDetailController.mediaMessages
+      int index = _chatDetailController.mediaMessages
           .indexWhere((element) => element == model);
 
       Get.to(() => MediaListViewer(
-                chatRoom: chatDetailController.chatRoom,
-                medias: chatDetailController.mediaMessages,
+                chatRoom: _chatDetailController.chatRoom.value!,
+                medias: _chatDetailController.mediaMessages,
                 startFrom: index,
               ))!
           .then((value) => loadChat());
     } else if (model.messageContentType == MessageContentType.video) {
-      Get.to(() => VideoPlayerScreen(
-                chatMessage: model,
-              ))!
-          .then((value) => loadChat());
+      if (model.messageContent.isNotEmpty) {
+        Get.to(() => PlayVideoController(
+                  chatMessage: model,
+                ))!
+            .then((value) => loadChat());
+      }
     } else if (model.messageContentType == MessageContentType.post) {
       Get.to(() => SinglePostDetail(
                 postId: model.postContent.postId,
@@ -739,6 +736,11 @@ class _ChatDetailState extends State<ChatDetail> {
           .then((value) => loadChat());
     } else if (model.messageContentType == MessageContentType.contact) {
       openActionPopupForContact(model.mediaContent.contact!);
+    } else if (model.messageContentType == MessageContentType.profile) {
+      Get.to(() => OtherUserProfile(
+                userId: model.profileContent.userId,
+              ))!
+          .then((value) => loadChat());
     } else if (model.messageContentType == MessageContentType.location) {
       try {
         final coords = Coords(model.mediaContent.location!.latitude,
@@ -778,6 +780,12 @@ class _ChatDetailState extends State<ChatDetail> {
       } catch (e) {
         // print(e);
       }
+    } else if (model.messageContentType == MessageContentType.file) {
+      String? path = await getIt<FileManager>().localFilePathForMessage(model);
+
+      if (path != null) {
+        OpenFile.open(path);
+      }
     }
   }
 
@@ -801,7 +809,7 @@ class _ChatDetailState extends State<ChatDetail> {
                     title: Center(child: Text(LocalizationString.saveContact)),
                     onTap: () async {
                       Get.back();
-                      chatDetailController.addNewContact(contact);
+                      _chatDetailController.addNewContact(contact);
                       AppUtil.showToast(
                           context: context,
                           message: LocalizationString.contactSaved,
@@ -815,51 +823,35 @@ class _ChatDetailState extends State<ChatDetail> {
             ));
   }
 
+  sendMessage() {
+    // if (messageTf.text.removeAllWhitespace.trim().isNotEmpty) {
+    _chatDetailController.sendTextMessage(
+        context: context,
+        mode: _chatDetailController.actionMode.value,
+        room: _chatDetailController.chatRoom.value!);
+    // messageTf.text = '';
+    //scrollToBottom();
+    // }
+  }
+
   void replyMessageTapped(ChatMessageModel model) {
-    int index = chatDetailController.messages.indexWhere((element) =>
+    int index = _chatDetailController.messages.indexWhere((element) =>
         element.localMessageId == model.originalMessage.localMessageId);
     if (index != -1) {
       Timer(const Duration(milliseconds: 1), () {
-        itemScrollController.jumpTo(
+        _itemScrollController.jumpTo(
           index: index,
         );
       });
     }
   }
 
-  void openGallery() {
-    showModalBottomSheet(
-        backgroundColor: Colors.transparent,
-        context: context,
-        builder: (context) => ChooseMediaForChat(
-              selectedMediaCompletetion: (medias) {
-                for (Media media in medias) {
-                  if (media.mediaType == GalleryMediaType.image) {
-                    chatDetailController.sendImageMessage(
-                        media: media,
-                        mode: chatDetailController.actionMode.value,
-                        context: context,
-                        roomId: chatDetailController.chatRoomId);
-                    Navigator.of(context).pop();
-                  } else {
-                    Get.back();
-                    chatDetailController.sendVideoMessage(
-                        media: media,
-                        model: chatDetailController.actionMode.value,
-                        context: context,
-                        roomId: chatDetailController.chatRoomId);
-                  }
-                }
-              },
-            ));
-  }
-
   void videoCall() {
-    chatDetailController.initiateVideoCall(context);
+    _chatDetailController.initiateVideoCall(context);
   }
 
   void audioCall() {
-    chatDetailController.initiateAudioCall(context);
+    _chatDetailController.initiateAudioCall(context);
   }
 
   selectUserForMessageForward() {
@@ -867,81 +859,30 @@ class _ChatDetailState extends State<ChatDetail> {
         backgroundColor: Colors.transparent,
         context: context,
         builder: (context) =>
-            SelectUserToSendMessage(sendToUserCallback: (user) {
-              // chatDetailController.forwardSelectedMessages(user);
-            }, selectedUser: (user) {
-              // chatDetailController.sendPostAsMessage(
-              //     post: widget.model, toOpponent: user);
+            SelectFollowingUserForMessageSending(sendToUserCallback: (user) {
+              _chatDetailController.getChatRoomWithUser(
+                  user.id,
+                  (room) => () {
+                        _chatDetailController.forwardSelectedMessages(
+                            room: room);
+                        Get.back();
+                      });
             })).then((value) {
-      chatDetailController.setToActionMode(mode: ChatMessageActionMode.none);
+      _chatDetailController.setToActionMode(mode: ChatMessageActionMode.none);
     });
   }
 
-  void openVoiceRecord() {
-    showModalBottomSheet(
-        backgroundColor: Colors.transparent,
-        context: context,
-        builder: (context) => VoiceRecord(
-              recordingCallback: (media) {
-                chatDetailController.sendAudioMessage(
-                    media: media,
-                    mode: chatDetailController.actionMode.value,
-                    context: context,
-                    roomId: chatDetailController.chatRoomId);
-              },
-            ));
-  }
-
-  void openContactList() {
-    showModalBottomSheet(
-        isScrollControlled: true,
-        backgroundColor: Colors.transparent,
-        context: context,
-        builder: (context) => FractionallySizedBox(
-              heightFactor: 1,
-              child: ContactList(
-                selectedContactsHandler: (contacts) {
-                  for (Contact contact in contacts) {
-                    chatDetailController.sendContactMessage(
-                        contact: contact,
-                        mode: chatDetailController.actionMode.value,
-                        context: context,
-                        roomId: chatDetailController.chatRoomId);
-                  }
-                },
-              ),
-            ));
-  }
-
-  void openLocationPicker() {
+  openMediaSharingOptionView() {
     showModalBottomSheet(
         backgroundColor: Colors.transparent,
         context: context,
         isScrollControlled: true,
-        builder: (context) => FractionallySizedBox(
-            heightFactor: 0.9,
-            child: PlacePicker(
-              apiKey: AppConfigConstants.googleMapApiKey,
-              displayLocation: null,
-            ))).then((location) {
-      if (location != null) {
-        LocationResult result = location as LocationResult;
-        LocationModel locationModel = LocationModel(
-            latitude: result.latLng!.latitude,
-            longitude: result.latLng!.longitude,
-            name: result.name!);
-
-        chatDetailController.sendLocationMessage(
-            location: locationModel,
-            mode: chatDetailController.actionMode.value,
-            context: context,
-            roomId: chatDetailController.chatRoomId);
-      }
-    });
+        builder: (context) => const FractionallySizedBox(
+            heightFactor: 0.5, child: ChatMediaSharingOptionPopup()));
   }
 
   void deleteMessageActionPopup() {
-    bool ifAnyMessageByOpponent = chatDetailController.selectedMessages
+    bool ifAnyMessageByOpponent = _chatDetailController.selectedMessages
         .where((e) => e.isMineMessage == false)
         .isNotEmpty;
 
@@ -954,18 +895,19 @@ class _ChatDetailState extends State<ChatDetail> {
                         child: Text(LocalizationString.deleteMessageForMe)),
                     onTap: () async {
                       Get.back();
-                      chatDetailController.deleteMessage(deleteScope: 1);
+                      _chatDetailController.deleteMessage(deleteScope: 1);
                       // postCardController.reportPost(widget.model);
                     }),
                 divider(context: context),
-                ifAnyMessageByOpponent == false
+                ifAnyMessageByOpponent == false &&
+                        _chatDetailController.chatRoom.value?.canIChat == true
                     ? ListTile(
                         title: Center(
                             child:
                                 Text(LocalizationString.deleteMessageForAll)),
                         onTap: () async {
                           Get.back();
-                          chatDetailController.deleteMessage(deleteScope: 2);
+                          _chatDetailController.deleteMessage(deleteScope: 2);
                           // postCardController.blockUser(widget.model.user.id);
                         })
                     : Container(),

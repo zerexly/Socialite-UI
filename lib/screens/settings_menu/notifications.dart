@@ -1,19 +1,19 @@
 import 'package:foap/helper/common_import.dart';
 import 'package:get/get.dart';
 
-class NotificationsScreen1 extends StatefulWidget {
-  const NotificationsScreen1({Key? key}) : super(key: key);
+class NotificationsScreen extends StatefulWidget {
+  const NotificationsScreen({Key? key}) : super(key: key);
 
   @override
-  State<NotificationsScreen1> createState() => _NotificationsScreen1State();
+  State<NotificationsScreen> createState() => _NotificationsScreenState();
 }
 
-class _NotificationsScreen1State extends State<NotificationsScreen1> {
-  final ProfileController profileController = Get.find();
+class _NotificationsScreenState extends State<NotificationsScreen> {
+  final NotificationController _notificationController = Get.find();
 
   @override
   void initState() {
-    profileController.getNotifications();
+    _notificationController.getNotifications();
     super.initState();
   }
 
@@ -26,36 +26,45 @@ class _NotificationsScreen1State extends State<NotificationsScreen1> {
             const SizedBox(
               height: 50,
             ),
-            backNavigationBar(context, LocalizationString.notifications),
+            backNavigationBar(
+                context: context, title: LocalizationString.notifications),
             divider(context: context).tP8,
             Expanded(
-              child: GetBuilder<ProfileController>(
-                  init: profileController,
+              child: GetBuilder<NotificationController>(
+                  init: _notificationController,
                   builder: (ctx) {
-                    return ListView.separated(
-                        padding: EdgeInsets.zero,
-                        itemCount: profileController.notifications.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              index == 0
-                                  ? const SizedBox(height: 20)
-                                  : Container(),
-                              NotificationTileType4(
-                                      notification: profileController
-                                          .notifications[index])
-                                  .hP16
-                                  .ripple(() {
-                                handleNotificationTap(
-                                    profileController.notifications[index]);
-                              }),
-                            ],
-                          );
-                        },
-                        separatorBuilder: (BuildContext context, int index) {
-                          return const SizedBox(height: 20);
-                        });
+                    return _notificationController.notifications.isNotEmpty
+                        ? ListView.separated(
+                            padding: EdgeInsets.zero,
+                            itemCount:
+                                _notificationController.notifications.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  index == 0
+                                      ? const SizedBox(height: 20)
+                                      : Container(),
+                                  NotificationTileType4(
+                                          notification: _notificationController
+                                              .notifications[index])
+                                      .hP16
+                                      .ripple(() {
+                                    handleNotificationTap(
+                                        _notificationController
+                                            .notifications[index]);
+                                  }),
+                                ],
+                              );
+                            },
+                            separatorBuilder:
+                                (BuildContext context, int index) {
+                              return const SizedBox(height: 20);
+                            })
+                        : emptyData(
+                            title: LocalizationString.noNotificationFound,
+                            subTitle: '',
+                            context: context);
                   }),
             ),
           ],
@@ -74,7 +83,6 @@ class _NotificationsScreen1State extends State<NotificationsScreen1> {
     } else if (notification.type == 4) {
       int competitionId = notification.referenceId;
       Get.to(() => CompetitionDetailScreen(
-            competition: null,
             competitionId: competitionId,
             refreshPreviousScreen: () {},
           ));

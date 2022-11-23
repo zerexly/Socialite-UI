@@ -122,4 +122,117 @@ class ApiParamModel {
   dynamic createChatRoomParam(int opponentId) {
     return {"receiver_id": opponentId.toString(), "type": '1'};
   }
+
+  dynamic createGroupChatRoomParam(
+      {required String groupName, String? groupDescription, String? image}) {
+    return {
+      "type": '2',
+      'receiver_id': '',
+      'title': groupName,
+      'image': image ?? '',
+      'description': groupDescription ?? ''
+    };
+  }
+
+  dynamic updateGroupChatRoomParam(
+      {String? groupName,
+      String? groupDescription,
+      String? image,
+      String? groupAccess}) {
+    Map<String, String> data = {};
+
+    if (groupName != null) {
+      data['title'] = groupName;
+    }
+    if (groupDescription != null) {
+      data['description'] = groupDescription;
+    }
+    if (image != null) {
+      data['image'] = image;
+    }
+    if (groupAccess != null) {
+      data['chat_access_group'] = groupAccess;
+    }
+    return data;
+  }
+
+  dynamic createClubParam(
+      {required int categoryId,
+      required int privacyMode,
+      required int enableChatRoom,
+      required String name,
+      required String image,
+      required String description}) {
+    return {
+      "category_id": categoryId.toString(),
+      'privacy_type': privacyMode.toString(),
+      'is_chat_room': enableChatRoom.toString(),
+      'name': name,
+      'image': image,
+      'description': description
+    };
+  }
+
+  dynamic updateClubParam(
+      {required int categoryId,
+      required int privacyMode,
+      required String name,
+      required String image,
+      required String description}) {
+    return {
+      "category_id": categoryId.toString(),
+      'privacy_type': privacyMode.toString(),
+      'name': name,
+      'image': image,
+      'description': description
+    };
+  }
+
+  dynamic removeFromClub({
+    required int userId,
+    required int clubId,
+  }) {
+    return {
+      "club_user_id": userId.toString(),
+      'id': clubId.toString(),
+    };
+  }
+
+  dynamic sendGiftParam(
+      {required int giftId,
+      required int receiverId,
+      required int source,
+      required int? liveId,
+      required int? postId}) {
+    //send_on_type : live call =1, profile=2, post=3
+    return {
+      "gift_id": giftId.toString(),
+      'reciever_id': receiverId.toString(),
+      'send_on_type': source.toString(),
+      'live_call_id': liveId == null ? '' : liveId.toString(),
+      'post_id': postId == null ? '' : postId.toString()
+    };
+  }
+
+  dynamic sendVerificationRequestParam({
+    required String userMessage,
+    required String documentType,
+    required List<Map<String, String>> images,
+  }) {
+    return {
+      "user_message": userMessage,
+      'document': images,
+      'document_type': documentType,
+    };
+  }
+
+  dynamic cancelVerificationRequestParam({
+    required int id,
+    required String userMessage,
+  }) {
+    return {
+      "user_message": userMessage,
+      'id': id.toString(),
+    };
+  }
 }

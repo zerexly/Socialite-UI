@@ -1,5 +1,4 @@
 import 'package:foap/helper/common_import.dart';
-import 'package:foap/manager/file_manager.dart';
 
 class DBManager {
   final db = Localstore.instance;
@@ -36,66 +35,143 @@ class DBManager {
 
   //******************** Chat ************************//
 
-  saveMessage(int roomId, ChatMessageModel chatMessage) {
-    db
-        .collection('rooms')
-        .doc(roomId.toString())
-        .collection('messages')
-        .doc(chatMessage.localMessageId.toString())
-        .set(chatMessage.toJson());
-  }
-
-  updateMessageContent(
-      int roomId, String localMessageId, String content) async {
-    final items = await db
-        .collection('rooms')
-        .doc(roomId.toString())
-        .collection('messages')
-        .get();
-
-    var messages = items?.values ?? [];
-    var matchedMessages = messages
-        .where((element) => element['local_message_id'] == localMessageId);
-
-    if (matchedMessages.isNotEmpty) {
-      var messageData = matchedMessages.first;
-      messageData['message'] = content;
-      db
-          .collection('rooms')
-          .doc(roomId.toString())
-          .collection('messages')
-          .doc(localMessageId.toString())
-          .set(messageData);
+  Future saveRooms(List<ChatRoomModel> chatRooms) async {
+    for (ChatRoomModel room in chatRooms) {
+      saveRoom(room);
     }
   }
 
-  updateMessageStatus(
-      {required int roomId,
-      required String localMessageId,
-      required int id,
-      required int status,
-      required int createdAt}) async {
-    final items = await db
-        .collection('rooms')
-        .doc(roomId.toString())
-        .collection('messages')
+  Future saveRoom(ChatRoomModel chatRoom) async {
+    final room = await db.collection('rooms').doc(chatRoom.id.toString()).get();
+
+    if (room == null) {
+      var json = chatRoom.toJson();
+      json['updated_at'] = chatRoom.createdAt;
+      await db.collection('rooms').doc(chatRoom.id.toString()).set(json);
+
+      for (ChatRoomMember user in chatRoom.roomMembers) {
+        await addUserInRoom(user, chatRoom);
+      }
+    }
+  }
+
+  Future updateRoom(ChatRoomModel chatRoom) async {
+    final room = await db.collection('rooms').doc(chatRoom.id.toString()).get();
+    var lastMessage = room!['lastMessage'];
+    var updateAt = room['updated_at'];
+
+    var chatRoomJson = chatRoom.toJson();
+    if (lastMessage != null) {
+      chatRoomJson['lastMessage'] = lastMessage;
+    }
+    chatRoomJson['updated_at'] = updateAt;
+
+    // if (room == null) {
+    await db.collection('rooms').doc(chatRoom.id.toString()).set(chatRoomJson);
+
+    for (ChatRoomMember user in chatRoom.roomMembers) {
+      await addUserInRoom(user, chatRoom);
+    }
+    // }
+  }
+
+  Future addUserInRoom(ChatRoomMember user, ChatRoomModel chatRoom) async {
+    final member = await db
+        .collection('roomsUsers')
+        .doc(chatRoom.id.toString())
+        .collection('members')
+        .doc(user.id.toString())
         .get();
 
-    var messages = items?.values ?? [];
-    var matchedMessages = messages
-        .where((element) => element['local_message_id'] == localMessageId);
-    if (matchedMessages.isNotEmpty) {
-      var messageData = matchedMessages.first;
-      messageData['id'] = id;
-      messageData['status'] = status;
-      messageData['created_at'] = createdAt;
+    if (member == null) {
+      await db
+          .collection('roomsUsers')
+          .doc(chatRoom.id.toString())
+          .collection('members')
+          .doc(user.id.toString())
+          .set(user.toJson());
+    }
+  }
 
-      db
-          .collection('rooms')
-          .doc(roomId.toString())
-          .collection('messages')
-          .doc(localMessageId.toString())
-          .set(messageData);
+  Future<List<ChatRoomMember>> getAllUsersInRoom(int roomId) async {
+    final result = await db
+        .collection('roomsUsers')
+        .doc(roomId.toString())
+        .collection('members')
+        .get();
+
+    List dbUsers = (result?.values ?? []).toList();
+
+    List<ChatRoomMember> membersArr = [];
+
+    for (var user in dbUsers) {
+      ChatRoomMember userModel = ChatRoomMember.fromJson(user);
+      membersArr.add(userModel);
+    }
+    return membersArr;
+  }
+
+  saveAsLastMessageInRoom(
+      {required int roomId, required ChatMessageModel chatMessage}) async {
+    var roomData = await db.collection('rooms').doc(roomId.toString()).get();
+    roomData!['lastMessage'] = chatMessage.toJson();
+    roomData['updated_at'] = chatMessage.createdAt;
+
+    db.collection('rooms').doc(roomId.toString()).set(roomData);
+  }
+
+  Future<List<ChatRoomModel>> getAllRooms() async {
+    final items = await db.collection('rooms').get();
+    List<ChatRoomModel> rooms = [];
+
+    List dbRooms = (items?.values ?? []).toList();
+    dbRooms.sort((a, b) {
+      if (b['updated_at'] == null || a['updated_at'] == null) {
+        return 0;
+      }
+      return b['updated_at'].compareTo(a['updated_at']);
+    });
+
+    for (var doc in dbRooms) {
+      ChatRoomModel room =
+          ChatRoomModel.fromJson((doc as Map<String, dynamic>));
+      List<ChatRoomMember> usersInRoom = await getAllUsersInRoom(room.id);
+      room.roomMembers = usersInRoom;
+      if (room.amIMember) {
+        rooms.add(room);
+      }
+    }
+    return rooms;
+  }
+
+  Future<ChatRoomModel?> getRoomById(int roomId) async {
+    final items = await db.collection('rooms').get();
+
+    List dbRooms = (items?.values ?? []).toList();
+    dbRooms = dbRooms.where((element) => element['id'] == roomId).toList();
+
+    if (dbRooms.isNotEmpty) {
+      ChatRoomModel chatRoom =
+          ChatRoomModel.fromJson((dbRooms.first as Map<String, dynamic>));
+      return chatRoom;
+    }
+    return null;
+  }
+
+  saveMessage(ChatRoomModel chatRoom, ChatMessageModel chatMessage) {
+    db
+        .collection('rooms')
+        .doc(chatRoom.id.toString())
+        .collection('messages')
+        .doc(chatMessage.localMessageId.toString())
+        .set(chatMessage.toJson());
+
+    //need to check, not sure why added
+    // getAllMessages(chatRoom.id);
+
+    if (chatMessage.isDateSeparator == false &&
+        chatMessage.messageContentType != MessageContentType.groupAction) {
+      saveAsLastMessageInRoom(roomId: chatRoom.id, chatMessage: chatMessage);
     }
   }
 
@@ -127,6 +203,80 @@ class DBManager {
     return messages;
   }
 
+  updateMessageContent(
+      int roomId, String localMessageId, String content) async {
+    var message = await db
+        .collection('rooms')
+        .doc(roomId.toString())
+        .collection('messages')
+        .doc(localMessageId.toString())
+        .get();
+
+    // var messages = items?.values ?? [];
+    // var matchedMessages = messages
+    //     .where((element) => element['local_message_id'] == localMessageId);
+
+    if (message != null) {
+      // var messageData = matchedMessages.first;
+      message['message'] = content;
+      db
+          .collection('rooms')
+          .doc(roomId.toString())
+          .collection('messages')
+          .doc(localMessageId.toString())
+          .set(message);
+    }
+  }
+
+  updateMessageStatus(
+      {required int roomId,
+      required String localMessageId,
+      required int id,
+      required int status}) async {
+    var message = await db
+        .collection('rooms')
+        .doc(roomId.toString())
+        .collection('messages')
+        .doc(localMessageId.toString())
+        .get();
+
+    if (message != null) {
+      message['id'] = id;
+      message['status'] = status;
+      // message['created_at'] = createdAt;
+
+      db
+          .collection('rooms')
+          .doc(roomId.toString())
+          .collection('messages')
+          .doc(localMessageId.toString())
+          .set(message);
+    }
+  }
+
+  starUnStarMessage(
+      {required int roomId,
+      required String localMessageId,
+      required int isStar}) async {
+    var message = await db
+        .collection('rooms')
+        .doc(roomId.toString())
+        .collection('messages')
+        .doc(localMessageId.toString())
+        .get();
+
+    if (message != null) {
+      message['isStar'] = isStar;
+
+      db
+          .collection('rooms')
+          .doc(roomId.toString())
+          .collection('messages')
+          .doc(localMessageId.toString())
+          .set(message);
+    }
+  }
+
   Future<List<ChatMessageModel>> getMessages(
       {required int roomId, required MessageContentType contentType}) async {
     List<ChatMessageModel> messages = [];
@@ -143,6 +293,22 @@ class DBManager {
             element.messageContentType == contentType &&
             element.messageContent.isNotEmpty)
         .toList();
+    messages.sort((a, b) => a.createdAt.compareTo(b.createdAt));
+    return messages;
+  }
+
+  Future<List<ChatMessageModel>> getStarredMessages(
+      {required int roomId}) async {
+    List<ChatMessageModel> messages = [];
+    final items = await db
+        .collection('rooms')
+        .doc(roomId.toString())
+        .collection('messages')
+        .get();
+    for (var doc in items?.values ?? []) {
+      messages.add(ChatMessageModel.fromJson((doc as Map<String, dynamic>)));
+    }
+    messages = messages.where((element) => element.isStar == 1).toList();
     messages.sort((a, b) => a.createdAt.compareTo(b.createdAt));
     return messages;
   }
@@ -186,7 +352,7 @@ class DBManager {
   }
 
   deleteRoom(ChatRoomModel chatRoom) async {
-    // await db.collection('rooms').doc(chatRoom.id.toString()).delete();
+    await db.collection('rooms').doc(chatRoom.id.toString()).delete();
     List<ChatMessageModel> messages = await getAllMessages(chatRoom.id);
     hardDeleteMessages(chatRoom: chatRoom, messages: messages);
     getIt<FileManager>().deleteRoomMedia(chatRoom);
@@ -237,7 +403,8 @@ class DBManager {
     }
   }
 
-  messagedDeleted({required int chatRoomId, required int messageId}) async {
+  messagedDeletedByOtherUser(
+      {required int chatRoomId, required int messageId}) async {
     final items = await db
         .collection('rooms')
         .doc(chatRoomId.toString())
@@ -248,8 +415,6 @@ class DBManager {
 
     var matchedMessages =
         messages.where((element) => element['id'] == messageId);
-
-    print(matchedMessages.length);
 
     if (matchedMessages.isNotEmpty) {
       var messageData = matchedMessages.first;
@@ -272,23 +437,29 @@ class DBManager {
 
     if (room != null) {
       roomData['roomId'] = roomId;
-      roomData['unreadCont'] = room['unreadCont'] + 1;
+      roomData['unreadCount'] = (room['unreadCount'] ?? 0) + 1;
     } else {
       roomData['roomId'] = roomId;
-      roomData['unreadCont'] = 1;
+      roomData['unreadCount'] = 1;
     }
     db.collection('unreadCountData').doc(roomId.toString()).set(roomData);
   }
 
-  clearUnReadCount({required int roomId}) async {
-    final room =
-        await db.collection('unreadCountData').doc(roomId.toString()).get();
-    Map<String, dynamic> roomData = {};
+  Future<int> roomsWithUnreadMessages() async {
+    final rooms = await db.collection('unreadCountData').get();
 
-    if (room != null) {
-      roomData['roomId'] = roomId;
-      roomData['unreadCont'] = 0;
-      db.collection('unreadCountData').doc(roomId.toString()).set(roomData);
+    return rooms?.length ?? 0;
+  }
+
+  clearUnReadCount({required int roomId}) async {
+    await db.collection('unreadCountData').doc(roomId.toString()).delete();
+  }
+
+  clearAllUnreadCount() async {
+    final items = await db.collection('unreadCountData').get();
+
+    for (Map<String, dynamic> doc in items?.values ?? []) {
+      db.collection('unreadCountData').doc(doc['roomId'].toString()).delete();
     }
   }
 
@@ -300,7 +471,7 @@ class DBManager {
       var matchedRooms =
           mappedRooms.where((element) => element.id == doc['roomId'] as int);
       if (matchedRooms.isNotEmpty) {
-        matchedRooms.first.unreadMessages = doc['unreadCont'] as int;
+        matchedRooms.first.unreadMessages = doc['unreadCount'] as int;
       }
     }
 

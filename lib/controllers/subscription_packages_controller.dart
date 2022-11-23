@@ -14,9 +14,8 @@ class SubscriptionPackageController extends GetxController {
   RxList<ProductDetails> products = <ProductDetails>[].obs;
   RxBool isAvailable = false.obs;
   RxString selectedPurchaseId = ''.obs;
-  RxInt selectedPackage = 0.obs;
 
-  initiate( BuildContext context) {
+  initiate(BuildContext context) {
     AppUtil.checkInternet().then((value) {
       if (value) {
         ApiController().getAllPackages().then((value) {
@@ -32,7 +31,7 @@ class SubscriptionPackageController extends GetxController {
     final Stream<List<PurchaseDetails>> purchaseUpdated =
         InAppPurchase.instance.purchaseStream;
     subscription = purchaseUpdated.listen((purchaseDetailsList) {
-      _listenToPurchaseUpdated(purchaseDetailsList,context);
+      _listenToPurchaseUpdated(purchaseDetailsList, context);
     }, onDone: () {
       subscription.cancel();
     }, onError: (error) {
@@ -59,42 +58,48 @@ class SubscriptionPackageController extends GetxController {
   }
 
   showRewardedAds() {
-    RewardedInterstitialAds(onRewarded: () {
+    RewardedInterstitialAds().show(() {
       ApiController().rewardCoins().then((response) {
         if (response.success == true) {
           getIt<UserProfileManager>().refreshProfile();
         } else {}
       });
-    }).loadInterstitialAd();
+    });
   }
 
-  void _listenToPurchaseUpdated(List<PurchaseDetails> purchaseDetailsList, BuildContext context) {
+  void _listenToPurchaseUpdated(
+      List<PurchaseDetails> purchaseDetailsList, BuildContext context) {
     purchaseDetailsList.forEach((PurchaseDetails purchaseDetails) async {
       if (purchaseDetails.status == PurchaseStatus.pending) {
         //showPending error
       } else {
         if (purchaseDetails.status == PurchaseStatus.error) {
           //show error
-          AppUtil.showToast(context: context,
-              message: LocalizationString.purchaseError, isSuccess: false);
+          AppUtil.showToast(
+              context: context,
+              message: LocalizationString.purchaseError,
+              isSuccess: false);
         } else if (purchaseDetails.status == PurchaseStatus.purchased) {
           //show success
 
           AppUtil.checkInternet().then((value) {
             if (value) {
-              ApiController()
-                  .subscribePackage(
-                      packages[selectedPackage.value].id.toString(),
-                      purchaseDetails.purchaseID!,
-                      packages[selectedPackage.value].price.toString())
-                  .then((response) {
-                AppUtil.showToast(context: context,
-                    message: LocalizationString.coinsAdded, isSuccess: true);
-                getIt<UserProfileManager>().refreshProfile();
-                if (response.success) {
-                  user.value.coins = packages[selectedPackage.value].coin;
-                }
-              });
+              subscribeToPackage(context, purchaseDetails.purchaseID!);
+              // ApiController()
+              //     .subscribePackage(
+              //         packages[selectedPackage.value].id.toString(),
+              //         purchaseDetails.purchaseID!,
+              //         packages[selectedPackage.value].price.toString())
+              //     .then((response) {
+              //   AppUtil.showToast(
+              //       context: context,
+              //       message: LocalizationString.coinsAdded,
+              //       isSuccess: true);
+              //   getIt<UserProfileManager>().refreshProfile();
+              //   if (response.success) {
+              //     user.value.coins = packages[selectedPackage.value].coin;
+              //   }
+              // });
             }
           });
         }
@@ -110,6 +115,56 @@ class SubscriptionPackageController extends GetxController {
         if (purchaseDetails.pendingCompletePurchase) {
           await inAppPurchase.completePurchase(purchaseDetails);
         }
+      }
+    });
+  }
+
+  subscribeToPackage(BuildContext context, String purchaseId) {
+    List<PackageModel> boughtPackages = packages.where((package) {
+      if (Platform.isIOS) {
+        if (package.inAppPurchaseIdIOS == purchaseId) {
+          return true;
+        } else {
+          return false;
+        }
+      } else {
+        if (package.inAppPurchaseIdAndroid == purchaseId) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+    }).toList();
+
+    PackageModel boughtPackage = boughtPackages.first;
+
+    ApiController()
+        .subscribePackage(boughtPackage.id.toString(), purchaseId,
+            boughtPackage.price.toString())
+        .then((response) {
+      AppUtil.showToast(
+          context: context,
+          message: LocalizationString.coinsAdded,
+          isSuccess: true);
+      getIt<UserProfileManager>().refreshProfile();
+      if (response.success) {
+        user.value.coins = boughtPackage.coin;
+      }
+    });
+  }
+
+  subscribeToDummyPackage(BuildContext context, String purchaseId) {
+    ApiController()
+        .subscribePackage(
+            packages[0].id.toString(), purchaseId, packages[0].price.toString())
+        .then((response) {
+      AppUtil.showToast(
+          context: context,
+          message: '${packages[0].coin} ${LocalizationString.coinsAdded}',
+          isSuccess: true);
+      getIt<UserProfileManager>().refreshProfile();
+      if (response.success) {
+        user.value.coins = packages[0].coin;
       }
     });
   }

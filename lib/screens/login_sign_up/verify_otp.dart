@@ -29,12 +29,12 @@ class VerifyOTPScreenState extends State<VerifyOTPScreen> {
           const SizedBox(
             height: 55,
           ),
-          Center(
-              child: Image.asset(
-            'assets/logo.png',
-            width: 80,
-            height: 25,
-          )),
+          // Center(
+          //     child: Image.asset(
+          //   'assets/logo.png',
+          //   width: 80,
+          //   height: 25,
+          // )),
           const SizedBox(
             height: 105,
           ),

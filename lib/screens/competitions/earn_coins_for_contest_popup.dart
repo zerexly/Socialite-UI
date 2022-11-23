@@ -17,54 +17,61 @@ class _EarnCoinForContestPopupState extends State<EarnCoinForContestPopup> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
-      body: Stack(
+      body: Column(
         children: [
-          Container().ripple(() {
-            Navigator.of(context).pop();
-          }),
-          Positioned(
-            child: Center(
-              child: Container(
+          const SizedBox(
+            height: 50,
+          ),
+          backNavigationBar(context: context, title: LocalizationString.coins),
+          divider(context: context).tP8,
+          const Spacer(),
+          Container(
                   height: 450,
                   color: Theme.of(context).backgroundColor,
                   child: Column(
                     children: [
                       Text(
-                        'You need',
-                        style: Theme.of(context).textTheme.titleSmall!.copyWith(color: Theme.of(context).primaryColor),
+                        LocalizationString.youNeed,
+                        style: Theme.of(context).textTheme.titleSmall,
                       ).bp(20),
                       Text(
-                        '${widget.needCoins} Ziocoin',
-                        style: Theme.of(context).textTheme.displaySmall!.copyWith(color: Theme.of(context).primaryColor),
+                        '${widget.needCoins} ${LocalizationString.coins}',
+                        style: Theme.of(context)
+                            .textTheme
+                            .displaySmall!
+                            .copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: Theme.of(context).primaryColor),
                       ).bp(15),
                       Text(
-                        'to join this quest',
-                        style: Theme.of(context).textTheme.titleSmall!.copyWith(color: Theme.of(context).primaryColor),
+                        LocalizationString.toJoinThisCompetition,
+                        style: Theme.of(context).textTheme.titleSmall,
                       ).bp(120),
                       Text(
-                        'Watch Ad to earn Ziocoins',
-                        style: Theme.of(context).textTheme.titleMedium!.copyWith(color: Theme.of(context).primaryColor),
+                        LocalizationString.watchAdsToEarnCoins,
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleMedium!
+                            .copyWith(color: Theme.of(context).primaryColor),
                       ).ripple(() {}).bp(20),
                       FilledButtonType1(
                         isEnabled: true,
-                        enabledTextStyle: Theme.of(context).textTheme.titleSmall!
-                            .copyWith(fontWeight: FontWeight.w900).copyWith(color: Colors.white),
-                        text: 'Buy coins',
+                        enabledTextStyle: Theme.of(context)
+                            .textTheme
+                            .titleSmall!
+                            .copyWith(fontWeight: FontWeight.w900)
+                            .copyWith(color: Colors.white),
+                        text: LocalizationString.buyCoins,
                         onPress: () {
                           Get.back();
-                          Get.to(() => PackagesScreen(handler: (newCoins) {
-                            setState(() {
-                              //coin += newCoins;
-                            });
-                          }));
+                          Get.to(() => const PackagesScreen());
                         },
                       ).hP16
                     ],
                   ).setPadding(top: 70, bottom: 45))
-                  .round(20)
-                  .hP25,
-            ),
-          ),
+              .round(20)
+              .hP25,
+          const Spacer(),
         ],
       ),
     );

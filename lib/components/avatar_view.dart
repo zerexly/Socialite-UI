@@ -32,7 +32,7 @@ class AvatarView extends StatelessWidget {
     return SizedBox(
       height: size ?? 60,
       width: size ?? 60,
-      child: url != null
+      child: url != null && (url ?? '').isNotEmpty
           ? CachedNetworkImage(
               imageUrl: url!,
               fit: BoxFit.cover,
@@ -63,9 +63,14 @@ class UserAvatarView extends StatelessWidget {
   final UserModel user;
   final double? size;
   final VoidCallback? onTapHandler;
+  final bool hideIfLive;
 
   const UserAvatarView(
-      {Key? key, required this.user, this.size = 60, this.onTapHandler})
+      {Key? key,
+      required this.user,
+      this.size = 60,
+      this.onTapHandler,
+      this.hideIfLive = false})
       : super(key: key);
 
   @override
@@ -75,14 +80,14 @@ class UserAvatarView extends StatelessWidget {
       width: size ?? 60,
       child: Stack(
         children: [
-          user.liveCallDetail != null
+          user.liveCallDetail != null && hideIfLive == false
               ? liveUserWidget(size: size ?? 60, context: context).ripple(() {
                   if (onTapHandler != null) {
                     onTapHandler!();
                   }
                 })
               : userPictureView(size: size ?? 60, context: context),
-          user.liveCallDetail == null
+          user.liveCallDetail == null || hideIfLive == true
               ? Positioned(
                   right: 0,
                   bottom: 0,
@@ -113,7 +118,11 @@ class UserAvatarView extends StatelessWidget {
                 child: const CircularProgressIndicator().p16),
             errorWidget: (context, url, error) => SizedBox(
                 height: size, width: size, child: const Icon(Icons.error)),
-          ).round(radius ?? 10)
+          ).borderWithRadius(
+            context: context,
+            value: 1,
+            radius: size / 3,
+            color: Theme.of(context).primaryColor)
         : SizedBox(
             height: double.infinity,
             width: double.infinity,
@@ -121,25 +130,30 @@ class UserAvatarView extends StatelessWidget {
               child: Text(
                 user.getInitials,
                 style: TextStyle(
-                    fontSize: size / 2.3, fontWeight: FontWeight.w600),
-              ).p8,
+                    fontSize:
+                        user.getInitials.length == 1 ? (size / 2) : (size / 3),
+                    fontWeight: FontWeight.w600),
+              ),
             ),
           ).borderWithRadius(
             context: context,
             value: 1,
-            radius: 15,
+            radius: size / 3,
             color: Theme.of(context).primaryColor);
   }
 
   Widget liveUserWidget({required double size, required BuildContext context}) {
     return Stack(
       children: [
-        userPictureView(size: size, radius: 13, context: context)
-            .borderWithRadius(
-                context: context,
-                value: 2,
-                radius: 15,
-                color: Theme.of(context).primaryColor),
+        AvatarGlow(
+          endRadius: 60.0,
+          child: Material(
+            // Replace this child with your own
+            elevation: 8.0,
+            // shape: CircleBorder(),
+            child: userPictureView(size: size, radius: 13, context: context),
+          ),
+        ),
         Positioned(
             right: 0,
             left: 0,

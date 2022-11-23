@@ -1,11 +1,12 @@
-import 'package:flutter/material.dart';
 import 'package:foap/components/place_picker/entities/entities.dart';
+import 'package:foap/helper/common_import.dart';
 
 class NearbyPlaceItem extends StatelessWidget {
   final NearbyPlace nearbyPlace;
   final VoidCallback onTap;
 
-  const NearbyPlaceItem(this.nearbyPlace, this.onTap, {Key? key}) : super(key: key);
+  const NearbyPlaceItem(this.nearbyPlace, this.onTap, {Key? key})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -16,9 +17,11 @@ class NearbyPlaceItem extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           child: Row(
             children: <Widget>[
-              Image.network(nearbyPlace.icon!, width: 16),
+              CachedNetworkImage(imageUrl: nearbyPlace.icon!, width: 16),
               const SizedBox(width: 24),
-              Expanded(child: Text("${nearbyPlace.name}", style: Theme.of(context).textTheme.titleSmall))
+              Expanded(
+                  child: Text("${nearbyPlace.name}",
+                      style: Theme.of(context).textTheme.titleSmall))
             ],
           ),
         ),

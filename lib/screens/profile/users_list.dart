@@ -45,7 +45,7 @@ class UsersListState extends State<UsersList> {
         padding: const EdgeInsets.only(top: 25),
         itemCount: usersList.length,
         itemBuilder: (context, index) {
-          return UserCard(model: usersList[index]);
+          return SelectableUserTile(model: usersList[index]);
         },
         separatorBuilder: (context, index) {
           return Container(

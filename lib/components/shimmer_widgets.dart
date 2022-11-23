@@ -1,4 +1,5 @@
 import 'package:foap/helper/common_import.dart';
+import 'package:get/get.dart';
 
 class HomeScreenShimmer extends StatelessWidget {
   const HomeScreenShimmer({Key? key}) : super(key: key);
@@ -9,9 +10,11 @@ class HomeScreenShimmer extends StatelessWidget {
       padding: const EdgeInsets.only(top: 20),
       itemCount: 20,
       itemBuilder: (ctx, index) {
-        return index == 0
-            ? const StoryAndHighlightsShimmer()
-            : const PostCardShimmer().hP16;
+        return
+            // index == 0
+            //   ? const StoryAndHighlightsShimmer()
+            //   :
+            const PostCardShimmer().hP16;
       },
       separatorBuilder: (ctx, index) {
         return const SizedBox(
@@ -19,6 +22,126 @@ class HomeScreenShimmer extends StatelessWidget {
         );
       },
     );
+  }
+}
+
+class ClubsCategoriesScreenShimmer extends StatelessWidget {
+  const ClubsCategoriesScreenShimmer({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+        height: 100,
+        child: ListView.separated(
+            padding: const EdgeInsets.only(left: 16),
+            scrollDirection: Axis.horizontal,
+            itemCount: 10,
+            itemBuilder: (BuildContext ctx, int index) {
+              return SizedBox(
+                width: 100,
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    Container(
+                      height: Get.height,
+                      width: Get.width,
+                      color: Theme.of(context).cardColor,
+                    ),
+                    Positioned(
+                        bottom: 5,
+                        left: 5,
+                        right: 5,
+                        child: Text(
+                          'Sports',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyMedium!
+                              .copyWith(fontWeight: FontWeight.w700),
+                        ))
+                  ],
+                ),
+              ).round(5).addShimmer(context);
+            },
+            separatorBuilder: (BuildContext ctx, int index) {
+              return const SizedBox(
+                width: 10,
+              );
+            }));
+  }
+}
+
+class ClubsScreenShimmer extends StatelessWidget {
+  const ClubsScreenShimmer({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        const SizedBox(
+          height: 15,
+        ),
+        SizedBox(
+          height: 5 * 350,
+          child: ListView.separated(
+              padding: const EdgeInsets.only(left: 16, right: 16),
+              itemCount: 5,
+              physics: const NeverScrollableScrollPhysics(),
+              itemBuilder: (BuildContext ctx, int index) {
+                return Container(
+                  // width: 250,
+                  height: 320,
+                  color: Theme.of(context).cardColor,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Expanded(
+                        child: Container(
+                          width: Get.width,
+                          height: double.infinity,
+                          color: Theme.of(context).cardColor,
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        'Club name',
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleSmall!
+                            .copyWith(fontWeight: FontWeight.w600),
+                      ).p8,
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            '250k ${LocalizationString.clubMembers}',
+                            style: Theme.of(context).textTheme.bodyLarge,
+                          ),
+                          const Spacer(),
+                          SizedBox(
+                              height: 40,
+                              width: 120,
+                              child: FilledButtonType1(
+                                  text: LocalizationString.join,
+                                  onPress: () {}))
+                        ],
+                      ).setPadding(left: 12, right: 12, bottom: 20)
+                    ],
+                  ),
+                ).round(15).addShimmer(context);
+              },
+              separatorBuilder: (BuildContext ctx, int index) {
+                return const SizedBox(
+                  height: 25,
+                );
+              }),
+        ),
+      ],
+    ).bP16;
   }
 }
 

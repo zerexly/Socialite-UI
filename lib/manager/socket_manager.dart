@@ -17,14 +17,15 @@ class SocketManager {
   BuildContext? buildContext;
   String? channelName;
   String? channelToken;
-  ResCallAcceptModel? resCallAcceptModel;
   List<CachedRequest> cachedRequests = [];
 
-  final ChatController chatController = Get.find();
-  final ChatDetailController chatDetailController = Get.find();
-  final AgoraCallController agoraCallController = Get.find();
-  final AgoraLiveController agoraLiveController = Get.find();
-  final HomeController homeController = Get.find();
+  final ChatHistoryController _chatController = Get.find();
+  final ChatDetailController _chatDetailController = Get.find();
+  final DashboardController _dashboardController = Get.find();
+  final AgoraCallController _agoraCallController = Get.find();
+  final AgoraLiveController _agoraLiveController = Get.find();
+  final HomeController _homeController = Get.find();
+  final TvStreamingController _liveTvStreamingController = Get.find();
 
   StreamSubscription<FGBGType>? subscription;
 
@@ -48,7 +49,10 @@ class SocketManager {
     );
     getIt<VoipController>().listenerSetup();
 
+    // if(_socketInstance!.connected == false){
     _socketInstance?.connect();
+    // }
+
     socketGlobalListeners();
 
     subscription = FGBGEvents.stream.listen((event) {
@@ -81,25 +85,43 @@ class SocketManager {
     _socketInstance?.on(
         SocketConstants.updateMessageStatus, updateMessageStatus);
     _socketInstance?.on(SocketConstants.deleteMessage, onDeleteMessage);
+    _socketInstance?.on(SocketConstants.addUserInChatRoom, addedInRoom);
 
     _socketInstance?.on(SocketConstants.typing, onReceiveTyping);
+    // _socketInstance?.on(SocketConstants.readMessage, readMessage);
+
     _socketInstance?.on(
         SocketConstants.offlineStatusEvent, onOfflineStatusEvent);
     _socketInstance?.on(SocketConstants.onlineStatusEvent, onOnlineStatusEvent);
 
+    _socketInstance?.on(SocketConstants.leaveGroupChat, leaveGroupChat);
+    _socketInstance?.on(SocketConstants.removeUserAdmin, removeUserAdmin);
+    _socketInstance?.on(
+        SocketConstants.removeUserFromGroupChat, removeUserFromGroupChat);
+    _socketInstance?.on(SocketConstants.makeUserAdmin, makeUserAdmin);
+    _socketInstance?.on(
+        SocketConstants.updateChatAccessGroup, updateChatAccessGroup);
+
     // live end point handlers
     _socketInstance?.on(SocketConstants.joinLive, liveJoinedByUser);
-    _socketInstance?.on(SocketConstants.sendMessageInLive, onOnlineStatusEvent);
+    // _socketInstance?.on(SocketConstants.sendMessageInLive, onOnlineStatusEvent);
     _socketInstance?.on(
         SocketConstants.liveCreatedConfirmation, liveCreatedConfirmation);
     _socketInstance?.on(SocketConstants.leaveLive, onUserLeaveLive);
     _socketInstance?.on(SocketConstants.endLive, onLiveEnd);
     _socketInstance?.on(SocketConstants.sendMessageInLive, newMessageInLive);
+
+    // live tv
+    _socketInstance?.on(
+        SocketConstants.sendMessageInLiveTv, onReceiveMessageInLiveTv);
   }
 
 //To Emit Event Into Socket
   bool emit(String event, Map<String, dynamic> data) {
+    print('emiting ${_socketInstance!.connected}');
     if (_socketInstance!.connected == true) {
+      print(
+          'event == $event ========== data = ${jsonDecode(json.encode(data))}');
       _socketInstance?.emit(event, jsonDecode(json.encode(data)));
     } else {
       // print('socked is not connected');
@@ -110,7 +132,6 @@ class SocketManager {
 
 //Get This Event After Successful Connection To Socket
   dynamic onConnect(_) {
-    // print("===> connected socket....................");
     emit(SocketConstants.login, {
       'userId': getIt<UserProfileManager>().user!.id,
       'username': getIt<UserProfileManager>().user!.userName
@@ -135,16 +156,7 @@ class SocketManager {
 
   //Get This Event When your call is created
   void handleOnCallConfirmation(dynamic response) {
-    // print('handleOnCallConfirmation $response');
-    agoraCallController.outgoingCallConfirmationReceived(response);
-
-    // if (response != null) {
-    //   final data = ResCallRequestModel.fromJson(response);
-    //   Get.to(() => PickUpScreen(
-    //       resCallRequestModel: data,
-    //       resCallAcceptModel: ResCallAcceptModel(),
-    //       isForOutGoing: false));
-    // }
+    _agoraCallController.outgoingCallConfirmationReceived(response);
   }
 
 //Get This Event When you Received Call From Other User
@@ -163,74 +175,159 @@ class SocketManager {
 
 //Get This Event When Other User Accepts/decline/completed Your Call
   void handleOnCallStatusUpdate(dynamic response) async {
-    agoraCallController.callStatusUpdateReceived(response);
-    // if (response != null) {
-    //   final data = ResCallAcceptModel.fromJson(response);
-    //   resCallAcceptModel = data;
-    //   channelName = data.channel;
-    //   channelToken = data.token;
-    //
-    //   Get.to(() => VideoCallingScreen(
-    //         channelName: data.channel!,
-    //         token: data.token!,
-    //         resCallAcceptModel: data,
-    //         resCallRequestModel: ResCallRequestModel(),
-    //         isForOutGoing: true,
-    //       ));
-    // }
+    _agoraCallController.callStatusUpdateReceived(response);
   }
 
 //******************* Chat ****************************//
 
-  void onReceiveMessage(dynamic response) {
+  void addedInRoom(dynamic response) {
+    response['action'] =
+        1; // 1 for added, 2 for removed , 3 for made admin , 4 for removed from admin, 5 left , 6 removed from group
+    Map<String, dynamic> chatMessage = {};
+    chatMessage['id'] = 0;
+    chatMessage['local_message_id'] = randomId();
+    chatMessage['room'] = response['room'];
+    chatMessage['messageType'] = 100;
+    chatMessage['message'] = jsonEncode(response);
+    chatMessage['created_by'] = response['userIdActiondBy'];
+    chatMessage['created_at'] = response['created_at'];
+
+    ChatMessageModel message = ChatMessageModel.fromJson(chatMessage);
+    _chatController.newMessageReceived(message);
+    _chatDetailController.newMessageReceived(message);
+
+    // getIt<SocketManager>().emit(SocketConstants.addUserInChatRoom, {
+    //   'userId': '${getIt<UserProfileManager>().user!.id}',
+    //   'room': response['room'].toString()
+    // });
+  }
+
+  void onReceiveMessage(dynamic response) async {
     ChatMessageModel message = ChatMessageModel.fromJson(response);
-    chatController.newMessageReceived(message);
-    chatDetailController.newMessageReceived(message);
+
+    await _chatDetailController.newMessageReceived(message);
+    _chatController.newMessageReceived(message);
+
+    int roomsWithUnreadMessageCount =
+        await getIt<DBManager>().roomsWithUnreadMessages();
+    _dashboardController.updateUnreadMessageCount(roomsWithUnreadMessageCount);
   }
 
   void onDeleteMessage(dynamic response) {
-    print('delete message notification ${response}');
-
     int deleteScope = response['deleteScope'] as int;
     int roomId = response['room'] as int;
     int messageId = response['id'] as int;
 
     if (deleteScope == 2) {
-      chatDetailController.messagedDeleted(
+      _chatDetailController.messagedDeleted(
           messageId: messageId, roomId: roomId);
     }
   }
 
   void onReceiveTyping(dynamic response) {
     var userName = response['username'];
+    var roomId = response['room'];
 
-    chatController.userTypingStatusChanged(userName: userName, status: true);
-    chatDetailController.userTypingStatusChanged(
-        userName: userName, status: true);
-
-    // ChatMessageModel message = ChatMessageModel.fromJson(response);
-    // chatController.newMessageReceived(message);
-    // chatDetailController.newMessageReceived(message);
+    _chatController.userTypingStatusChanged(
+        userName: userName, roomId: roomId, status: true);
+    _chatDetailController.userTypingStatusChanged(
+        roomId: roomId, userName: userName, status: true);
   }
 
   void updateMessageStatus(dynamic response) {
-    chatDetailController.messageUpdateReceived(response);
+    _chatDetailController.messageUpdateReceived(response);
   }
 
   void onOfflineStatusEvent(dynamic response) {
     var userId = response['userId'];
 
-    chatController.userAvailabilityStatusChange(
+    _chatController.userAvailabilityStatusChange(
         userId: userId, isOnline: false);
-    chatDetailController.userAvailabilityStatusChange(
+    _chatDetailController.userAvailabilityStatusChange(
         userId: userId, isOnline: false);
   }
 
   void onOnlineStatusEvent(dynamic response) {
     var userId = response['userId'];
-    chatController.userAvailabilityStatusChange(userId: userId, isOnline: true);
-    chatDetailController.userAvailabilityStatusChange(
+    _chatController.userAvailabilityStatusChange(
         userId: userId, isOnline: true);
+    _chatDetailController.userAvailabilityStatusChange(
+        userId: userId, isOnline: true);
+  }
+
+  // group chat
+  leaveGroupChat(dynamic response) {
+    response['action'] =
+        5; // 1 for added, 2 for removed , 3 for made admin ,4 remove form admins, 5 left
+    Map<String, dynamic> chatMessage = {};
+    chatMessage['id'] = 0;
+    chatMessage['local_message_id'] = randomId();
+    chatMessage['room'] = response['room'];
+    chatMessage['messageType'] = 100;
+    chatMessage['message'] = jsonEncode(response);
+    chatMessage['created_by'] = response['userId'];
+    chatMessage['created_at'] = response['created_at'];
+
+    ChatMessageModel message = ChatMessageModel.fromJson(chatMessage);
+    _chatController.newMessageReceived(message);
+    _chatDetailController.newMessageReceived(message);
+  }
+
+  removeUserAdmin(dynamic response) {
+    response['action'] =
+        4; // 1 for added, 2 for removed , 3 for made admin ,4 left
+    Map<String, dynamic> chatMessage = {};
+    chatMessage['id'] = 0;
+    chatMessage['local_message_id'] = randomId();
+    chatMessage['room'] = response['room'];
+    chatMessage['messageType'] = 100;
+    chatMessage['message'] = jsonEncode(response);
+    chatMessage['created_by'] = response['userIdActiondBy'];
+    chatMessage['created_at'] = response['created_at'];
+
+    ChatMessageModel message = ChatMessageModel.fromJson(chatMessage);
+    _chatController.newMessageReceived(message);
+    _chatDetailController.newMessageReceived(message);
+  }
+
+  removeUserFromGroupChat(dynamic response) {
+    response['action'] =
+        2; // 1 for added, 2 for removed , 3 for made admin ,4 left
+    Map<String, dynamic> chatMessage = {};
+    chatMessage['id'] = 0;
+    chatMessage['local_message_id'] = randomId();
+    chatMessage['room'] = response['room'];
+    chatMessage['messageType'] = 100;
+    chatMessage['message'] = jsonEncode(response);
+    chatMessage['created_by'] = response['userIdActiondBy'];
+    chatMessage['created_at'] = response['created_at'];
+
+    ChatMessageModel message = ChatMessageModel.fromJson(chatMessage);
+    _chatController.newMessageReceived(message);
+    _chatDetailController.newMessageReceived(message);
+  }
+
+  makeUserAdmin(dynamic response) {
+    response['action'] =
+        3; // 1 for added, 2 for removed , 3 for made admin ,4 left
+    Map<String, dynamic> chatMessage = {};
+    chatMessage['id'] = 0;
+    chatMessage['local_message_id'] = randomId();
+    chatMessage['room'] = response['room'];
+    chatMessage['messageType'] = 100;
+    chatMessage['message'] = jsonEncode(response);
+    chatMessage['created_by'] = response['userIdActiondBy'];
+    chatMessage['created_at'] = response['created_at'];
+
+    ChatMessageModel message = ChatMessageModel.fromJson(chatMessage);
+    _chatController.newMessageReceived(message);
+    _chatDetailController.newMessageReceived(message);
+  }
+
+  updateChatAccessGroup(dynamic response) {
+    _chatDetailController.updatedChatGroupAccessStatus(
+        chatRoomId: response['room'],
+        chatAccessGroup: response['chatAccessGroup']);
   }
 
   // live
@@ -238,25 +335,33 @@ class SocketManager {
   void liveJoinedByUser(dynamic response) {
     int userId = response['userId'];
     ApiController().getOtherUser(userId.toString()).then((response) {
-      agoraLiveController.onNewUserJoined(response.user!);
+      _agoraLiveController.onNewUserJoined(response.user!);
     });
   }
 
   void newMessageInLive(dynamic response) {
     ChatMessageModel message = ChatMessageModel.fromJson(response);
-    agoraLiveController.onNewMessageReceived(message);
+    _agoraLiveController.onNewMessageReceived(message);
   }
 
   void liveCreatedConfirmation(dynamic response) {
-    agoraLiveController.liveCreatedConfirmation(response);
+    _agoraLiveController.liveCreatedConfirmation(response);
   }
 
   void onUserLeaveLive(dynamic response) {
-    agoraLiveController.onUserLeave(response['userId']);
+    _agoraLiveController.onUserLeave(response['userId']);
   }
 
   void onLiveEnd(dynamic response) {
-    homeController.liveUsersUpdated();
-    agoraLiveController.onLiveEnd(response['liveCallId']);
+    _homeController.liveUsersUpdated();
+    _agoraLiveController.onLiveEnd(response['liveCallId']);
+  }
+
+  // live tv
+
+  void onReceiveMessageInLiveTv(dynamic response) async {
+    ChatMessageModel message = ChatMessageModel.fromJson(response);
+
+    await _liveTvStreamingController.newMessageReceived(message);
   }
 }

@@ -2,67 +2,45 @@ import 'package:foap/helper/common_import.dart';
 import 'package:get/get.dart';
 
 class OtherUserProfile extends StatefulWidget {
-  final int? userId;
+  final int userId;
 
-  // final UserModel? user;
-
-  const OtherUserProfile({Key? key, this.userId}) : super(key: key);
+  const OtherUserProfile({Key? key, required this.userId}) : super(key: key);
 
   @override
   OtherUserProfileState createState() => OtherUserProfileState();
 }
 
 class OtherUserProfileState extends State<OtherUserProfile> {
-  final ProfileController profileController = Get.find();
-  final HighlightsController highlightsController = Get.find();
-
-  int? userId;
+  final ProfileController _profileController = Get.find();
+  final HighlightsController _highlightsController = Get.find();
+  final ChatDetailController _chatDetailController = Get.find();
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      profileController.clear();
+      _profileController.clear();
       initialLoad();
     });
   }
 
   initialLoad() {
-    PostSearchQuery query = PostSearchQuery();
-
-    query.userId = widget.userId!;
-    query.isRecent = 1;
-
-    userId = widget.userId!;
-
-    MentionedPostSearchQuery mentionedPostSearchQuery =
-        MentionedPostSearchQuery(userId: userId!);
-
-    profileController.setMentionedPostSearchQuery(mentionedPostSearchQuery);
-    profileController.setPostSearchQuery(query);
-    profileController.getOtherUserDetail(
-        userId: widget.userId!, context: context);
-    highlightsController.getHighlights(userId: widget.userId!);
+    _profileController.getMyMentions(widget.userId);
+    _profileController.getPosts(widget.userId);
+    _profileController.getOtherUserDetail(
+        userId: widget.userId, context: context);
+    _highlightsController.getHighlights(userId: widget.userId);
   }
 
   @override
   void didUpdateWidget(covariant OtherUserProfile oldWidget) {
     super.didUpdateWidget(oldWidget);
-    PostSearchQuery query = PostSearchQuery();
-
-    query.userId = widget.userId!;
-    query.isRecent = 1;
-
-    MentionedPostSearchQuery mentionedPostSearchQuery =
-        MentionedPostSearchQuery(userId: userId!);
-    query.userId = userId!;
-    profileController.setMentionedPostSearchQuery(mentionedPostSearchQuery);
-    profileController.setPostSearchQuery(query);
+    initialLoad();
   }
 
   @override
   void dispose() {
-    profileController.clear();
+    _profileController.clear();
     super.dispose();
   }
 
@@ -70,238 +48,342 @@ class OtherUserProfileState extends State<OtherUserProfile> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Theme.of(context).backgroundColor,
-        body: Column(
-          children: [
-            const SizedBox(
-              height: 50,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                ThemeIconWidget(
-                  ThemeIcon.backArrow,
-                  size: 20,
-                  color: Theme.of(context).iconTheme.color,
-                ).ripple(() {
-                  Get.back();
-                }),
-                Obx(() => Text(
-                      profileController.user.value.userName,
-                      style: Theme.of(context)
-                          .textTheme
-                          .titleMedium!
-                          .copyWith(fontWeight: FontWeight.w600),
-                    )),
-                SizedBox(
-                  height: 25,
-                  width: 20,
-                  child: ThemeIconWidget(
-                    ThemeIcon.more,
-                    color: Theme.of(context).iconTheme.color,
-                    size: 20,
-                  ).ripple(() {
-                    openActionPopup();
-                  }),
-                )
-              ],
-            ).setPadding(left: 16, right: 16, top: 8, bottom: 16),
-            divider(context: context).vP8,
-            Obx(() => profileController.noDataFound.value == false
-                ? Expanded(
-                    child: ListView(
-                      padding: const EdgeInsets.only(top: 10),
-                      children: [
-                        addProfileView(),
-                        // const SizedBox(height: 20),
-                        addHighlightsView(),
-                        const SizedBox(height: 20),
-                        segmentView(),
-                        addPhotoGrid(),
-                        const SizedBox(height: 50),
-                      ],
-                    ),
-                  )
-                : Expanded(child: noUserFound(context))),
-          ],
+        body: Stack(
+          children: [profileInfoView(), giftSendingOverlay()],
         ));
+  }
+
+  Widget profileInfoView() {
+    return Column(
+      children: [
+        const SizedBox(
+          height: 50,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            ThemeIconWidget(
+              ThemeIcon.backArrow,
+              size: 20,
+              color: Theme.of(context).iconTheme.color,
+            ).ripple(() {
+              Get.back();
+            }),
+            Obx(() => _profileController.user.value != null
+                ? Text(
+                    _profileController.user.value!.userName,
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyLarge!
+                        .copyWith(fontWeight: FontWeight.w600),
+                  )
+                : Container()),
+            Obx(() => _profileController.user.value?.isMe == false
+                ? SizedBox(
+                    height: 25,
+                    width: 20,
+                    child: ThemeIconWidget(
+                      ThemeIcon.more,
+                      color: Theme.of(context).iconTheme.color,
+                      size: 20,
+                    ).ripple(() {
+                      openActionPopup();
+                    }),
+                  )
+                : Container())
+          ],
+        ).setPadding(left: 16, right: 16, top: 8, bottom: 16),
+        divider(context: context).vP8,
+        Obx(() => _profileController.noDataFound.value == false
+            ? Expanded(
+                child: ListView(
+                  padding: const EdgeInsets.only(top: 10),
+                  children: [
+                    const SizedBox(height: 20),
+                    addProfileView(),
+                    const SizedBox(height: 10),
+                    addHighlightsView(),
+                    const SizedBox(height: 50),
+                    segmentView(),
+                    addPhotoGrid(),
+                    const SizedBox(height: 50),
+                  ],
+                ),
+              )
+            : Expanded(child: noUserFound(context))),
+      ],
+    );
+  }
+
+  Widget giftSendingOverlay() {
+    return Obx(() => _profileController.sendingGift.value == null
+        ? Container()
+        : Positioned(
+            left: 0,
+            top: 0,
+            right: 0,
+            bottom: 0,
+            child: Pulse(
+              duration: const Duration(milliseconds: 500),
+              child: Center(
+                child: Image.network(
+                  _profileController.sendingGift.value!.logo,
+                  height: 80,
+                  width: 80,
+                  fit: BoxFit.contain,
+                ),
+              ),
+            )));
   }
 
   addProfileView() {
     return GetBuilder<ProfileController>(
-        init: profileController,
+        init: _profileController,
         builder: (ctx) {
-          userId ??= profileController.user.value.id;
-
-          return Column(
-              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                UserAvatarView(
-                    user: profileController.user.value,
-                    size: 65,
-                    onTapHandler: () {
-                      //open live
-                    }),
-                const SizedBox(
-                  height: 10,
-                ),
-                Text(
-                  profileController.user.value.userName,
-                  style: Theme.of(context)
-                      .textTheme
-                      .titleLarge!
-                      .copyWith(fontWeight: FontWeight.w800),
-                ).bP4,
-                profileController.user.value.country != null
-                    ? Text(
-                        '${profileController.user.value.country},${profileController.user.value.city}',
-                        style: Theme.of(context)
-                            .textTheme
-                            .titleMedium,
-                      )
-                    : Container(),
-                const SizedBox(
-                  height: 40,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+          return _profileController.user.value != null
+              ? Column(
                   children: [
-                    SizedBox(
-                      width: 80,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            profileController.user.value.totalPost.toString(),
-                            style: Theme.of(context)
-                                .textTheme
-                                .displaySmall!
-                                .copyWith(fontWeight: FontWeight.w600),
-                          ).bP16,
-                          Text(
-                            LocalizationString.posts,
-                            style: Theme.of(context).textTheme.titleMedium,
-                          ),
-                        ],
-                      ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            UserAvatarView(
+                                user: _profileController.user.value!,
+                                size: 65,
+                                onTapHandler: () {
+                                  //open live
+                                }),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  _profileController.user.value!.userName,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleSmall!
+                                      .copyWith(fontWeight: FontWeight.w600),
+                                ),
+                                if (_profileController.user.value!.isVerified)
+                                  Row(
+                                    children: [
+                                      const SizedBox(
+                                        width: 5,
+                                      ),
+                                      Image.asset(
+                                        'assets/verified.png',
+                                        height: 15,
+                                        width: 15,
+                                      )
+                                    ],
+                                  ),
+                              ],
+                            ).bP4,
+                            _profileController.user.value?.country != null
+                                ? Text(
+                                    '${_profileController.user.value!.country},${_profileController.user.value!.city}',
+                                    style:
+                                        Theme.of(context).textTheme.bodyMedium,
+                                  )
+                                : Container(),
+                          ],
+                        ),
+                      ],
                     ),
-                    const Spacer(),
-                    SizedBox(
-                      width: 80,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            '${profileController.user.value.totalFollower}',
-                            style: Theme.of(context)
-                                .textTheme
-                                .displaySmall!
-                                .copyWith(fontWeight: FontWeight.w600),
-                          ).bP16,
-                          Text(
-                            LocalizationString.followers,
-                            style: Theme.of(context).textTheme.titleMedium,
-                          ),
-                        ],
-                      ).ripple(() {
-                        List<UserModel> followers = profileController.followers;
-
-                        if (followers.isNotEmpty) {
-                          Get.to(() => const FollowerFollowingList(
-                              isFollowersList: true));
-                        }
-                      }),
+                    const SizedBox(
+                      height: 20,
                     ),
-                    const Spacer(),
-                    SizedBox(
-                      width: 80,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            '${profileController.user.value.totalFollowing}',
-                            style: Theme.of(context)
-                                .textTheme
-                                .displaySmall!
-                                .copyWith(fontWeight: FontWeight.w600),
-                          ).bP16,
-                          Text(
-                            LocalizationString.following,
-                            style: Theme.of(context).textTheme.titleMedium,
-                          ),
-                        ],
-                      ).ripple(() {
-                        List<UserModel> following = profileController.following;
-
-                        if (following.isNotEmpty) {
-                          Get.to(() => const FollowerFollowingList(
-                              isFollowersList: false));
-                        }
-                      }),
+                    statsView(),
+                    const SizedBox(
+                      height: 40,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        // const Spacer(),
+                        Expanded(
+                          child: FilledButtonType1(
+                              height: 35,
+                              enabledBackgroundColor: _profileController
+                                      .user.value!.isFollowing
+                                  ? Theme.of(context).primaryColor
+                                  : Theme.of(context).primaryColor.lighten(0.1),
+                              enabledTextStyle:
+                                  Theme.of(context).textTheme.bodyLarge,
+                              text: _profileController.user.value!.isFollowing
+                                  ? LocalizationString.unFollow
+                                  : _profileController.user.value!.isFollower
+                                      ? LocalizationString.followBack
+                                          .toUpperCase()
+                                      : LocalizationString.follow.toUpperCase(),
+                              onPress: () {
+                                _profileController.followUnFollowUserApi(
+                                    context: context,
+                                    isFollowing: !_profileController
+                                        .user.value!.isFollowing);
+                              }),
+                        ),
+                        // const Spacer(),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.20,
+                            child: FilledButtonType1(
+                                height: 35,
+                                enabledBackgroundColor:
+                                    Theme.of(context).disabledColor,
+                                enabledTextStyle:
+                                    Theme.of(context).textTheme.bodyLarge,
+                                text: LocalizationString.chat,
+                                onPress: () {
+                                  EasyLoading.show(
+                                      status: LocalizationString.loading);
+                                  _chatDetailController.getChatRoomWithUser(
+                                      _profileController.user.value!.id,
+                                      (room) {
+                                    EasyLoading.dismiss();
+                                    Get.to(() => ChatDetail(
+                                          chatRoom: room,
+                                        ));
+                                  });
+                                })),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.25,
+                            child: FilledButtonType1(
+                                height: 35,
+                                enabledBackgroundColor:
+                                    Theme.of(context).disabledColor,
+                                enabledTextStyle:
+                                    Theme.of(context).textTheme.bodyLarge,
+                                text: LocalizationString.sendGift,
+                                onPress: () {
+                                  showModalBottomSheet<void>(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return FractionallySizedBox(
+                                            heightFactor: 0.8,
+                                            child: GiftsPageView(
+                                                giftSelectedCompletion: (gift) {
+                                              Get.back();
+                                              _profileController.sendGift(gift);
+                                            }));
+                                      });
+                                })),
+                      ],
                     )
                   ],
-                ).hP16,
-                const SizedBox(
-                  height: 40,
-                ),
-                Row(
-                  children: [
-                    const Spacer(),
-                    BorderButtonType1(
-                        height: 30,
-                        backgroundColor:
-                            profileController.user.value.isFollowing == 1
-                                ? Theme.of(context).primaryColor
-                                : Theme.of(context).cardColor,
-                        width: MediaQuery.of(context).size.width * 0.3,
-                        textStyle: Theme.of(context)
-                            .textTheme
-                            .titleSmall!
-                            .copyWith(fontWeight: FontWeight.w600),
-                        text: profileController.user.value.isFollowing == 1
-                            ? LocalizationString.unFollow.toUpperCase()
-                            : profileController.user.value.isFollower == 1
-                                ? LocalizationString.followBack.toUpperCase()
-                                : LocalizationString.follow.toUpperCase(),
-                        onPress: () {
-                          profileController.followUnFollowUserApi(
-                              context: context,
-                              isFollowing:
-                                  profileController.user.value.isFollowing == 1
-                                      ? 0
-                                      : 1);
-                        }),
-                    const Spacer(),
-                    BorderButtonType1(
-                        height: 30,
-                        width: MediaQuery.of(context).size.width * 0.3,
-                        textStyle: Theme.of(context)
-                            .textTheme
-                            .titleSmall!
-                            .copyWith(fontWeight: FontWeight.w600),
-                        text: LocalizationString.message.toUpperCase(),
-                        onPress: () {
-                          Get.to(() => ChatDetail(
-                                opponent: profileController.user.value,
-                                chatRoom: null,
-                              ));
-                        }),
-                    const Spacer(),
-                  ],
-                )
-              ]).p16;
+                ).hP16
+              : Container();
         });
+  }
+
+  statsView() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              _profileController.user.value!.totalPost.toString(),
+              style: Theme.of(context).textTheme.titleLarge,
+            ).bP8,
+            Text(
+              LocalizationString.posts,
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+          ],
+        ),
+        // const SizedBox(
+        //   width: 20,
+        // ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              '${_profileController.user.value!.totalFollower}',
+              style: Theme.of(context).textTheme.titleLarge,
+            ).bP8,
+            Text(
+              LocalizationString.followers,
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+          ],
+        ).ripple(() {
+          if (_profileController.user.value!.totalFollower > 0) {
+            Get.to(() => FollowerFollowingList(
+                      isFollowersList: true,
+                      userId: widget.userId,
+                    ))!
+                .then((value) {
+              initialLoad();
+            });
+          }
+        }),
+        // const SizedBox(
+        //   width: 20,
+        // ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              '${_profileController.user.value!.totalFollowing}',
+              style: Theme.of(context).textTheme.titleLarge,
+            ).bP8,
+            Text(
+              LocalizationString.following,
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+          ],
+        ).ripple(() {
+          if (_profileController.user.value!.totalFollowing > 0) {
+            Get.to(() => FollowerFollowingList(
+                      isFollowersList: false,
+                      userId: widget.userId,
+                    ))!
+                .then((value) {
+              initialLoad();
+            });
+          }
+        }),
+        _profileController.user.value == null
+            ? Container()
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    _profileController
+                        .user.value!.giftSummary!.totalCoin.formatNumber
+                        .toString(),
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ).bP8,
+                  Text(
+                    LocalizationString.coins,
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ],
+              ),
+      ],
+    ).p16.shadow(context: context);
   }
 
   addHighlightsView() {
     return GetBuilder<HighlightsController>(
-      init: highlightsController,
+      init: _highlightsController,
       builder: (ctx) {
-        return highlightsController.isLoading
+        return _highlightsController.isLoading
             ? const StoryAndHighlightsShimmer().vP25
-            : highlightsController.highlights.isNotEmpty
+            : _highlightsController.highlights.isNotEmpty
                 ? HighlightsBar(
-                    highlights: highlightsController.highlights,
+                    highlights: _highlightsController.highlights,
                     addHighlightCallback: () {
                       Get.to(() => const ChooseStoryForHighlights());
                     },
@@ -316,16 +398,17 @@ class OtherUserProfileState extends State<OtherUserProfile> {
 
   Widget segmentView() {
     return HorizontalSegmentBar(
-        textStyle: Theme.of(context).textTheme.titleMedium,
+        textStyle: Theme.of(context).textTheme.bodyLarge,
         selectedTextStyle: Theme.of(context)
             .textTheme
-            .titleMedium!
+            .bodyLarge!
             .copyWith(color: Theme.of(context).primaryColor)
             .copyWith(fontWeight: FontWeight.w900),
         width: MediaQuery.of(context).size.width,
         onSegmentChange: (segment) {
-          profileController.segmentChanged(segment);
+          _profileController.segmentChanged(segment);
         },
+        hideHighlightIndicator: false,
         segments: [
           LocalizationString.posts,
           LocalizationString.mentions,
@@ -334,29 +417,29 @@ class OtherUserProfileState extends State<OtherUserProfile> {
 
   addPhotoGrid() {
     return GetBuilder<ProfileController>(
-        init: profileController,
+        init: _profileController,
         builder: (ctx) {
           ScrollController scrollController = ScrollController();
           scrollController.addListener(() {
             if (scrollController.position.maxScrollExtent ==
                 scrollController.position.pixels) {
-              if (profileController.selectedSegment.value == 0) {
-                if (!profileController.isLoadingPosts) {
-                  profileController.getPosts();
+              if (_profileController.selectedSegment.value == 0) {
+                if (!_profileController.isLoadingPosts) {
+                  _profileController.getPosts(widget.userId);
                 }
               } else {
-                if (!profileController.mentionsPostsIsLoading) {
-                  profileController.getMyMentions();
+                if (!_profileController.mentionsPostsIsLoading) {
+                  _profileController.getMyMentions(widget.userId);
                 }
               }
             }
           });
 
-          List<PostModel> posts = profileController.selectedSegment.value == 0
-              ? profileController.posts
-              : profileController.mentions;
+          List<PostModel> posts = _profileController.selectedSegment.value == 0
+              ? _profileController.posts
+              : _profileController.mentions;
 
-          return profileController.isLoadingPosts
+          return _profileController.isLoadingPosts
               ? const PostBoxShimmer()
               : MasonryGridView.count(
                   controller: scrollController,
@@ -373,19 +456,30 @@ class OtherUserProfileState extends State<OtherUserProfile> {
                         imageUrl: posts[index].gallery.first.thumbnail(),
                         fit: BoxFit.cover,
                         placeholder: (context, url) =>
-                            AppUtil.addProgressIndicator(context),
+                            AppUtil.addProgressIndicator(context, 100),
                         errorWidget: (context, url, error) => const Icon(
                           Icons.error,
                         ),
                       ).round(10),
                     ).ripple(() {
                       Get.to(() => Posts(
-                            posts: List.from(posts),
-                            index: index,
-                            source: profileController.selectedSegment.value == 0
-                                ? PostSource.posts
-                                : PostSource.mentions,
-                          ));
+                                posts: List.from(posts),
+                                index: index,
+                                source:
+                                    _profileController.selectedSegment.value ==
+                                            0
+                                        ? PostSource.posts
+                                        : PostSource.mentions,
+                                page:
+                                    _profileController.selectedSegment.value ==
+                                            0
+                                        ? _profileController.postsCurrentPage
+                                        : _profileController.mentionsPostPage,
+                                totalPages: _profileController.totalPages,
+                              ))!
+                          .then((value) {
+                        initialLoad();
+                      });
                     }),
                     posts[index].gallery.length == 1
                         ? posts[index].gallery.first.isVideoPost() == true
@@ -408,8 +502,8 @@ class OtherUserProfileState extends State<OtherUserProfile> {
                               size: 30,
                             ))
                   ]),
-                  mainAxisSpacing: 4.0,
-                  crossAxisSpacing: 4.0,
+                  mainAxisSpacing: 8.0,
+                  crossAxisSpacing: 8.0,
                 ).hP16;
         });
   }
@@ -424,7 +518,7 @@ class OtherUserProfileState extends State<OtherUserProfile> {
                     onTap: () async {
                       Get.back();
 
-                      profileController.reportUser(context);
+                      _profileController.reportUser(context);
                     }),
                 divider(context: context),
                 ListTile(
@@ -432,7 +526,7 @@ class OtherUserProfileState extends State<OtherUserProfile> {
                     onTap: () async {
                       Get.back();
 
-                      profileController.blockUser(context);
+                      _profileController.blockUser(context);
                     }),
                 divider(context: context),
                 ListTile(

@@ -2,131 +2,170 @@ import 'package:foap/helper/common_import.dart';
 import 'package:get/get.dart';
 
 class HomeController extends GetxController {
-  final AgoraLiveController agoraLiveController = Get.find();
-  List<UserModel> followingUsers = [];
   RxList<PostModel> posts = <PostModel>[].obs;
   RxList<StoryModel> stories = <StoryModel>[].obs;
   RxList<UserModel> liveUsers = <UserModel>[].obs;
 
-  bool isLoading = false;
+  RxList<BannerAd> bannerAds = <BannerAd>[].obs;
 
   RxInt currentVisibleVideoId = 0.obs;
-  Map<int, double> mediaVisibilityInfo = {};
-  PostSearchQuery? postSearchQuery;
+  Map<int, double> _mediaVisibilityInfo = {};
+  PostSearchQuery postSearchQuery = PostSearchQuery();
 
-  bool isLoadingPosts = false;
-  int postsCurrentPage = 1;
-  bool canLoadMorePosts = true;
-  bool isLoadingStories = false;
+  RxBool isRefreshingPosts = false.obs;
+  RxBool isRefreshingStories = false.obs;
 
-  int currentPage = 1;
-  bool canLoadMore = true;
+  RxInt categoryIndex = 0.obs;
+
+  int _postsCurrentPage = 1;
+  bool _canLoadMorePosts = true;
 
   clear() {
-    currentPage = 0;
-    canLoadMore = false;
     stories.clear();
     liveUsers.clear();
-    // update();
   }
 
-  setPostSearchQuery(PostSearchQuery query) {
-    if (query != postSearchQuery) {
-      clear();
+  clearPosts() {
+    _postsCurrentPage = 1;
+    _canLoadMorePosts = true;
+    posts.clear();
+  }
+
+  categoryIndexChanged({required int index, required VoidCallback callback}) {
+    if (index != categoryIndex.value) {
+      categoryIndex.value = index;
+      clearPosts();
+      postSearchQuery = PostSearchQuery();
+
+      if (index == 1) {
+        postSearchQuery.isFollowing = 1;
+        postSearchQuery.isRecent = 1;
+      }
+      // else if (index == 2) {
+      //   postSearchQuery.isPopular = 1;
+      // }
+      else if (index == 2) {
+        postSearchQuery.isRecent = 1;
+      } else if (index == 3) {
+        postSearchQuery.isMine = 1;
+        postSearchQuery.isRecent = 1;
+      } else {
+        postSearchQuery.isRecent = 1;
+      }
+
+      getPosts(isRecent: false, callback: callback);
     }
-    update();
-    postSearchQuery = query;
-    getPosts();
   }
 
-  void getPosts() async {
-    if (canLoadMorePosts == true) {
+  removePostFromList(PostModel post) {
+    posts.removeWhere((element) => element.id == post.id);
+    posts.refresh();
+  }
+
+  void addNewPost(PostModel post) {
+    posts.insert(0, post);
+    posts.refresh();
+  }
+
+  void getPosts(
+      {required bool? isRecent, required VoidCallback callback}) async {
+    if (_canLoadMorePosts == true) {
+      // for (int i = 0; i < 5; i++) {
+      //   BannerAdsHelper().loadBannerAds((ad) {
+      //     bannerAds.add(ad);
+      //     bannerAds.refresh();
+      //   });
+      // }
+
+      if (isRecent == true) {
+        postSearchQuery.isRecent = 1;
+      }
+
+      if (_postsCurrentPage == 1) {
+        isRefreshingPosts.value = true;
+      }
+
       AppUtil.checkInternet().then((value) async {
         if (value) {
-          isLoadingPosts = true;
           ApiController()
               .getPosts(
-                  userId: postSearchQuery!.userId,
-                  isPopular: postSearchQuery!.isPopular,
-                  isFollowing: postSearchQuery!.isFollowing,
-                  isSold: postSearchQuery!.isSold,
-                  isMine: postSearchQuery!.isMine,
-                  isRecent: postSearchQuery!.isRecent,
-                  title: postSearchQuery!.title,
-                  hashtag: postSearchQuery!.hashTag,
-                  page: postsCurrentPage)
+                  userId: postSearchQuery.userId,
+                  isPopular: postSearchQuery.isPopular,
+                  isFollowing: postSearchQuery.isFollowing,
+                  isSold: postSearchQuery.isSold,
+                  isMine: postSearchQuery.isMine,
+                  isRecent: postSearchQuery.isRecent,
+                  title: postSearchQuery.title,
+                  hashtag: postSearchQuery.hashTag,
+                  clubId: postSearchQuery.clubId,
+                  page: _postsCurrentPage)
               .then((response) async {
-            // posts.value = [];
             posts.addAll(response.success
                 ? response.posts
                     .where((element) => element.gallery.isNotEmpty)
                     .toList()
                 : []);
             posts.sort((a, b) => b.createDate!.compareTo(a.createDate!));
-            isLoadingPosts = false;
+            isRefreshingPosts.value = false;
 
-            if (response.posts.length == response.metaData?.perPage) {
-              postsCurrentPage += 1;
-              canLoadMorePosts = true;
+            if (_postsCurrentPage >= response.metaData!.pageCount) {
+              _canLoadMorePosts = false;
             } else {
-              canLoadMorePosts = false;
+              _canLoadMorePosts = true;
             }
-            update();
+            _postsCurrentPage += 1;
+
+            callback();
           });
         }
       });
     }
   }
 
-  contentOptionSelected(String option) {
-    if (option == 'Story') {
+  contentOptionSelected(String option, BuildContext context) {
+    if (option == LocalizationString.story) {
       Get.to(() => const ChooseMediaForStory());
-    } else if (option == 'Post') {
+    } else if (option == LocalizationString.post) {
       // Get.offAll(const DashboardScreen(
       //   selectedTab: 2,
       // ));
-    } else if (option == 'Highlights') {
+    } else if (option == LocalizationString.highlights) {
       Get.to(() => const ChooseStoryForHighlights());
-    } else if (option == 'Live') {
-      agoraLiveController.initializeLive();
+    } else if (option == LocalizationString.goLive) {
+      Get.to(() => const CheckingLiveFeasibility());
+    } else if (option == LocalizationString.competition) {
+      Get.to(() => const CompetitionsScreen());
+    } else if (option == LocalizationString.liveNow) {
+      Get.to(() => const RandomLiveListing());
+    } else if (option == LocalizationString.liveTv) {
+      Get.to(() => const TvListDashboard());
+      // Get.to(() => const LiveTVStreaming());
     }
   }
 
   setCurrentVisibleVideo(
       {required PostGallery media, required double visibility}) {
-    mediaVisibilityInfo[media.id] = visibility;
+    // print(visibility);
+    if (visibility < 20) {
+      currentVisibleVideoId.value = -1;
+    }
+    _mediaVisibilityInfo[media.id] = visibility;
     double maxVisibility =
-        mediaVisibilityInfo[mediaVisibilityInfo.keys.first] ?? 0;
-    int maxVisibilityMediaId = mediaVisibilityInfo.keys.first;
+        _mediaVisibilityInfo[_mediaVisibilityInfo.keys.first] ?? 0;
+    int maxVisibilityMediaId = _mediaVisibilityInfo.keys.first;
 
-    for (int key in mediaVisibilityInfo.keys) {
-      double visibility = mediaVisibilityInfo[key] ?? 0;
+    for (int key in _mediaVisibilityInfo.keys) {
+      double visibility = _mediaVisibilityInfo[key] ?? 0;
       if (visibility >= maxVisibility) {
         maxVisibilityMediaId = key;
       }
     }
 
-    if (currentVisibleVideoId.value != maxVisibilityMediaId) {
+    if (currentVisibleVideoId.value != maxVisibilityMediaId &&
+        visibility > 80) {
       currentVisibleVideoId.value = maxVisibilityMediaId;
-      update();
+      // update();
     }
-  }
-
-  void getFollowingUsers() async {
-    AppUtil.checkInternet().then((value) async {
-      if (value) {
-        isLoading = true;
-        ApiController().getFollowingUsers().then((response) async {
-          followingUsers = response.users;
-
-          bool biometricAuthStatus =
-              response.user?.isBioMetricLoginEnabled == 1;
-          SharedPrefs().setBioMetricAuthStatus(biometricAuthStatus);
-          isLoading = false;
-          update();
-        });
-      }
-    });
   }
 
   void reportPost(int postId, BuildContext context) {
@@ -134,45 +173,54 @@ class HomeController extends GetxController {
       if (value) {
         ApiController().reportPost(postId).then((response) async {
           if (response.success == true) {
-            AppUtil.showToast(context: context,
+            AppUtil.showToast(
+                context: context,
                 message: LocalizationString.postReportedSuccessfully,
                 isSuccess: true);
           } else {
-            AppUtil.showToast(context: context,
-                message: LocalizationString.errorMessage, isSuccess: true);
+            AppUtil.showToast(
+                context: context,
+                message: LocalizationString.errorMessage,
+                isSuccess: true);
           }
         });
       } else {
-        AppUtil.showToast(context: context,
-            message: LocalizationString.noInternet, isSuccess: true);
+        AppUtil.showToast(
+            context: context,
+            message: LocalizationString.noInternet,
+            isSuccess: true);
       }
     });
   }
 
-  void likeUnlikePost(PostModel post,BuildContext context) {
-    post.isLike = !post.isLike;
-    post.totalLike = post.isLike ? (post.totalLike) + 1 : (post.totalLike) - 1;
-    AppUtil.checkInternet().then((value) async {
-      if (value) {
-        ApiController()
-            .likeUnlike(post.isLike, post.id)
-            .then((response) async {});
-      } else {
-        AppUtil.showToast(context: context,
-            message: LocalizationString.noInternet, isSuccess: true);
-      }
-    });
-
-    posts.refresh();
-    update();
-  }
+  // void likeUnlikePost(PostModel post, BuildContext context) {
+  //   post.isLike = !post.isLike;
+  //   post.totalLike = post.isLike ? (post.totalLike) + 1 : (post.totalLike) - 1;
+  //   AppUtil.checkInternet().then((value) async {
+  //     if (value) {
+  //       ApiController()
+  //           .likeUnlike(post.isLike, post.id)
+  //           .then((response) async {});
+  //     } else {
+  //       AppUtil.showToast(
+  //           context: context,
+  //           message: LocalizationString.noInternet,
+  //           isSuccess: true);
+  //     }
+  //   });
+  //
+  //   posts.refresh();
+  //   update();
+  // }
 
   postTextTapHandler({required PostModel post, required String text}) {
     if (text.startsWith('#')) {
       Get.to(() => Posts(
-              hashTag: text.replaceAll('#', ''), source: PostSource.posts))!
+                hashTag: text.replaceAll('#', ''),
+                source: PostSource.posts,
+              ))!
           .then((value) {
-        getPosts();
+        getPosts(isRecent: false, callback: () {});
         getStories();
       });
     } else {
@@ -185,20 +233,22 @@ class HomeController extends GetxController {
             .first
             .id;
         Get.to(() => OtherUserProfile(userId: mentionedUserId))!.then((value) {
-          getPosts();
+          getPosts(isRecent: false, callback: () {});
           getStories();
         });
       }
     }
   }
 
-  // stories
+// stories
 
   void getStories() async {
     stories.clear();
+    isRefreshingStories.value = true;
+    update();
+
     AppUtil.checkInternet().then((value) async {
       if (value) {
-        isLoadingStories = true;
         var responses = await Future.wait([
           getCurrentActiveStories(),
           getFollowersStories(),
@@ -216,8 +266,10 @@ class HomeController extends GetxController {
         stories.add(story);
         stories.addAll(responses[1] as List<StoryModel>);
         liveUsers.value = responses[2] as List<UserModel>;
-        update();
       }
+
+      isRefreshingStories.value = false;
+      update();
     });
   }
 
@@ -235,7 +287,6 @@ class HomeController extends GetxController {
 
   Future<List<StoryModel>> getFollowersStories() async {
     List<StoryModel> followersStories = [];
-
     List<StoryModel> viewedAllStories = [];
     List<StoryModel> notViewedStories = [];
 
@@ -254,8 +305,6 @@ class HomeController extends GetxController {
           notViewedStories.add(story);
         }
       }
-
-      isLoadingStories = false;
     });
 
     followersStories.addAll(notViewedStories);

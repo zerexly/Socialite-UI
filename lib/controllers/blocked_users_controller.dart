@@ -26,8 +26,8 @@ class BlockedUsersController extends GetxController {
         EasyLoading.dismiss();
         usersList.value = response.blockedUsers;
 
+        blockedUserPage += 1;
         if (response.blockedUsers.length == response.metaData?.perPage) {
-          blockedUserPage += 1;
           canLoadMoreBlockedUser = true;
         } else {
           canLoadMoreBlockedUser = false;

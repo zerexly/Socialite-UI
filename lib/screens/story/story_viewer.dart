@@ -120,13 +120,13 @@ class _StoryViewerState extends State<StoryViewer> {
                   style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                       fontWeight: FontWeight.w600, color: Colors.white),
                 ),
-                Obx(() => Text(
+                Obx(() => storyController.storyMediaModel.value != null ? Text(
                       storyController.storyMediaModel.value!.createdAt,
                       style: Theme.of(context)
                           .textTheme
                           .bodyMedium!
                           .copyWith(color: Colors.white70),
-                    ))
+                    ) : Container())
               ],
             ),
           ],

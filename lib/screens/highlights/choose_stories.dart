@@ -43,11 +43,11 @@ class _ChooseStoryForHighlightsState extends State<ChooseStoryForHighlights> {
                 Get.back();
               }),
               const Spacer(),
-              Image.asset(
-                'assets/logo.png',
-                width: 80,
-                height: 25,
-              ),
+              // Image.asset(
+              //   'assets/logo.png',
+              //   width: 80,
+              //   height: 25,
+              // ),
               const Spacer(),
               ThemeIconWidget(
                 ThemeIcon.nextArrow,
@@ -66,18 +66,24 @@ class _ChooseStoryForHighlightsState extends State<ChooseStoryForHighlights> {
                 builder: (ctx) {
                   return highlightsController.isLoading
                       ? const StoriesShimmerWidget()
-                      : GridView.builder(
-                          padding: EdgeInsets.zero,
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisSpacing: 5,
-                                  mainAxisSpacing: 5,
-                                  childAspectRatio: 0.6,
-                                  crossAxisCount: _numberOfColumns),
-                          itemCount: highlightsController.stories.length,
-                          itemBuilder: (context, index) {
-                            return _buildItem(index);
-                          }).hP16;
+                      : highlightsController.stories.isNotEmpty
+                          ? GridView.builder(
+                              padding: EdgeInsets.zero,
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisSpacing: 5,
+                                      mainAxisSpacing: 5,
+                                      childAspectRatio: 0.6,
+                                      crossAxisCount: _numberOfColumns),
+                              itemCount: highlightsController.stories.length,
+                              itemBuilder: (context, index) {
+                                return _buildItem(index);
+                              }).hP16
+                          : emptyData(
+                              title: LocalizationString.noStoryFound,
+                              subTitle:
+                              LocalizationString.postSomeStories,
+                              context: context);
                 }).hP4,
           )
         ],
@@ -122,7 +128,8 @@ class _ChooseStoryForHighlightsState extends State<ChooseStoryForHighlights> {
             width: double.infinity,
             child: Stack(
               children: [
-                Image.network(
+                CachedNetworkImage(
+  imageUrl:
                   highlightsController.stories[index].image!,
                   fit: BoxFit.cover,
                   height: double.infinity,

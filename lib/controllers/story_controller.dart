@@ -2,41 +2,19 @@ import 'package:foap/helper/common_import.dart';
 import 'package:get/get.dart';
 
 class AppStoryController extends GetxController {
-  // RxList<GalleryMedia> mediaList = <GalleryMedia>[].obs;
-  // final RxList<GalleryMedia> selectedItems = <GalleryMedia>[].obs;
-
   RxList<Media> mediaList = <Media>[].obs;
-  Rx<MediaCount> mediaCount = MediaCount.single.obs;
-
+  RxBool allowMultipleSelection = false.obs;
   RxInt numberOfItems = 0.obs;
 
   Rx<StoryMediaModel?> storyMediaModel = Rx<StoryMediaModel?>(null);
   bool isLoading = false;
 
-  // loadGalleryData(BuildContext context) async {
-  //   mediaList.clear();
-  //   numberOfItems.value = 0;
-  //   // _channel.invokeMethod<int>("getItemCount", 3).then((count) {
-  //   //   numberOfItems.value = count ?? 0;
-  //   //   update();
-  //   // });
-  //
-  //   getIt<GalleryLoader>().loadGalleryData(
-  //       mediaType: PostMediaType.all,
-  //       context: context,
-  //       completion: (data) {
-  //         numberOfItems.value = data.length;
-  //         mediaList.value = data;
-  //         update();
-  //       });
-  // }
-
-  mediaSelected(List<Media> media){
+  mediaSelected(List<Media> media) {
     mediaList.value = media;
   }
 
-  mediaCountSelected(MediaCount count){
-    mediaCount.value = count;
+  toggleMultiSelectionMode() {
+    allowMultipleSelection.value = !allowMultipleSelection.value;
     update();
   }
 
@@ -67,18 +45,19 @@ class AppStoryController extends GetxController {
 
     await AppUtil.checkInternet().then((value) async {
       if (value) {
-        Uint8List mainFileData = media.mediaByte!;
         final tempDir = await getTemporaryDirectory();
         File mainFile;
         String? videoThumbnailPath;
 
-        if (media.mediaType == GalleryMediaType.image) {
+        if (media.mediaType == GalleryMediaType.photo) {
+          Uint8List mainFileData = await media.file!.compress();
           //image media
           mainFile =
               await File('${tempDir.path}/${media.id!.replaceAll('/', '')}.png')
                   .create();
           mainFile.writeAsBytesSync(mainFileData);
         } else {
+          Uint8List mainFileData = media.file!.readAsBytesSync();
           // video
           mainFile =
               await File('${tempDir.path}/${media.id!.replaceAll('/', '')}.mp4')
@@ -110,13 +89,13 @@ class AppStoryController extends GetxController {
           await mainFile.delete();
           gallery = {
             // 'image': media.mediaType == 1 ? mainFileUploadedPath : '',
-            'image': media.mediaType == GalleryMediaType.image
+            'image': media.mediaType == GalleryMediaType.photo
                 ? mainFileUploadedPath
                 : videoThumbnailPath!,
-            'video': media.mediaType == GalleryMediaType.image
+            'video': media.mediaType == GalleryMediaType.photo
                 ? ''
                 : mainFileUploadedPath,
-            'type': media.mediaType == GalleryMediaType.image ? '2' : '3',
+            'type': media.mediaType == GalleryMediaType.photo ? '2' : '3',
             'description': '',
             'background_color': '',
           };

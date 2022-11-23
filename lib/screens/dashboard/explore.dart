@@ -15,13 +15,13 @@ class _ExploreState extends State<Explore> {
   @override
   void initState() {
     super.initState();
-    exploreController.getWinners();
+    exploreController.getSuggestedUsers();
   }
 
   @override
   void didUpdateWidget(covariant Explore oldWidget) {
     // TODO: implement didUpdateWidget
-    exploreController.getWinners();
+    exploreController.getSuggestedUsers();
     super.didUpdateWidget(oldWidget);
   }
 
@@ -35,12 +35,27 @@ class _ExploreState extends State<Explore> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
+      top: false,
+      bottom: false,
       child: Scaffold(
         backgroundColor: Theme.of(context).backgroundColor,
-        body: Column(
+        body: KeyboardDismissOnTap(
+            child: Column(
           children: [
+            const SizedBox(
+              height: 40,
+            ),
             Row(
               children: [
+                const ThemeIconWidget(
+                  ThemeIcon.backArrow,
+                  size: 25,
+                ).ripple(() {
+                  Get.back();
+                }),
+                const SizedBox(
+                  width: 10,
+                ),
                 Expanded(
                   child: SearchBar(
                       showSearchIcon: true,
@@ -53,31 +68,27 @@ class _ExploreState extends State<Explore> {
                       },
                       onSearchCompleted: (searchTerm) {}),
                 ),
-                GetBuilder<ExploreController>(
-                    init: exploreController,
-                    builder: (ctx) {
-                      return exploreController.searchText.isNotEmpty
-                          ? Row(
-                              children: [
-                                const SizedBox(
-                                  width: 10,
-                                ),
-                                Container(
-                                  height: 50,
-                                  width: 50,
-                                  color: Theme.of(context).primaryColor,
-                                  child: ThemeIconWidget(
-                                    ThemeIcon.close,
-                                    color: Theme.of(context).backgroundColor,
-                                    size: 25,
-                                  ),
-                                ).round(20).ripple(() {
-                                  exploreController.closeSearch();
-                                }),
-                              ],
-                            )
-                          : Container();
-                    })
+                Obx(() => exploreController.searchText.isNotEmpty
+                    ? Row(
+                        children: [
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Container(
+                            height: 50,
+                            width: 50,
+                            color: Theme.of(context).primaryColor,
+                            child: ThemeIconWidget(
+                              ThemeIcon.close,
+                              color: Theme.of(context).backgroundColor,
+                              size: 25,
+                            ),
+                          ).round(20).ripple(() {
+                            exploreController.closeSearch();
+                          }),
+                        ],
+                      )
+                    : Container())
               ],
             ).setPadding(left: 16, right: 16, top: 25, bottom: 20),
             GetBuilder<ExploreController>(
@@ -89,15 +100,14 @@ class _ExploreState extends State<Explore> {
                             children: [
                               segmentView(),
                               divider(context: context, height: 0.2),
-                              searchedResult(
-                                  segment: exploreController.selectedSegment),
+                              searchedResult(segment: exploreController.selectedSegment),
                             ],
                           ),
                         )
                       : searchSuggestionView();
                 })
           ],
-        ),
+        )),
       ),
     );
   }
@@ -122,14 +132,14 @@ class _ExploreState extends State<Explore> {
       if (scrollController.position.maxScrollExtent ==
           scrollController.position.pixels) {
         if (!exploreController.suggestUserIsLoading) {
-          exploreController.getWinners();
+          exploreController.getSuggestedUsers();
         }
       }
     });
 
     return exploreController.suggestUserIsLoading
         ? Expanded(child: const ShimmerUsers().hP16)
-        : exploreController.topWinner.isNotEmpty
+        : exploreController.suggestedUsers.isNotEmpty
             ? Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -138,10 +148,10 @@ class _ExploreState extends State<Explore> {
                       height: 20,
                     ),
                     Text(
-                      LocalizationString.topUsers,
+                      LocalizationString.suggestedUsers,
                       style: Theme.of(context)
                           .textTheme
-                          .displaySmall!
+                          .titleLarge!
                           .copyWith(fontWeight: FontWeight.w900),
                     ),
                     const SizedBox(
@@ -151,19 +161,18 @@ class _ExploreState extends State<Explore> {
                       child: ListView.separated(
                           controller: scrollController,
                           padding: const EdgeInsets.only(top: 20, bottom: 50),
-                          itemCount: exploreController.topWinner.length,
+                          itemCount: exploreController.suggestedUsers.length,
                           itemBuilder: (BuildContext ctx, int index) {
                             return UserTile(
-                              profile: exploreController.topWinner[index],
+                              profile: exploreController.suggestedUsers[index],
                               followCallback: () {
                                 exploreController.followUser(
-                                    exploreController.topWinner[index]);
+                                    exploreController.suggestedUsers[index]);
                               },
                               unFollowCallback: () {
                                 exploreController.unFollowUser(
-                                    exploreController.topWinner[index]);
+                                    exploreController.suggestedUsers[index]);
                               },
-                              openLiveCallback: () {},
                             );
                           },
                           separatorBuilder: (BuildContext ctx, int index) {
@@ -221,7 +230,6 @@ class _ExploreState extends State<Explore> {
                       exploreController
                           .unFollowUser(exploreController.searchedUsers[index]);
                     },
-                    openLiveCallback: () {},
                   );
                 },
                 separatorBuilder: (BuildContext ctx, int index) {
@@ -261,8 +269,9 @@ class _ExploreState extends State<Explore> {
                     hashtag: exploreController.hashTags[index],
                     onItemCallback: () {
                       Get.to(() => Posts(
-                          hashTag: exploreController.hashTags[index].name,
-                          source: PostSource.posts));
+                            hashTag: exploreController.hashTags[index].name,
+                            source: PostSource.posts,
+                          ));
                     },
                   );
                 },
@@ -331,7 +340,7 @@ class _ExploreState extends State<Explore> {
                                             fit: BoxFit.cover,
                                             placeholder: (context, url) =>
                                                 AppUtil.addProgressIndicator(
-                                                    context),
+                                                    context, 100),
                                             errorWidget:
                                                 (context, url, error) =>
                                                     const Icon(
@@ -353,6 +362,8 @@ class _ExploreState extends State<Explore> {
                                                 List.from(postController.posts),
                                             index: index,
                                             source: PostSource.posts,
+                                            page:
+                                                postController.postsCurrentPage,
                                           ));
                                     })
                                   : AspectRatio(
@@ -366,7 +377,7 @@ class _ExploreState extends State<Explore> {
                                             fit: BoxFit.cover,
                                             placeholder: (context, url) =>
                                                 AppUtil.addProgressIndicator(
-                                                    context),
+                                                    context, 100),
                                             errorWidget:
                                                 (context, url, error) =>
                                                     const Icon(Icons.error),
@@ -377,6 +388,10 @@ class _ExploreState extends State<Explore> {
                                                 List.from(postController.posts),
                                             index: index,
                                             source: PostSource.posts,
+                                            page:
+                                                postController.postsCurrentPage,
+                                            totalPages:
+                                                postController.totalPages,
                                           ));
                                     }),
                           mainAxisSpacing: 4.0,

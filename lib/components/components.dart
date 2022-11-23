@@ -22,7 +22,7 @@ class ProfilePictureWithName extends StatelessWidget {
                             imageUrl: user.picture!,
                             fit: BoxFit.cover,
                             placeholder: (context, url) =>
-                                AppUtil.addProgressIndicator(context),
+                                AppUtil.addProgressIndicator(context,50),
                             errorWidget: (context, url, error) =>
                                 const Icon(Icons.error),
                           ))

@@ -19,6 +19,7 @@ class CompetitionsState extends State<CompetitionsScreen> {
 
   @override
   void initState() {
+    competitionController.getCompetitions();
     super.initState();
   }
 
@@ -33,7 +34,7 @@ class CompetitionsState extends State<CompetitionsScreen> {
           const SizedBox(
             height: 50,
           ),
-          titleNavigationBar(
+          backNavigationBar(
             context: context,
             title: LocalizationString.competition,
           ),
@@ -43,10 +44,10 @@ class CompetitionsState extends State<CompetitionsScreen> {
             unselectedLabelColor: Theme.of(context).disabledColor,
             indicatorColor: Theme.of(context).primaryColor,
             indicatorWeight: 2,
-            unselectedLabelStyle: Theme.of(context).textTheme.titleMedium,
+            unselectedLabelStyle: Theme.of(context).textTheme.bodyLarge,
             labelStyle: Theme.of(context)
                 .textTheme
-                .titleMedium!
+                .bodyLarge!
                 .copyWith(fontWeight: FontWeight.w900),
             tabs: List.generate(competitionsArr.length, (int index) {
               return Visibility(
@@ -61,59 +62,18 @@ class CompetitionsState extends State<CompetitionsScreen> {
           GetBuilder<CompetitionController>(
               init: competitionController,
               builder: (ctx) {
-                return FutureBuilder(
-                  future: competitionController.getCompetitions(), // async work
-                  builder: (BuildContext context, AsyncSnapshot snapshot) {
-                    if (snapshot.connectionState == ConnectionState.done &&
-                        snapshot.hasData) {
-                      ApiResponseModel apiResponse = snapshot.data;
-                      if (apiResponse.success) {
-                        var allCompetitions = apiResponse.competitions;
-                        competitionController.current = allCompetitions
-                            .where((element) => element.isOngoing)
-                            .toList();
-                        competitionController.completed = allCompetitions
-                            .where((element) => element.isPast)
-                            .toList();
-                        competitionController.winners = allCompetitions
-                            .where((element) => element.winnerAnnounced())
-                            .toList();
-
-                        return Expanded(
-                            child: TabBarView(
-                          children: List.generate(competitionsArr.length,
-                              (int index) {
-                            return index == 0
-                                ? addCompetitionsList(
-                                    competitionController.current)
-                                : index == 1
-                                    ? addCompetitionsList(
-                                        competitionController.completed)
-                                    : addCompetitionsList(
-                                        competitionController.winners);
-                          }),
-                        ));
-                      } else {
-                        return Center(
-                            child: Text(
-                          LocalizationString.noData,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyLarge!
-                              .copyWith(color: Theme.of(context).primaryColor),
-                        ));
-                      }
-                    } else {
-                      //Show Loader
-                      return Center(
-                        child: CircularProgressIndicator(
-                            backgroundColor: Colors.black12,
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                                Theme.of(context).primaryColor)),
-                      );
-                    }
-                  },
-                );
+                return Expanded(
+                    child: TabBarView(
+                  children: List.generate(competitionsArr.length, (int index) {
+                    return index == 0
+                        ? addCompetitionsList(competitionController.current)
+                        : index == 1
+                            ? addCompetitionsList(
+                                competitionController.completed)
+                            : addCompetitionsList(
+                                competitionController.winners);
+                  }),
+                ));
               })
         ]),
       ),
@@ -121,8 +81,8 @@ class CompetitionsState extends State<CompetitionsScreen> {
   }
 
   addCompetitionsList(List<CompetitionModel> arr) {
-    return ListView.builder(
-      padding: EdgeInsets.zero,
+    return ListView.separated(
+      padding: const EdgeInsets.only(top: 20),
       itemCount: arr.length,
       itemBuilder: (context, index) {
         CompetitionModel model = arr[index];
@@ -130,13 +90,19 @@ class CompetitionsState extends State<CompetitionsScreen> {
             model: model,
             handler: () {
               model.isPast
-                  ? Get.to(() => PastCompetitionDetail(competition: model))
+                  ? Get.to(
+                      () => CompletedCompetitionDetail(competitionId: model.id))
                   : Get.to(() => CompetitionDetailScreen(
-                      competition: model,
+                      competitionId: model.id,
                       refreshPreviousScreen: () {
                         competitionController.getCompetitions();
                       }));
             });
+      },
+      separatorBuilder: (context, index) {
+        return const SizedBox(
+          height: 20,
+        );
       },
     );
   }

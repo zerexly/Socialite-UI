@@ -15,6 +15,7 @@ class ApiResponseModel {
   UserModel? user;
   CompetitionModel? competition;
   int highlightId = 0;
+  int createdPostId = 0;
 
   List<CompetitionModel> competitions = [];
   List<PostModel> posts = [];
@@ -26,22 +27,41 @@ class ApiResponseModel {
   List<CountryModel> countries = [];
   List<PaymentModel> payments = [];
   List<UserModel> topUsers = [];
-  List<UserModel> topWinners = [];
   List<UserModel> users = [];
+  List<UserModel> randomLives = [];
+  List<UserModel> randomOnlineUsers = [];
+
   List<UserModel> blockedUsers = [];
   List<CallHistoryModel> callHistory = [];
   List<UserModel> liveUsers = [];
+  List<GiftCategoryModel> giftCategories = [];
+  List<GiftModel> gifts = [];
+  List<ReceivedGiftModel> giftReceived = [];
 
   List<NotificationModel> notifications = [];
   List<SupportRequestModel> supportMessages = [];
   List<Hashtag> hashtags = [];
   List<HighlightsModel> highlights = [];
+
+  List<ClubModel> clubs = [];
+  List<CategoryModel> categories = [];
+  List<ClubMemberModel> clubMembers = [];
+
+  List<TvModel> liveTvs = [];
+  List<TvCategoryModel> tvCategories = [];
+  List<LiveModel> lives = [];
+
+  List<VerificationRequest> verificationRequests = [];
+
+  // chat
+  List<ChatRoomModel> chatRooms = [];
+  ChatRoomModel? room;
+
   APIMetaData? metaData;
   SettingModel? settings;
   PostModel? post;
 
   int roomId = 0;
-  List<ChatRoomModel> chatRooms = [];
 
   ApiResponseModel();
 
@@ -62,6 +82,20 @@ class ApiResponseModel {
               url == NetworkConstantsUtil.otherUser) {
             model.user = UserModel.fromJson(data['user']);
           }
+          if (url == NetworkConstantsUtil.randomLives) {
+            var items = data['user']['items'];
+
+            model.randomLives =
+                List<UserModel>.from(items.map((x) => UserModel.fromJson(x)));
+            model.metaData = APIMetaData.fromJson(data['user']['_meta']);
+          }
+          if (url == NetworkConstantsUtil.randomOnlineUser) {
+            var items = data['user'];
+
+            model.randomOnlineUsers =
+                List<UserModel>.from(items.map((x) => UserModel.fromJson(x)));
+            // model.metaData = APIMetaData.fromJson(data['user']['_meta']);
+          }
           if (data['auth_key'] != null) {
             model.authKey = data['auth_key'];
             //AppConfigConstants.userId = model.user!.id;
@@ -79,11 +113,45 @@ class ApiResponseModel {
           } else if (data['competition'] != null) {
             model.competition = CompetitionModel.fromJson(data['competition']);
           }
+        }
+        if (url == NetworkConstantsUtil.requestVerificationHistory) {
+          if (data['verification'] != null) {
+            var items = data['verification']['items'];
+
+            model.verificationRequests = List<VerificationRequest>.from(
+                items.map((x) => VerificationRequest.fromJson(x)));
+          }
         } else if (data['results'] != null) {
           var items = data['results'];
           if (items != null && items.length > 0) {
             model.hashtags =
                 List<Hashtag>.from(items.map((x) => Hashtag.fromJson(x)));
+          }
+        } else if (data['club'] != null) {
+          var items = data['club']['items'];
+          if (items != null && items.length > 0) {
+            model.clubs =
+                List<ClubModel>.from(items.map((x) => ClubModel.fromJson(x)));
+            model.metaData = APIMetaData.fromJson(data['club']['_meta']);
+          }
+        } else if (data['userList'] != null) {
+          var items = data['userList']['items'];
+          if (items != null && items.length > 0) {
+            model.clubMembers = List<ClubMemberModel>.from(
+                items.map((x) => ClubMemberModel.fromJson(x)));
+            model.metaData = APIMetaData.fromJson(data['userList']['_meta']);
+          }
+        } else if (data['live_tv'] != null) {
+          var items = data['live_tv']['items'];
+          if (items != null && items.length > 0) {
+            model.liveTvs =
+                List<TvModel>.from(items.map((x) => TvModel.fromJson(x)));
+          }
+        } else if (data['live_history'] != null) {
+          var items = data['live_history']['items'];
+          if (items != null && items.length > 0) {
+            model.lives =
+                List<LiveModel>.from(items.map((x) => LiveModel.fromJson(x)));
           }
         } else if (data['notification'] != null) {
           var items = data['notification']['items'];
@@ -97,6 +165,36 @@ class ApiResponseModel {
           if (items != null && items.length > 0) {
             model.highlights = List<HighlightsModel>.from(
                 items.map((x) => HighlightsModel.fromJson(x)));
+          }
+        } else if (data['category'] != null) {
+          var items = data['category'];
+
+          if (items != null && items.length > 0) {
+            if (url == NetworkConstantsUtil.getTVCategories) {
+              model.tvCategories = List<TvCategoryModel>.from(
+                  items.map((x) => TvCategoryModel.fromJson(x)));
+            }
+            if (url == NetworkConstantsUtil.giftsCategories) {
+              model.giftCategories = List<GiftCategoryModel>.from(
+                  items.map((x) => GiftCategoryModel.fromJson(x)));
+            } else {
+              model.categories = List<CategoryModel>.from(
+                  items.map((x) => CategoryModel.fromJson(x)));
+            }
+          }
+        } else if (data['gift'] != null) {
+          var items = data['gift']['items'];
+
+          if (url == NetworkConstantsUtil.giftsReceived) {
+            if (items != null && items.length > 0) {
+              model.giftReceived = List<ReceivedGiftModel>.from(
+                  items.map((x) => ReceivedGiftModel.fromJson(x)));
+            }
+          } else {
+            if (items != null && items.length > 0) {
+              model.gifts =
+                  List<GiftModel>.from(items.map((x) => GiftModel.fromJson(x)));
+            }
           }
         } else if (data['supportRequest'] != null) {
           var items = data['supportRequest']['items'];
@@ -124,6 +222,9 @@ class ApiResponseModel {
               model.users =
                   List<UserModel>.from(items.map((x) => UserModel.fromJson(x)));
             }
+            if (data['following']['_meta'] != null) {
+              model.metaData = APIMetaData.fromJson(data['following']['_meta']);
+            }
           } else {
             var items = (data['following'] as List<dynamic>)
                 .map((e) => e['followingUserDetail'])
@@ -135,17 +236,16 @@ class ApiResponseModel {
           }
         } else if (data['topUser'] != null || data['topWinner'] != null) {
           var topUsers = data['topUser'];
-          var topWinners = data['topWinner'];
 
           if (topUsers != null && topUsers.length > 0) {
             model.topUsers = List<UserModel>.from(
                 topUsers.map((x) => UserModel.fromJson(x)));
           }
 
-          if (topWinners != null && topWinners.length > 0) {
-            model.topWinners = List<UserModel>.from(
-                topWinners.map((x) => UserModel.fromJson(x)));
-          }
+          // if (topWinners != null && topWinners.length > 0) {
+          //   model.topWinners = List<UserModel>.from(
+          //       topWinners.map((x) => UserModel.fromJson(x)));
+          // }
         } else if (data['blockedUser'] != null) {
           var blockedUser = data['blockedUser'];
 
@@ -193,6 +293,8 @@ class ApiResponseModel {
                   items.map((x) => StoryModel.fromJson(x)));
             }
           }
+        } else if (data['post_id'] != null) {
+          model.createdPostId = data['post_id'] as int;
         } else if (data['post'] != null) {
           if (url == NetworkConstantsUtil.postDetail) {
             var post = data['post'];
@@ -246,14 +348,23 @@ class ApiResponseModel {
         } else if (data['room_id'] != null) {
           model.roomId = data['room_id'];
         } else if (data['room'] != null) {
-          model.chatRooms = [];
-          var room = data['room'] as List<dynamic>?;
-          if (room != null && room.isNotEmpty) {
-            room = room
-                .where((element) => element['lastMessage'] != null)
-                .toList();
-            model.chatRooms = List<ChatRoomModel>.from(
-                room.map((x) => ChatRoomModel.fromJson(x)));
+          if (url == NetworkConstantsUtil.getRooms) {
+            model.chatRooms = [];
+            var room = data['room'] as List<dynamic>?;
+            if (room != null && room.isNotEmpty) {
+              room = room
+                  .where((element) =>
+                      (element['chatRoomUser'] as List<dynamic>).length > 1)
+                  .toList();
+              model.chatRooms = List<ChatRoomModel>.from(
+                  room.map((x) => ChatRoomModel.fromJson(x)));
+            }
+          } else if (url == NetworkConstantsUtil.getChatRoomDetail) {
+            var room = data['room'] as Map<String, dynamic>?;
+            if (room != null) {
+              var roomData = data['room'];
+              model.room = ChatRoomModel.fromJson(roomData);
+            }
           }
         }
       }

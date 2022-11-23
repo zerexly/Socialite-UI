@@ -1,10 +1,9 @@
 import 'package:foap/helper/common_import.dart';
-import 'package:get/get.dart';
 
 class WallpaperForChatBackground extends StatefulWidget {
-  final int opponentId;
+  final int roomId;
 
-  const WallpaperForChatBackground({Key? key, required this.opponentId})
+  const WallpaperForChatBackground({Key? key, required this.roomId})
       : super(key: key);
 
   @override
@@ -14,6 +13,8 @@ class WallpaperForChatBackground extends StatefulWidget {
 
 class _WallpaperForChatBackgroundState
     extends State<WallpaperForChatBackground> {
+  String currentWallpaper = '';
+
   List<String> wallpapers = [
     'assets/chatbg/chatbg1.jpg',
     'assets/chatbg/chatbg2.jpg',
@@ -28,12 +29,18 @@ class _WallpaperForChatBackgroundState
     'assets/chatbg/chatbg11.jpg',
     'assets/chatbg/chatbg12.jpg',
     'assets/chatbg/chatbg13.jpg',
-
   ];
 
   @override
   void initState() {
     super.initState();
+    getCurrentWallpaper();
+  }
+
+  getCurrentWallpaper() async {
+    currentWallpaper =
+        await SharedPrefs().getWallpaper(roomId: widget.roomId);
+    setState(() {});
   }
 
   @override
@@ -45,30 +52,8 @@ class _WallpaperForChatBackgroundState
           const SizedBox(
             height: 55,
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              ThemeIconWidget(
-                ThemeIcon.close,
-                color: Theme.of(context).primaryColor,
-                size: 27,
-              ).ripple(() {
-                Get.back();
-              }),
-              const Spacer(),
-              Text(
-                LocalizationString.wallpapers,
-                style: Theme.of(context)
-                    .textTheme
-                    .titleMedium!
-                    .copyWith(fontWeight: FontWeight.w900),
-              ),
-              const Spacer(),
-              const SizedBox(
-                width: 27,
-              )
-            ],
-          ).hp(20),
+        backNavigationBar(
+            context: context, title: LocalizationString.wallpaper),
           const SizedBox(height: 20),
           Expanded(
             child: GridView.builder(
@@ -80,15 +65,35 @@ class _WallpaperForChatBackgroundState
                     crossAxisCount: 3),
                 itemCount: wallpapers.length,
                 itemBuilder: (context, index) {
-                  return Image.asset(
-                    wallpapers[index],
-                    fit: BoxFit.cover,
-                    height: double.infinity,
-                    width: double.infinity,
+                  return Stack(
+                    children: [
+                      Image.asset(
+                        wallpapers[index],
+                        fit: BoxFit.cover,
+                        height: double.infinity,
+                        width: double.infinity,
+                      ),
+                      currentWallpaper == wallpapers[index]
+                          ? Positioned(
+                              child: Container(
+                              height: double.infinity,
+                              width: double.infinity,
+                              color: Colors.black38,
+                              child: const ThemeIconWidget(
+                                ThemeIcon.checkMark,
+                                size: 50,
+                                color: Colors.white,
+                              ),
+                            ))
+                          : Container()
+                    ],
                   ).round(5).ripple(() {
+                    currentWallpaper = wallpapers[index];
                     SharedPrefs().setWallpaper(
-                        userId: widget.opponentId,
+                        roomId: widget.roomId,
                         wallpaper: wallpapers[index]);
+
+                    setState(() {});
                   });
                 }).hP16,
           )

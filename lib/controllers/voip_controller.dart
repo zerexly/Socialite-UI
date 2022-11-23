@@ -46,11 +46,12 @@ class VoipController {
     FlutterCallkitIncoming.onEvent.listen((event) {
       switch (event!.name) {
         case CallEvent.ACTION_CALL_INCOMING:
-          getIt<SocketManager>().connect();
+          //getIt<SocketManager>().connect();
           break;
         case CallEvent.ACTION_CALL_START:
           break;
         case CallEvent.ACTION_CALL_ACCEPT:
+
           CallData callData = CallData.fromJson(event.body);
 
           UserModel opponent = UserModel();

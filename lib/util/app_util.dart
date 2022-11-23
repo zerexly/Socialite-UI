@@ -1,6 +1,5 @@
 import 'package:connectivity/connectivity.dart';
 import 'package:foap/helper/common_import.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:get/get.dart';
 
 class AppUtil {
@@ -16,7 +15,7 @@ class AppUtil {
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: isSuccess == true
             ? Theme.of(context).primaryColor
-            : Theme.of(context).errorColor.withOpacity(0.2),
+            : Theme.of(context).errorColor.lighten(),
         icon: Icon(Icons.error, color: Theme.of(context).iconTheme.color));
   }
 
@@ -24,11 +23,11 @@ class AppUtil {
     FocusScope.of(context).requestFocus(FocusNode());
   }
 
-  static Widget addProgressIndicator(BuildContext context) {
+  static Widget addProgressIndicator(BuildContext context, double? size) {
     return Center(
         child: SizedBox(
-      width: 50,
-      height: 50,
+      width: size ?? 50,
+      height: size ?? 50,
       child: CircularProgressIndicator(
           strokeWidth: 2.0,
           backgroundColor: Colors.black12,
@@ -57,46 +56,137 @@ class AppUtil {
     return false;
   }
 
-  static Future<File> findPath(String imageUrl) async {
-    final cache = DefaultCacheManager();
-    final file = await cache.getSingleFile(imageUrl);
-    return file;
-  }
-
-  static void logoutAction(BuildContext cxt, VoidCallback handler) {
+  static void showConfirmationAlert(
+      {required String title,
+      required String subTitle,
+      required BuildContext cxt,
+      required VoidCallback okHandler}) {
     showDialog(
-      barrierDismissible: false,
-      barrierColor: null,
       context: cxt,
       builder: (BuildContext context) {
-        return AlertDialog(
-          shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(10))),
-          title: Text(AppConfigConstants.appName,
-              style: TextStyle(color: Theme.of(context).primaryColor)),
-          content: Text(LocalizationString.logoutConfirmation),
-          actions: [
-            SizedBox(
-              width: 100,
-              height: 30,
-              child: BorderButtonType1(
-                  text: LocalizationString.yes,
-                  onPress: () {
-                    Get.back(closeOverlays: true);
-                    handler();
-                  }),
-            ),
-            SizedBox(
-              width: 100,
-              height: 30,
-              child: FilledButtonType1(
-                  isEnabled: true,
-                  text: LocalizationString.no,
-                  onPress: () {
-                    Get.back(closeOverlays: true);
-                  }),
-            )
-          ],
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          child: Container(
+            height: 220,
+            width: Get.width,
+            color: Theme.of(context).backgroundColor,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title,
+                    style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                        color: Theme.of(context).primaryColor,
+                        fontWeight: FontWeight.w900)),
+                const SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  subTitle,
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+                const SizedBox(
+                  height: 40,
+                ),
+                Column(
+                  children: [
+                    Row(
+                      children: [
+                        const Spacer(),
+                        SizedBox(
+                          width: 100,
+                          height: 40,
+                          child: BorderButtonType1(
+                              text: LocalizationString.yes,
+                              onPress: () {
+                                Get.back(closeOverlays: true);
+                                okHandler();
+                              }),
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        SizedBox(
+                          width: 100,
+                          height: 40,
+                          child: FilledButtonType1(
+                              isEnabled: true,
+                              text: LocalizationString.no,
+                              onPress: () {
+                                Get.back(closeOverlays: true);
+                              }),
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                      ],
+                    ),
+                  ],
+                )
+              ],
+            ).hP16,
+          ).round(20),
+        );
+      },
+    );
+  }
+
+  static void showDemoAppConfirmationAlert(
+      {required String title,
+      required String subTitle,
+      required BuildContext cxt,
+      required VoidCallback okHandler}) {
+    showDialog(
+      context: cxt,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          child: Container(
+            height: 200,
+            width: Get.width,
+            color: Theme.of(context).backgroundColor,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title,
+                    style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                        color: Theme.of(context).primaryColor,
+                        fontWeight: FontWeight.w900)),
+                const SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  subTitle,
+                  style: Theme.of(context).textTheme.bodyLarge,
+                ),
+                const SizedBox(
+                  height: 25,
+                ),
+                Column(
+                  children: [
+                    Row(
+                      children: [
+                        const Spacer(),
+                        SizedBox(
+                          width: 100,
+                          height: 30,
+                          child: BorderButtonType1(
+                              text: LocalizationString.ok,
+                              onPress: () {
+                                Get.back(closeOverlays: true);
+                                okHandler();
+                              }),
+                        ),
+                      ],
+                    ),
+                  ],
+                )
+              ],
+            ).p16,
+          ).round(20),
         );
       },
     );

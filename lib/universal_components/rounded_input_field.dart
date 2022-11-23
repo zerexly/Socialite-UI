@@ -1,11 +1,8 @@
 import 'dart:math';
-import 'package:flutter/material.dart';
-import 'package:foap/theme/theme_icon.dart';
-import 'package:foap/theme/icon_enum.dart';
-import 'package:foap/helper/extension.dart';
 import 'package:currency_picker/currency_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:country_picker/country_picker.dart';
+import 'package:foap/helper/common_import.dart';
 
 class InputField extends StatefulWidget {
   final String? label;
@@ -83,7 +80,6 @@ class _InputFieldState extends State<InputField> {
   late double? cornerRadius;
 
   late Color cursorColor;
-  late TextStyle textStyle;
 
   @override
   void initState() {
@@ -113,7 +109,7 @@ class _InputFieldState extends State<InputField> {
   @override
   Widget build(BuildContext context) {
     cursorColor = widget.cursorColor ?? Theme.of(context).iconTheme.color!;
-    textStyle = widget.textStyle ?? Theme.of(context).textTheme.bodyMedium!;
+
     return Container(
       decoration: BoxDecoration(
         color: isError == false
@@ -143,14 +139,20 @@ class _InputFieldState extends State<InputField> {
         children: [
           (label != null && showLabelInNewLine == true)
               ? Text(label!,
-                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.w600))
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyMedium!
+                          .copyWith(fontWeight: FontWeight.w600))
                   .bP4
               : Container(),
           Row(
             children: [
               (label != null && showLabelInNewLine == false)
                   ? Text(label!,
-                          style: Theme.of(context).textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.w600))
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyMedium!
+                              .copyWith(fontWeight: FontWeight.w600))
                       .bP4
                   : Container(),
               iconOnRightSide == false ? iconView() : Container(),
@@ -162,7 +164,8 @@ class _InputFieldState extends State<InputField> {
                         ? TextInputType.emailAddress
                         : TextInputType.text,
                     textAlign: TextAlign.left,
-                    style: Theme.of(context).textTheme.titleMedium!,
+                    style: widget.textStyle ??
+                        Theme.of(context).textTheme.bodyMedium!,
                     onChanged: widget.onChanged,
                     maxLines: maxLines,
                     decoration: InputDecoration(
@@ -266,7 +269,10 @@ class _InputPriceFieldState extends State<InputPriceField> {
         children: [
           widget.label != null
               ? Text(widget.label!,
-                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.w600))
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyMedium!
+                          .copyWith(fontWeight: FontWeight.w600))
                   .bP8
               : Container(),
           Row(
@@ -275,7 +281,10 @@ class _InputPriceFieldState extends State<InputPriceField> {
                 children: [
                   Text(
                     widget.currencyText ?? "+1",
-                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.w900),
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyLarge!
+                        .copyWith(fontWeight: FontWeight.w900),
                   ).hP8.ripple(() {
                     showCurrencyPicker(
                       context: context,
@@ -325,7 +334,7 @@ class DropDownField extends StatefulWidget {
   final bool? disable;
   final TextEditingController? controller;
   final VoidCallback? onTap;
-  final ValueChanged<String>? onChanged;
+  final Color? backgroundColor;
 
   const DropDownField({
     Key? key,
@@ -334,7 +343,7 @@ class DropDownField extends StatefulWidget {
     this.disable,
     this.controller,
     this.onTap,
-    this.onChanged,
+    this.backgroundColor,
   }) : super(key: key);
 
   @override
@@ -350,47 +359,60 @@ class _DropDownFieldState extends State<DropDownField> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 5),
+      // margin: const EdgeInsets.symmetric(vertical: 5),
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       width: double.infinity,
       decoration: BoxDecoration(
-        color: Theme.of(context).backgroundColor,
+        color: widget.backgroundColor ?? Theme.of(context).backgroundColor,
         borderRadius: BorderRadius.circular(5),
       ),
-      height: 80,
+      height: 60,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           widget.label != null
               ? Text(widget.label!,
-                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.w600))
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyMedium!
+                          .copyWith(fontWeight: FontWeight.w600))
                   .bP8
               : Container(),
           Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Expanded(
-                  child: TextField(
-                style: Theme.of(context).textTheme.bodyMedium,
-                controller: widget.controller,
-                onChanged: widget.onChanged,
-                keyboardType: TextInputType.number,
-                cursorColor: Theme.of(context).iconTheme.color,
-                decoration: InputDecoration(
-                  hintStyle: Theme.of(context).textTheme.bodyMedium,
-                  hintText: widget.hintText,
-                  border: InputBorder.none,
+                  child: AbsorbPointer(
+                absorbing: true,
+                child: TextField(
+                  readOnly: true,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                  controller: widget.controller,
+                  keyboardType: TextInputType.number,
+                  cursorColor: Theme.of(context).iconTheme.color,
+                  decoration: InputDecoration(
+                    hintStyle: Theme.of(context).textTheme.bodyMedium,
+                    hintText: widget.hintText,
+                    border: InputBorder.none,
+                  ),
                 ),
               )),
-              ThemeIconWidget(ThemeIcon.downArrow, color: Theme.of(context).errorColor)
+              ThemeIconWidget(
+                ThemeIcon.downArrow,
+                color: Theme.of(context).iconTheme.color,
+                size: 25,
+              ),
+              const SizedBox(
+                width: 10,
+              )
             ],
-          ).ripple(() {
-            if (widget.disable != true) {
-              widget.onTap!();
-            }
-          }),
+          ),
         ],
       ),
-    );
+    ).ripple(() {
+      widget.onTap!();
+    });
   }
 }
 
@@ -448,7 +470,6 @@ class _InputMobileNumberFieldState extends State<InputMobileNumberField> {
 
   @override
   void initState() {
-
     isError = widget.isError;
     controller = widget.controller!;
     hintText = widget.hintText;
@@ -491,7 +512,10 @@ class _InputMobileNumberFieldState extends State<InputMobileNumberField> {
         children: [
           widget.label != null
               ? Text(widget.label!,
-                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.w600))
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium!
+                      .copyWith(fontWeight: FontWeight.w600))
               : Container(),
           Row(children: [
             Text(
@@ -532,7 +556,10 @@ class _InputMobileNumberFieldState extends State<InputMobileNumberField> {
                           counterText: "",
                           // labelText: hintText,
                           // labelStyle: Theme.of(context).textTheme.bodyLarge!.copyWith(color: Theme.of(context).primaryColor),
-                          hintStyle: Theme.of(context).textTheme.titleMedium!.copyWith(color: Theme.of(context).primaryColor),
+                          hintStyle: Theme.of(context)
+                              .textTheme
+                              .titleMedium!
+                              .copyWith(color: Theme.of(context).primaryColor),
                           hintText: hintText),
                     ),
                     onFocusChange: (hasFocus) {
@@ -606,7 +633,12 @@ class _InputDateFieldState extends State<InputDateField> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           widget.label != null
-              ? Text(widget.label!, style: Theme.of(context).textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.w600)).bP8
+              ? Text(widget.label!,
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyMedium!
+                          .copyWith(fontWeight: FontWeight.w600))
+                  .bP8
               : Container(),
           Container(
             width: 80,
@@ -696,7 +728,12 @@ class _RoundedInputDateTimeFieldState extends State<RoundedInputDateTimeField> {
       child: Column(
         children: [
           widget.label != null
-              ? Text(widget.label!, style: Theme.of(context).textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.w600)).bP8
+              ? Text(widget.label!,
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyMedium!
+                          .copyWith(fontWeight: FontWeight.w600))
+                  .bP8
               : Container(),
           Container(
             color: Theme.of(context).backgroundColor,

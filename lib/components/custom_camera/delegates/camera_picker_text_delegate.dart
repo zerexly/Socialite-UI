@@ -4,7 +4,7 @@
 
 import 'package:camera/camera.dart' show CameraLensDirection, FlashMode;
 import 'package:flutter/rendering.dart';
-import 'package:easy_localization/easy_localization.dart';
+import 'package:get/get.dart';
 
 /// All text delegates.
 const List<CameraPickerTextDelegate> cameraPickerTextDelegates =
@@ -124,41 +124,41 @@ class EnglishCameraPickerTextDelegate extends CameraPickerTextDelegate {
   String get languageCode => 'en';
 
   @override
-  String get confirm => 'Confirm'.tr();
+  String get confirm => 'Confirm'.tr;
 
   @override
-  String get shootingTips => 'Tap to take photo.'.tr();
+  String get shootingTips => 'Tap to take photo.'.tr;
 
   @override
   String get shootingWithRecordingTips =>
-      'Tap to take photo. Long press to record video.'.tr();
+      'Tap to take photo. Long press to record video.'.tr;
 
   @override
-  String get shootingOnlyRecordingTips => 'Long press to record video.'.tr();
+  String get shootingOnlyRecordingTips => 'Long press to record video.'.tr;
 
   @override
-  String get shootingTapRecordingTips => 'Tap to record video.'.tr();
+  String get shootingTapRecordingTips => 'Tap to record video.'.tr;
 
   @override
-  String get loadFailed => 'Load failed'.tr();
+  String get loadFailed => 'Load failed'.tr;
 
   @override
-  String get sActionManuallyFocusHint => 'manually focus'.tr();
+  String get sActionManuallyFocusHint => 'manually focus'.tr;
 
   @override
-  String get sActionPreviewHint => 'preview'.tr();
+  String get sActionPreviewHint => 'preview'.tr;
 
   @override
-  String get sActionRecordHint => 'record'.tr();
+  String get sActionRecordHint => 'record'.tr;
 
   @override
-  String get sActionShootHint => 'take picture'.tr();
+  String get sActionShootHint => 'take picture'.tr;
 
   @override
-  String get sActionShootingButtonTooltip => 'shooting button'.tr();
+  String get sActionShootingButtonTooltip => 'shooting button'.tr;
 
   @override
-  String get sActionStopRecordingHint => 'stop recording'.tr();
+  String get sActionStopRecordingHint => 'stop recording'.tr;
 
   @override
   String sCameraLensDirectionLabel(CameraLensDirection value) => value.name;

@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 class UserProfileManager {
   UserModel? user;
 
-  bool get isLogin{
+  bool get isLogin {
     return user != null;
   }
 
@@ -13,6 +13,7 @@ class UserProfileManager {
     SharedPrefs().clearPreferences();
     Get.offAll(() => const LoginScreen());
     getIt<SocketManager>().disconnect();
+    getIt<DBManager>().clearAllUnreadCount();
   }
 
   Future refreshProfile() async {
@@ -21,12 +22,14 @@ class UserProfileManager {
     if (authKey != null) {
       await ApiController().getMyProfile().then((value) {
         user = value.user;
-        if(user != null){
+
+        if (user != null) {
           setupSocketServiceLocator();
         }
+        return;
       });
-    }
-    else{
+    } else {
+      return;
       // print('no auth token found');
     }
   }

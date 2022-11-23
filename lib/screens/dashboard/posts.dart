@@ -8,9 +8,13 @@ class Posts extends StatefulWidget {
   final List<PostModel>? posts;
   final int? index;
   final PostSource? source;
+  final int? page;
+  final int? totalPages;
 
   const Posts(
       {Key? key,
+      this.page,
+      this.totalPages,
       this.hashTag,
       this.userId,
       this.locationId,
@@ -33,11 +37,13 @@ class _PostsState extends State<Posts> {
   void initState() {
     super.initState();
 
-    postController.addPosts(widget.posts ?? []);
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      postController.addPosts(
+          widget.posts ?? [], widget.page, widget.totalPages);
+
       loadData();
       if (widget.index != null) {
-        Future.delayed(const Duration(milliseconds: 100), () {
+        Future.delayed(const Duration(seconds: 1), () {
           itemScrollController.jumpTo(
             index: widget.index!,
           );
@@ -57,6 +63,14 @@ class _PostsState extends State<Posts> {
       query.hashTag = widget.hashTag!;
       postController.setPostSearchQuery(query);
     }
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+
+    postController.clearPosts();
+    super.dispose();
   }
 
   @override
@@ -80,18 +94,18 @@ class _PostsState extends State<Posts> {
                   Get.back();
                 }),
                 const Spacer(),
-                Image.asset(
-                  'assets/logo.png',
-                  width: 80,
-                  height: 25,
-                ),
+                // Image.asset(
+                //   'assets/logo.png',
+                //   width: 80,
+                //   height: 25,
+                // ),
                 const Spacer(),
                 ThemeIconWidget(
                   ThemeIcon.notification,
                   color: Theme.of(context).iconTheme.color,
                   size: 25,
                 ).ripple(() {
-                  Get.to(() => const NotificationsScreen1());
+                  Get.to(() => const NotificationsScreen());
                 }),
               ],
             ).hp(20),
@@ -110,53 +124,57 @@ class _PostsState extends State<Posts> {
           scrollController.position.pixels) {
         if (widget.source == PostSource.posts) {
           if (!postController.isLoadingPosts) {
-            // postController.getPosts();
+            postController.getPosts();
           }
         } else {
           if (!postController.mentionsPostsIsLoading) {
-            // postController.getMyMentions();
+            postController.getMyMentions();
           }
         }
       }
     });
 
-    return GetBuilder<PostController>(
-        init: postController,
-        builder: (ctx) {
-          List<PostModel> posts = widget.source == PostSource.posts
-              ? postController.posts
-              : postController.mentions;
+    return Obx(() {
+      List<PostModel> posts = widget.source == PostSource.posts
+          ? postController.posts
+          : postController.mentions;
 
-          return postController.isLoadingPosts
-              ? const HomeScreenShimmer()
-              : posts.isEmpty
-                  ? Center(child: Text(LocalizationString.noData))
-                  : ScrollablePositionedList.builder(
-                      itemScrollController: itemScrollController,
-                      itemPositionsListener: itemPositionsListener,
-                      padding: const EdgeInsets.only(top: 10, bottom: 50),
-                      itemCount: posts.length,
-                      itemBuilder: (context, index) {
-                        PostModel model = posts[index];
-                        return Column(
-                          children: [
-                            PostCard(
-                              model: model,
-                              textTapHandler: (text) {
-                                postController.postTextTapHandler(
-                                    post: model, text: text);
-                              },
-                              likeTapHandler: () {
-                                postController.likeUnlikePost(model, context);
-                              },
-                            ),
-                            const SizedBox(
-                              height: 15,
-                            )
-                          ],
-                        );
-                      },
+      return postController.isLoadingPosts
+          ? const HomeScreenShimmer()
+          : posts.isEmpty
+              ? Center(child: Text(LocalizationString.noData))
+              : ScrollablePositionedList.builder(
+                  itemScrollController: itemScrollController,
+                  itemPositionsListener: itemPositionsListener,
+                  padding: const EdgeInsets.only(top: 10, bottom: 50),
+                  itemCount: posts.length,
+                  itemBuilder: (context, index) {
+                    PostModel model = posts[index];
+                    return Column(
+                      children: [
+                        PostCard(
+                          model: model,
+                          textTapHandler: (text) {
+                            postController.postTextTapHandler(
+                                post: model, text: text);
+                          },
+                          // mediaTapHandler: (post){
+                          //   Get.to(()=> PostMediaFullScreen(post: post));
+                          // },
+                          // likeTapHandler: () {
+                          //   postController.likeUnlikePost(model, context);
+                          // },
+                          removePostHandler: () {
+                            postController.removePostFromList(model);
+                          },
+                        ),
+                        const SizedBox(
+                          height: 15,
+                        )
+                      ],
                     );
-        });
+                  },
+                );
+    });
   }
 }

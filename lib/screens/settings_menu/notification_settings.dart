@@ -28,7 +28,7 @@ class _AppNotificationSettingsState extends State<AppNotificationSettings> {
             const SizedBox(
               height: 50,
             ),
-            backNavigationBar(context, LocalizationString.notificationSettings),
+            backNavigationBar(context:context, title:LocalizationString.notificationSettings),
             divider(context: context).vP8,
             const SizedBox(
               height: 20,

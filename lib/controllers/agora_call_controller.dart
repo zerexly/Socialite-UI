@@ -1,7 +1,7 @@
 import 'package:agora_rtc_engine/rtc_engine.dart';
 import 'package:foap/helper/common_import.dart';
-import 'package:foap/util/constant_util.dart';
 import 'package:get/get.dart';
+import 'package:just_audio/just_audio.dart';
 
 class AgoraCallController extends GetxController {
   RxInt remoteUserId = 0.obs;
@@ -18,6 +18,7 @@ class AgoraCallController extends GetxController {
   RxBool remoteJoined = false.obs;
 
   // int callId = 0;
+  final player = AudioPlayer();
 
   late String localCallId;
   UserModel? opponent;
@@ -39,12 +40,12 @@ class AgoraCallController extends GetxController {
     remoteJoined.value = false;
   }
 
-  makeCallRequest({required Call call}) {
+  makeCallRequest({required Call call}) async {
     opponent = call.opponent;
     localCallId = randomId();
 
     getIt<SocketManager>().emit(
-        SocketConstants.onCallRequest,
+        SocketConstants.callCreate,
         ({
           CallArgParams.senderId: getIt<UserProfileManager>().user!.id,
           CallArgParams.receiverId: call.opponent.id,
@@ -58,7 +59,6 @@ class AgoraCallController extends GetxController {
     required Call call,
   }) async {
     if (AppConfigConstants.agoraApiKey.isEmpty) {
-      // print('Agora Engine is not starting');
       update();
       return;
     }
@@ -174,34 +174,25 @@ class AgoraCallController extends GetxController {
   callStatusUpdateReceived(Map<String, dynamic> updatedData) {
     int status = updatedData['status'];
 
-    if (status == 5) {
-      if (remoteJoined.value == true) {
-        _engine?.leaveChannel();
-        _engine?.destroy();
+    // callId = 0;
+    Call call = Call(
+        uuid: updatedData['uuid'],
+        channelName: '',
+        isOutGoing: false,
+        opponent: UserModel(),
+        token: '',
+        callType: 0,
+        callId: updatedData['id']);
 
-        clear();
+    if (status == 5 || status == 2) {
+      if (Platform.isIOS) {
+        getIt<VoipController>().endCall(call);
       }
-
-      // callId = 0;
-      Call call = Call(
-          uuid: updatedData['uuid'],
-          channelName: '',
-          isOutGoing: false,
-          opponent: UserModel(),
-          token: '',
-          callType: 0,
-          callId: updatedData['id']);
-
-      getIt<VoipController>().endCall(call);
-      remoteJoined.value = false;
-      Wakelock.disable();
-      Get.back();
-    } else if (status == 2) {
-      Get.back();
+      endCall(call);
     }
   }
 
-  outgoingCallConfirmationReceived(Map<String, dynamic> updatedData) {
+  outgoingCallConfirmationReceived(Map<String, dynamic> updatedData) async{
     String uuid = updatedData['uuid'];
     int id = updatedData['id'];
     String localCallId = updatedData['localCallId'];
@@ -221,7 +212,11 @@ class AgoraCallController extends GetxController {
     if (this.localCallId == localCallId) {
       // callId = id;
       initializeCalling(call: call);
-      getIt<VoipController>().outGoingCall(call);
+      if (Platform.isIOS) {
+        getIt<VoipController>().outGoingCall(call);
+      }
+      await player.setAsset('assets/ringtone.mp3');
+      player.play();
     }
   }
 
@@ -279,22 +274,28 @@ class AgoraCallController extends GetxController {
     initializeCalling(
       call: call,
     );
+    player.stop();
   }
 
   //Use This Method To End Call
   void endCall(Call call) async {
-    _engine?.leaveChannel();
-    _engine?.destroy();
-    clear();
+    player.stop();
+    if (remoteJoined.value == true) {
+      _engine?.leaveChannel();
+      _engine?.destroy();
 
-    Wakelock.disable(); // Turn off wakelock feature after call end
-
+      clear();
+    }
     // callId = 0;
     remoteJoined.value = false;
     Get.back();
+
+    InterstitialAds().show();
   }
 
   void onCallEnd(Call call) async {
+    player.stop();
+
     if (remoteJoined.value == true) {
       if (Platform.isAndroid) {
         endCall(call);
@@ -317,7 +318,9 @@ class AgoraCallController extends GetxController {
         'status': 2
       });
     }
-    getIt<VoipController>().endCall(call);
+    if (Platform.isIOS) {
+      getIt<VoipController>().endCall(call);
+    }
   }
 
   void declineCall({required Call call}) async {
@@ -326,8 +329,9 @@ class AgoraCallController extends GetxController {
       'userId': getIt<UserProfileManager>().user!.id,
       'status': 2
     });
-    getIt<VoipController>().endCall(call);
-
+    if (Platform.isIOS) {
+      getIt<VoipController>().endCall(call);
+    }
     // callId = 0;
     remoteJoined.value = false;
     Get.back();
@@ -339,7 +343,9 @@ class AgoraCallController extends GetxController {
       'userId': getIt<UserProfileManager>().user!.id,
       'status': 3
     });
-    getIt<VoipController>().endCall(call);
+    if (Platform.isIOS) {
+      getIt<VoipController>().endCall(call);
+    }
     // callId = 0;
     remoteJoined.value = false;
     Get.back();

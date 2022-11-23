@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
@@ -240,8 +239,7 @@ class PlacePickerState extends State<PlacePicker> {
           "input={$place}&sessiontoken=$sessionToken";
 
       if (locationResult != null) {
-        endpoint += "&location=${locationResult!.latLng!.latitude}," +
-            "${locationResult!.latLng!.longitude}";
+        endpoint += "&location=${locationResult!.latLng!.latitude}," "${locationResult!.latLng!.longitude}";
       }
 
       final response = await http.get(Uri.parse(endpoint));

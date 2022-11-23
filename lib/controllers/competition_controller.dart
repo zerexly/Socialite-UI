@@ -2,9 +2,9 @@ import 'package:foap/helper/common_import.dart';
 import 'package:get/get.dart';
 
 class CompetitionController extends GetxController {
-  List<CompetitionModel> current = [];
-  List<CompetitionModel> completed = [];
-  List<CompetitionModel> winners = [];
+  RxList<CompetitionModel> current = <CompetitionModel>[].obs;
+  RxList<CompetitionModel> completed = <CompetitionModel>[].obs;
+  RxList<CompetitionModel> winners = <CompetitionModel>[].obs;
   late ApiResponseModel competitionResponse;
   final picker = ImagePicker();
 
@@ -13,6 +13,18 @@ class CompetitionController extends GetxController {
   Future<ApiResponseModel> getCompetitions() async {
     await ApiController().getCompetitions().then((value) {
       competitionResponse = value;
+
+      current.value = competitionResponse.competitions
+          .where((element) => element.isOngoing)
+          .toList();
+      completed.value = competitionResponse.competitions
+          .where((element) => element.isPast)
+          .toList();
+      winners.value = competitionResponse.competitions
+          .where((element) => element.winnerAnnounced())
+          .toList();
+
+      update();
     });
 
     return competitionResponse;
@@ -43,6 +55,7 @@ class CompetitionController extends GetxController {
     });
   }
 
+
   void joinCompetition(CompetitionModel competition, BuildContext context) {
     int coin = getIt<UserProfileManager>().user!.coins ?? 0;
 
@@ -54,13 +67,16 @@ class CompetitionController extends GetxController {
               .joinCompetition(competition.id)
               .then((response) async {
             EasyLoading.dismiss();
-            AppUtil.showToast(context: context,message: response.message, isSuccess: false);
+            AppUtil.showToast(
+                context: context, message: response.message, isSuccess: true);
             competition.isJoined = 1;
             update();
           });
         } else {
-          AppUtil.showToast(context: context,
-              message: LocalizationString.noInternet, isSuccess: true);
+          AppUtil.showToast(
+              context: context,
+              message: LocalizationString.noInternet,
+              isSuccess: false);
         }
       });
     } else {
@@ -71,17 +87,17 @@ class CompetitionController extends GetxController {
 
   viewMySubmission(CompetitionModel competition) async {
     var loggedInUserPost = competition.posts
-        .where((element) => element.user.id == getIt<UserProfileManager>().user!.id)
+        .where((element) =>
+            element.user.id == getIt<UserProfileManager>().user!.id)
         .toList();
     //User have already published post for this competition
     PostModel postModel = loggedInUserPost.first;
-    File path = await AppUtil.findPath(postModel.gallery.first.filePath);
+    // File path = await AppUtil.findPath(postModel.gallery.first.filePath);
 
     if (competition.competitionMediaType == 1) {
-      Get.to(() =>
-          EnlargeImageViewScreen(model: postModel, file: path, handler: () {}));
+      Get.to(() => EnlargeImageViewScreen(model: postModel, handler: () {}));
     } else {
-      Get.to(() => VideoPlayerScreen(
+      Get.to(() => PlayVideoController(
             media: postModel.gallery.first,
           ));
     }

@@ -1,5 +1,4 @@
 import 'package:foap/helper/common_import.dart';
-import 'package:foap/screens/profile/blocked_users.dart';
 import 'package:get/get.dart';
 
 class Settings extends StatefulWidget {
@@ -12,13 +11,10 @@ class Settings extends StatefulWidget {
 class _SettingsState extends State<Settings> {
   final SettingsController settingsController = Get.find();
 
-  int coin = 0;
-
   @override
   void initState() {
     super.initState();
     settingsController.loadSettings();
-    coin = getIt<UserProfileManager>().user!.coins ?? 0;
   }
 
   @override
@@ -30,58 +26,93 @@ class _SettingsState extends State<Settings> {
           const SizedBox(
             height: 50,
           ),
-          backNavigationBar(context, LocalizationString.settings),
-          divider(context: context).vP8,
-          addTileEvent(
-              'assets/zioCoin.png',
-              '${LocalizationString.coins} ($coin)',
-              LocalizationString.checkYourCoinsAndEarnMoreCoins, () {
-            Get.to(() => PackagesScreen(handler: (newCoins) {
-                  setState(() {
-                    coin += newCoins;
-                  });
-                }));
-          }),
-          addTileEvent(
-              'assets/blocked_user.png',
-              LocalizationString.blockedUser,
-              LocalizationString.manageBlockedUser, () {
-            Get.to(() => const BlockedUsersList());
-          }),
-          addTileEvent('assets/support.png', LocalizationString.faq,
-              LocalizationString.faqMessage, () {
-            Get.to(() => const FaqList());
-          }),
-          addTileEvent('assets/earning.png', LocalizationString.earnings,
-              LocalizationString.trackEarning, () {
-            Get.to(() => const PaymentWithdrawalScreen());
-          }),
-          addTileEvent(
-              'assets/settings.png',
-              LocalizationString.notificationSettings,
-              LocalizationString.tuneSettings, () {
-            Get.to(() => const AppNotificationSettings());
-          }),
-          darkModeTile(),
-          addTileEvent('assets/logout.png', LocalizationString.logout,
-              LocalizationString.exitApp, () {
-            AppUtil.logoutAction(context, () {
-              getIt<UserProfileManager>().logout();
-            });
-          })
+          titleNavigationBar(
+              context: context, title: LocalizationString.settings),
+          divider(context: context).tP8,
+          Expanded(
+            child: ListView(
+              padding: EdgeInsets.zero,
+              children: [
+                Column(
+                  children: [
+                    addTileEvent('assets/language.png',
+                        LocalizationString.changeLanguage, '', () {
+                      Get.to(() => const ChangeLanguage());
+                    }, true),
+                    addTileEvent('assets/coins.png',
+                        LocalizationString.paymentAndCoins, '', () {
+                      Get.to(() => const PaymentAndCoins());
+                    }, true),
+                    addTileEvent(
+                        'assets/account.png', LocalizationString.account, '',
+                        () {
+                      Get.to(() => const AppAccount());
+                    }, true),
+                    addTileEvent(
+                        'assets/privacy.png', LocalizationString.privacy, '',
+                        () {
+                      Get.to(() => const PrivacyOptions());
+                    }, true),
+                    addTileEvent(
+                        'assets/settings.png',
+                        LocalizationString.notificationSettings,
+                        LocalizationString.tuneSettings, () {
+                      Get.to(() => const AppNotificationSettings());
+                    }, true),
+                    addTileEvent('assets/faq.png', LocalizationString.faq,
+                        LocalizationString.faqMessage, () {
+                      Get.to(() => const FaqList());
+                    }, true),
+                    darkModeTile(),
+                    addTileEvent('assets/share.png', LocalizationString.share,
+                        LocalizationString.shareAppSubtitle, () {
+                      Share.share('Install this cool app');
+                    }, false),
+                    addTileEvent('assets/logout.png', LocalizationString.logout,
+                        LocalizationString.exitApp, () {
+                      AppUtil.showConfirmationAlert(
+                          title: AppConfigConstants.appName,
+                          subTitle: LocalizationString.logoutConfirmation,
+                          cxt: context,
+                          okHandler: () {
+                            getIt<UserProfileManager>().logout();
+                          });
+                    }, false),
+                    addTileEvent(
+                        'assets/delete_account.png',
+                        LocalizationString.deleteAccount,
+                        LocalizationString.deleteAccountSubheading, () {
+                      AppUtil.showConfirmationAlert(
+                          title: LocalizationString.deleteAccount,
+                          subTitle:
+                              LocalizationString.areYouSureToDeleteAccount,
+                          cxt: context,
+                          okHandler: () {
+                            Navigator.of(context).pop();
+                            getIt<UserProfileManager>().logout();
+                          });
+                    }, false),
+                  ],
+                ),
+                const SizedBox(
+                  height: 50,
+                )
+              ],
+            ),
+          ),
         ],
       ),
     );
   }
 
   addTileEvent(
-      String icon, String title, String subTitle, VoidCallback action) {
+      String icon, String title, String subTitle, VoidCallback action, bool showNextArrow) {
     return InkWell(
         onTap: action,
         child: Column(
           children: [
             SizedBox(
-              height: 75,
+              height: 65,
               child: Row(children: [
                 Container(
                         color: Theme.of(context).primaryColor.withOpacity(0.2),
@@ -98,19 +129,19 @@ class _SettingsState extends State<Settings> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(title,
+                      Text(title.tr,
                               style: Theme.of(context)
                                   .textTheme
-                                  .titleMedium!
+                                  .bodyLarge!
                                   .copyWith(fontWeight: FontWeight.w600))
-                          .bP8,
-                      Text(subTitle,
-                          style: Theme.of(context).textTheme.bodyLarge),
+                          .bP4,
+                      // Text(subTitle,
+                      //     style: Theme.of(context).textTheme.bodySmall),
                     ],
                   ),
                 ),
                 // const Spacer(),
-                ThemeIconWidget(
+                if(showNextArrow) ThemeIconWidget(
                   ThemeIcon.nextArrow,
                   color: Theme.of(context).iconTheme.color,
                   size: 15,
@@ -126,7 +157,7 @@ class _SettingsState extends State<Settings> {
     return Column(
       children: [
         SizedBox(
-          height: 75,
+          height: 65,
           child: Row(children: [
             Container(
                     color: Theme.of(context).primaryColor.withOpacity(0.2),
@@ -143,14 +174,13 @@ class _SettingsState extends State<Settings> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(LocalizationString.darkMode,
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleMedium!
-                              .copyWith(fontWeight: FontWeight.w600))
-                      .bP8,
-                  Text(LocalizationString.changeTheAppearanceSetting,
-                      style: Theme.of(context).textTheme.bodyLarge),
+                  Text(LocalizationString.darkMode.tr,
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyLarge!
+                          .copyWith(fontWeight: FontWeight.w600))
+                  // Text(LocalizationString.changeTheAppearanceSetting,
+                  //     style: Theme.of(context).textTheme.bodySmall),
                 ],
               ),
             ),
@@ -158,14 +188,14 @@ class _SettingsState extends State<Settings> {
             Obx(() => FlutterSwitch(
                   inactiveColor: Theme.of(context).disabledColor,
                   activeColor: Theme.of(context).primaryColor,
-                  width: 60.0,
+                  width: 50.0,
                   height: 30.0,
                   valueFontSize: 15.0,
                   toggleSize: 20.0,
                   value: settingsController.isDarkMode.value,
                   borderRadius: 30.0,
                   padding: 8.0,
-                  showOnOff: true,
+                  // showOnOff: true,
                   onToggle: (val) {
                     settingsController.setDarkMode(val);
                   },

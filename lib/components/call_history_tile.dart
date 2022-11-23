@@ -9,7 +9,8 @@ class CallHistoryTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        AvatarView(size: 50, url: model.opponent.picture),
+        UserAvatarView(size: 45, user: model.opponent),
+        // AvatarView(size: 45, url: model.opponent.picture,name: model.opponent.userName,),
         const SizedBox(
           width: 10,
         ),
@@ -20,8 +21,8 @@ class CallHistoryTile extends StatelessWidget {
               model.opponent.userName,
               style: Theme.of(context)
                   .textTheme
-                  .titleMedium!
-                  .copyWith(fontWeight: FontWeight.w900),
+                  .bodyLarge!
+                  .copyWith(fontWeight: FontWeight.w600),
             ),
             const SizedBox(
               height: 5,
@@ -46,9 +47,9 @@ class CallHistoryTile extends StatelessWidget {
                   style: model.isMissedCall
                       ? Theme.of(context)
                           .textTheme
-                          .bodyLarge!
+                          .bodyMedium!
                           .copyWith(color: Theme.of(context).errorColor)
-                      : Theme.of(context).textTheme.bodyLarge,
+                      : Theme.of(context).textTheme.bodyMedium,
                 ),
               ],
             )
@@ -60,7 +61,7 @@ class CallHistoryTile extends StatelessWidget {
           children: [
             Text(
               model.timeOfCall,
-              style: Theme.of(context).textTheme.bodyLarge,
+              style: Theme.of(context).textTheme.bodySmall,
             ),
             const SizedBox(
               height: 5,
@@ -69,14 +70,17 @@ class CallHistoryTile extends StatelessWidget {
               children: [
                 const ThemeIconWidget(
                   ThemeIcon.clock,
-                  size: 15,
+                  size: 12,
                 ),
                 const SizedBox(
                   width: 5,
                 ),
                 Text(
                   model.duration,
-                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.w600),
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodySmall!
+                      .copyWith(fontWeight: FontWeight.w600),
                 ),
               ],
             )

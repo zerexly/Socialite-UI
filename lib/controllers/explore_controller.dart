@@ -7,13 +7,10 @@ class ExploreController extends GetxController {
   RxList<LocationModel> locations = <LocationModel>[].obs;
   RxList<Hashtag> hashTags = <Hashtag>[].obs;
   RxList<UserModel> suggestedUsers = <UserModel>[].obs;
-  RxList<UserModel> topWinner = <UserModel>[].obs;
   RxList<UserModel> searchedUsers = <UserModel>[].obs;
 
-  // RxList<PostModel> topPosts = <PostModel>[].obs;
-
   bool isSearching = false;
-  String searchText = '';
+  RxString searchText = ''.obs;
   int selectedSegment = 0;
 
   int suggestUserPage = 1;
@@ -50,14 +47,14 @@ class ExploreController extends GetxController {
   closeSearch() {
     clear();
     postController.clearPosts();
-    searchText = '';
+    searchText.value = '';
     selectedSegment = 0;
     update();
   }
 
   searchTextChanged(String text) {
     clear();
-    searchText = text;
+    searchText.value = text;
     postController.clearPosts();
     searchData();
   }
@@ -67,15 +64,15 @@ class ExploreController extends GetxController {
       if (selectedSegment == 0) {
         PostSearchQuery query = PostSearchQuery();
         // query.isPopular = 1;
-        query.title = searchText;
+        query.title = searchText.value;
         postController.setPostSearchQuery(query);
 
         // postController.getPosts();
         // getPosts(isPopular: 1, title: searchText);
       } else if (selectedSegment == 1) {
-        searchUser(searchText);
+        searchUser(searchText.value);
       } else if (selectedSegment == 2) {
-        searchHashTags(searchText);
+        searchHashTags(searchText.value);
       } else if (selectedSegment == 3) {
         // searchLocations(searchText);
       }
@@ -91,13 +88,6 @@ class ExploreController extends GetxController {
     update();
   }
 
-  // searchLocations(String text) {
-  //   locations.value = LocationModel.dummyData()
-  //       .map((e) => LocationModel.fromJson(e))
-  //       .toList();
-  //   update();
-  // }
-
   searchHashTags(String text) {
     if (canLoadMoreHashtags) {
       hashtagsIsLoading = true;
@@ -106,8 +96,8 @@ class ExploreController extends GetxController {
           .then((response) {
         hashTags.value = response.hashtags;
         hashtagsIsLoading = false;
+        hashtagsPage += 1;
         if (response.hashtags.length == response.metaData?.perPage) {
-          hashtagsPage += 1;
           canLoadMoreHashtags = true;
         } else {
           canLoadMoreHashtags = false;
@@ -118,17 +108,15 @@ class ExploreController extends GetxController {
     }
   }
 
-  getWinners() {
+  getSuggestedUsers() {
     if (canLoadMoreSuggestUser) {
       suggestUserIsLoading = true;
 
       ApiController().getSuggestedUsers(page: suggestUserPage).then((response) {
         suggestUserIsLoading = false;
         suggestedUsers.value = response.topUsers;
-        topWinner.value = response.topWinners;
-
-        if (response.topWinners.length == response.metaData?.perPage) {
-          suggestUserPage += 1;
+        suggestUserPage += 1;
+        if (response.topUsers.length == response.metaData?.perPage) {
           canLoadMoreSuggestUser = true;
         } else {
           canLoadMoreSuggestUser = false;
@@ -149,8 +137,8 @@ class ExploreController extends GetxController {
         accountsIsLoading = false;
         searchedUsers.value = response.users;
 
+        accountsPage += 1;
         if (response.topUsers.length == response.metaData?.perPage) {
-          accountsPage += 1;
           canLoadMoreAccounts = true;
         } else {
           canLoadMoreAccounts = false;
@@ -162,7 +150,7 @@ class ExploreController extends GetxController {
   }
 
   followUser(UserModel user) {
-    user.isFollowing = 1;
+    user.isFollowing = true;
     if (searchedUsers.where((e) => e.id == user.id).isNotEmpty) {
       searchedUsers[
           searchedUsers.indexWhere((element) => element.id == user.id)] = user;
@@ -176,7 +164,7 @@ class ExploreController extends GetxController {
   }
 
   unFollowUser(UserModel user) {
-    user.isFollowing = 0;
+    user.isFollowing = false;
     if (searchedUsers.where((e) => e.id == user.id).isNotEmpty) {
       searchedUsers[
           searchedUsers.indexWhere((element) => element.id == user.id)] = user;

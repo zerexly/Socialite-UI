@@ -1,5 +1,6 @@
 import 'package:foap/helper/common_import.dart';
 import 'package:get/get.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class HomeFeedScreen extends StatefulWidget {
   const HomeFeedScreen({Key? key}) : super(key: key);
@@ -9,44 +10,73 @@ class HomeFeedScreen extends StatefulWidget {
 }
 
 class HomeFeedState extends State<HomeFeedScreen> {
-  final HomeController homeController = Get.find();
-  final AgoraLiveController agoraLiveController = Get.find();
+  final HomeController _homeController = Get.find();
+  final AddPostController _addPostController = Get.find();
+  final AgoraLiveController _agoraLiveController = Get.find();
+  final RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
+
+  final _controller = ScrollController();
 
   final List<String> options = [
     LocalizationString.story,
     LocalizationString.highlights,
-    LocalizationString.live
+    LocalizationString.goLive,
+    // LocalizationString.liveNow,
   ];
+
   String? selectedValue;
 
   @override
   void initState() {
     super.initState();
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      loadData();
+      loadData(isRecent: true);
     });
+
+    _controller.addListener(() {
+      if (_controller.position.atEdge) {
+        bool isTop = _controller.position.pixels == 0;
+        if (isTop) {
+        } else {
+          loadData(isRecent: false);
+        }
+      }
+    });
+  }
+
+  loadMore({required bool? isRecent}) {
+    loadPosts(isRecent);
+  }
+
+  refreshData() {
+    _homeController.clear();
+    loadData(isRecent: false);
   }
 
   @override
   void dispose() {
     super.dispose();
-    homeController.clear();
+    _homeController.clear();
   }
 
-  void loadData() {
-    if (getIt<UserProfileManager>().user != null) {
-      PostSearchQuery query = PostSearchQuery();
-      query.isFollowing = 1;
-      query.isRecent = 1;
-      homeController.setPostSearchQuery(query);
+  loadPosts(bool? isRecent) {
+    _homeController.getPosts(
+        isRecent: isRecent,
+        callback: () {
+          _refreshController.refreshCompleted();
+        });
+  }
 
-      // postController.getPosts();
-      homeController.getStories();
-    }
+  void loadData({required bool? isRecent}) {
+    loadPosts(isRecent);
+    _homeController.getStories();
   }
 
   @override
   void didUpdateWidget(covariant HomeFeedScreen oldWidget) {
+    loadData(isRecent: false);
     super.didUpdateWidget(oldWidget);
   }
 
@@ -65,25 +95,34 @@ class HomeFeedState extends State<HomeFeedScreen> {
               children: [
                 Row(
                   children: [
-                    Container(
-                        height: 25,
-                        width: 25,
-                        color: Theme.of(context).primaryColor,
-                        child: const ThemeIconWidget(
-                          ThemeIcon.camera,
-                          color: Colors.white,
-                          size: 15,
-                        )).circular,
-                    const SizedBox(width: 5),
                     Text(
                       AppConfigConstants.appName,
                       style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w300,
                           color: Theme.of(context).primaryColor),
                     )
                   ],
                 ),
                 const Spacer(),
+                // const ThemeIconWidget(
+                //   ThemeIcon.map,
+                //   // color: Theme.of(context).primaryColor,
+                //   size: 25,
+                // ).ripple(() {
+                //   Get.to(() => MapsUsersScreen());
+                // }),
+                const SizedBox(
+                  width: 20,
+                ),
+                const ThemeIconWidget(
+                  ThemeIcon.search,
+                  size: 25,
+                ).ripple(() {
+                  Get.to(() => const Explore());
+                }),
+                const SizedBox(
+                  width: 20,
+                ),
                 DropdownButtonHideUnderline(
                   child: DropdownButton2(
                     customButton: Container(
@@ -100,7 +139,7 @@ class HomeFeedState extends State<HomeFeedScreen> {
                         .map((item) => DropdownMenuItem<String>(
                               value: item,
                               child: Text(
-                                item,
+                                item.tr,
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodyLarge!
@@ -110,7 +149,8 @@ class HomeFeedState extends State<HomeFeedScreen> {
                         .toList(),
                     value: selectedValue,
                     onChanged: (value) {
-                      homeController.contentOptionSelected(value as String);
+                      _homeController.contentOptionSelected(
+                          value as String, context);
                     },
                     itemPadding: const EdgeInsets.only(left: 16, right: 16),
                     dropdownWidth: 150,
@@ -122,75 +162,86 @@ class HomeFeedState extends State<HomeFeedScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(width: 15),
-                Container(
-                  color: Theme.of(context).backgroundColor,
-                  height: 25,
-                  width: 25,
-                  child: const ThemeIconWidget(
-                    ThemeIcon.chat,
-                    // color: Theme.of(context).primaryColor,
-                    size: 17,
-                  ),
-                ).ripple(() {
-                  Get.to(() => const ChatHistory());
-                }),
-                const SizedBox(width: 15),
-                const ThemeIconWidget(
-                  ThemeIcon.mobile,
-                  // color: Theme.of(context).primaryColor,
-                  size: 23,
-                ).ripple(() {
-                  Get.to(() => const CallHistory());
-                }),
-                const SizedBox(width: 15),
-                const ThemeIconWidget(
-                  ThemeIcon.notification,
-                  // color: Theme.of(context).primaryColor,
-                  size: 27,
-                ).ripple(() {
-                  Get.to(() => const NotificationsScreen1());
-                }),
+                // const SizedBox(width: 15),
               ],
             ).hp(20),
             const SizedBox(
               height: 10,
             ),
             Expanded(
-              child: CustomScrollView(
-                slivers: [
-                  SliverList(
-                      delegate: SliverChildBuilderDelegate(
-                          (ctx, index) => Column(
-                                children: [
-                                  const SizedBox(height: 20),
-                                  storiesView()
-                                      .shadow(context: context, radius: 25)
-                                      .hP16,
-                                  postsView(),
-                                  const SizedBox(
-                                    height: 50,
-                                  )
-                                ],
-                              ),
-                          childCount: 1))
-                ],
-              ),
+              child: postsView(),
             ),
           ],
         ));
+  }
+
+  Widget postingView() {
+    return Obx(() => _addPostController.isPosting.value
+        ? Container(
+            height: 55,
+            color: Theme.of(context).cardColor,
+            child: Row(
+              children: [
+                Image.memory(
+                  _addPostController.postingMedia.first.thumbnail!,
+                  fit: BoxFit.cover,
+                  width: 40,
+                  height: 40,
+                ).round(5),
+                const SizedBox(
+                  width: 10,
+                ),
+                Text(
+                  _addPostController.isErrorInPosting.value
+                      ? LocalizationString.postFailed
+                      : LocalizationString.posting,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                const Spacer(),
+                _addPostController.isErrorInPosting.value
+                    ? Row(
+                        children: [
+                          Text(
+                            LocalizationString.discard,
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium!
+                                .copyWith(fontWeight: FontWeight.w600),
+                          ).ripple(() {
+                            _addPostController.discardFailedPost();
+                          }),
+                          const SizedBox(
+                            width: 20,
+                          ),
+                          Text(
+                            LocalizationString.retry,
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium!
+                                .copyWith(fontWeight: FontWeight.w600),
+                          ).ripple(() {
+                            _addPostController.retryPublish(context);
+                          }),
+                        ],
+                      )
+                    : Container()
+              ],
+            ).hP8,
+          ).shadow(context: context, radius: 10).bp(20)
+        : Container());
   }
 
   Widget storiesView() {
     return SizedBox(
       height: 110,
       child: GetBuilder<HomeController>(
-          init: homeController,
+          init: _homeController,
           builder: (ctx) {
             return StoryUpdatesBar(
-              stories: homeController.stories,
-              liveUsers: homeController.liveUsers,
+              stories: _homeController.stories,
+              liveUsers: _homeController.liveUsers,
               addStoryCallback: () {
+                // Get.to(() => const TextStoryMaker());
                 Get.to(() => const ChooseMediaForStory());
               },
               viewStoryCallback: (story) {
@@ -203,7 +254,7 @@ class HomeFeedState extends State<HomeFeedScreen> {
                     host: user,
                     token: user.liveCallDetail!.token,
                     liveId: user.liveCallDetail!.id);
-                agoraLiveController.joinAsAudience(
+                _agoraLiveController.joinAsAudience(
                   live: live,
                 );
               },
@@ -212,83 +263,112 @@ class HomeFeedState extends State<HomeFeedScreen> {
     );
   }
 
-  // Future<void> imagesSelectedForStory(SelectedImagesDetails details) async {
-  //   if (details.multiSelectionMode == true) {
-  //     List<GalleryMedia> medias = (details.selectedFiles ?? [])
-  //         .map((e) => GalleryMedia(
-  //             bytes: e.readAsBytesSync(),
-  //             id: randomId(),
-  //             dateCreated: DateTime.now().millisecondsSinceEpoch,
-  //             mediaType: mime(e.path) == 'image' ? 1 : 2,
-  //             path: ''))
-  //         .toList();
-  //     storyController.uploadAllPostImages(items: medias);
-  //   } else {
-  //     print(mime(details.selectedFile.path));
-  //     GalleryMedia media = GalleryMedia(
-  //         bytes: details.selectedFile.readAsBytesSync(),
-  //         id: randomId(),
-  //         dateCreated: DateTime.now().millisecondsSinceEpoch,
-  //         mediaType: mime(details.selectedFile.path) == 'image' ? 1 : 2,
-  //         path: '');
-  //     storyController.uploadAllPostImages(items: [media]);
-  //   }
-  // }
-
   postsView() {
-    ScrollController scrollController = ScrollController();
-    scrollController.addListener(() {
-      if (scrollController.position.maxScrollExtent ==
-          scrollController.position.pixels) {
-        if (!homeController.isLoadingPosts) {
-          homeController.getPosts();
-        }
-      }
-    });
+    return Obx(() {
+      return ListView.separated(
+              controller: _controller,
+              padding: const EdgeInsets.only( bottom: 100),
+              itemCount: _homeController.posts.length + 4,
+              itemBuilder: (context, index) {
+                if (index == 0) {
+                  return Obx(() =>
+                      _homeController.isRefreshingStories.value == true
+                          ? const StoryAndHighlightsShimmer()
+                          : storiesView());
+                } else if (index == 1) {
+                  return const QuickLinkWidget().vP16;
+                } else if (index == 2) {
+                  return postingView().hP16;
+                } else if (index == 3) {
+                  return Obx(() => Column(
+                        children: [
+                          HorizontalMenuBar(
+                              padding:
+                                  const EdgeInsets.only(left: 16, right: 16),
+                              onSegmentChange: (segment) {
+                                _homeController.categoryIndexChanged(
+                                    index: segment,
+                                    callback: () {
+                                      _refreshController.refreshCompleted();
+                                    });
+                              },
+                              selectedIndex:
+                                  _homeController.categoryIndex.value,
+                              menus: [
+                                LocalizationString.all,
+                                LocalizationString.following,
+                                // LocalizationString.trending,
+                                LocalizationString.recent,
+                                LocalizationString.your,
+                              ]),
+                          _homeController.isRefreshingPosts.value == true
+                              ? SizedBox(
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.9,
+                                  child: const HomeScreenShimmer())
+                              : _homeController.posts.isEmpty
+                                  ? SizedBox(
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.5,
+                                      child: emptyPost(
+                                          context: context,
+                                          title: LocalizationString.noPostFound,
+                                          subTitle: LocalizationString
+                                              .followFriendsToSeeUpdates),
+                                    )
+                                  : Container()
+                        ],
+                      ));
+                } else {
+                  PostModel model = _homeController.posts[index - 4];
 
-    return homeController.isLoadingPosts == true
-        ? SizedBox(
-            height: MediaQuery.of(context).size.height * 0.7,
-            child: const HomeScreenShimmer())
-        : GetBuilder<HomeController>(
-            init: homeController,
-            builder: (ctx) {
-              return homeController.posts.isNotEmpty
-                  ? SizedBox(
-                      height: homeController.posts.length * 540,
-                      child: ListView.separated(
-                          physics: const NeverScrollableScrollPhysics(),
-                          controller: scrollController,
-                          padding: const EdgeInsets.only(top: 20),
-                          itemCount: homeController.posts.length,
-                          itemBuilder: (context, index) {
-                            PostModel model = homeController.posts[index];
-                            return PostCard(
-                              model: model,
-                              textTapHandler: (text) {
-                                homeController.postTextTapHandler(
-                                    post: model, text: text);
-                              },
-                              likeTapHandler: () {
-                                homeController.likeUnlikePost(model, context);
-                              },
-                            );
-                          },
-                          separatorBuilder: (context, index) {
-                            return const SizedBox(
-                              height: 25,
-                            );
-                          }),
-                    )
-                  : SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.5,
-                      child: emptyPost(
-                          context: context,
-                          title: LocalizationString.noPostFound,
-                          subTitle:
-                              LocalizationString.followFriendsToSeeUpdates),
-                    );
-            },
-          );
+                  return PostCard(
+                    model: model,
+                    textTapHandler: (text) {
+                      _homeController.postTextTapHandler(
+                          post: model, text: text);
+                    },
+                    // mediaTapHandler: (post) {
+                    //   // Get.to(()=> PostMediaFullScreen(post: post));
+                    // },
+                    removePostHandler: () {
+                      _homeController.removePostFromList(model);
+                    },
+                  );
+                }
+              },
+              separatorBuilder: (context, index) {
+                // if ((index + 1) % 5 == 0) {
+                //   return FutureBuilder<Widget>(
+                //     future: BannerAdsWidget.getBannerWidget(
+                //         context: context, index: (index + 1) % 5),
+                //     builder: (_, snapshot) {
+                //       if (!snapshot.hasData) {
+                //         return Container();
+                //       } else {
+                //         return SizedBox(
+                //           height: 50,
+                //           width: MediaQuery.of(context).size.width,
+                //           child: snapshot.data,
+                //         );
+                //       }
+                //     },
+                //   );
+                // }
+                if (index == 1) {
+                  return Container();
+                } else {
+                  return const SizedBox(
+                    height: 20,
+                  );
+                }
+              })
+          .addPullToRefresh(
+              refreshController: _refreshController,
+              enablePullUp: false,
+              onRefresh: refreshData,
+              onLoading: () {});
+    });
   }
 }

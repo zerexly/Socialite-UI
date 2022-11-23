@@ -14,7 +14,7 @@ class SharedPrefs {
 
   Future<bool> isDarkMode() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.get('darkMode') as bool? ?? false;
+    return prefs.get('darkMode') as bool? ?? true;
   }
 
   setDarkMode(bool value) async {
@@ -73,14 +73,15 @@ class SharedPrefs {
     return prefs.get('VOIPToken') as String?;
   }
 
-  void setWallpaper({required int userId, required String wallpaper}) async {
+  void setWallpaper({required int roomId, required String wallpaper}) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString(userId.toString(), wallpaper);
+    prefs.setString(roomId.toString(), wallpaper);
   }
 
-  Future<String> getWallpaper({required int userId}) async {
+  Future<String> getWallpaper({required int roomId}) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.get(userId.toString()) as String? ?? "assets/chatbg/chatbg3.jpg";
+    return prefs.get(roomId.toString()) as String? ??
+        "assets/chatbg/chatbg3.jpg";
   }
 
   //Set/Get UserLoggedIn Status
@@ -104,5 +105,15 @@ class SharedPrefs {
     // if (fcmToken != null) {
     //   setFCMToken(fcmToken);
     // }
+  }
+
+  void setLanguage(String lang) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('language', lang);
+  }
+
+  Future<String> getLanguage() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.get('language') as String? ?? 'en';
   }
 }

@@ -1,7 +1,4 @@
 export 'package:image_picker/image_picker.dart';
-export 'package:photo_view/photo_view.dart';
-export 'package:photo_view/photo_view_gallery.dart';
-export 'package:video_compress/video_compress.dart';
 export 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 export 'package:cached_network_image/cached_network_image.dart';
 export 'package:path_provider/path_provider.dart';
@@ -34,21 +31,19 @@ export 'package:wakelock/wakelock.dart';
 export 'package:focused_menu/focused_menu.dart';
 export 'package:focused_menu/modals.dart';
 export 'package:localstore/localstore.dart';
-export 'package:flutter_sticky_header/flutter_sticky_header.dart';
 export 'package:pip_view/pip_view.dart';
 export 'package:google_sign_in/google_sign_in.dart';
 export 'package:flutter_linkify/flutter_linkify.dart';
-export 'package:video_thumbnail_imageview/video_thumbnail_imageview.dart';
+
+// export 'package:video_thumbnail_imageview/video_thumbnail_imageview.dart';
 export 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
 export 'package:uuid/uuid.dart';
 export 'package:mime_type/mime_type.dart';
 export 'package:photo_manager/photo_manager.dart';
 export 'package:share_plus/share_plus.dart';
 export 'package:google_mlkit_smart_reply/google_mlkit_smart_reply.dart';
-// export 'package:smart_reply/smart_reply.dart';
 export 'package:flutter_archive/flutter_archive.dart';
 export 'package:overlay_support/overlay_support.dart';
-export 'package:sliding_up_panel/sliding_up_panel.dart';
 export 'package:progress_state_button/progress_button.dart';
 export 'package:progress_state_button/iconed_button.dart';
 export 'package:sign_in_with_apple/sign_in_with_apple.dart';
@@ -57,10 +52,31 @@ export 'package:flutter_contacts/flutter_contacts.dart';
 export 'package:map_launcher/map_launcher.dart';
 export 'package:flutter_svg/flutter_svg.dart';
 export 'package:flutter_switch/flutter_switch.dart';
+export 'package:rate_my_app/rate_my_app.dart';
+export 'package:flutter_image_compress/flutter_image_compress.dart';
+export 'package:avatar_glow/avatar_glow.dart';
+export 'package:facebook_audience_network/facebook_audience_network.dart';
+export 'package:flare_flutter/flare_actor.dart';
+export 'package:flare_flutter/flare_controls.dart';
+export 'package:url_launcher/url_launcher.dart';
+export 'package:ripple_wave/ripple_wave.dart';
+export 'package:animated_text_kit/animated_text_kit.dart';
+// export 'package:zoom_pinch_overlay/zoom_pinch_overlay.dart';
+export 'package:file_picker/file_picker.dart';
+export 'package:flutter_downloader/flutter_downloader.dart';
+export 'package:android_path_provider/android_path_provider.dart';
+export 'package:percent_indicator/percent_indicator.dart';
+export 'package:open_file/open_file.dart';
+export 'package:auto_orientation/auto_orientation.dart';
+export 'package:pinch_zoom/pinch_zoom.dart';
+export 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+export 'package:animate_do/animate_do.dart';
 
-
-
-
-
-
+// export 'package:pip_flutter/pipflutter_player.dart';
+// export 'package:pip_flutter/pipflutter_player_configuration.dart';
+// export 'package:pip_flutter/pipflutter_player_controller.dart';
+// export 'package:pip_flutter/pipflutter_player_data_source.dart';
+// export 'package:pip_flutter/pipflutter_player_data_source_type.dart';
+// export 'package:jitsi_meet/jitsi_meet.dart';
+// export 'package:jitsi_meet/feature_flag/feature_flag.dart';
 

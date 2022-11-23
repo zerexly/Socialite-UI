@@ -1,5 +1,4 @@
 import 'package:foap/helper/common_import.dart';
-import 'package:foap/util/constant_util.dart';
 import 'package:get/get.dart';
 
 class VoiceRecord extends StatefulWidget {
@@ -113,11 +112,13 @@ class _VoiceRecordState extends State<VoiceRecord> {
   }
 
   sendRecording() {
-    if (recordingPath != null) {
-      Uint8List bytes = File(recordingPath!).readAsBytesSync();
+    File file = File(recordingPath!);
+    Uint8List data = file.readAsBytesSync();
 
+    if (recordingPath != null) {
       Media media = Media(
-        mediaByte: bytes,
+        file: File(recordingPath!),
+        fileSize: data.length,
         id: randomId(),
         creationTime: DateTime.now(),
         mediaType: GalleryMediaType.audio,

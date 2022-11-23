@@ -31,46 +31,47 @@ class _ContactListState extends State<ContactList> {
           const SizedBox(
             height: 50,
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          Stack(
             children: [
-              const ThemeIconWidget(
-                ThemeIcon.close,
-                size: 20,
-              ).ripple(() {
-                Navigator.of(context).pop();
-              }),
-              Column(
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+                  const ThemeIconWidget(
+                    ThemeIcon.close,
+                    size: 20,
+                  ).ripple(() {
+                    Navigator.of(context).pop();
+                  }),
                   Text(
-                    LocalizationString.shareContacts,
+                    LocalizationString.send,
                     style: Theme.of(context)
                         .textTheme
                         .titleMedium!
                         .copyWith(fontWeight: FontWeight.w600),
-                  ),
-                  Obx(() => Text(
-                        '${contactsController.selectedContacts.length}/${contactsController.contacts.length}',
-                        style: Theme.of(context)
-                            .textTheme
-                            .titleMedium!
-                            .copyWith(fontWeight: FontWeight.w900),
-                      ))
+                  ).ripple(() {
+                    Navigator.of(context).pop();
+                    widget.selectedContactsHandler(
+                        contactsController.selectedContacts);
+                  }),
                 ],
-              ),
-              Text(
-                LocalizationString.send,
-                style: Theme.of(context)
-                    .textTheme
-                    .titleMedium!
-                    .copyWith(fontWeight: FontWeight.w600),
-              ).ripple(() {
-                Navigator.of(context).pop();
-                widget.selectedContactsHandler(
-                    contactsController.selectedContacts);
-              }),
+              ).hP16,
+              Positioned(
+                left: 0,
+                right: 0,
+                child: Column(
+                  children: [
+                    Obx(() => Text(
+                          '${LocalizationString.shareContacts} ${contactsController.selectedContacts.length}/${contactsController.contacts.length}',
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleSmall!
+                              .copyWith(fontWeight: FontWeight.w600),
+                        ))
+                  ],
+                ),
+              )
             ],
-          ).hP16,
+          ),
           divider(context: context).tP16,
           Expanded(
             child: GetBuilder<ContactsController>(

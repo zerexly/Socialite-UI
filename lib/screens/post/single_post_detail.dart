@@ -34,7 +34,7 @@ class _SinglePostDetailState extends State<SinglePostDetail> {
           const SizedBox(
             height: 50,
           ),
-          backNavigationBar(context, LocalizationString.post),
+          backNavigationBar(context: context, title: LocalizationString.post),
           divider(context: context).tP8,
           const SizedBox(
             height: 20,
@@ -59,10 +59,16 @@ class _SinglePostDetailState extends State<SinglePostDetail> {
                         ? PostCard(
                             model: singlePostDetailController.post.value!,
                             textTapHandler: (text) {},
-                            likeTapHandler: () {
-                              singlePostDetailController
-                                  .likeUnlikePost(context);
+                            // likeTapHandler: () {
+                            //   singlePostDetailController
+                            //       .likeUnlikePost(context);
+                            // },
+                            removePostHandler: () {
+                              Get.back();
                             },
+                            // mediaTapHandler: (post) {
+                            //   Get.to(() => PostMediaFullScreen(post: post));
+                            // },
                           )
                         : Container();
               }),

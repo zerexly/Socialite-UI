@@ -34,12 +34,11 @@ class UpdateProfileState extends State<UpdateProfile> {
           const SizedBox(
             height: 50,
           ),
-          backNavigationBar(context, LocalizationString.editProfile),
+          backNavigationBar(
+              context: context, title: LocalizationString.editProfile),
           divider(context: context).vP8,
           addProfileView(),
-          const SizedBox(
-            height: 15,
-          ),
+
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -49,14 +48,16 @@ class UpdateProfileState extends State<UpdateProfile> {
                     LocalizationString.userName,
                     style: Theme.of(context)
                         .textTheme
-                        .titleMedium!
+                        .bodyLarge!
                         .copyWith(fontWeight: FontWeight.w600),
                   ),
                   const Spacer(),
-                  Obx(() => Text(
-                        profileController.user.value.userName,
-                        style: Theme.of(context).textTheme.titleMedium,
-                      )),
+                  Obx(() => profileController.user.value != null
+                      ? Text(
+                          profileController.user.value!.userName,
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        )
+                      : Container()),
                   const SizedBox(
                     width: 20,
                   ),
@@ -78,13 +79,13 @@ class UpdateProfileState extends State<UpdateProfile> {
                     LocalizationString.password,
                     style: Theme.of(context)
                         .textTheme
-                        .titleMedium!
+                        .bodyLarge!
                         .copyWith(fontWeight: FontWeight.w600),
                   ),
                   const Spacer(),
                   Text(
                     '********',
-                    style: Theme.of(context).textTheme.titleMedium,
+                    style: Theme.of(context).textTheme.bodyMedium,
                   ),
                   const SizedBox(
                     width: 20,
@@ -103,15 +104,17 @@ class UpdateProfileState extends State<UpdateProfile> {
                 children: [
                   Text(
                     LocalizationString.phoneNumber,
-                    style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                           fontWeight: FontWeight.w600,
                         ),
                   ),
                   const Spacer(),
-                  Obx(() => Text(
-                        profileController.user.value.phone ?? '',
-                        style: Theme.of(context).textTheme.titleMedium,
-                      )),
+                  Obx(() => profileController.user.value != null
+                      ? Text(
+                          profileController.user.value!.phone ?? '',
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        )
+                      : Container()),
                   const SizedBox(
                     width: 20,
                   ),
@@ -131,15 +134,17 @@ class UpdateProfileState extends State<UpdateProfile> {
                 children: [
                   Text(
                     LocalizationString.paymentDetail,
-                    style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                           fontWeight: FontWeight.w600,
                         ),
                   ),
                   const Spacer(),
-                  Obx(() => Text(
-                        profileController.user.value.paypalId ?? '',
-                        style: Theme.of(context).textTheme.titleMedium,
-                      )),
+                  Obx(() => profileController.user.value != null
+                      ? Text(
+                          profileController.user.value!.paypalId ?? '',
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        )
+                      : Container()),
                   const SizedBox(
                     width: 20,
                   ),
@@ -159,14 +164,14 @@ class UpdateProfileState extends State<UpdateProfile> {
                 children: [
                   Text(
                     LocalizationString.location,
-                    style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                           fontWeight: FontWeight.w600,
                         ),
                   ),
                   const Spacer(),
                   Obx(() => Text(
-                        '${profileController.user.value.country ?? ''} ${profileController.user.value.city ?? ''}',
-                        style: Theme.of(context).textTheme.titleMedium,
+                        '${profileController.user.value?.country ?? ''} ${profileController.user.value?.city ?? ''}',
+                        style: Theme.of(context).textTheme.bodyMedium,
                       )),
                   const SizedBox(
                     width: 20,
@@ -184,7 +189,7 @@ class UpdateProfileState extends State<UpdateProfile> {
               ),
               divider(context: context).vP16,
             ],
-          ).p16,
+          ).hP16,
           // Row(
           //   children: [
           //     Container(
@@ -226,47 +231,52 @@ class UpdateProfileState extends State<UpdateProfile> {
         init: profileController,
         builder: (ctx) {
           return SizedBox(
-            height: 180,
-            child: Column(children: [
-              UserAvatarView(
-                      user: profileController.user.value,
-                      size: 65,
-                      onTapHandler: () {})
-                  .ripple(() {
-                openImagePickingPopup();
-              }),
-              Text(
-                LocalizationString.editProfile,
-                style: Theme.of(context).textTheme.bodyMedium,
-              ).vP4.ripple(() {
-                openImagePickingPopup();
-              }),
-              Text(
-                profileController.user.value.userName,
-                style: Theme.of(context)
-                    .textTheme
-                    .titleMedium!
-                    .copyWith(fontWeight: FontWeight.w600),
-              ).setPadding(top: 8, bottom: 4),
-              profileController.user.value.email != null
-                  ? Text(
-                      '${profileController.user.value.email}',
+            height: 210,
+            child: profileController.user.value != null
+                ? Column(children: [
+                  const SizedBox(height: 20,),
+                    UserAvatarView(
+                            user: profileController.user.value!,
+                            size: 65,
+                            onTapHandler: () {})
+                        .ripple(() {
+                      openImagePickingPopup();
+                    }),
+                    Text(
+                      LocalizationString.editProfilePicture,
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ).vP4.ripple(() {
+                      openImagePickingPopup();
+                    }),
+                    Text(
+                      profileController.user.value!.userName,
                       style: Theme.of(context)
                           .textTheme
                           .titleMedium!
-                          .copyWith(color: Theme.of(context).backgroundColor),
-                    )
-                  : Container(),
-              profileController.user.value.country != null
-                  ? Text(
-                      '${profileController.user.value.country ?? ''},${profileController.user.value.city ?? ''}',
-                      style: Theme.of(context)
-                          .textTheme
-                          .titleMedium!
-                          .copyWith(color: Theme.of(context).backgroundColor),
-                    ).vP4
-                  : Container(),
-            ]).p8,
+                          .copyWith(fontWeight: FontWeight.w600),
+                    ).setPadding(bottom: 4),
+                    profileController.user.value?.email != null
+                        ? Text(
+                            '${profileController.user.value!.email}',
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium!
+                                .copyWith(
+                                    color: Theme.of(context).backgroundColor),
+                          )
+                        : Container(),
+                    profileController.user.value?.country != null
+                        ? Text(
+                            '${profileController.user.value?.country ?? ''},${profileController.user.value?.city ?? ''}',
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium!
+                                .copyWith(
+                                    color: Theme.of(context).backgroundColor),
+                          ).vP4
+                        : Container(),
+                  ]).p8
+                : Container(),
           );
         });
   }
@@ -291,7 +301,6 @@ class UpdateProfileState extends State<UpdateProfile> {
                           .pickImage(source: ImageSource.camera)
                           .then((pickedFile) {
                         if (pickedFile != null) {
-                          setState(() {});
                           profileController.editProfileImageAction(
                               pickedFile, context);
                         } else {}

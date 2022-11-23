@@ -9,16 +9,18 @@ class PaymentWithdrawalScreen extends StatefulWidget {
 }
 
 class PaymentWithdrawalState extends State<PaymentWithdrawalScreen> {
-  final ProfileController profileController = Get.find();
+  final ProfileController _profileController = Get.find();
+  final SettingsController _settingsController = Get.find();
+
+  TextEditingController textController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
 
-    // getUserProfileApi();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      profileController.getUserProfile();
-      profileController.getWithdrawHistory();
+      _profileController.getMyProfile();
+      _profileController.getWithdrawHistory();
     });
   }
 
@@ -30,7 +32,8 @@ class PaymentWithdrawalState extends State<PaymentWithdrawalScreen> {
           const SizedBox(
             height: 50,
           ),
-          backNavigationBar(context, LocalizationString.earnings),
+          backNavigationBar(
+              context: context, title: LocalizationString.earnings),
           divider(context: context).vP8,
           const SizedBox(
             height: 20,
@@ -39,7 +42,7 @@ class PaymentWithdrawalState extends State<PaymentWithdrawalScreen> {
           const SizedBox(
             height: 20,
           ),
-          withdrawBtn(),
+          totalCoinBalanceView(),
           const SizedBox(
             height: 20,
           ),
@@ -50,102 +53,20 @@ class PaymentWithdrawalState extends State<PaymentWithdrawalScreen> {
                 LocalizationString.transactionHistory,
                 style: Theme.of(context)
                     .textTheme
-                    .titleLarge!
-                    .copyWith(fontWeight: FontWeight.w600),
+                    .bodyLarge!
+                    .copyWith(fontWeight: FontWeight.w900),
               )),
           Expanded(
             child: GetBuilder<ProfileController>(
-                init: profileController,
+                init: _profileController,
                 builder: (ctx) {
                   return ListView.builder(
                       padding: EdgeInsets.zero,
-                      itemCount: profileController.payments.length,
+                      itemCount: _profileController.payments.length,
                       itemBuilder: (context, index) {
                         PaymentModel paymentModel =
-                            profileController.payments[index];
-                        return Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Padding(
-                                padding: const EdgeInsets.fromLTRB(
-                                    15.0, 10.0, 15.0, 15.0),
-                                child: Row(children: [
-                                  Container(
-                                    color: Theme.of(context)
-                                        .primaryColor
-                                        .withOpacity(0.1),
-                                    height: 31,
-                                    width: 31,
-                                    child: ThemeIconWidget(ThemeIcon.wallet,
-                                        color: Theme.of(context).primaryColor,
-                                        size: 25),
-                                  ).circular,
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        LocalizationString.withdrawal,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyLarge!
-                                            .copyWith(
-                                                color: Theme.of(context)
-                                                    .primaryColor),
-                                      ),
-                                      const SizedBox(height: 5),
-                                      Text(
-                                        paymentModel.createDate,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodySmall,
-                                      )
-                                    ],
-                                  ).lP8,
-                                  const Spacer(),
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      Text(
-                                        '\$${paymentModel.amount}',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .titleLarge!
-                                            .copyWith(
-                                                color: Theme.of(context)
-                                                    .primaryColor,
-                                                fontWeight: FontWeight.w600),
-                                      ).bP4,
-                                      Text(
-                                        paymentModel.status == 1
-                                            ? LocalizationString.pending
-                                            : paymentModel.status == 2
-                                                ? LocalizationString.rejected
-                                                : LocalizationString.completed,
-                                        style: paymentModel.status == 1
-                                            ? Theme.of(context)
-                                                .textTheme
-                                                .titleSmall!
-                                                .copyWith(
-                                                    color: Theme.of(context)
-                                                        .primaryColor,
-                                                    fontWeight: FontWeight.w600)
-                                            : Theme.of(context)
-                                                .textTheme
-                                                .bodyLarge!
-                                                .copyWith(
-                                                    color: Theme.of(context)
-                                                        .errorColor,
-                                                    fontWeight:
-                                                        FontWeight.w600),
-                                      ),
-                                    ],
-                                  )
-                                ])),
-                          ],
-                        );
+                            _profileController.payments[index];
+                        return TransactionTile(model: paymentModel);
                       });
                 }),
           ),
@@ -154,45 +75,185 @@ class PaymentWithdrawalState extends State<PaymentWithdrawalScreen> {
 
   totalBalanceView() {
     return GetBuilder<ProfileController>(
-            init: profileController,
-            builder: (ctx) {
-              return SizedBox(
-                height: 100,
-                child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Center(
-                        child: Text(
+        init: _profileController,
+        builder: (ctx) {
+          return Container(
+            color: Theme.of(context).cardColor,
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
                           LocalizationString.availableBalance,
                           style: Theme.of(context)
                               .textTheme
-                              .titleMedium!
+                              .bodySmall!
                               .copyWith(fontWeight: FontWeight.w600),
                         ),
-                      ),
-                      const SizedBox(height: 10),
-                      Center(
-                        child: Text(
+                        const SizedBox(height: 10),
+                        Text(
                           '\$${getIt<UserProfileManager>().user!.balance}',
                           style: Theme.of(context)
                               .textTheme
-                              .displayMedium!
+                              .headlineSmall!
                               .copyWith(fontWeight: FontWeight.w900),
+                        )
+                      ]),
+                ),
+                withdrawBtn()
+              ],
+            ).p16,
+          ).round(10);
+        }).hP16;
+  }
+
+  totalCoinBalanceView() {
+    return GetBuilder<ProfileController>(
+        init: _profileController,
+        builder: (ctx) {
+          return Container(
+            color: Theme.of(context).cardColor,
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          LocalizationString.availableCoins,
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall!
+                              .copyWith(fontWeight: FontWeight.w600),
                         ),
-                      )
-                    ]),
-              );
-            })
-        .shadowWithBorder(
-            context: context,
-            radius: 20,
-            shadowOpacity: 2.5,
-            borderWidth: 2,
-            borderColor: Theme.of(context).primaryColor,
-            fillColor: Theme.of(context).backgroundColor)
-        .shadow(context: context, shadowOpacity: 0.2)
-        .hP16;
+                        const SizedBox(height: 10),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '${getIt<UserProfileManager>().user!.coins}',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headlineSmall!
+                                  .copyWith(fontWeight: FontWeight.w900),
+                            ),
+                            const SizedBox(height: 5),
+                            Text(
+                              '= \$${(_settingsController.setting.value!.coinsValue * getIt<UserProfileManager>().user!.coins).toStringAsFixed(2)}',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium!
+                                  .copyWith(
+                                      fontWeight: FontWeight.w500,
+                                      color: Theme.of(context).primaryColor),
+                            ),
+                          ],
+                        )
+                      ]),
+                ),
+                redeemBtn()
+              ],
+            ).p16,
+          ).round(10);
+        }).hP16;
+  }
+
+  Future<void> askNumberOfCoinToRedeem() async {
+    BuildContext dialogContext;
+
+    return showDialog(
+        context: context,
+        builder: (context) {
+          dialogContext = context;
+
+          return AlertDialog(
+            title: Text(
+              LocalizationString.enterNumberOfCoins,
+            ),
+            content: Container(
+              color: Theme.of(context).backgroundColor,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: SizedBox(
+                      height: 50,
+                      child: TextField(
+                        keyboardType: TextInputType.number,
+                        decoration: const InputDecoration(
+                          border: InputBorder.none,
+                        ),
+                        style: Theme.of(context).textTheme.bodyLarge,
+                        onChanged: (value) {
+                          if (textController.text.isNotEmpty) {
+                            _settingsController
+                                .redeemCoinValueChange(int.parse(value));
+                          } else {
+                            _settingsController.redeemCoinValueChange(0);
+                          }
+                        },
+                        controller: textController,
+                      ).lP8,
+                    ),
+                  ),
+                  Obx(() => Container(
+                        height: 50,
+                        color: Theme.of(context).primaryColor,
+                        child: Center(
+                          child: Text(
+                            '= \$${(_settingsController.redeemCoins * _settingsController.setting.value!.coinsValue).toStringAsFixed(2)}',
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium!
+                                .copyWith(fontWeight: FontWeight.w500),
+                          ).hP8,
+                        ),
+                      ).rightRounded(10)),
+                ],
+              ),
+            ).round(10),
+            actions: <Widget>[
+              FilledButtonType1(
+                text: LocalizationString.redeem,
+                onPress: () {
+                  if (textController.text.isNotEmpty) {
+                    int coins = int.parse(textController.text);
+                    if (coins >=
+                        _settingsController
+                            .setting.value!.minCoinsWithdrawLimit) {
+                      if (coins >= getIt<UserProfileManager>().user!.coins) {
+                        AppUtil.showToast(
+                            context: context,
+                            message: LocalizationString.enterValidAmountOfCoins
+                                .replaceAll(
+                                    '{{coins}}',
+                                    _settingsController
+                                        .setting.value!.minCoinsWithdrawLimit
+                                        .toString()),
+                            isSuccess: false);
+                        return;
+                      }
+                      _profileController.redeemRequest(coins, context);
+                      textController.text = '';
+                      Navigator.pop(dialogContext);
+                    } else {
+                      AppUtil.showToast(
+                          context: context,
+                          message: LocalizationString.minCoinsRedeemLimit
+                              .replaceAll(
+                                  '{{coins}}',
+                                  _settingsController
+                                      .setting.value!.minCoinsWithdrawLimit
+                                      .toString()),
+                          isSuccess: false);
+                    }
+                  }
+                },
+              ),
+            ],
+          );
+        });
   }
 
   withdrawBtn() {
@@ -201,7 +262,10 @@ class PaymentWithdrawalState extends State<PaymentWithdrawalScreen> {
         if (int.parse(getIt<UserProfileManager>().user!.balance) < 50) {
           AppUtil.showToast(
               context: context,
-              message: LocalizationString.minWithdrawlLimit,
+              message: LocalizationString.minWithdrawLimit.replaceAll(
+                  '{{cash}}',
+                  _settingsController.setting.value!.minWithdrawLimit
+                      .toString()),
               isSuccess: false);
         } else if ((getIt<UserProfileManager>().user!.paypalId ?? '').isEmpty) {
           AppUtil.showToast(
@@ -209,18 +273,52 @@ class PaymentWithdrawalState extends State<PaymentWithdrawalScreen> {
               message: LocalizationString.pleaseEnterPaypalId,
               isSuccess: false);
         } else {
-          profileController.withdrawalRequest(context);
+          _profileController.withdrawalRequest(context);
         }
       },
       child: Center(
         child: Container(
-            height: 45.0,
-            width: 120,
+            height: 35.0,
+            width: 100,
             color: Theme.of(context).primaryColor,
             child: Center(
               child: Text(LocalizationString.withdraw,
-                  style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                      fontWeight: FontWeight.w600, color: Colors.white)),
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodySmall!
+                      .copyWith(fontWeight: FontWeight.w600)),
+            )).round(5).shadow(context: context),
+      ),
+    );
+  }
+
+  redeemBtn() {
+    return InkWell(
+      onTap: () {
+        if (getIt<UserProfileManager>().user!.coins <
+            _settingsController.setting.value!.minCoinsWithdrawLimit) {
+          AppUtil.showToast(
+              context: context,
+              message: LocalizationString.minCoinsRedeemLimit.replaceAll(
+                  '{{coins}}',
+                  _settingsController.setting.value!.minCoinsWithdrawLimit
+                      .toString()),
+              isSuccess: false);
+        } else {
+          askNumberOfCoinToRedeem();
+        }
+      },
+      child: Center(
+        child: Container(
+            height: 35.0,
+            width: 100,
+            color: Theme.of(context).primaryColor,
+            child: Center(
+              child: Text(LocalizationString.redeem,
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodySmall!
+                      .copyWith(fontWeight: FontWeight.w600)),
             )).round(5).shadow(context: context),
       ),
     );

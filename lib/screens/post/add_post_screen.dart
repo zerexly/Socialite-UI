@@ -4,8 +4,10 @@ import 'package:get/get.dart';
 class AddPostScreen extends StatefulWidget {
   final List<Media> items;
   final int? competitionId;
+  final int? clubId;
 
-  const AddPostScreen({Key? key, required this.items, this.competitionId})
+  const AddPostScreen(
+      {Key? key, required this.items, this.competitionId, this.clubId})
       : super(key: key);
 
   @override
@@ -16,11 +18,24 @@ class AddPostState extends State<AddPostScreen> {
   TextEditingController descriptionText = TextEditingController();
 
   final AddPostController addPostController = Get.find();
-  final ExploreController exploreController = Get.find();
+
+  RateMyApp rateMyApp = RateMyApp(
+    preferencesPrefix: 'rateMyApp_',
+    minDays: 0, // Show rate popup on first day of install.
+    minLaunches:
+        0, // Show rate popup after 5 launches of app after minDays is passed.
+  );
 
   @override
   void initState() {
     super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await rateMyApp.init();
+      if (mounted && rateMyApp.shouldOpenDialog) {
+        rateMyApp.showRateDialog(context);
+      }
+    });
   }
 
   @override
@@ -47,7 +62,9 @@ class AddPostState extends State<AddPostScreen> {
                                   const ThemeIconWidget(ThemeIcon.backArrow)),
                           const Spacer(),
                           Text(
-                            LocalizationString.share,
+                            widget.competitionId == null
+                                ? LocalizationString.share
+                                : LocalizationString.submit,
                             style: Theme.of(context)
                                 .textTheme
                                 .titleMedium!
@@ -55,11 +72,12 @@ class AddPostState extends State<AddPostScreen> {
                                     color: Theme.of(context).primaryColor,
                                     fontWeight: FontWeight.w600),
                           ).ripple(() {
-                            addPostController.uploadAllPostImages(
+                            addPostController.uploadAllPostFiles(
                                 context: context,
                                 items: widget.items,
                                 title: descriptionText.text,
-                                competitionId: widget.competitionId);
+                                competitionId: widget.competitionId,
+                                clubId: widget.clubId);
                           })
                         ],
                       ).hP16,
@@ -98,26 +116,6 @@ class AddPostState extends State<AddPostScreen> {
                       const SizedBox(
                         height: 20,
                       ),
-                      // Obx(() => Row(
-                      //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      //       children: [
-                      //         Text(
-                      //           LocalizationString.allowComments,
-                      //           style: Theme.of(context).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.w600),
-                      //         ),
-                      //         ThemeIconWidget(
-                      //           addPostController.allowComments.value
-                      //               ? ThemeIcon.selectedCheckbox
-                      //               : ThemeIcon.emptyCheckbox,
-                      //           size: 20,
-                      //           color: addPostController.allowComments.value
-                      //               ? Theme.of(context).primaryColor
-                      //               : Theme.of(context).iconTheme.color,
-                      //         ).ripple(() {
-                      //           addPostController.toggleAllowCommentsSetting();
-                      //         })
-                      //       ],
-                      //     ).hP16)
                     ]),
                 addPostController.isPreviewMode.value
                     ? Stack(
@@ -157,11 +155,14 @@ class AddPostState extends State<AddPostScreen> {
           CarouselSlider(
             items: [
               for (Media media in widget.items)
-                Image.memory(
-                  media.thumbnail!,
-                  fit: BoxFit.cover,
-                  width: double.infinity,
-                ).round(5)
+                isLarge
+                    ? Image.file(media.file!,
+                        fit: BoxFit.cover, width: double.infinity)
+                    : Image.memory(
+                        media.thumbnail!,
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                      ).round(5)
             ],
             options: CarouselOptions(
               enlargeCenterPage: false,
@@ -173,7 +174,7 @@ class AddPostState extends State<AddPostScreen> {
               },
             ),
           ),
-          widget.items.length > 1
+          widget.items.length > 1 && isLarge == false
               ? Positioned(
                   right: 5,
                   top: 5,

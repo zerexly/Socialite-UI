@@ -10,17 +10,18 @@ class CallHistory extends StatefulWidget {
 }
 
 class _CallHistoryState extends State<CallHistory> {
-  final CallHistoryController callHistoryController = Get.find();
+  final CallHistoryController _callHistoryController = Get.find();
+  final ChatDetailController _chatDetailController = Get.find();
 
   @override
   void initState() {
-    callHistoryController.callHistory();
+    _callHistoryController.callHistory();
     super.initState();
   }
 
   @override
   void dispose() {
-    callHistoryController.clear();
+    _callHistoryController.clear();
     super.dispose();
   }
 
@@ -64,36 +65,45 @@ class _CallHistoryState extends State<CallHistory> {
             divider(context: context).tP8,
             Expanded(
               child: GetBuilder<CallHistoryController>(
-                  init: callHistoryController,
+                  init: _callHistoryController,
                   builder: (ctx) {
                     ScrollController scrollController = ScrollController();
                     scrollController.addListener(() {
                       if (scrollController.position.maxScrollExtent ==
                           scrollController.position.pixels) {
-                        if (!callHistoryController.isLoading) {
-                          callHistoryController.callHistory();
+                        if (!_callHistoryController.isLoading) {
+                          _callHistoryController.callHistory();
                         }
                       }
                     });
 
-                    return ListView.separated(
-                        padding: const EdgeInsets.only(top: 20, bottom: 100),
-                        controller: scrollController,
-                        itemBuilder: (ctx, index) {
-                          return CallHistoryTile(
-                                  model: callHistoryController.calls[index])
-                              .ripple(() {
-                            callHistoryController.reInitiateCall(
-                                call: callHistoryController.calls[index],
+                    return _callHistoryController.calls.isNotEmpty
+                        ? ListView.separated(
+                            padding:
+                                const EdgeInsets.only(top: 20, bottom: 100),
+                            controller: scrollController,
+                            itemBuilder: (ctx, index) {
+                              return CallHistoryTile(
+                                      model:
+                                          _callHistoryController.calls[index])
+                                  .ripple(() {
+                                _callHistoryController.reInitiateCall(
+                                    call: _callHistoryController.calls[index],
+                                    context: context);
+                              });
+                            },
+                            separatorBuilder: (ctx, index) {
+                              return const SizedBox(
+                                height: 20,
+                              );
+                            },
+                            itemCount: _callHistoryController.calls.length)
+                        : _callHistoryController.isLoading == true
+                            ? Container()
+                            : emptyData(
+                                title: LocalizationString.noCallFound,
+                                subTitle: LocalizationString.makeSomeCalls,
                                 context: context);
-                          });
-                        },
-                        separatorBuilder: (ctx, index) {
-                          return const SizedBox(
-                            height: 20,
-                          );
-                        },
-                        itemCount: callHistoryController.calls.length);
                   }).hP16,
             ),
           ],
@@ -104,6 +114,16 @@ class _CallHistoryState extends State<CallHistory> {
     showModalBottomSheet(
         backgroundColor: Colors.transparent,
         context: context,
-        builder: (context) => const SelectUserForChat());
+        builder: (context) => SelectUserForChat(userSelected: (user) {
+              _chatDetailController.getChatRoomWithUser(user.id, (room) {
+                EasyLoading.dismiss();
+
+                Get.back();
+                Get.to(() => ChatDetail(
+                      // opponent: usersList[index - 1].toChatRoomMember,
+                      chatRoom: room,
+                    ));
+              });
+            }));
   }
 }

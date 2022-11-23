@@ -1,5 +1,4 @@
 import 'package:foap/helper/common_import.dart';
-import 'package:foap/helper/nunber_extension.dart';
 
 class HashTagTile extends StatelessWidget {
   final Hashtag hashtag;
@@ -34,7 +33,7 @@ class HashTagTile extends StatelessWidget {
                   style: Theme.of(context).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.w600),
                 ).bP4,
                 Text(
-                  '${hashtag.counter.formatNumber()} ${LocalizationString.posts.toLowerCase()}',
+                  '${hashtag.counter.formatNumber} ${LocalizationString.posts.toLowerCase()}',
                   style: Theme.of(context).textTheme.bodyLarge,
                 )
               ],

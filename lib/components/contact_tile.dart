@@ -12,17 +12,19 @@ class ContactTile extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(contact.displayName,
-                style: Theme.of(context)
-                    .textTheme
-                    .titleMedium!
-                    .copyWith(fontWeight: FontWeight.w600)),
-            Text(contact.phones.map((e) => e.number).toList().join(','),
-                style: Theme.of(context).textTheme.titleSmall)
-          ],
+        Flexible(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(contact.displayName,
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleMedium!
+                      .copyWith(fontWeight: FontWeight.w600)),
+              Text(contact.phones.map((e) => e.number).toList().join(','),
+                  style: Theme.of(context).textTheme.titleSmall)
+            ],
+          ),
         ),
         isSelected
             ? ThemeIconWidget(

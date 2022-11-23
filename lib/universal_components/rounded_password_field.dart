@@ -138,7 +138,7 @@ class _PasswordFieldState extends State<PasswordField> {
                 Expanded(
                     child: Focus(
                   child: TextField(
-                          style: Theme.of(context).textTheme.titleMedium,
+                          style: Theme.of(context).textTheme.titleSmall,
                           controller: controller,
                           onChanged: onChanged,
                           cursorColor: Theme.of(context).primaryColor,

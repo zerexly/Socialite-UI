@@ -3,6 +3,48 @@ import 'package:foap/helper/common_import.dart';
 import 'package:push/push.dart';
 import 'package:get/get.dart';
 
+class FCM {
+  final _firebaseMessaging = FirebaseMessaging.instance;
+
+  final streamCtlr = StreamController<String>.broadcast();
+  final titleCtlr = StreamController<String>.broadcast();
+  final bodyCtlr = StreamController<String>.broadcast();
+
+  setNotifications() {
+    FirebaseMessaging.onMessage.listen(
+          (message) async {
+        if (message.data.containsKey('data')) {
+          // Handle data message
+          streamCtlr.sink.add(message.data['data']);
+        }
+        if (message.data.containsKey('notification')) {
+          // Handle notification message
+          streamCtlr.sink.add(message.data['notification']);
+        }
+        // Or do other work.
+        titleCtlr.sink.add(message.notification!.title!);
+        bodyCtlr.sink.add(message.notification!.body!);
+      },
+    );
+    // With this token you can test it easily on your phone
+    _firebaseMessaging.getToken().then((fcmToken) {
+      if (fcmToken != null) {
+        SharedPrefs().setFCMToken(fcmToken);
+      }
+    });
+
+    FirebaseMessaging.instance.onTokenRefresh.listen((fcmToken) {
+      SharedPrefs().setFCMToken(fcmToken);
+    }).onError((err) {});
+  }
+
+  dispose() {
+    streamCtlr.close();
+    bodyCtlr.close();
+    titleCtlr.close();
+  }
+}
+
 class NotificationManager {
   final AgoraLiveController agoraLiveController = Get.find();
   final AgoraCallController agoraCallController = Get.find();
@@ -40,7 +82,7 @@ class NotificationManager {
 
       if (action.buttonKeyPressed == "answer") {
         actionOnCall(action.payload!, true);
-      } else if (action.buttonKeyPressed == "delete") {
+      } else if (action.buttonKeyPressed == "decline") {
         actionOnCall(action.payload!, false);
       }
     });
@@ -69,7 +111,6 @@ class NotificationManager {
 
     // Handle notification taps
     Push.instance.onNotificationTap.listen((data) {
-      // print('Notification was tapped:\n''Data: ${data} \n');
       String? callType = data['callType'] as String?;
 
       if (callType != null) {
@@ -81,12 +122,6 @@ class NotificationManager {
 
     // Handle push notifications
     Push.instance.onMessage.listen((message) {
-      // print('RemoteMessage received while app is in foreground:\n'
-      //     'RemoteMessage.Notification: ${message.notification} \n'
-      //     ' title: ${message.notification?.title.toString()}\n'
-      //     ' body: ${message.notification?.body.toString()}\n'
-      //     'RemoteMessage.Data: ${message.data}');
-
       String? callType = message.data?['callType'] as String?;
 
       if (callType != null) {
@@ -128,7 +163,7 @@ class NotificationManager {
                     ? 'New competition added'
                     : notificationType == 100
                         ? 'New message'
-                        : notificationType == 100
+                        : notificationType == 101
                             ? 'Live'
                             : '',
         body: message,
@@ -148,51 +183,60 @@ class NotificationManager {
   }
 
   handleCallNotification(Map<String?, Object?> data) {
-    String channelName = data['channelName'] as String;
-    String token = data['token'] as String;
-    String id = data['callType'] as String;
-    String uuid = data['uuid'] as String;
-    String callerId = data['callerId'] as String;
-    String username = data['username'] as String;
-    String callType = data['callType'] as String;
+    int notificationType = int.parse(data['notification_type'] as String);
 
-    AwesomeNotifications().createNotification(
-        content: NotificationContent(
-          //simple notification
-          id: 123,
-          channelKey: 'calls',
-          //set configuration wuth key "basic"
-          title: callType == '1' ? 'Audio call' : 'Video call',
-          body: 'Call from $username',
-          payload: {
-            "channelName": channelName,
-            "token": token,
-            "callerId": callerId.toString(),
-            "callType": callType,
-            "id": id,
-            "uuid": uuid
-          },
-          category: NotificationCategory.Call,
-          displayOnBackground: true,
-          wakeUpScreen: true,
-          fullScreenIntent: true,
-          displayOnForeground: true,
-          autoDismissible: false,
-        ),
-        actionButtons: [
-          NotificationActionButton(
-            key: "answer",
-            label: "Answer",
+    if (notificationType == 104) {
+      //call cancelled by caller
+      AwesomeNotifications().dismissAllNotifications();
+    } else {
+      // new call
+      String channelName = data['channelName'] as String;
+      String token = data['token'] as String;
+      String id = data['callType'] as String;
+      String uuid = data['uuid'] as String;
+      String callerId = data['callerId'] as String;
+      String username = data['username'] as String;
+      String callType = data['callType'] as String;
+
+      AwesomeNotifications().createNotification(
+          content: NotificationContent(
+            //simple notification
+            id: 123,
+            channelKey: 'calls',
+            //set configuration wuth key "basic"
+            title: callType == '1' ? 'Audio call' : 'Video call',
+            body: 'Call from $username',
+            payload: {
+              "channelName": channelName,
+              "token": token,
+              "callerId": callerId.toString(),
+              "callType": callType,
+              "id": id,
+              "uuid": uuid
+            },
+            category: NotificationCategory.Call,
+            displayOnBackground: true,
+            wakeUpScreen: true,
+            fullScreenIntent: true,
+            displayOnForeground: true,
+            autoDismissible: false,
           ),
-          NotificationActionButton(
-            key: "decline",
-            label: "Decline",
-          )
-        ]);
+          actionButtons: [
+            NotificationActionButton(
+              key: "answer",
+              label: "Answer",
+            ),
+            NotificationActionButton(
+              key: "decline",
+              label: "Decline",
+            )
+          ]);
+    }
   }
 
   parseNotificationData(dynamic data, bool isInForeground) {
-    int notificationType = int.parse(data['notification_type'] as String);
+    int notificationType =
+        int.parse(data['notification_type'] as String? ?? '0');
 
     if (isInForeground) {
       // show banner
@@ -319,15 +363,20 @@ class NotificationManager {
         int referenceId = int.parse(data['reference_id'] as String);
         // new competition added notification
         Get.to(() => CompetitionDetailScreen(
-              competition: null,
               competitionId: referenceId,
               refreshPreviousScreen: () {},
             ));
       } else if (notificationType == 100) {
-        int userId = int.parse(data['userId'] as String);
-        UserModel user = UserModel();
-        user.id = userId;
-        Get.to(() => ChatDetail(chatRoom: null, opponent: user));
+        // print(data);
+        int? roomId = data['room'] as int?;
+        if (roomId != null) {
+          ApiController().getChatRoomDetail(roomId).then((response) {
+            if (response.room != null) {
+              Get.to(
+                  () => ChatDetail(chatRoom: response.room!));
+            }
+          });
+        }
       } else if (notificationType == 101) {
         int liveId = int.parse(data['liveCallId'] as String);
         String channelName = data['channelName'];

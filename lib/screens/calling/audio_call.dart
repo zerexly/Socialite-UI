@@ -27,7 +27,7 @@ class _AudioCallingScreenState extends State<AudioCallingScreen> {
   void dispose() {
     // _engine.leaveChannel();
     // _engine.destroy();
-    // Wakelock.disable(); // Turn off wakelock feature after call end
+    Wakelock.disable(); // Turn off wakelock feature after call end
     super.dispose();
   }
 

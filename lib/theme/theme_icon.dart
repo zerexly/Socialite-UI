@@ -52,6 +52,19 @@ class ThemeIconWidget extends StatelessWidget {
           size: size ?? 20,
           color: color ?? Theme.of(context).iconTheme.color,
         );
+      case ThemeIcon.filledStar:
+        return Icon(
+          Icons.star,
+          size: size ?? 20,
+          color: color ?? Theme.of(context).iconTheme.color,
+        );
+      case ThemeIcon.diamond:
+        return Icon(
+          Icons.diamond,
+          size: size ?? 20,
+          color: color ?? Theme.of(context).iconTheme.color,
+        );
+
       case ThemeIcon.checkMark:
         return Icon(
           Icons.check,
@@ -143,6 +156,12 @@ class ThemeIconWidget extends StatelessWidget {
           size: size ?? 20,
           color: color ?? Theme.of(context).iconTheme.color,
         );
+      case ThemeIcon.calendar:
+        return Icon(
+          Icons.calendar_month,
+          size: size ?? 20,
+          color: color ?? Theme.of(context).iconTheme.color,
+        );
       case ThemeIcon.offer:
         return Icon(
           Icons.local_offer_outlined,
@@ -158,6 +177,12 @@ class ThemeIconWidget extends StatelessWidget {
       case ThemeIcon.account:
         return Icon(
           Icons.person_outline,
+          size: size ?? 20,
+          color: color ?? Theme.of(context).iconTheme.color,
+        );
+      case ThemeIcon.group:
+        return Icon(
+          Icons.group,
           size: size ?? 20,
           color: color ?? Theme.of(context).iconTheme.color,
         );
@@ -188,6 +213,12 @@ class ThemeIconWidget extends StatelessWidget {
       case ThemeIcon.selectedRadio:
         return Icon(
           Icons.radio_button_checked,
+          size: size ?? 20,
+          color: color ?? Theme.of(context).iconTheme.color,
+        );
+      case ThemeIcon.unSelectedRadio:
+        return Icon(
+          Icons.radio_button_off_outlined,
           size: size ?? 20,
           color: color ?? Theme.of(context).iconTheme.color,
         );
@@ -227,7 +258,12 @@ class ThemeIconWidget extends StatelessWidget {
           size: size ?? 20,
           color: color ?? Theme.of(context).iconTheme.color,
         );
-
+      case ThemeIcon.eye:
+        return Icon(
+          Icons.remove_red_eye,
+          size: size ?? 20,
+          color: color ?? Theme.of(context).iconTheme.color,
+        );
       case ThemeIcon.password:
         return Icon(
           Icons.password_outlined,
@@ -434,12 +470,7 @@ class ThemeIconWidget extends StatelessWidget {
           size: size ?? 20,
           color: color ?? Theme.of(context).iconTheme.color,
         );
-      case ThemeIcon.map:
-        return Icon(
-          Icons.map_outlined,
-          size: size ?? 20,
-          color: color ?? Theme.of(context).iconTheme.color,
-        );
+
       case ThemeIcon.news:
         return Icon(
           Icons.list_alt_outlined,
@@ -582,6 +613,84 @@ class ThemeIconWidget extends StatelessWidget {
       case ThemeIcon.location:
         return Icon(
           Icons.location_on,
+          size: size ?? 20,
+          color: color ?? Theme.of(context).iconTheme.color,
+        );
+      case ThemeIcon.drawing:
+        return Icon(
+          Icons.draw,
+          size: size ?? 20,
+          color: color ?? Theme.of(context).iconTheme.color,
+        );
+      case ThemeIcon.report:
+        return Icon(
+          Icons.report_problem_outlined,
+          size: size ?? 20,
+          color: color ?? Theme.of(context).iconTheme.color,
+        );
+      case ThemeIcon.hide:
+        return Icon(
+          Icons.visibility_off_outlined,
+          size: size ?? 20,
+          color: color ?? Theme.of(context).iconTheme.color,
+        );
+      case ThemeIcon.addCircle:
+        return Icon(
+          Icons.add_circle,
+          size: size ?? 20,
+          color: color ?? Theme.of(context).iconTheme.color,
+        );
+      case ThemeIcon.userGroup:
+        return Icon(
+          Icons.supervisor_account_outlined,
+          size: size ?? 20,
+          color: color ?? Theme.of(context).iconTheme.color,
+        );
+      case ThemeIcon.public:
+        return Icon(
+          Icons.public,
+          size: size ?? 20,
+          color: color ?? Theme.of(context).iconTheme.color,
+        );
+      case ThemeIcon.request:
+        return Icon(
+          Icons.task_sharp,
+          size: size ?? 20,
+          color: color ?? Theme.of(context).iconTheme.color,
+        );
+      case ThemeIcon.files:
+        return Icon(
+          Icons.file_copy_outlined,
+          size: size ?? 20,
+          color: color ?? Theme.of(context).iconTheme.color,
+        );
+      case ThemeIcon.fullScreen:
+        return Icon(
+          Icons.open_in_full_outlined,
+          size: size ?? 20,
+          color: color ?? Theme.of(context).iconTheme.color,
+        );
+      case ThemeIcon.randomChat:
+        return Icon(
+          Icons.person_search,
+          size: size ?? 20,
+          color: color ?? Theme.of(context).iconTheme.color,
+        );
+      case ThemeIcon.download:
+        return Icon(
+          Icons.file_download,
+          size: size ?? 20,
+          color: color ?? Theme.of(context).iconTheme.color,
+        );
+      case ThemeIcon.pause:
+        return Icon(
+          Icons.pause,
+          size: size ?? 20,
+          color: color ?? Theme.of(context).iconTheme.color,
+        );
+      case ThemeIcon.map:
+        return Icon(
+          Icons.map,
           size: size ?? 20,
           color: color ?? Theme.of(context).iconTheme.color,
         );

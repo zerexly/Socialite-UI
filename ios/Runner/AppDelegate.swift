@@ -4,6 +4,7 @@ import GoogleMobileAds
 import PushKit
 import flutter_callkit_incoming
 import GoogleMaps
+import flutter_downloader
 
 @UIApplicationMain
 @objc class AppDelegate: FlutterAppDelegate,PKPushRegistryDelegate {
@@ -15,17 +16,37 @@ import GoogleMaps
 
         GADMobileAds.sharedInstance().start(completionHandler: nil)
         GeneratedPluginRegistrant.register(with: self)
+        
+        FlutterDownloaderPlugin.setPluginRegistrantCallback { registry in
+                if (!registry.hasPlugin("FlutterDownloaderPlugin")) {
+                   FlutterDownloaderPlugin.register(with: registry.registrar(forPlugin: "FlutterDownloaderPlugin")!)
+                }
+        }
 
-//        ImageGallery.shared.createImagePickerChanel(window: window!)
-        //Setup VOIP
+//      ImageGallery.shared.createImagePickerChanel(window: window!)
+//      Setup VOIP
+        
         let mainQueue = DispatchQueue.main
         let voipRegistry: PKPushRegistry = PKPushRegistry(queue: mainQueue)
         voipRegistry.delegate = self
         voipRegistry.desiredPushTypes = [PKPushType.voIP]
-        
+
+        let center  = UNUserNotificationCenter.current()
+
+        center.requestAuthorization(options: [.sound, .alert, .badge]) { (granted, error) in
+            if error == nil{
+               UIApplication.shared.registerForRemoteNotifications()
+            }
+        }
+
         return super.application(application, didFinishLaunchingWithOptions: launchOptions)
     }
     
+//    private func registerPlugins(registry: FlutterPluginRegistry) {
+//        if (!registry.hasPlugin("FlutterDownloaderPlugin")) {
+//           FlutterDownloaderPlugin.register(with: registry.registrar(forPlugin: "FlutterDownloaderPlugin")!)
+//        }
+//    }
     
     // Handle updated push credentials
     func pushRegistry(_ registry: PKPushRegistry, didUpdate credentials: PKPushCredentials, for type: PKPushType) {
@@ -52,20 +73,33 @@ import GoogleMaps
         }
         print("type == .voIP")
 
-        let id = payload.dictionaryPayload["id"]
+        let id = Int(payload.dictionaryPayload["id"] as! String)
         let uuid = payload.dictionaryPayload["uuid"]
 
-        let nameCaller = payload.dictionaryPayload["username"]
-        let callerImage =  payload.dictionaryPayload["userImage"]
-        let callerId =  payload.dictionaryPayload["callerId"]
+        let nameCaller = payload.dictionaryPayload["username"] ?? ""
+        let callerImage =  payload.dictionaryPayload["userImage"] ?? ""
+        let callerId =  Int(payload.dictionaryPayload["callerId"] as? String ?? "")
 
         let handle =  payload.dictionaryPayload["channelName"]
         let token =  payload.dictionaryPayload["token"]
 
-        let data = flutter_callkit_incoming.Data(id: uuid as! String, nameCaller: nameCaller as! String, handle: handle as! String, type: payload.dictionaryPayload["callType"] as! Int == 1 ? 0 : 1)
-        //set more data
-        data.extra = ["id": id!, "platform": "ios","callerId":callerId! ,"callerImage":callerImage!, "channelName":handle!,"token":token!]
+        let notificationType =  payload.dictionaryPayload["notification_type"] as! String
 
-        SwiftFlutterCallkitIncomingPlugin.sharedInstance?.showCallkitIncoming(data, fromPushKit: true)
+        print(payload)
+
+        let data = flutter_callkit_incoming.Data(id: uuid as! String, nameCaller: nameCaller as! String, handle: handle as! String, type: payload.dictionaryPayload["callType"] as! String == "1" ? 0 : 1)
+        
+        
+
+        if(notificationType == "103"){
+            SwiftFlutterCallkitIncomingPlugin.sharedInstance?.showCallkitIncoming(data, fromPushKit: true)
+            //set more data
+            data.extra = ["id": id!, "platform": "ios","callerId":callerId ,"callerImage":callerImage, "channelName":handle!,"token":token!]
+        }
+        else{
+            //set more data
+            data.extra = ["id": id!, "platform": "ios","callerId":callerId ,"callerImage":callerImage, "channelName":handle!]
+            SwiftFlutterCallkitIncomingPlugin.sharedInstance?.endCall(data)
+        }
     }
 }

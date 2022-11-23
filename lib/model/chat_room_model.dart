@@ -1,39 +1,168 @@
+import 'dart:convert';
+
 import 'package:foap/helper/common_import.dart';
+
+class ChatRoomMember {
+  int id;
+
+  int roomId;
+  int userId;
+  int isAdmin;
+  UserModel userDetail;
+
+  ChatRoomMember({
+    required this.id,
+    required this.roomId,
+    required this.userId,
+    required this.isAdmin,
+    required this.userDetail,
+  });
+
+  factory ChatRoomMember.fromJson(Map<String, dynamic> jsonData) =>
+      ChatRoomMember(
+          id: jsonData["id"],
+          roomId: jsonData["room_id"],
+          userId: jsonData["user_id"],
+          isAdmin: jsonData["is_admin"],
+          userDetail: UserModel.fromJson(jsonData['user'] is String
+              ? json.decode(jsonData['user'])
+              : jsonData['user']));
+
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "room_id": roomId,
+        "user_id": userId,
+        "is_admin": isAdmin,
+        "user": json.encode(userDetail.toJson()),
+      };
+}
 
 class ChatRoomModel {
   int id = 0;
   int status = 0;
   int createdAt = 0;
   int createdBy = 0;
-  List<UserModel> users = [];
-  ChatMessageModel lastMessage;
-  bool isTyping = false;
+  String? name;
+
+  // List<UserModel> users = [];
+  ChatMessageModel? lastMessage;
+
+  // bool isTyping = false;
+  List<String> whoIsTyping = [];
   bool isOnline = false;
   int unreadMessages = 0;
+  bool isGroupChat;
+  int type = 0;
 
-  ChatRoomModel(
-      {required this.id,
-      required this.status,
-      required this.createdAt,
-      required this.createdBy,
-      required this.users,
-      required this.isOnline,
-      required this.lastMessage});
+  String? image;
+  String? description;
+  int groupAccess;
+  List<ChatRoomMember> roomMembers;
+  UserModel chatGroupOwner;
 
-  factory ChatRoomModel.fromJson(dynamic json) => ChatRoomModel(
-      id: json['id'],
-      status: json['status'],
-      createdAt: json['created_at'],
-      createdBy: json['created_by'],
-      isOnline: json['is_chat_user_online'] == 1,
-      users: (json['chatRoomUser'] as List<dynamic>)
-          .map((e) => UserModel.fromJson(e["user"]))
-          .toList(),
-      lastMessage: ChatMessageModel.fromJson(json['lastMessage']));
+  ChatRoomModel({
+    required this.id,
+    this.name,
+    required this.status,
+    required this.createdAt,
+    required this.createdBy,
+    // required this.users,
+    required this.isOnline,
+    required this.isGroupChat,
+    required this.type,
+    required this.lastMessage,
+    required this.groupAccess,
+    this.image,
+    this.description,
+    required this.roomMembers,
+    required this.chatGroupOwner,
+  });
 
-  UserModel get opponent {
-    return users
-        .where((element) => element.id != getIt<UserProfileManager>().user!.id)
+  factory ChatRoomModel.fromJson(dynamic jsonData) => ChatRoomModel(
+      id: jsonData['id'],
+      name: jsonData['title'] ?? 'No Group name added',
+      status: jsonData['status'],
+      createdAt:
+          jsonData['created_at'] ?? DateTime.now().millisecondsSinceEpoch,
+      createdBy: jsonData['created_by'],
+      isOnline: jsonData['is_chat_user_online'] == 1,
+      isGroupChat: jsonData['type'] == 2,
+      type: jsonData['type'],
+      image: jsonData['imageUrl'],
+      description: jsonData['description'],
+      groupAccess: jsonData['chat_access_group'] ?? 1,
+      chatGroupOwner: UserModel.fromJson(jsonData['createdByUser'] is String
+          ? json.decode(jsonData['createdByUser'])
+          : jsonData['createdByUser']),
+      roomMembers: jsonData['chatRoomUser'] != null
+          ? jsonData['chatRoomUser'] is String
+              ? (json.decode(jsonData['chatRoomUser']) as List<dynamic>)
+                  .map((e) =>
+                      ChatRoomMember.fromJson(e is String ? json.decode(e) : e))
+                  .toList()
+              : (jsonData['chatRoomUser'] as List<dynamic>)
+                  .map((e) =>
+                      ChatRoomMember.fromJson(e is String ? json.decode(e) : e))
+                  .toList()
+          : [],
+      lastMessage: jsonData['lastMessage'] == null
+          ? null
+          : ChatMessageModel.fromJson(jsonData['lastMessage']));
+
+  Map<String, dynamic> toJson() {
+    // print(users.first.toJson());
+    return {
+      'id': id,
+      'title': name,
+      'status': status,
+      'created_at': createdAt,
+      'created_by': createdBy,
+      'is_chat_user_online': isOnline,
+      'type': type,
+      'imageUrl': image,
+      'description': description,
+      'chat_access_group': groupAccess,
+      'chatRoomUser':
+          json.encode(roomMembers.map((e) => json.encode(e.toJson())).toList()),
+      'createdByUser': json.encode(chatGroupOwner.toJson()),
+      // 'unreadMessages': unreadMessages,
+    };
+  }
+
+  ChatRoomMember get opponent {
+    return roomMembers
+        .where((element) =>
+            element.userDetail.id != getIt<UserProfileManager>().user!.id)
+        .first;
+  }
+
+  bool get amIGroupAdmin {
+    return roomMembers
+        .where((element) => element.isAdmin == 1 && element.userDetail.isMe)
+        .toList()
+        .isNotEmpty;
+  }
+
+  bool get amIMember {
+    return roomMembers
+        .where((element) => element.userDetail.isMe)
+        .toList()
+        .isNotEmpty;
+  }
+
+  bool get canIChat {
+    if (isGroupChat == false) {
+      return true;
+    }
+    if (groupAccess == 2) {
+      return true;
+    }
+    return amIGroupAdmin;
+  }
+
+  ChatRoomMember memberById(int memberId) {
+    return roomMembers
+        .where((element) => element.userDetail.id == memberId)
         .first;
   }
 }

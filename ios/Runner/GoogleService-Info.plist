@@ -3,23 +3,21 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>500884745411-co520q9prbopgeqjaki0j51o2m8s7crs.apps.googleusercontent.com</string>
+	<string>258656413911-5bqj5jcr6oqledsen49qf9oba5l8tcm8.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.500884745411-co520q9prbopgeqjaki0j51o2m8s7crs</string>
-	<key>ANDROID_CLIENT_ID</key>
-	<string>500884745411-574mdi8echntnlk2743kpfqglu84get3.apps.googleusercontent.com</string>
+	<string>com.googleusercontent.apps.258656413911-5bqj5jcr6oqledsen49qf9oba5l8tcm8</string>
 	<key>API_KEY</key>
-	<string>AIzaSyBd0y7HLxgvj4Ykh9pRnuNfqCqdBi6K4C8</string>
+	<string>AIzaSyCySU4h66tkg3OujTVtkOH3T3DGrslTjxc</string>
 	<key>GCM_SENDER_ID</key>
-	<string>500884745411</string>
+	<string>258656413911</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.baljit.apptesting</string>
+	<string>com.socialified</string>
 	<key>PROJECT_ID</key>
-	<string>quizerica-be083</string>
+	<string>socialified-23223</string>
 	<key>STORAGE_BUCKET</key>
-	<string>quizerica-be083.appspot.com</string>
+	<string>socialified-23223.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -31,8 +29,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:500884745411:ios:9ce3bab7bd43488ff6c676</string>
-	<key>DATABASE_URL</key>
-	<string>https://quizerica-be083.firebaseio.com</string>
+	<string>1:258656413911:ios:7d66446d2393ac1b626892</string>
 </dict>
 </plist>
