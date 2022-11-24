@@ -18,6 +18,7 @@ class CompetitionDetailScreen extends StatefulWidget {
 
 class CompetitionDetailState extends State<CompetitionDetailScreen> {
   final CompetitionController competitionController = Get.find();
+  SettingsController settingsController = Get.find();
 
   @override
   void initState() {
@@ -62,7 +63,7 @@ class CompetitionDetailState extends State<CompetitionDetailScreen> {
                   ).ripple(() {
                     Get.to(() => WebViewScreen(
                         header: LocalizationString.disclaimer,
-                        url: AppConfigConstants.disclaimerUrl));
+                        url: settingsController.setting.value!.disclaimerUrl!));
                   }),
                 ],
               ).hP16,

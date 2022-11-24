@@ -23,6 +23,7 @@ class ChatMediaSharingOptionPopup extends StatefulWidget {
 class _ChatMediaSharingOptionPopupState
     extends State<ChatMediaSharingOptionPopup> {
   final ChatDetailController _chatDetailController = Get.find();
+  SettingsController settingsController = Get.find();
 
   List<SharingMediaType> mediaTypes = [
     SharingMediaType(
@@ -177,7 +178,7 @@ class _ChatMediaSharingOptionPopupState
     GiphyGif? gif = await GiphyGet.getGif(
       context: context,
       //Required
-      apiKey: AppConfigConstants.giphyApiKey,
+      apiKey: settingsController.setting.value!.giphyApiKey!,
       //Required.
       lang: GiphyLanguage.english,
       //Optional - Language for query.
@@ -238,7 +239,7 @@ class _ChatMediaSharingOptionPopupState
         builder: (context) => FractionallySizedBox(
             heightFactor: 0.9,
             child: PlacePicker(
-              apiKey: AppConfigConstants.googleMapApiKey,
+              apiKey: settingsController.setting.value!.googleMapApiKey!,
               displayLocation: null,
             ))).then((location) {
       if (location != null) {

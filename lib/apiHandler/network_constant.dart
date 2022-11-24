@@ -157,4 +157,8 @@ class NetworkConstantsUtil {
   static String requestVerification = 'user-verifications';
   static String requestVerificationHistory = 'user-verifications';
   static String cancelVerification = 'user-verifications/cancel';
+
+
+  // FAQ
+  static String getFAQs = 'faqs';
 }

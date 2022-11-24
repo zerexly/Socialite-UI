@@ -38,6 +38,7 @@ class AgoraLiveController extends GetxController {
 
   DateTime? liveStartTime;
   DateTime? liveEndTime;
+  SettingsController settingsController = Get.find();
 
   String get liveTime {
     int totalSeconds = liveEndTime!.difference(liveStartTime!).inSeconds;
@@ -164,9 +165,9 @@ class AgoraLiveController extends GetxController {
   _joinLive({
     required Live live,
   }) {
-    if (AppConfigConstants.agoraApiKey.isEmpty) {
+    if (settingsController.setting.value!.agoraApiKey!.isEmpty) {
       infoStrings.add(
-        AppConfigConstants.agoraApiKey,
+        settingsController.setting.value!.agoraApiKey!,
       );
       infoStrings.add('Agora Engine is not starting');
       update();
@@ -200,7 +201,7 @@ class AgoraLiveController extends GetxController {
 
   //Initialize Agora RTC Engine
   Future<void> _initAgoraRtcEngine() async {
-    _engine = await RtcEngine.create(AppConfigConstants.agoraApiKey);
+    _engine = await RtcEngine.create(settingsController.setting.value!.agoraApiKey!);
     await _engine.enableVideo();
   }
 

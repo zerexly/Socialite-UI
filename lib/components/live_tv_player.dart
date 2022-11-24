@@ -25,6 +25,7 @@ class _SocialifiedLiveTvVideoPlayerState
     extends State<SocialifiedLiveTvVideoPlayer> {
   final TvStreamingController _liveTvStreamingController = Get.find();
   TextEditingController messageTextField = TextEditingController();
+  SettingsController settingsController = Get.find();
 
   late Future<void> initializeVideoPlayerFuture;
   VideoPlayerController? videoPlayerController;
@@ -445,7 +446,7 @@ class _SocialifiedLiveTvVideoPlayerState
 
     if (widget.tvModel.isLocked == true &&
         videoPlayerController!.value.position >=
-            Duration(seconds: AppConfigConstants.freeLiveTvDurationToView)) {
+            Duration(seconds: int.parse(settingsController.setting.value!.freeLiveTvDurationToView!))) {
       if (!mounted) return;
       pause();
       isFreeTimePlayed = true;

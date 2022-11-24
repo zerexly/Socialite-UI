@@ -80,6 +80,7 @@ class ApiController {
   }
 
   Future<ApiResponseModel> checkUsername(String username) async {
+
     var url = NetworkConstantsUtil.baseUrl + NetworkConstantsUtil.checkUserName;
     dynamic param = ApiParamModel().getCheckUsernameParam(username);
     return http
@@ -1099,7 +1100,7 @@ class ApiController {
       "Authorization": "Bearer ${authKey!}"
     }).then((http.Response response) async {
       final ApiResponseModel parsedResponse = await getResponse(
-          response.body, NetworkConstantsUtil.getNotifications);
+          response.body, NetworkConstantsUtil.getSettings);
       return parsedResponse;
     });
   }
@@ -1815,4 +1816,22 @@ class ApiController {
       return parsedResponse;
     });
   }
+
+
+  ////// Created by Richa
+
+  Future<ApiResponseModel> getFAQ() async {
+    var url =
+        '${NetworkConstantsUtil.baseUrl}${NetworkConstantsUtil.getFAQs}';
+    String? authKey = await SharedPrefs().getAuthorizationKey();
+
+    return http.get(Uri.parse(url), headers: {
+      "Authorization": "Bearer ${authKey!}"
+    }).then((http.Response response) async {
+      final ApiResponseModel parsedResponse =
+      await getResponse(response.body, NetworkConstantsUtil.getFAQs);
+      return parsedResponse;
+    });
+  }
+
 }

@@ -3,6 +3,8 @@ import 'dart:developer';
 import 'package:foap/helper/common_import.dart';
 import 'package:get/get.dart';
 
+import '../model/faq_model.dart';
+
 class ApiResponseModel {
   bool success = true;
   String message = "";
@@ -52,6 +54,9 @@ class ApiResponseModel {
   List<LiveModel> lives = [];
 
   List<VerificationRequest> verificationRequests = [];
+
+  //FAQ
+  List<FAQModel> faqs = [];
 
   // chat
   List<ChatRoomModel> chatRooms = [];
@@ -364,6 +369,14 @@ class ApiResponseModel {
             if (room != null) {
               var roomData = data['room'];
               model.room = ChatRoomModel.fromJson(roomData);
+            }
+          }
+        } else if (data['faq'] != null) {
+          var items = data['faq']['items'];
+
+          if (url == NetworkConstantsUtil.getFAQs) {
+            if (items != null && items.length > 0) {
+              model.faqs = List<FAQModel>.from(items.map((x) => FAQModel.fromJson(x)));
             }
           }
         }

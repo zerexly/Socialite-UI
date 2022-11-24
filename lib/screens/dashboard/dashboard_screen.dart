@@ -9,16 +9,16 @@ class DashboardController extends GetxController {
   RxBool isLoading = false.obs;
 
   getSettings() {
-    isLoading.value = true;
+   isLoading.value = true;
     ApiController().getSettings().then((response) {
       isLoading.value = false;
 
       setting.value = response.settings;
 
-      print('setting.value!.latestVersion ${setting.value!.latestVersion}');
+      print('setting.value!.latestVersion ${setting.value?.latestVersion}');
       print('AppConfigConstants.currentVersion ${AppConfigConstants.currentVersion}');
 
-      if (setting.value!.latestVersion! != AppConfigConstants.currentVersion) {
+      if (setting.value?.latestVersion! != AppConfigConstants.currentVersion) {
         forceUpdate.value = true;
       }
     });
@@ -49,17 +49,18 @@ class DashboardState extends State<DashboardScreen> {
 
   @override
   void initState() {
-    super.initState();
 
     items = [
-      const HomeFeedScreen(),
+     const HomeFeedScreen(),
       const ChatHistory(),
       Container(),
       const MyProfile(),
       const Settings()
     ];
 
-    _dashboardController.getSettings();
+   Future.delayed(Duration.zero, ()=> _dashboardController.getSettings() );
+
+    super.initState();
   }
 
   @override
@@ -73,7 +74,7 @@ class DashboardState extends State<DashboardScreen> {
         : _dashboardController.setting.value?.pid == null
             ? const InvalidPurchaseView()
             : _dashboardController.forceUpdate.value == true
-                ? const ForceUpdateView()
+                ? ForceUpdateView()
                 : Scaffold(
                     backgroundColor: Theme.of(context).backgroundColor,
                     body: items[_dashboardController.currentIndex.value],
@@ -88,8 +89,8 @@ class DashboardState extends State<DashboardScreen> {
                         size: 40,
                         color: Colors.white,
                       ),
-                    ).round(20).tP16.ripple(() {
-                      onTabTapped(2);
+                    ).round(20).tP16.ripple(()=> {
+                    onTabTapped(2)
                     }),
                     bottomNavigationBar: SizedBox(
                       height: MediaQuery.of(context).viewPadding.bottom > 0
@@ -104,7 +105,7 @@ class DashboardState extends State<DashboardScreen> {
                         unselectedFontSize: 12,
                         unselectedItemColor: Colors.grey,
                         selectedItemColor: Theme.of(context).primaryColor,
-                        onTap: onTabTapped,
+                        onTap: (index)=>{onTabTapped(index)},
                         items: [
                           BottomNavigationBarItem(
                               icon: Image.asset(
@@ -191,12 +192,14 @@ class DashboardState extends State<DashboardScreen> {
 
   void onTabTapped(int index) async {
     if (index == 2) {
-      showGeneralDialog(
+      Future.delayed(Duration.zero,() => showGeneralDialog(
           context: context,
           pageBuilder: (context, animation, secondaryAnimation) =>
-              const SelectMedia());
+          const SelectMedia()),);
+
     } else {
-      _dashboardController.indexChanged(index);
+      Future.delayed(Duration.zero,()=>_dashboardController.indexChanged(index));
+
     }
   }
 }
