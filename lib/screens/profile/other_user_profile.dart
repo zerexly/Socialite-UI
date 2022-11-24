@@ -232,7 +232,7 @@ class OtherUserProfileState extends State<OtherUserProfile> {
                           width: 10,
                         ),
                         SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.20,
+                            width: MediaQuery.of(context).size.width * 0.25,
                             child: FilledButtonType1(
                                 height: 35,
                                 enabledBackgroundColor:
@@ -256,7 +256,7 @@ class OtherUserProfileState extends State<OtherUserProfile> {
                           width: 10,
                         ),
                         SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.25,
+                            width: MediaQuery.of(context).size.width * 0.30,
                             child: FilledButtonType1(
                                 height: 35,
                                 enabledBackgroundColor:
@@ -354,7 +354,7 @@ class OtherUserProfileState extends State<OtherUserProfile> {
             });
           }
         }),
-        _profileController.user.value == null
+        _profileController.user.value?.giftSummary == null
             ? Container()
             : Column(
                 crossAxisAlignment: CrossAxisAlignment.center,

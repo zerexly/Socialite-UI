@@ -52,7 +52,7 @@ class SelectUserForGroupChatState extends State<SelectUserForGroupChat> {
                           : LocalizationString.invite,
                       style: Theme.of(context)
                           .textTheme
-                          .titleMedium!
+                          .titleSmall!
                           .copyWith(fontWeight: FontWeight.w600),
                     ).ripple(() {
                       if (widget.group == null) {
@@ -86,7 +86,7 @@ class SelectUserForGroupChatState extends State<SelectUserForGroupChat> {
                             : LocalizationString.addParticipants,
                         style: Theme.of(context)
                             .textTheme
-                            .titleMedium!
+                            .bodyLarge!
                             .copyWith(fontWeight: FontWeight.w600),
                       ),
                       Obx(() => selectUserForGroupChatController
@@ -95,7 +95,7 @@ class SelectUserForGroupChatState extends State<SelectUserForGroupChat> {
                               '${selectUserForGroupChatController.selectedFriends.length} ${LocalizationString.friendsSelected}',
                               style: Theme.of(context)
                                   .textTheme
-                                  .titleMedium!
+                                  .bodyLarge!
                                   .copyWith(fontWeight: FontWeight.w900),
                             )
                           : Container())

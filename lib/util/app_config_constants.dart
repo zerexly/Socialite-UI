@@ -1,7 +1,7 @@
 class AppConfigConstants {
   // Name of app
   static String appName = 'Socialified';
-  static String currentVersion = '1.5';
+  static String currentVersion = '1.3';
 
   static int maximumVideoDurationAllowed = 120; // it must be in seconds
 
@@ -35,10 +35,10 @@ class AppConfigConstants {
 
   // Rest api base url
   static const restApiBaseUrl =
-      'https://fwdtechnology.co/socialified/api/web/v1/';
+      'https://fwdtechnology.co/media_selling/api/web/v1/';
 
   // Socket api url
-  static const socketApiBaseUrl = "http://fwdtechnology.co:4000/";
+  static const socketApiBaseUrl = "http://fwdtechnology.co:3000/";
 
   // is demo app
   static const bool isDemoApp = true;

@@ -115,7 +115,7 @@ class ClubsController extends GetxController {
   joinClub(ClubModel club) {
     clubs.value = clubs.map((element) {
       if (element.id == club.id) {
-        element.isJoined = 1;
+        element.isJoined = true;
       }
       return element;
     }).toList();
@@ -127,7 +127,7 @@ class ClubsController extends GetxController {
   leaveClub(ClubModel club) {
     clubs.value = clubs.map((element) {
       if (element.id == club.id) {
-        element.isJoined = 0;
+        element.isJoined = false;
       }
       return element;
     }).toList();

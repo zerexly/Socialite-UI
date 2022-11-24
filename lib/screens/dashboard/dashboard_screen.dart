@@ -59,7 +59,9 @@ class DashboardState extends State<DashboardScreen> {
       const Settings()
     ];
 
-    _dashboardController.getSettings();
+    WidgetsBinding.instance.addPostFrameCallback((_){
+      _dashboardController.getSettings();
+    });
   }
 
   @override

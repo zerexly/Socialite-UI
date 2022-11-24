@@ -9,7 +9,7 @@ class ClubModel {
   String? desc;
   int? enableChat;
   int? chatRoomId;
-  int? isJoined;
+  bool? isJoined;
   int? createdBy;
   int? totalMembers;
 
@@ -46,7 +46,7 @@ class ClubModel {
         image: json["imageUrl"],
         imageName: json["image"],
         desc: json["description"],
-        isJoined: json["is_joined"],
+        isJoined: json["is_joined"] == 1,
         createdBy: json["created_by"],
         totalMembers: json["totalJoinedUser"],
         createdByUser: json["createdByUser"] == null ? null :UserModel.fromJson(json["createdByUser"]),
@@ -55,4 +55,5 @@ class ClubModel {
   bool get amIAdmin {
     return createdByUser!.isMe;
   }
+
 }

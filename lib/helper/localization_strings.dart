@@ -816,4 +816,5 @@ class LocalizationString {
   static String paymentAndCoins = 'Payment and coins'.tr;
   static String changeLanguage = 'Change Language'.tr;
   static String chooseImage = 'Choose image'.tr;
+
 }
