@@ -3,6 +3,8 @@ import 'dart:developer';
 import 'package:foap/helper/common_import.dart';
 import 'package:get/get.dart';
 
+import '../model/faq_model.dart';
+
 class ApiResponseModel {
   bool success = true;
   String message = "";
@@ -52,6 +54,9 @@ class ApiResponseModel {
   List<LiveModel> lives = [];
 
   List<VerificationRequest> verificationRequests = [];
+
+  //FAQ
+  List<FAQModel> faqs = [];
 
   // chat
   List<ChatRoomModel> chatRooms = [];
