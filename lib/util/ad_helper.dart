@@ -1,4 +1,5 @@
 import 'package:foap/helper/common_import.dart';
+import 'package:get/get.dart';
 
 // class BannerAdsHelper {
 //   late BannerAd _bannerAd;
@@ -46,7 +47,7 @@ class _BannerAdmobState extends State<BannerAdmob> {
     super.initState();
     _bannerAd?.dispose();
     _bannerAd = BannerAd(
-      adUnitId: AdmobKeys.bannerAdUnitId,
+      adUnitId: AdmobKeys().bannerAdUnitId,
       request: const AdRequest(),
       size: AdSize.largeBanner,
       listener: BannerAdListener(
@@ -96,7 +97,7 @@ class BannerAdsWidget {
     }
 
     BannerAd bannerAd = BannerAd(
-      adUnitId: AdmobKeys.bannerAdUnitId,
+      adUnitId: AdmobKeys().bannerAdUnitId,
       size: AdSize.fullBanner,
       request: const AdRequest(),
       listener: BannerAdListener(
@@ -149,11 +150,12 @@ class BannerAdsWidget {
 //ignore: must_be_immutable
 class RewardedInterstitialAds {
   RewardedInterstitialAd? _rewardedInterstitialAd;
+  SettingsController settingsController = Get.find();
 
   void show(VoidCallback onRewarded) {
-    if (AdsNetwork.networkToUse == 1) {
+    if (settingsController.setting.value!.networkToUse! == 1) {
       FacebookRewardedVideoAd.loadRewardedVideoAd(
-        placementId: FacebookAudienceNetworkKeys.rewardInterstitialAdUnitId,
+        placementId: FacebookAudienceNetworkKeys().rewardInterstitialAdUnitId,
         listener: (result, value) {
           if (result == RewardedVideoAdResult.LOADED) {
             FacebookRewardedVideoAd.showRewardedVideoAd();
@@ -172,7 +174,7 @@ class RewardedInterstitialAds {
       );
     } else {
       RewardedInterstitialAd.load(
-          adUnitId: AdmobKeys.rewardInterstitialAdUnitId,
+          adUnitId: AdmobKeys().rewardInterstitialAdUnitId,
           request: const AdRequest(),
           rewardedInterstitialAdLoadCallback:
               RewardedInterstitialAdLoadCallback(
@@ -196,11 +198,12 @@ class RewardedInterstitialAds {
 //ignore: must_be_immutable
 class InterstitialAds {
   InterstitialAd? _interstitialAd;
+  SettingsController settingsController = Get.find();
 
   void show() {
-    if (AdsNetwork.networkToUse == 1) {
+    if (settingsController.setting.value!.networkToUse == 1) {
       FacebookInterstitialAd.loadInterstitialAd(
-        placementId: FacebookAudienceNetworkKeys.interstitialAdUnitId,
+        placementId: FacebookAudienceNetworkKeys().interstitialAdUnitId,
         listener: (result, value) {
           if (result == InterstitialAdResult.LOADED) {
             FacebookInterstitialAd.showInterstitialAd(delay: 1000);
@@ -209,7 +212,7 @@ class InterstitialAds {
       );
     } else {
       InterstitialAd.load(
-        adUnitId: AdmobKeys.interstitialAdUnitId,
+        adUnitId: AdmobKeys().interstitialAdUnitId,
         request: const AdRequest(),
         adLoadCallback: InterstitialAdLoadCallback(
           onAdLoaded: (ad) {

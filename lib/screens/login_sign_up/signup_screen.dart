@@ -13,6 +13,7 @@ class SignUpScreenState extends State<SignUpScreen> {
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
   TextEditingController confirmPassword = TextEditingController();
+  SettingsController settingsController = Get.find();
 
   String countryCode = '+1';
   final LoginController loginController = Get.find();
@@ -164,7 +165,7 @@ class SignUpScreenState extends State<SignUpScreen> {
                             .copyWith(color: Theme.of(context).primaryColor))
                     .ripple(() {
                   loginController
-                      .launchUrlInBrowser(AppConfigConstants.termsOfServiceUrl);
+                      .launchUrlInBrowser(settingsController.setting.value!.termsOfServiceUrl!);
                 }),
                 Text(LocalizationString.and,
                     style: Theme.of(context).textTheme.bodyMedium),
@@ -175,7 +176,7 @@ class SignUpScreenState extends State<SignUpScreen> {
                             .copyWith(color: Theme.of(context).primaryColor))
                     .ripple(() {
                   loginController
-                      .launchUrlInBrowser(AppConfigConstants.privacyPolicyUrl);
+                      .launchUrlInBrowser(settingsController.setting.value!.privacyPolicyUrl!);
                 }),
               ],
             ),

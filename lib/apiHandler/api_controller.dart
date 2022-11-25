@@ -80,7 +80,6 @@ class ApiController {
   }
 
   Future<ApiResponseModel> checkUsername(String username) async {
-
     var url = NetworkConstantsUtil.baseUrl + NetworkConstantsUtil.checkUserName;
     dynamic param = ApiParamModel().getCheckUsernameParam(username);
     return http
@@ -1833,4 +1832,5 @@ class ApiController {
       return parsedResponse;
     });
   }
+
 }

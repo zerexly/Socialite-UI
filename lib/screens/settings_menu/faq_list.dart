@@ -29,7 +29,7 @@ class _FaqListState extends State<FaqList> {
 
   @override
   void dispose() {
-    _faqController.dispose();
+   // _faqController.dispose();
     super.dispose();
   }
 
@@ -45,7 +45,7 @@ class _FaqListState extends State<FaqList> {
           backNavigationBar(context:context, title:LocalizationString.faq),
           divider(context: context).tP8,
           Expanded(
-            child: ListView.builder(
+            child: Obx(()=> ListView.builder(
                 padding: const EdgeInsets.only(bottom: 50),
                 itemCount: _faqController.faqs.length,
                 itemBuilder: (ctx, index) {
@@ -57,7 +57,7 @@ class _FaqListState extends State<FaqList> {
                     ],
                     onExpansionChanged: (bool expanded) {},
                   );
-                }),
+                }),)
           )
         ],
       ),

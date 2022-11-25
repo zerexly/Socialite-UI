@@ -1,21 +1,23 @@
 import 'package:foap/helper/common_import.dart';
+import 'package:get/get.dart';
 
 class FacebookAudienceNetworkKeys {
-  static String get interstitialAdUnitId {
+  SettingsController settingsController = Get.find();
+   String get interstitialAdUnitId {
     if (Platform.isAndroid) {
-      return AdmobConstants.interstitialAdUnitIdForAndroid;
+      return settingsController.setting.value!.fbInterstitialAdUnitIdForAndroid!;
     } else if (Platform.isIOS) {
-      return AdmobConstants.interstitialAdUnitIdForiOS;
+      return settingsController.setting.value!.fbInterstitialAdUnitIdForiOS!;
     } else {
       throw UnsupportedError("Unsupported platform");
     }
   }
 
-  static String get rewardInterstitialAdUnitId {
+  String get rewardInterstitialAdUnitId {
     if (Platform.isAndroid) {
-      return AdmobConstants.rewardInterstitlAdUnitIdForAndroid;
+      return  settingsController.setting.value!.fbRewardInterstitialAdUnitIdForAndroid!;
     } else if (Platform.isIOS) {
-      return AdmobConstants.rewardInterstitialAdUnitIdForiOS;
+      return settingsController.setting.value!.fbRewardInterstitialAdUnitIdForiOS!;
     } else {
       throw UnsupportedError("Unsupported platform");
     }
@@ -23,31 +25,32 @@ class FacebookAudienceNetworkKeys {
 }
 
 class AdmobKeys {
-  static String get interstitialAdUnitId {
+  SettingsController settingsController = Get.find();
+  String get interstitialAdUnitId {
     if (Platform.isAndroid) {
-      return AdmobConstants.interstitialAdUnitIdForAndroid;
+      return settingsController.setting.value!.interstitialAdUnitIdForAndroid!;
     } else if (Platform.isIOS) {
-      return AdmobConstants.interstitialAdUnitIdForiOS;
+      return  settingsController.setting.value!.interstitialAdUnitIdForiOS!;
     } else {
       throw UnsupportedError("Unsupported platform");
     }
   }
 
-  static String get rewardInterstitialAdUnitId {
+  String get rewardInterstitialAdUnitId {
     if (Platform.isAndroid) {
-      return AdmobConstants.rewardInterstitlAdUnitIdForAndroid;
+      return settingsController.setting.value!.rewardInterstitlAdUnitIdForAndroid!;
     } else if (Platform.isIOS) {
-      return AdmobConstants.rewardInterstitialAdUnitIdForiOS;
+      return settingsController.setting.value!.rewardInterstitialAdUnitIdForiOS!;
     } else {
       throw UnsupportedError("Unsupported platform");
     }
   }
 
-  static String get bannerAdUnitId {
+  String get bannerAdUnitId {
     if (Platform.isAndroid) {
-      return AdmobConstants.bannerAdUnitIdForAndroid;
+      return settingsController.setting.value!.bannerAdUnitIdForAndroid!;
     } else if (Platform.isIOS) {
-      return AdmobConstants.bannerAdUnitIdForiOS;
+      return settingsController.setting.value!.bannerAdUnitIdForiOS!;
     } else {
       throw UnsupportedError("Unsupported platform");
     }

@@ -108,10 +108,10 @@ class DialogUtils {
     String cancelButtonTitle,
     Function okButtonAction,
     bool isCancelEnable,
-    Function cancelButtonAction,
+    Function cancelButtonAction,{String? title}
   ) {
     return CupertinoAlertDialog(
-        title: Text(AppConfigConstants.appName),
+        title: Text(title??AppConfigConstants.appName),
         content: Text(message),
         actions: isCancelEnable
             ? _okCancelActions(

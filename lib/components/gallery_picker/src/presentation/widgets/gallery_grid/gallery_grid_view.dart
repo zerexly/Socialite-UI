@@ -1,6 +1,7 @@
 import 'package:foap/components/gallery_picker/src/presentation/pages/gallery_media_picker_controller.dart';
 import 'package:foap/components/gallery_picker/src/presentation/widgets/gallery_grid/thumbnail_widget.dart';
 import 'package:foap/helper/common_import.dart';
+import 'package:get/get.dart';
 
 typedef OnAssetItemClick = void Function(AssetEntity entity, int index);
 
@@ -81,6 +82,7 @@ class GalleryGridViewState extends State<GalleryGridView> {
   static Map<int?, AssetEntity?> _createMap() {
     return {};
   }
+  SettingsController settingsController = Get.find();
 
   /// create cache for images
   var cacheMap = _createMap();
@@ -141,7 +143,7 @@ class GalleryGridViewState extends State<GalleryGridView> {
         }
 
         if (asset.videoDuration >
-            Duration(seconds: AppConfigConstants.maximumVideoDurationAllowed)) {
+            Duration(seconds: int.parse(settingsController.setting.value!.maximumVideoDurationAllowed!))) {
           AppUtil.showToast(
               context: context,
               message: LocalizationString.maxVideoLengthMessage,

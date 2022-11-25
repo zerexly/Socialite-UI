@@ -160,5 +160,5 @@ class NetworkConstantsUtil {
 
 
   // FAQ
-  static String getFAQs = '/faqs';
+  static String getFAQs = 'faqs';
 }

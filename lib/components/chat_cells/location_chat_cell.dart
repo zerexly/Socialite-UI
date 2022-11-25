@@ -1,15 +1,17 @@
 import 'package:foap/helper/common_import.dart';
+import 'package:get/get.dart';
 import 'package:google_static_maps_controller/google_static_maps_controller.dart';
 
 class LocationChatTile extends StatelessWidget {
   final ChatMessageModel message;
 
-  const LocationChatTile({Key? key, required this.message}) : super(key: key);
+  LocationChatTile({Key? key, required this.message}) : super(key: key);
+  SettingsController settingsController = Get.find();
 
   @override
   Widget build(BuildContext context) {
     var controller = StaticMapController(
-      googleApiKey: AppConfigConstants.googleMapApiKey,
+      googleApiKey: settingsController.setting.value!.googleMapApiKey!,
       width: 400,
       height: 400,
       zoom: 15,

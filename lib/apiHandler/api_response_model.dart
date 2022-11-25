@@ -371,6 +371,14 @@ class ApiResponseModel {
               model.room = ChatRoomModel.fromJson(roomData);
             }
           }
+        } else if (data['faq'] != null) {
+          var items = data['faq']['items'];
+
+          if (url == NetworkConstantsUtil.getFAQs) {
+            if (items != null && items.length > 0) {
+              model.faqs = List<FAQModel>.from(items.map((x) => FAQModel.fromJson(x)));
+            }
+          }
         }
       }
     } else {

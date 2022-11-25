@@ -3,6 +3,8 @@ import 'package:foap/helper/common_import.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:get/get.dart';
 import 'package:giphy_get/l10n.dart';
+
+import 'controllers/faq_controller.dart';
 // import 'package:easy_localization/easy_localization.dart';
 
 class MyHttpOverrides extends HttpOverrides {
@@ -40,6 +42,7 @@ Future<void> main() async {
   // Get.changeThemeMode(ThemeMode.dark);
 
   Get.put(DashboardController());
+  Get.put(SettingsController());
   Get.put(SubscriptionPackageController());
   Get.put(AgoraCallController());
   Get.put(AgoraLiveController());
@@ -55,7 +58,6 @@ Future<void> main() async {
   Get.put(ProfileController());
   Get.put(NotificationSettingController());
   Get.put(CompetitionController());
-  Get.put(SettingsController());
   Get.put(ChatHistoryController());
   Get.put(BlockedUsersController());
   Get.put(MediaListViewerController());
@@ -82,6 +84,7 @@ Future<void> main() async {
   Get.put(GiftController());
   Get.put(LiveHistoryController());
   Get.put(RequestVerificationController());
+  Get.put(FAQController());
 
   setupServiceLocator();
   await getIt<UserProfileManager>().refreshProfile();

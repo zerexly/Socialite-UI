@@ -2,8 +2,8 @@ import 'package:foap/helper/common_import.dart';
 import 'package:get/get.dart';
 
 class ForceUpdateView extends StatelessWidget {
-  const ForceUpdateView({Key? key}) : super(key: key);
-
+  ForceUpdateView({Key? key}) : super(key: key);
+  SettingsController settingsController = Get.find();
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -51,7 +51,7 @@ class ForceUpdateView extends StatelessWidget {
               text: LocalizationString.update,
               onPress: () async {
                 await launchUrl(
-                    Uri.parse(AppConfigConstants.latestAppDownloadLink));
+                    Uri.parse(settingsController.setting.value!.freeLiveTvDurationToView!));
               },
               enabledBackgroundColor: const Color(0xff512e98),
             ),
