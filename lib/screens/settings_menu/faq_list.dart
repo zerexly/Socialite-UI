@@ -35,7 +35,6 @@ class _FaqListState extends State<FaqList> {
 
   @override
   Widget build(BuildContext context) {
-    print('faq length ${_faqController.faqs.length}');
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
       body: Column(

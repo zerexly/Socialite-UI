@@ -80,7 +80,6 @@ class ApiController {
   }
 
   Future<ApiResponseModel> checkUsername(String username) async {
-
     var url = NetworkConstantsUtil.baseUrl + NetworkConstantsUtil.checkUserName;
     dynamic param = ApiParamModel().getCheckUsernameParam(username);
     return http
@@ -1100,7 +1099,7 @@ class ApiController {
       "Authorization": "Bearer ${authKey!}"
     }).then((http.Response response) async {
       final ApiResponseModel parsedResponse = await getResponse(
-          response.body, NetworkConstantsUtil.getSettings);
+          response.body, NetworkConstantsUtil.getNotifications);
       return parsedResponse;
     });
   }
