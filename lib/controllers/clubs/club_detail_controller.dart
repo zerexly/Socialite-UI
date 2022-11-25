@@ -107,7 +107,7 @@ class ClubDetailController extends GetxController {
   }
 
   joinClub() {
-    club.value!.isJoined = 1;
+    club.value!.isJoined = true;
     club.refresh();
     ApiController().joinClub(clubId: club.value!.id!).then((response) {
       if (response.success) {
@@ -125,7 +125,7 @@ class ClubDetailController extends GetxController {
   }
 
   leaveClub() {
-    club.value!.isJoined = 0;
+    club.value!.isJoined = false;
     club.refresh();
     ApiController().leaveClub(clubId: club.value!.id!).then((response) {});
   }

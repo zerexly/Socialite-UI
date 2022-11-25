@@ -8,7 +8,10 @@ class ClubDetail extends StatefulWidget {
   final Function(ClubModel) deleteCallback;
 
   const ClubDetail(
-      {Key? key, required this.club, required this.needRefreshCallback, required this.deleteCallback})
+      {Key? key,
+      required this.club,
+      required this.needRefreshCallback,
+      required this.deleteCallback})
       : super(key: key);
 
   @override
@@ -135,8 +138,11 @@ class ClubDetailState extends State<ClubDetail> {
                               : SizedBox(
                                   height: 50,
                                   width: _clubDetailController
-                                              .club.value!.enableChat ==
-                                          1
+                                                  .club.value!.enableChat ==
+                                              1 &&
+                                          _clubDetailController
+                                                  .club.value!.isJoined ==
+                                              true
                                       ? (MediaQuery.of(context).size.width -
                                               32) *
                                           0.7
@@ -145,19 +151,22 @@ class ClubDetailState extends State<ClubDetail> {
                                   child: FilledButtonType1(
                                       text: _clubDetailController
                                                   .club.value!.isJoined ==
-                                              1
+                                              true
                                           ? LocalizationString.leaveClub
                                           : LocalizationString.join,
                                       onPress: () {
                                         if (_clubDetailController
                                                 .club.value!.isJoined ==
-                                            1) {
+                                            true) {
                                           _clubDetailController.leaveClub();
                                         } else {
                                           _clubDetailController.joinClub();
                                         }
                                       })),
-                          if (_clubDetailController.club.value!.enableChat == 1)
+                          if (_clubDetailController.club.value!.enableChat ==
+                                  1 &&
+                              _clubDetailController.club.value!.isJoined ==
+                                  true)
                             SizedBox(
                                 height: 50,
                                 width:

@@ -1,7 +1,7 @@
 class AppConfigConstants {
   // Name of app
   static String appName = 'Socialified';
-  static String currentVersion = '1.5';
+  static String currentVersion = '1.3';
 
   // static int maximumVideoDurationAllowed = 120; // it must be in seconds
   //

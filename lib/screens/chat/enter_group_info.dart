@@ -43,7 +43,7 @@ class _EnterGroupInfoState extends State<EnterGroupInfo> {
                       LocalizationString.create,
                       style: Theme.of(context)
                           .textTheme
-                          .titleMedium!
+                          .bodyLarge!
                           .copyWith(fontWeight: FontWeight.w600),
                     ).ripple(() {
                       createGroup();

@@ -267,7 +267,7 @@ class HomeFeedState extends State<HomeFeedScreen> {
     return Obx(() {
       return ListView.separated(
               controller: _controller,
-              padding: const EdgeInsets.only( bottom: 100),
+              padding: const EdgeInsets.only(bottom: 100),
               itemCount: _homeController.posts.length + 4,
               itemBuilder: (context, index) {
                 if (index == 0) {
@@ -276,7 +276,7 @@ class HomeFeedState extends State<HomeFeedScreen> {
                           ? const StoryAndHighlightsShimmer()
                           : storiesView());
                 } else if (index == 1) {
-                  return const QuickLinkWidget().vP16;
+                  return const QuickLinkWidget();
                 } else if (index == 2) {
                   return postingView().hP16;
                 } else if (index == 3) {
