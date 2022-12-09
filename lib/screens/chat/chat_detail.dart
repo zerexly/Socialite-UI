@@ -245,7 +245,7 @@ class _ChatDetailState extends State<ChatDetail> {
                                                       .isOnline ==
                                                   true
                                               ? LocalizationString.online
-                                              : '${LocalizationString.lastSeen}${_chatDetailController.chatRoom.value!.opponent.userDetail.lastSeenAtTime}',
+                                              : _chatDetailController.chatRoom.value!.opponent.userDetail.lastSeenAtTime,
                                           style: Theme.of(context)
                                               .textTheme
                                               .bodyMedium!
@@ -878,7 +878,7 @@ class _ChatDetailState extends State<ChatDetail> {
         context: context,
         isScrollControlled: true,
         builder: (context) => const FractionallySizedBox(
-            heightFactor: 0.5, child: ChatMediaSharingOptionPopup()));
+            heightFactor: 0.42, child: ChatMediaSharingOptionPopup()));
   }
 
   void deleteMessageActionPopup() {

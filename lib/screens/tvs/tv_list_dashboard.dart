@@ -14,6 +14,7 @@ class _TvListDashboardState extends State<TvListDashboard> {
   @override
   void initState() {
     _tvStreamingController.getTvCategories();
+    _tvStreamingController.getBannersTvs();
     super.initState();
   }
 
@@ -38,6 +39,66 @@ class _TvListDashboardState extends State<TvListDashboard> {
             title: LocalizationString.tvs,
           ),
           divider(context: context).tP8,
+          const SizedBox(
+            height: 20,
+          ),
+          Stack(
+            children: [
+              SizedBox(
+                height: 250,
+                child: GetBuilder<TvStreamingController>(
+                    init: _tvStreamingController,
+                    builder: (ctx) {
+                      return CarouselSlider(
+                        items: [
+                          for (TvModel tv in _tvStreamingController.banners)
+                            CachedNetworkImage(
+                              imageUrl: tv.image,
+                              fit: BoxFit.cover,
+                              width: Get.width,
+                            ).ripple(() {
+                              Get.to(() => LiveTVStreaming(
+                                    tvModel: tv,
+                                  ));
+                            })
+                        ],
+                        options: CarouselOptions(
+                            enlargeCenterPage: true,
+                            enableInfiniteScroll: false,
+                            height: double.infinity,
+                            viewportFraction: 0.8,
+                            onPageChanged: (index, reason) {
+                              _tvStreamingController.updateBannerSlider(index);
+                            },
+                            autoPlay: true),
+                      );
+                    }),
+              ),
+              if (_tvStreamingController.banners.isNotEmpty)
+                Positioned(
+                    bottom: 10,
+                    left: 0,
+                    right: 0,
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: Obx(
+                        () {
+                          return DotsIndicator(
+                            dotsCount: _tvStreamingController.banners.length,
+                            position:
+                                (_tvStreamingController.currentBannerIndex)
+                                    .toDouble(),
+                            decorator: DotsDecorator(
+                                activeColor: Theme.of(context).primaryColor),
+                          );
+                        },
+                      ),
+                    ))
+            ],
+          ),
+          const SizedBox(
+            height: 15,
+          ),
           Expanded(
               child: GetBuilder<TvStreamingController>(
                   init: _tvStreamingController,

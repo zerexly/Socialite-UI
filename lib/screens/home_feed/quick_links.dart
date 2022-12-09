@@ -1,7 +1,16 @@
 import 'package:foap/helper/common_import.dart';
 import 'package:get/get.dart';
 
-enum QuickLinkType { live, randomChat, randomCall, competition, clubs, pages, tv }
+enum QuickLinkType {
+  live,
+  randomChat,
+  randomCall,
+  competition,
+  clubs,
+  pages,
+  tv,
+  event
+}
 
 class QuickLink {
   String icon;
@@ -51,15 +60,21 @@ class _QuickLinkWidgetState extends State<QuickLinkWidget> {
     //     subHeading: LocalizationString.haveFunByRandomCalling,
     //     linkType: QuickLinkType.randomCall),
     QuickLink(
+        icon: 'assets/events.png',
+        heading: LocalizationString.events,
+        subHeading: '',
+        linkType: QuickLinkType.event),
+    QuickLink(
         icon: 'assets/chat_colored.png',
         heading: LocalizationString.strangerChat,
         subHeading: LocalizationString.haveFunByRandomChatting,
         linkType: QuickLinkType.randomChat),
-    // QuickLink(
-    //     icon: 'assets/television.png',
-    //     heading: LocalizationString.tvs,
-    //     subHeading: LocalizationString.watchTvs,
-    //     linkType: QuickLinkType.tv),
+
+    QuickLink(
+        icon: 'assets/television.png',
+        heading: LocalizationString.tvs,
+        subHeading: LocalizationString.watchTvs,
+        linkType: QuickLinkType.tv),
   ];
 
   @override
@@ -101,10 +116,11 @@ class _QuickLinkWidgetState extends State<QuickLinkWidget> {
                   ));
             } else if (link.linkType == QuickLinkType.clubs) {
               Get.to(() => const ClubsListing());
-            } else if (link.linkType == QuickLinkType.pages) {}
-            else if (link.linkType == QuickLinkType.tv
-            ) {
+            } else if (link.linkType == QuickLinkType.pages) {
+            } else if (link.linkType == QuickLinkType.tv) {
               Get.to(() => const TvListDashboard());
+            } else if (link.linkType == QuickLinkType.event) {
+              Get.to(() => const EventsListing());
             }
           });
         },

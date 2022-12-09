@@ -176,7 +176,8 @@ class _InputFieldState extends State<InputField> {
                         counterText: "",
                         // labelText: hintText,
                         labelStyle: Theme.of(context).textTheme.bodyLarge,
-                        hintStyle: Theme.of(context).textTheme.titleMedium,
+                        hintStyle: widget.textStyle ??
+                            Theme.of(context).textTheme.bodyMedium!,
                         hintText: hintText),
                   ),
                   onFocusChange: (hasFocus) {

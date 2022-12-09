@@ -7,8 +7,10 @@ class TvStreamingController extends GetxController {
       <String, List<ChatMessageModel>>{}.obs;
 
   RxBool showChatMessages = false.obs;
+  RxList<TvModel> banners = <TvModel>[].obs;
   RxList<TvModel> liveTvs = <TvModel>[].obs;
   RxList<TvCategoryModel> categories = <TvCategoryModel>[].obs;
+  RxInt currentBannerIndex = 0.obs;
 
   clearCategories() {
     categories.clear();
@@ -20,12 +22,25 @@ class TvStreamingController extends GetxController {
     update();
   }
 
+  updateBannerSlider(int index) {
+    currentBannerIndex.value = index;
+  }
+
   getTvCategories() {
     ApiController().getTVCategories().then((response) {
       categories.value = response.tvCategories
           .where((element) => element.tvs.isNotEmpty)
           .toList();
       categories.refresh();
+      update();
+    });
+  }
+
+  getBannersTvs({int? categoryId, String? name}) {
+    ApiController()
+        .getLiveTvs(categoryId: categoryId, name: name)
+        .then((response) {
+      banners.value = response.liveTvs;
       update();
     });
   }

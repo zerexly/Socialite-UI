@@ -58,7 +58,7 @@ class AgoraCallController extends GetxController {
   Future<void> initializeCalling({
     required Call call,
   }) async {
-    if (settingsController.setting.value!.agoraApiKey!.isEmpty) {
+    if (AppConfigConstants.agoraApiKey.isEmpty) {
       update();
       return;
     }
@@ -88,7 +88,7 @@ class AgoraCallController extends GetxController {
 
   //Initialize Agora RTC Engine
   Future<void> _initAgoraRtcEngine({required AgoraCallType callType}) async {
-    _engine = await RtcEngine.create(settingsController.setting.value!.agoraApiKey!);
+    _engine = await RtcEngine.create(AppConfigConstants.agoraApiKey);
     if (callType == AgoraCallType.video) {
       await _engine!.enableVideo();
     }

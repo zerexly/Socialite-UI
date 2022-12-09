@@ -52,7 +52,7 @@ dependencies:
   shared_preferences: ^2.0.5
   webview_flutter: ^3.0.1
   intl: ^0.17.0
-  local_auth: ^1.1.11
+  local_auth: ^2.1.2
   pin_code_text_field: ^1.8.0
   currency_picker: ^2.0.8
   country_picker: ^2.0.12
@@ -61,15 +61,15 @@ dependencies:
   adaptive_action_sheet: ^2.0.1
 #  video_compress: ^3.1.0
   video_player: ^2.4.7
-  firebase_messaging: ^11.4.0
-  firebase_core: ^1.17.0
+  firebase_messaging: ^14.1.3
+  firebase_core: ^2.3.0
   get: ^4.6.5
   dots_indicator: ^2.1.0
   flutter_easyloading: ^3.0.5
-  story_view: ^0.13.2
+  story_view: ^0.14.0
   keyboard_attachable: ^2.1.0
   detectable_text_field: ^2.0.3
-  firebase_crashlytics: ^2.8.2
+  firebase_crashlytics: ^3.0.6
   chewie: ^1.3.4
   dropdown_button2: ^1.6.2
   visibility_detector: ^0.3.3
@@ -84,14 +84,14 @@ dependencies:
   get_it: ^7.2.0
   just_audio: ^0.9.29
   audio_service: ^0.18.6
-  audio_video_progress_bar: ^0.10.0
+  audio_video_progress_bar: ^0.11.0
   agora_rtc_engine: ^5.3.0
   permission_handler: ^10.0.0
   flutter_ringtone_player: ^3.2.0
   wakelock: ^0.6.1+2
   socket_io_client: ^2.0.0-beta.3-nullsafety.0
   focused_menu: ^1.0.5
-  localstore: ^1.2.3
+  localstore: ^1.3.1
   flutter_fgbg: ^0.2.0
 #  flutter_sticky_header: ^0.6.4
   gallery_saver: ^2.3.2
@@ -104,8 +104,8 @@ dependencies:
   #  custom_gallery_display: ^0.3.8
   mime_type: ^1.0.0
   photo_manager: ^2.2.1
-  share_plus: ^4.5.3
-  google_mlkit_smart_reply: ^0.4.0
+  share_plus: ^6.3.0
+  google_mlkit_smart_reply: ^0.5.0
 #  smart_reply: ^0.1.0
   flutter_archive: ^5.0.0
   push: ^0.1.3
@@ -146,7 +146,11 @@ dependencies:
   percent_indicator: ^4.2.2
   auto_orientation: ^2.2.1
   flutter_keyboard_visibility: ^5.4.0
-  animate_do: ^2.1.0
+  animate_do: ^3.0.2
+  flutter_braintree: ^2.3.1
+  razorpay_flutter: ^1.3.4
+  flutter_stripe: ^7.0.0
+  sqflite: ^2.2.2
   open_file:
     git:
       url: https://github.com/crazecoder/open_file

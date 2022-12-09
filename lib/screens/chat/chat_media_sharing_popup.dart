@@ -239,7 +239,7 @@ class _ChatMediaSharingOptionPopupState
         builder: (context) => FractionallySizedBox(
             heightFactor: 0.9,
             child: PlacePicker(
-              apiKey: settingsController.setting.value!.googleMapApiKey!,
+              apiKey: AppConfigConstants.googleMapApiKey,
               displayLocation: null,
             ))).then((location) {
       if (location != null) {

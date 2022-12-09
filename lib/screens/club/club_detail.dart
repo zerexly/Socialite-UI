@@ -28,7 +28,7 @@ class ClubDetailState extends State<ClubDetail> {
 
   @override
   void initState() {
-    _clubDetailController.setClub(widget.club);
+    _clubDetailController.setEvent(widget.club);
     refreshPosts();
     super.initState();
   }
@@ -269,7 +269,7 @@ class ClubDetailState extends State<ClubDetail> {
                     Get.to(() => ClubSettings(
                           club: widget.club,
                           updateClubCallback: (club) {
-                            _clubDetailController.setClub(club);
+                            _clubDetailController.setEvent(club);
                           },
                           deleteClubCallback: (club) {
                             Get.back();

@@ -1,7 +1,6 @@
 import 'package:foap/helper/common_import.dart';
 
 enum Font { lato, openSans, poppins, raleway, roboto }
-
 enum DisplayMode { light, dark }
 
 class AppThemeSetting {

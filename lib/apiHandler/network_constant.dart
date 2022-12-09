@@ -140,6 +140,15 @@ class NetworkConstantsUtil {
   static String removeUserFromClub = 'clubs/remove';
   static String clubMembers = 'clubs/club-joined-user?expand=user&id=';
 
+  // Events
+  static String searchEvents = 'clubs?expand=createdByUser,totalJoinedUser';
+  static String joinEvent = 'clubs/join';
+  static String eventBooking = 'clubs/join';
+  static String leaveEvent = 'clubs/left';
+  static String eventMembers = 'clubs/club-joined-user?expand=user&id=';
+  static String cancelEventBooking = 'clubs/left';
+  static String getEventCategories = 'clubs/category';
+
   // random live and chat
   static String randomLives = 'chats/live-user?expand=userLiveDetail';
   static String randomOnlineUser = 'chats/online-user';
@@ -157,7 +166,6 @@ class NetworkConstantsUtil {
   static String requestVerification = 'user-verifications';
   static String requestVerificationHistory = 'user-verifications';
   static String cancelVerification = 'user-verifications/cancel';
-
 
   // FAQ
   static String getFAQs = 'faqs';

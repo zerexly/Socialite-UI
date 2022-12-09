@@ -13,6 +13,7 @@ class StoryViewer extends StatefulWidget {
 class _StoryViewerState extends State<StoryViewer> {
   final controller = StoryController();
   final AppStoryController storyController = Get.find();
+  final SettingsController settingsController = Get.find();
 
   @override
   void initState() {
@@ -38,6 +39,9 @@ class _StoryViewerState extends State<StoryViewer> {
                     ? StoryItem.pageVideo(
                         media.video!,
                         controller: controller,
+                        duration: Duration(
+                            seconds: int.parse(settingsController
+                                .setting.value!.maximumVideoDurationAllowed!)),
                         key: Key(media.id.toString()),
                       )
                     : StoryItem.pageImage(
@@ -120,13 +124,15 @@ class _StoryViewerState extends State<StoryViewer> {
                   style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                       fontWeight: FontWeight.w600, color: Colors.white),
                 ),
-                Obx(() => storyController.storyMediaModel.value != null ? Text(
-                      storyController.storyMediaModel.value!.createdAt,
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyMedium!
-                          .copyWith(color: Colors.white70),
-                    ) : Container())
+                Obx(() => storyController.storyMediaModel.value != null
+                    ? Text(
+                        storyController.storyMediaModel.value!.createdAt,
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyMedium!
+                            .copyWith(color: Colors.white70),
+                      )
+                    : Container())
               ],
             ),
           ],

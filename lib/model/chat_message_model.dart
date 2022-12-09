@@ -141,6 +141,8 @@ class ChatMessageModel {
   String messageContent = "";
   int senderId = 0;
   int createdAt = 0;
+  int? viewedAt;
+  int deleteAfter = AppConfigConstants.secondsInADay;
 
   // String messageTime = '';
   String lastMessageSenderName = '';
@@ -173,6 +175,9 @@ class ChatMessageModel {
     model.messageContent = json['message'];
     model.senderId = json['created_by'];
     model.createdAt = json['created_at'];
+    model.viewedAt = json['viewed_at'];
+    model.deleteAfter =
+        json['deleteAfter'] ?? getIt<UserProfileManager>().user!.chatDeleteTime;
 
     // model.messageTime = createDate.messageTimeForChat();
     model.isDeleted = json['isDeleted'] ?? 0;
@@ -306,6 +311,47 @@ class ChatMessageModel {
       return MessageContentType.gift;
     }
     return MessageContentType.text;
+  }
+
+  bool get isMediaMessage {
+    if (messageType == 1) {
+      return false;
+    } else if (messageType == 2) {
+      return true;
+    } else if (messageType == 3) {
+      return true;
+    } else if (messageType == 4) {
+      return true;
+    } else if (messageType == 5) {
+      return false;
+    } else if (messageType == 6) {
+      return false;
+    } else if (messageType == 7) {
+      return false;
+    } else if (messageType == 8) {
+      return false;
+    } else if (messageType == 9) {
+      return reply.isMediaMessage;
+    } else if (messageType == 10) {
+      return originalMessage.isMediaMessage;
+    } else if (messageType == 11) {
+      return false;
+    } else if (messageType == 12) {
+      return false;
+    } else if (messageType == 13) {
+      return true;
+    } else if (messageType == 14) {
+      return false;
+    } else if (messageType == 15) {
+      return false;
+    } else if (messageType == 16) {
+      return true;
+    } else if (messageType == 100) {
+      return false;
+    } else if (messageType == 200) {
+      return false;
+    }
+    return false;
   }
 
   bool get isMineMessage {

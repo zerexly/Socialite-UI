@@ -66,7 +66,8 @@ class LocalizationString {
   static String next = 'Next'.tr;
 
   static String pleaseGrantRequiredPermission =
-      "Please grant the required permission from settings to access this feature.".tr;
+      "Please grant the required permission from settings to access this feature."
+          .tr;
 
   static String noInternet =
       'Please check your internet connection and try again.'.tr;
@@ -195,8 +196,7 @@ class LocalizationString {
   static String coinsAdded = 'Coins added to your account'.tr;
 
   static String pleaseEnterPassword = 'Please enter password'.tr;
-  static String pleaseEnterConfirmPassword =
-      'Please enter confirm password'.tr;
+  static String pleaseEnterConfirmPassword = 'Please enter confirm password'.tr;
   static String passwordsDoesNotMatched = 'Password does not matched'.tr;
   static String createAccountForTopPicks =
       'Create an account to our top picks for you!'.tr;
@@ -212,8 +212,7 @@ class LocalizationString {
   static String pleaseEnterColorName = 'Please enter color name'.tr;
   static String pleaseSelectColor = 'Please select color'.tr;
 
-  static String userNameOrPasswordIsWrong =
-      'User name or password is wrong'.tr;
+  static String userNameOrPasswordIsWrong = 'User name or password is wrong'.tr;
   static String invalidPhoneNumber = 'Please enter a valid phone number'.tr;
 
   static String home = 'Home'.tr;
@@ -237,8 +236,7 @@ class LocalizationString {
 
   static String requestSent = 'Request sent'.tr;
 
-  static String notAllowedMessage =
-      'Such kind of messages are not allowed'.tr;
+  static String notAllowedMessage = 'Such kind of messages are not allowed'.tr;
 
   static String errorMessage =
       'There is some problem, Please try again later'.tr;
@@ -374,8 +372,7 @@ class LocalizationString {
   static String saveContact = 'Save Contact'.tr;
   static String contactSaved = 'Contact Saved'.tr;
   static String darkMode = 'Dark mode'.tr;
-  static String changeTheAppearanceSetting =
-      'Change the appearance setting'.tr;
+  static String changeTheAppearanceSetting = 'Change the appearance setting'.tr;
 
   static String settingsSaved = 'Settings Saved'.tr;
   static String support = 'Support'.tr;
@@ -384,8 +381,7 @@ class LocalizationString {
   static String reported = 'Reported'.tr;
   static String postReportedSuccessfully = 'Post is reported successfully'.tr;
   static String userReportedSuccessfully = 'User is reported successfully'.tr;
-  static String storyReportedSuccessfully =
-      'Story is reported successfully'.tr;
+  static String storyReportedSuccessfully = 'Story is reported successfully'.tr;
   static String userBlockedSuccessfully = 'User is blocked successfully'.tr;
 
   static String report = 'Report'.tr;
@@ -539,8 +535,7 @@ class LocalizationString {
   static String editClubInfo = 'Edit club info'.tr;
   static String editClubImage = 'Edit club image'.tr;
   static String deleteClub = 'Delete club'.tr;
-  static String areYouSureToDeleteClub =
-      'Are you sure to delete the club?'.tr;
+  static String areYouSureToDeleteClub = 'Are you sure to delete the club?'.tr;
   static String clubIsDeleted = 'Club is deleted successfully'.tr;
 
   static String participants = "Participants".tr;
@@ -699,8 +694,7 @@ class LocalizationString {
 
   static String joinLiveProfessionals =
       'Join trending live from professionals'.tr;
-  static String joinCompetitionsToEarn =
-      'Join competitions and earn money'.tr;
+  static String joinCompetitionsToEarn = 'Join competitions and earn money'.tr;
 
   static String page = 'Pages'.tr;
   static String spaceForBusiness =
@@ -749,8 +743,7 @@ class LocalizationString {
   static String files = 'Files'.tr;
   static String file = 'File'.tr;
 
-  static String findingPerfectUserToChat =
-      'Finding a perfect user to chat'.tr;
+  static String findingPerfectUserToChat = 'Finding a perfect user to chat'.tr;
   static String deleteAccountSubheading =
       'Permanent delete account and whole data'.tr;
 
@@ -770,8 +763,7 @@ class LocalizationString {
   static String redeem = 'Redeem'.tr;
   static String minCoinsRedeemLimit =
       'Minimum {{coins}} coins required to redeem'.tr;
-  static String minWithdrawLimit =
-      'Minimum withdrawal limit is {{cash}}\$'.tr;
+  static String minWithdrawLimit = 'Minimum withdrawal limit is {{cash}}\$'.tr;
   static String enterValidAmountOfCoins =
       'Please enter valid amount of coins'.tr;
   static String enterNumberOfCoins = 'Enter number of coins to redeem'.tr;
@@ -816,5 +808,35 @@ class LocalizationString {
   static String paymentAndCoins = 'Payment and coins'.tr;
   static String changeLanguage = 'Change Language'.tr;
   static String chooseImage = 'Choose image'.tr;
+
+  // v 1.6 keys
+  static String events = 'Events'.tr;
+  static String going = "Going".tr;
+  static String buyTicket = 'Buy Ticket'.tr;
+  static String ticketType = 'Ticket type'.tr;
+  static String orderSummary = 'Order Summary'.tr;
+
+  static String subTotal = 'Sub Total'.tr;
+  static String fees = 'Fees'.tr;
+  static String tax = 'Tax'.tr;
+  static String total = 'Total'.tr;
+  static String checkout = 'Checkout'.tr;
+  static String couponCode = 'Coupon code'.tr;
+  static String enterCouponCode = 'Enter coupon coupon'.tr;
+  static String apply = 'Apply'.tr;
+  static String applyCoupon = 'Apply coupon'.tr;
+  static String noCouponApplied = 'No coupon applied'.tr;
+  static String couponApplied = 'coupon applied'.tr;
+  static String makePayment = 'Make payment'.tr;
+  static String selectPaymentGateway = 'Select payment gateway'.tr;
+
+  // checkout
+
+  static String choosePaymentMethod = 'Choose payment method'.tr;
+  static String creditCard = 'Credit card'.tr;
+  static String applePay = 'Apple Pay'.tr;
+  static String paypal = 'Paypal'.tr;
+  static String razorPay = 'Razorpay'.tr;
+  static String cash = 'Cash'.tr;
 
 }

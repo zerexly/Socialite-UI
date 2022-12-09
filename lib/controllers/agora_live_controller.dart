@@ -165,9 +165,9 @@ class AgoraLiveController extends GetxController {
   _joinLive({
     required Live live,
   }) {
-    if (settingsController.setting.value!.agoraApiKey!.isEmpty) {
+    if (AppConfigConstants.agoraApiKey.isEmpty) {
       infoStrings.add(
-        settingsController.setting.value!.agoraApiKey!,
+        AppConfigConstants.agoraApiKey,
       );
       infoStrings.add('Agora Engine is not starting');
       update();
@@ -201,7 +201,7 @@ class AgoraLiveController extends GetxController {
 
   //Initialize Agora RTC Engine
   Future<void> _initAgoraRtcEngine() async {
-    _engine = await RtcEngine.create(settingsController.setting.value!.agoraApiKey!);
+    _engine = await RtcEngine.create(AppConfigConstants.agoraApiKey);
     await _engine.enableVideo();
   }
 

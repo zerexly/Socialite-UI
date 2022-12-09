@@ -22,8 +22,8 @@ class SettingModel {
   String? privacyPolicyUrl;
   String? termsOfServiceUrl;
   String? giphyApiKey;
-  String? agoraApiKey;
-  String? googleMapApiKey;
+  // String? agoraApiKey;
+  // String? googleMapApiKey;
   String? interstitialAdUnitIdForAndroid;
   String? interstitialAdUnitIdForiOS;
   String? rewardInterstitlAdUnitIdForAndroid;
@@ -72,8 +72,8 @@ class SettingModel {
     required this.privacyPolicyUrl,
     required this.termsOfServiceUrl,
     required this.giphyApiKey,
-    required this.agoraApiKey,
-    required this.googleMapApiKey,
+    // required this.agoraApiKey,
+    // required this.googleMapApiKey,
     required this.interstitialAdUnitIdForAndroid,
     required this.interstitialAdUnitIdForiOS,
     required this.rewardInterstitlAdUnitIdForAndroid,
@@ -117,8 +117,8 @@ class SettingModel {
     privacyPolicyUrl: json["privacy_policy_url"],
     termsOfServiceUrl: json["terms_of_service_url"],
     giphyApiKey: json["giphy_api_key"],
-    agoraApiKey: json["agora_api_key"],
-    googleMapApiKey: json["google_map_api_key"],
+    // agoraApiKey: json["agora_api_key"],
+    // googleMapApiKey: json["google_map_api_key"],
     interstitialAdUnitIdForAndroid: json["interstitial_ad_unit_id_for_android"],
     interstitialAdUnitIdForiOS: json["interstitial_ad_unit_id_for_IOS"],
     rewardInterstitlAdUnitIdForAndroid: json["reward_Interstitl_ad_unit_id_for_android"],

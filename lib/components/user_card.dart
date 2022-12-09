@@ -450,6 +450,62 @@ class ClubMemberTile extends StatelessWidget {
   }
 }
 
+class EventMemberTile extends StatelessWidget {
+  final EventMemberModel member;
+  final VoidCallback? viewCallback;
+
+  const EventMemberTile({
+    Key? key,
+    required this.member,
+    this.viewCallback,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            UserAvatarView(
+              user: member.user!,
+              size: 40,
+            ),
+            SizedBox(
+              width: MediaQuery.of(context).size.width - 200,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    member.user!.userName,
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyLarge!
+                        .copyWith(fontWeight: FontWeight.w900),
+                  ).bP4,
+                  member.user!.country != null
+                      ? Text(
+                          '${member.user!.city!}, ${member.user!.country!}',
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        )
+                      : Container()
+                ],
+              ).hP16,
+            ).ripple(() {
+              if (viewCallback != null) {
+                viewCallback!();
+              }
+            }),
+            // const Spacer(),
+          ],
+        ),
+        const Spacer(),
+      ],
+    );
+  }
+}
+
 class SendMessageUserTile extends StatelessWidget {
   final UserModel profile;
   final ButtonState state;
@@ -562,8 +618,7 @@ class BlockedUserTile extends StatelessWidget {
 class GifterUserTile extends StatelessWidget {
   final ReceivedGiftModel gift;
 
-  const GifterUserTile({Key? key, required this.gift})
-      : super(key: key);
+  const GifterUserTile({Key? key, required this.gift}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -577,7 +632,9 @@ class GifterUserTile extends StatelessWidget {
           height: 40,
           width: 40,
         ),
-        const SizedBox(width: 5,),
+        const SizedBox(
+          width: 5,
+        ),
         const ThemeIconWidget(
           ThemeIcon.diamond,
           color: Colors.yellow,

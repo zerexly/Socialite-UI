@@ -11,7 +11,7 @@ class LocationChatTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var controller = StaticMapController(
-      googleApiKey: settingsController.setting.value!.googleMapApiKey!,
+      googleApiKey: AppConfigConstants.googleMapApiKey,
       width: 400,
       height: 400,
       zoom: 15,

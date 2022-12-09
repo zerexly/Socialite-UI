@@ -51,7 +51,7 @@ class ForceUpdateView extends StatelessWidget {
               text: LocalizationString.update,
               onPress: () async {
                 await launchUrl(
-                    Uri.parse(settingsController.setting.value!.freeLiveTvDurationToView!));
+                    Uri.parse(settingsController.setting.value!.latestAppDownloadLink!));
               },
               enabledBackgroundColor: const Color(0xff512e98),
             ),

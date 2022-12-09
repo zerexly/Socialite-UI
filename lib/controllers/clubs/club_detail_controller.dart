@@ -19,7 +19,7 @@ class ClubDetailController extends GetxController {
     canLoadMorePosts = true;
   }
 
-  setClub(ClubModel clubObj) {
+  setEvent(ClubModel clubObj) {
     club.value = clubObj;
     club.refresh();
 

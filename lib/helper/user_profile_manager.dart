@@ -24,7 +24,7 @@ class UserProfileManager {
         user = value.user;
 
         if (user != null) {
-          setupSocketServiceLocator();
+          setupSocketServiceLocator1();
         }
         return;
       });

@@ -41,6 +41,8 @@ class ChatRoomModel {
   int id = 0;
   int status = 0;
   int createdAt = 0;
+  int? updatedAt;
+
   int createdBy = 0;
   String? name;
 
@@ -65,6 +67,8 @@ class ChatRoomModel {
     this.name,
     required this.status,
     required this.createdAt,
+    this.updatedAt,
+
     required this.createdBy,
     // required this.users,
     required this.isOnline,
@@ -84,6 +88,7 @@ class ChatRoomModel {
       status: jsonData['status'],
       createdAt:
           jsonData['created_at'] ?? DateTime.now().millisecondsSinceEpoch,
+      updatedAt: jsonData['updated_at'],
       createdBy: jsonData['created_by'],
       isOnline: jsonData['is_chat_user_online'] == 1,
       isGroupChat: jsonData['type'] == 2,

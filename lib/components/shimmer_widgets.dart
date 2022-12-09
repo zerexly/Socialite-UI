@@ -145,6 +145,121 @@ class ClubsScreenShimmer extends StatelessWidget {
   }
 }
 
+class EventCategoriesScreenShimmer extends StatelessWidget {
+  const EventCategoriesScreenShimmer({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.separated(
+        padding: const EdgeInsets.only(left: 16),
+        scrollDirection: Axis.horizontal,
+        itemCount: 5,
+        itemBuilder: (BuildContext ctx, int index) {
+          return Row(
+            children: [
+              Container(
+                color: Theme.of(context).cardColor,
+                height: 30,
+                width: 30,
+              ).circular,
+              const SizedBox(
+                width: 10,
+              ),
+              Text(
+                LocalizationString.loading,
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyMedium!
+                    .copyWith(fontWeight: FontWeight.w700),
+              )
+            ],
+          )
+              .setPadding(left: 8, right: 8, top: 4, bottom: 4)
+              .borderWithRadius(context: context, value: 1, radius: 20);
+        },
+        separatorBuilder: (BuildContext ctx, int index) {
+          return const SizedBox(
+            width: 10,
+          );
+        });
+  }
+}
+
+class EventsScreenShimmer extends StatelessWidget {
+  const EventsScreenShimmer({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        const SizedBox(
+          height: 15,
+        ),
+        SizedBox(
+          height: 5 * 350,
+          child: ListView.separated(
+              padding: const EdgeInsets.only(left: 16, right: 16),
+              itemCount: 5,
+              physics: const NeverScrollableScrollPhysics(),
+              itemBuilder: (BuildContext ctx, int index) {
+                return Container(
+                  // width: 250,
+                  height: 320,
+                  color: Theme.of(context).cardColor,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Expanded(
+                        child: Container(
+                          width: Get.width,
+                          height: double.infinity,
+                          color: Theme.of(context).cardColor,
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        'Club name',
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleSmall!
+                            .copyWith(fontWeight: FontWeight.w600),
+                      ).p8,
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            '250k ${LocalizationString.clubMembers}',
+                            style: Theme.of(context).textTheme.bodyLarge,
+                          ),
+                          const Spacer(),
+                          SizedBox(
+                              height: 40,
+                              width: 120,
+                              child: FilledButtonType1(
+                                  text: LocalizationString.join,
+                                  onPress: () {}))
+                        ],
+                      ).setPadding(left: 12, right: 12, bottom: 20)
+                    ],
+                  ),
+                ).round(15).addShimmer(context);
+              },
+              separatorBuilder: (BuildContext ctx, int index) {
+                return const SizedBox(
+                  height: 25,
+                );
+              }),
+        ),
+      ],
+    ).bP16;
+  }
+}
+
 class PostCardShimmer extends StatelessWidget {
   const PostCardShimmer({Key? key}) : super(key: key);
 

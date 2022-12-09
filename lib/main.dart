@@ -85,6 +85,7 @@ Future<void> main() async {
   Get.put(LiveHistoryController());
   Get.put(RequestVerificationController());
   Get.put(FAQController());
+  Get.put(EventsController());
 
   setupServiceLocator();
   await getIt<UserProfileManager>().refreshProfile();
@@ -92,7 +93,8 @@ Future<void> main() async {
 
   // AppConfigConstants.selectedLanguage = await SharedPrefs().getLanguageCode();
 
-  getIt<DBManager>().clearOldStories();
+  // getIt<DBManager>().clearOldStories();
+  await getIt<DBManager>().createDatabase();
 
   if (getIt<UserProfileManager>().isLogin == true) {
     ApiController().updateTokens();
@@ -163,8 +165,7 @@ class _SocialifiedAppState extends State<SocialifiedApp> {
                   fallbackLocale: const Locale('en', 'US'),
                   debugShowCheckedModeBanner: false,
                   // navigatorKey: navigationKey,
-                  home: FaqList(),
-                  //const SplashScreen(),
+                  home: const SplashScreen(),
                   builder: EasyLoading.init(),
                   theme: AppTheme.lightTheme,
                   darkTheme: AppTheme.darkTheme,

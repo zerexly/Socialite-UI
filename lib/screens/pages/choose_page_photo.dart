@@ -59,8 +59,7 @@ class ChoosePageCoverPhotoState extends State<ChoosePageCoverPhoto> {
               fit: StackFit.expand,
               children: [
                 CachedNetworkImage(
-  imageUrl:
-                  Assets.dummyProfilePictureUrl,
+                  imageUrl: 'Assets.dummyProfilePictureUrl',
                   fit: BoxFit.cover,
                 ).round(5),
                 Positioned(
@@ -93,8 +92,7 @@ class ChoosePageCoverPhotoState extends State<ChoosePageCoverPhoto> {
                 itemCount: 10,
                 itemBuilder: (BuildContext ctx, int index) {
                   return CachedNetworkImage(
-  imageUrl:
-                    Assets.dummyProfilePictureUrl,
+                    imageUrl: 'Assets.dummyProfilePictureUrl',
                     height: 50,
                     width: 50,
                     fit: BoxFit.cover,

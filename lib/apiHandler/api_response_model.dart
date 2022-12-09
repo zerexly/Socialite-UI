@@ -49,6 +49,10 @@ class ApiResponseModel {
   List<CategoryModel> categories = [];
   List<ClubMemberModel> clubMembers = [];
 
+  List<EventModel> events = [];
+  List<EventMemberModel> eventMembers = [];
+  List<EventCategoryModel> eventCategories = [];
+
   List<TvModel> liveTvs = [];
   List<TvCategoryModel> tvCategories = [];
   List<LiveModel> lives = [];
@@ -376,7 +380,8 @@ class ApiResponseModel {
 
           if (url == NetworkConstantsUtil.getFAQs) {
             if (items != null && items.length > 0) {
-              model.faqs = List<FAQModel>.from(items.map((x) => FAQModel.fromJson(x)));
+              model.faqs =
+                  List<FAQModel>.from(items.map((x) => FAQModel.fromJson(x)));
             }
           }
         }

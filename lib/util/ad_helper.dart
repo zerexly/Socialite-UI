@@ -153,7 +153,7 @@ class RewardedInterstitialAds {
   SettingsController settingsController = Get.find();
 
   void show(VoidCallback onRewarded) {
-    if (settingsController.setting.value!.networkToUse! == 1) {
+    if (int.parse(settingsController.setting.value!.networkToUse!) == 1) {
       FacebookRewardedVideoAd.loadRewardedVideoAd(
         placementId: FacebookAudienceNetworkKeys().rewardInterstitialAdUnitId,
         listener: (result, value) {

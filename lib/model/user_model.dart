@@ -85,6 +85,7 @@ class UserModel {
 
   // next release
   int isDatingEnabled = 0;
+  int chatDeleteTime = 0;
 
   UserModel();
 
@@ -118,6 +119,7 @@ class UserModel {
     model.chatLastTimeOnline = json['chat_last_time_online'];
     model.accountCreatedWith = json['account_created_with'] ?? 1;
     model.isVerified = json['is_verified'] == 1;
+    model.chatDeleteTime = json['chat_delete_period'] ?? AppConfigConstants.secondsInADay;
 
     model.paypalId = json['paypal_id'];
     model.balance = (json['available_balance'] ?? '').toString();
@@ -199,7 +201,7 @@ class UserModel {
 
     DateTime dateTime =
         DateTime.fromMillisecondsSinceEpoch(chatLastTimeOnline! * 1000).toUtc();
-    return timeago.format(dateTime);
+    return '${LocalizationString.lastSeen} ${timeago.format(dateTime)}';
   }
 
   bool get isMe {

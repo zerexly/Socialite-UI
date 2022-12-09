@@ -13,9 +13,10 @@ Future<void> setupServiceLocator() async {
   // getIt.registerLazySingleton<GalleryLoader>(() => GalleryLoader());
   getIt.registerLazySingleton<NotificationManager>(() => NotificationManager());
   getIt.registerLazySingleton<LocationManager>(() => LocationManager());
+
 }
 
-Future<void> setupSocketServiceLocator() async {
+Future<void> setupSocketServiceLocator1() async {
   if (!getIt.isRegistered<SocketManager>()) {
     getIt.registerLazySingleton<SocketManager>(() => SocketManager());
   }
