@@ -140,6 +140,9 @@ class HomeController extends GetxController {
     } else if (option == LocalizationString.liveTv) {
       Get.to(() => const TvListDashboard());
       // Get.to(() => const LiveTVStreaming());
+    } else if (option == LocalizationString.reel) {
+      Get.to(() => const CreateReelScreen());
+      // Get.to(() => const LiveTVStreaming());
     }
   }
 
@@ -243,7 +246,6 @@ class HomeController extends GetxController {
 // stories
 
   void getStories() async {
-    stories.clear();
     isRefreshingStories.value = true;
     update();
 
@@ -254,6 +256,7 @@ class HomeController extends GetxController {
           getFollowersStories(),
           getLiveUsers()
         ]).whenComplete(() {});
+        stories.clear();
 
         StoryModel story = StoryModel(
             id: 1,

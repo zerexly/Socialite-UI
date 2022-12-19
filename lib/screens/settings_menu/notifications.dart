@@ -35,7 +35,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                   builder: (ctx) {
                     return _notificationController.notifications.isNotEmpty
                         ? ListView.separated(
-                            padding: EdgeInsets.zero,
+                            padding: const EdgeInsets.only(bottom: 100),
                             itemCount:
                                 _notificationController.notifications.length,
                             itemBuilder: (BuildContext context, int index) {

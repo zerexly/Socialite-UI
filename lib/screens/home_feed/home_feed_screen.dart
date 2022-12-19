@@ -22,6 +22,8 @@ class HomeFeedState extends State<HomeFeedScreen> {
     LocalizationString.story,
     LocalizationString.highlights,
     LocalizationString.goLive,
+    LocalizationString.reel,
+
     // LocalizationString.liveNow,
   ];
 

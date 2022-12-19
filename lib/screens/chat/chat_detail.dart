@@ -11,11 +11,8 @@ class ChatDetail extends StatefulWidget {
 }
 
 class _ChatDetailState extends State<ChatDetail> {
-  // final ChatHistoryController _chatController = Get.find();
   final ChatDetailController _chatDetailController = Get.find();
-  final ItemScrollController _itemScrollController = ItemScrollController();
-  final ItemPositionsListener _itemPositionsListener =
-      ItemPositionsListener.create();
+  final ScrollController _controller = ScrollController();
 
   @override
   void initState() {
@@ -38,8 +35,10 @@ class _ChatDetailState extends State<ChatDetail> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Timer(const Duration(milliseconds: 100), () {
         if (_chatDetailController.messages.isNotEmpty) {
-          _itemScrollController.jumpTo(
-            index: _chatDetailController.messages.length,
+          _controller.animateTo(
+            _controller.position.maxScrollExtent,
+            duration: const Duration(milliseconds: 250),
+            curve: Curves.fastOutSlowIn,
           );
         }
       });
@@ -245,7 +244,12 @@ class _ChatDetailState extends State<ChatDetail> {
                                                       .isOnline ==
                                                   true
                                               ? LocalizationString.online
-                                              : _chatDetailController.chatRoom.value!.opponent.userDetail.lastSeenAtTime,
+                                              : _chatDetailController
+                                                  .chatRoom
+                                                  .value!
+                                                  .opponent
+                                                  .userDetail
+                                                  .lastSeenAtTime,
                                           style: Theme.of(context)
                                               .textTheme
                                               .bodyMedium!
@@ -553,9 +557,10 @@ class _ChatDetailState extends State<ChatDetail> {
                             fit: BoxFit.cover,
                           ),
                         ),
-                  child: ScrollablePositionedList.builder(
-                    itemScrollController: _itemScrollController,
-                    itemPositionsListener: _itemPositionsListener,
+                  child: ListView.builder(
+                    controller: _controller,
+                    // itemScrollController: _itemScrollController,
+                    // itemPositionsListener: _itemPositionsListener,
                     padding: const EdgeInsets.only(
                         top: 10, bottom: 50, left: 16, right: 16),
                     itemCount: _chatDetailController.messages.length,
@@ -575,7 +580,11 @@ class _ChatDetailState extends State<ChatDetail> {
   }
 
   Widget chatMessageFocusMenu(ChatMessageModel message) {
+    final dataKey = GlobalKey();
+    message.globalKey = dataKey;
     return FocusedMenuHolder(
+      key: dataKey,
+
       menuWidth: MediaQuery.of(context).size.width * 0.50,
       blurSize: 5.0,
       menuItemExtent: 45,
@@ -830,7 +839,7 @@ class _ChatDetailState extends State<ChatDetail> {
         mode: _chatDetailController.actionMode.value,
         room: _chatDetailController.chatRoom.value!);
     // messageTf.text = '';
-    //scrollToBottom();
+    scrollToBottom();
     // }
   }
 
@@ -838,11 +847,19 @@ class _ChatDetailState extends State<ChatDetail> {
     int index = _chatDetailController.messages.indexWhere((element) =>
         element.localMessageId == model.originalMessage.localMessageId);
     if (index != -1) {
-      Timer(const Duration(milliseconds: 1), () {
-        _itemScrollController.jumpTo(
-          index: index,
-        );
-      });
+      Scrollable.ensureVisible(model.globalKey!.currentContext!);
+      // _controller.jumpTo(
+      //   _controller.position.maxScrollExtent,
+      //   duration: const Duration(milliseconds: 250),
+      //   curve: Curves.fastOutSlowIn,
+      // );
+
+      // Timer(const Duration(milliseconds: 1), () {
+      //
+      //   _itemScrollController.jumpTo(
+      //     index: index,
+      //   );
+      // });
     }
   }
 

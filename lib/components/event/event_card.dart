@@ -39,7 +39,7 @@ class EventCard extends StatelessWidget {
                     child: Container(
                       color: Theme.of(context).cardColor,
                       child: Text(
-                        '20 June 2022',
+                        event.startAtDate,
                         style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                             color: Theme.of(context).primaryColor,
                             fontWeight: FontWeight.w500),
@@ -60,7 +60,7 @@ class EventCard extends StatelessWidget {
                             width: 5,
                           ),
                           Text(
-                            'California',
+                            event.placeName,
                             style: Theme.of(context)
                                 .textTheme
                                 .bodyLarge!
@@ -71,18 +71,18 @@ class EventCard extends StatelessWidget {
                         ],
                       ).p8,
                     ).round(20)),
-                Positioned(
-                    right: 10,
-                    top: 10,
-                    child: Container(
-                      color: Theme.of(context).cardColor,
-                      height: 40,
-                      width: 40,
-                      child: ThemeIconWidget(
-                        ThemeIcon.favFilled,
-                        color: event.isFavourite ? Colors.red : Colors.white,
-                      ).p4,
-                    ).circular)
+                // Positioned(
+                //     right: 10,
+                //     top: 10,
+                //     child: Container(
+                //       color: Theme.of(context).cardColor,
+                //       height: 40,
+                //       width: 40,
+                //       child: ThemeIconWidget(
+                //         ThemeIcon.favFilled,
+                //         color: event.isFavourite ? Colors.red : Colors.white,
+                //       ).p4,
+                //     ).circular)
               ],
             ),
           ),

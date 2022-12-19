@@ -141,13 +141,18 @@ class NetworkConstantsUtil {
   static String clubMembers = 'clubs/club-joined-user?expand=user&id=';
 
   // Events
-  static String searchEvents = 'clubs?expand=createdByUser,totalJoinedUser';
   static String joinEvent = 'clubs/join';
-  static String eventBooking = 'clubs/join';
   static String leaveEvent = 'clubs/left';
   static String eventMembers = 'clubs/club-joined-user?expand=user&id=';
-  static String cancelEventBooking = 'clubs/left';
-  static String getEventCategories = 'clubs/category';
+
+  static String eventsCategories = 'categories/event?expand=event';
+  static String searchEvents = 'events?';
+  static String eventCoupons = 'events/coupon';
+  static String eventDetails =
+      'events/{{id}}?expand=eventTicket,eventOrganisor';
+  static String buyTicket = 'events/buy-ticket';
+  static String eventBookings = 'events/my-booked-event?';
+  static String cancelEventBooking = 'events/cancel-ticket-booking';
 
   // random live and chat
   static String randomLives = 'chats/live-user?expand=userLiveDetail';
@@ -169,4 +174,7 @@ class NetworkConstantsUtil {
 
   // FAQ
   static String getFAQs = 'faqs';
+
+  // Payment
+  static String createPaymentIntent = 'payments/payment-intent';
 }

@@ -29,6 +29,7 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
+			    <string>socialifiedstripe</string>
 				<string>com.googleusercontent.apps.258656413911-5bqj5jcr6oqledsen49qf9oba5l8tcm8</string>
 			</array>
 		</dict>
@@ -81,6 +82,9 @@
 		<string>here-location</string>
 		<string>tomtomgo</string>
 		<string>itms</string>
+		<string>tez</string>
+		<string>phonepe</string>
+		<string>paytmmp</string>
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
@@ -260,6 +264,8 @@
 			<string>3qcr597p9d.skadnetwork</string>
 		</dict>
 	</array>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
@@ -285,7 +291,5 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>UIApplicationSupportsIndirectInputEvents</key>
-	<true/>
 </dict>
 </plist>

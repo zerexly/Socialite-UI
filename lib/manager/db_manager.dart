@@ -1,11 +1,13 @@
 import 'dart:convert';
-
+import 'dart:math';
 import 'package:foap/helper/common_import.dart';
 import 'package:path/path.dart' as p;
+import 'package:encrypt/encrypt.dart' as encrypt;
 
 class DBManager {
   // final db = Localstore.instance;
   late Database database;
+  var random = Random.secure();
 
   createDatabase() async {
     var databasesPath = await getDatabasesPath();
@@ -17,17 +19,17 @@ class DBManager {
       print('openDatabase');
       database = await openDatabase(path, version: 1,
           onCreate: (Database db, int version) async {
-            await db.execute(
-                'CREATE TABLE StoryViewHistory (storyId INTEGER PRIMARY KEY, time INTEGER)');
-            await db.execute(
-                'CREATE TABLE ChatRooms (id INTEGER PRIMARY KEY, title TEXT ,status INTEGER,type INTEGER,is_chat_user_online INTEGER, created_by INTEGER,created_at INTEGER,updated_at INTEGER,imageUrl TEXT,description TEXT,chat_access_group INTEGER,last_message_id TEXT,unread_messages_count INTEGER)');
-            await db.execute(
-                'CREATE TABLE Messages (local_message_id TEXT PRIMARY KEY, id INTEGER, room_id INTEGER,messageType INTEGER, message TEXT,username TEXT, created_by INTEGER,created_at INTEGER,viewed_at INTEGER,isDeleted INTEGER,isStar INTEGER,deleteAfter INTEGER,status INTEGER)');
-            await db.execute(
-                'CREATE TABLE ChatRoomMembers (id INTEGER PRIMARY KEY, room_id INTEGER, user_id INTEGER,is_admin INTEGER,user TEXT)');
-            await db.execute(
-                'CREATE TABLE UsersCache (id INTEGER PRIMARY KEY, username TEXT,email TEXT,picture TEXT)');
-          });
+        await db.execute(
+            'CREATE TABLE StoryViewHistory (storyId INTEGER PRIMARY KEY, time INTEGER)');
+        await db.execute(
+            'CREATE TABLE ChatRooms (id INTEGER PRIMARY KEY, title TEXT ,status INTEGER,type INTEGER,is_chat_user_online INTEGER, created_by INTEGER,created_at INTEGER,updated_at INTEGER,imageUrl TEXT,description TEXT,chat_access_group INTEGER,last_message_id TEXT,unread_messages_count INTEGER)');
+        await db.execute(
+            'CREATE TABLE Messages (local_message_id TEXT PRIMARY KEY, id INTEGER, room_id INTEGER,messageType INTEGER, message TEXT,username TEXT, created_by INTEGER,created_at INTEGER,viewed_at INTEGER,isDeleted INTEGER,isStar INTEGER,deleteAfter INTEGER,status INTEGER,encryption_key TEXT)');
+        await db.execute(
+            'CREATE TABLE ChatRoomMembers (id INTEGER PRIMARY KEY, room_id INTEGER, user_id INTEGER,is_admin INTEGER,user TEXT)');
+        await db.execute(
+            'CREATE TABLE UsersCache (id INTEGER PRIMARY KEY, username TEXT,email TEXT,picture TEXT)');
+      });
     } catch (_) {}
   }
 
@@ -248,7 +250,7 @@ class DBManager {
           'SELECT * FROM UsersCache WHERE id = ${roomJson["created_by"]}');
 
       Map<String, dynamic> updateAbleRoomJson =
-      Map<String, dynamic>.from(roomJson);
+          Map<String, dynamic>.from(roomJson);
 
       updateAbleRoomJson['createdByUser'] = userData.first;
       ChatRoomModel room = ChatRoomModel.fromJson(updateAbleRoomJson);
@@ -263,7 +265,7 @@ class DBManager {
 
   Future<ChatRoomModel?> getRoomById(int roomId) async {
     List<Map> dbRooms =
-    await database.rawQuery('SELECT * FROM ChatRooms WHERE id = $roomId');
+        await database.rawQuery('SELECT * FROM ChatRooms WHERE id = $roomId');
     // final items = await db.collection('rooms').get();
     // List dbRooms = (items?.values ?? []).toList();
     // dbRooms = dbRooms.where((element) => element['id'] == roomId).toList();
@@ -276,7 +278,7 @@ class DBManager {
 
       print('roomJson["created_by"] ${roomJson["created_by"]}');
       Map<String, dynamic> updatedRoomJson =
-      Map<String, dynamic>.from(roomJson);
+          Map<String, dynamic>.from(roomJson);
 
       updatedRoomJson['createdByUser'] = userData.first;
       ChatRoomModel chatRoom = ChatRoomModel.fromJson(updatedRoomJson);
@@ -289,6 +291,15 @@ class DBManager {
     if (chatMessage.isMineMessage) {
       chatMessage.viewedAt = DateTime.now().millisecondsSinceEpoch;
     }
+
+    // final encryptionKey =
+    //     encrypt.Key.fromUtf8(AppConfigConstants.chatMessageEncryptionKey);
+    // final iv = encrypt.IV.fromLength(16);
+    //
+    // final encrypter = encrypt.Encrypter(encrypt.AES(encryptionKey));
+    //
+    // final encryptedMessageContent =
+    //     encrypter.encrypt(chatMessage.messageContent, iv: iv);
 
     await database.transaction((txn) async {
       await txn.rawInsert('INSERT INTO Messages(local_message_id, '
@@ -307,7 +318,7 @@ class DBManager {
           '${chatMessage.id},'
           '"${chatRoom.id}", '
           '${chatMessage.messageType},'
-          '"${chatMessage.messageContent}", '
+          '${jsonEncode(chatMessage.messageContent.replaceAll('"', '****doubleQuote****'))}, '
           '"${chatMessage.userName}",'
           '${chatMessage.senderId},'
           '${chatMessage.createdAt},'
@@ -358,7 +369,7 @@ class DBManager {
 
     for (var doc in updateAbleDbMessages) {
       ChatMessageModel message =
-      ChatMessageModel.fromJson((doc as Map<String, dynamic>));
+          ChatMessageModel.fromJson((doc as Map<String, dynamic>));
       int timeDifference = 0;
       print('message.viewedAt = ${message.viewedAt}');
       print('message.deleteAfter = ${message.deleteAfter}');
@@ -366,7 +377,7 @@ class DBManager {
       if (message.viewedAt != null) {
         final date2 = DateTime.now();
         DateTime viewAtDateTime =
-        DateTime.fromMillisecondsSinceEpoch(message.viewedAt!);
+            DateTime.fromMillisecondsSinceEpoch(message.viewedAt!);
         timeDifference = date2.difference(viewAtDateTime).inSeconds;
       } else {
         messagesToUpdate.add(message);
@@ -462,9 +473,9 @@ class DBManager {
 
   updateMessageStatus(
       {required int roomId,
-        required String localMessageId,
-        required int id,
-        required int status}) async {
+      required String localMessageId,
+      required int id,
+      required int status}) async {
     await database.transaction((txn) async {
       await txn.rawUpdate('UPDATE Messages '
           'SET '
@@ -494,8 +505,8 @@ class DBManager {
 
   starUnStarMessage(
       {required int roomId,
-        required String localMessageId,
-        required int isStar}) async {
+      required String localMessageId,
+      required int isStar}) async {
     await database.transaction((txn) async {
       await txn.rawUpdate('UPDATE Messages '
           'SET '
@@ -540,8 +551,8 @@ class DBManager {
     }
     messages = messages
         .where((element) =>
-    element.messageContentType == contentType &&
-        element.messageContent.isNotEmpty)
+            element.messageContentType == contentType &&
+            element.messageContent.isNotEmpty)
         .toList();
     messages.sort((a, b) => a.createdAt.compareTo(b.createdAt));
     return messages;
@@ -580,7 +591,7 @@ class DBManager {
     //     .get();
     for (var doc in dbMessages) {
       ChatMessageModel message =
-      ChatMessageModel.fromJson((doc as Map<String, dynamic>));
+          ChatMessageModel.fromJson((doc as Map<String, dynamic>));
       if (message.id == messageId) {
         messages.add(message);
       }
@@ -652,7 +663,7 @@ class DBManager {
 
   deleteMessages(
       {required ChatRoomModel chatRoom,
-        required List<ChatMessageModel> messagesToDelete}) async {
+      required List<ChatMessageModel> messagesToDelete}) async {
     // final items = await db
     //     .collection('rooms')
     //     .doc(chatRoom.id.toString())

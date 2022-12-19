@@ -12,7 +12,7 @@ import flutter_downloader
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
-        GMSServices.provideAPIKey("AIzaSyBOSn0omCgR27SLAZcXxFgWFOFl4k4jnj0")
+        GMSServices.provideAPIKey("AIzaSyA4vcqErGvq5NRbvhvq8JKSp0VFpNBBPjE")
 
         GADMobileAds.sharedInstance().start(completionHandler: nil)
         GeneratedPluginRegistrant.register(with: self)

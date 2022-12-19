@@ -4,25 +4,20 @@ import 'package:get/get.dart';
 class DashboardController extends GetxController {
   RxInt currentIndex = 0.obs;
   RxInt unreadMsgCount = 0.obs;
-  Rx<SettingModel?> setting = Rx<SettingModel?>(null);
-  RxBool forceUpdate = false.obs;
   RxBool isLoading = false.obs;
 
-  getSettings() {
-   isLoading.value = true;
-    ApiController().getSettings().then((response) {
-      isLoading.value = false;
-
-      setting.value = response.settings;
-
-      print('setting.value!.latestVersion ${setting.value?.latestVersion}');
-      print('AppConfigConstants.currentVersion ${AppConfigConstants.currentVersion}');
-
-      if (setting.value?.latestVersion! != AppConfigConstants.currentVersion) {
-        forceUpdate.value = true;
-      }
-    });
-  }
+  // getSettings() {
+  //  isLoading.value = true;
+  //   ApiController().getSettings().then((response) {
+  //     isLoading.value = false;
+  //
+  //     setting.value = response.settings;
+  //
+  //     if (setting.value?.latestVersion! != AppConfigConstants.currentVersion) {
+  //       forceUpdate.value = true;
+  //     }
+  //   });
+  // }
 
   indexChanged(int index) {
     currentIndex.value = index;
@@ -42,6 +37,7 @@ class DashboardScreen extends StatefulWidget {
 
 class DashboardState extends State<DashboardScreen> {
   final DashboardController _dashboardController = Get.find();
+  final SettingsController _settingsController = Get.find();
 
   List<Widget> items = [];
   final picker = ImagePicker();
@@ -49,19 +45,20 @@ class DashboardState extends State<DashboardScreen> {
 
   @override
   void initState() {
-
     items = [
-     const HomeFeedScreen(),
+      const HomeFeedScreen(),
       const ChatHistory(),
       Container(),
-      const MyProfile(),
+      const MyProfile(
+        showBack: false,
+      ),
       const Settings()
     ];
 
     super.initState();
 
-    WidgetsBinding.instance.addPostFrameCallback((_){
-      _dashboardController.getSettings();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _settingsController.getSettings();
     });
   }
 
@@ -73,9 +70,9 @@ class DashboardState extends State<DashboardScreen> {
             width: Get.width,
             child: const Center(child: CircularProgressIndicator()),
           )
-        : _dashboardController.setting.value?.pid == null
+        : _settingsController.setting.value?.pid == null
             ? const InvalidPurchaseView()
-            : _dashboardController.forceUpdate.value == true
+            : _settingsController.forceUpdate.value == true
                 ? ForceUpdateView()
                 : Scaffold(
                     backgroundColor: Theme.of(context).backgroundColor,
@@ -91,9 +88,7 @@ class DashboardState extends State<DashboardScreen> {
                         size: 40,
                         color: Colors.white,
                       ),
-                    ).round(20).tP16.ripple(()=> {
-                    onTabTapped(2)
-                    }),
+                    ).round(20).tP16.ripple(() => {onTabTapped(2)}),
                     bottomNavigationBar: SizedBox(
                       height: MediaQuery.of(context).viewPadding.bottom > 0
                           ? 90
@@ -107,7 +102,7 @@ class DashboardState extends State<DashboardScreen> {
                         unselectedFontSize: 12,
                         unselectedItemColor: Colors.grey,
                         selectedItemColor: Theme.of(context).primaryColor,
-                        onTap: (index)=>{onTabTapped(index)},
+                        onTap: (index) => {onTabTapped(index)},
                         items: [
                           BottomNavigationBarItem(
                               icon: Image.asset(
@@ -194,14 +189,16 @@ class DashboardState extends State<DashboardScreen> {
 
   void onTabTapped(int index) async {
     if (index == 2) {
-      Future.delayed(Duration.zero,() => showGeneralDialog(
-          context: context,
-          pageBuilder: (context, animation, secondaryAnimation) =>
-          const SelectMedia()),);
-
+      Future.delayed(
+        Duration.zero,
+        () => showGeneralDialog(
+            context: context,
+            pageBuilder: (context, animation, secondaryAnimation) =>
+                const SelectMedia()),
+      );
     } else {
-      Future.delayed(Duration.zero,()=>_dashboardController.indexChanged(index));
-
+      Future.delayed(
+          Duration.zero, () => _dashboardController.indexChanged(index));
     }
   }
 }

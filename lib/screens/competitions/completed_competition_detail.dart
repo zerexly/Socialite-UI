@@ -8,7 +8,8 @@ class CompletedCompetitionDetail extends StatefulWidget {
       : super(key: key);
 
   @override
-  CompletedCompetitionDetailState createState() => CompletedCompetitionDetailState();
+  CompletedCompetitionDetailState createState() =>
+      CompletedCompetitionDetailState();
 }
 
 class CompletedCompetitionDetailState
@@ -37,47 +38,16 @@ class CompletedCompetitionDetailState
           const SizedBox(
             height: 50,
           ),
-          Stack(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const ThemeIconWidget(
-                    ThemeIcon.backArrow,
-                    size: 20,
-                  ).ripple(() {
-                    Get.back();
-                  }),
-                  const Spacer(),
-                  Text(
-                    LocalizationString.disclaimer,
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyLarge!
-                        .copyWith(fontWeight: FontWeight.w900),
-                  ).ripple(() {
-                    Get.to(() => WebViewScreen(
-                        header: LocalizationString.disclaimer,
-                        url: settingsController.setting.value!.disclaimerUrl!));
-                  }),
-                ],
-              ).hP16,
-              Positioned(
-                left: 0,
-                right: 0,
-                child: Center(
-                  child: Text(
-                    LocalizationString.competition,
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyLarge!
-                        .copyWith(fontWeight: FontWeight.w900),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          divider(context: context).tP16,
+          backNavigationBarWithIcon(
+              context: context,
+              icon: ThemeIcon.privacyPolicy,
+              title: LocalizationString.competition,
+              iconBtnClicked: () {
+                Get.to(() => WebViewScreen(
+                    header: LocalizationString.disclaimer,
+                    url: settingsController.setting.value!.disclaimerUrl!));
+              }),
+          // divider(context: context).tP16,
           Expanded(
             child: Stack(children: [
               Obx(() {
@@ -86,50 +56,51 @@ class CompletedCompetitionDetailState
                 return competition == null
                     ? Container()
                     : SingleChildScrollView(
-                    child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Stack(
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Container(
-                                  height: 270.0,
-                                  margin: const EdgeInsets.only(bottom: 30),
-                                  child: CachedNetworkImage(
-                                    imageUrl: competition.photo,
-                                    fit: BoxFit.cover,
-                                    width: MediaQuery.of(context).size.width,
-                                    placeholder: (context, url) =>
-                                        AppUtil.addProgressIndicator(context,100),
-                                    errorWidget: (context, url, error) =>
-                                    const Icon(Icons.error),
-                                  )),
-                              applyShader(),
-                              CompetitionHighlightBar(model: competition)
-                            ],
-                          ),
-                          competition.winnerAnnounced()
-                              ? Column(
-                            children: [
-                              for (CompetitionPositionModel position
-                              in competition.competitionPositions)
-                                winnerInfo(
-                                    forPosition: position,
-                                    competition: competition),
-                            ],
-                          )
-                              : Column(
-                            crossAxisAlignment:
-                            CrossAxisAlignment.start,
-                            children: [
-                              Text(competition.description,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleMedium),
-                              addPhotoGrid(competition: competition),
-                            ],
-                          ).setPadding(
-                              top: 16, bottom: 16, left: 16, right: 16),
-                        ]));
+                            Stack(
+                              children: [
+                                Container(
+                                    height: 270.0,
+                                    margin: const EdgeInsets.only(bottom: 30),
+                                    child: CachedNetworkImage(
+                                      imageUrl: competition.photo,
+                                      fit: BoxFit.cover,
+                                      width: MediaQuery.of(context).size.width,
+                                      placeholder: (context, url) =>
+                                          AppUtil.addProgressIndicator(
+                                              context, 100),
+                                      errorWidget: (context, url, error) =>
+                                          const Icon(Icons.error),
+                                    )),
+                                applyShader(),
+                                CompetitionHighlightBar(model: competition)
+                              ],
+                            ),
+                            competition.winnerAnnounced()
+                                ? Column(
+                                    children: [
+                                      for (CompetitionPositionModel position
+                                          in competition.competitionPositions)
+                                        winnerInfo(
+                                            forPosition: position,
+                                            competition: competition),
+                                    ],
+                                  )
+                                : Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(competition.description,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .titleMedium),
+                                      addPhotoGrid(competition: competition),
+                                    ],
+                                  ).setPadding(
+                                    top: 16, bottom: 16, left: 16, right: 16),
+                          ]));
               }),
               // addBottomActionButton()
             ]),
@@ -141,7 +112,7 @@ class CompletedCompetitionDetailState
 
   Widget winnerInfo(
       {required CompetitionPositionModel forPosition,
-        required CompetitionModel competition}) {
+      required CompetitionModel competition}) {
     return FutureBuilder(
       builder: (ctx, snapshot) {
         // Displaying LoadingSpinner to indicate waiting state
@@ -149,25 +120,25 @@ class CompletedCompetitionDetailState
           UserModel winner = snapshot.data as UserModel;
           return competition.mainWinnerId() == winner.id
               ? winnerDetailCard(
-              position: forPosition,
-              winner: winner,
-              competition: competition)
-              .shadow(context: context)
-              .p16
+                      position: forPosition,
+                      winner: winner,
+                      competition: competition)
+                  .shadow(context: context)
+                  .p16
               : winnerDetailCard(
-              position: forPosition,
-              winner: winner,
-              competition: competition)
-              .p16;
+                      position: forPosition,
+                      winner: winner,
+                      competition: competition)
+                  .p16;
         } else {
           return SizedBox(
               width: MediaQuery.of(context).size.width - 32,
               child: Center(
                 child: Text('Loading...',
-                    style: Theme.of(context)
-                        .textTheme
-                        .titleSmall!
-                        .copyWith(color: Theme.of(context).primaryColor))
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleSmall!
+                            .copyWith(color: Theme.of(context).primaryColor))
                     .vP25,
               )).shadow(context: context).p16;
         }
@@ -181,8 +152,8 @@ class CompletedCompetitionDetailState
 
   Widget winnerDetailCard(
       {required CompetitionPositionModel position,
-        required UserModel winner,
-        required CompetitionModel competition}) {
+      required UserModel winner,
+      required CompetitionModel competition}) {
     return SizedBox(
       width: MediaQuery.of(context).size.width - 32,
       child: Row(
@@ -198,8 +169,8 @@ class CompletedCompetitionDetailState
                   Text(
                     position.title,
                     style: Theme.of(context).textTheme.displaySmall!.copyWith(
-                      fontWeight: FontWeight.w500,
-                    ),
+                          fontWeight: FontWeight.w500,
+                        ),
                   ).hP4,
                   Image.asset(
                     'assets/trophy.png',
@@ -214,16 +185,16 @@ class CompletedCompetitionDetailState
                     '${LocalizationString.user} :',
                     style: Theme.of(context)
                         .textTheme
-                        .titleMedium!
+                        .bodyLarge!
                         .copyWith(fontWeight: FontWeight.w600),
                   ).hP4,
                   Text(winner.userName,
-                      style: Theme.of(context)
-                          .textTheme
-                          .titleMedium!
-                          .copyWith(
-                          color: Theme.of(context).primaryColor,
-                          fontWeight: FontWeight.w900))
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyLarge!
+                              .copyWith(
+                                  color: Theme.of(context).primaryColor,
+                                  fontWeight: FontWeight.w900))
                       .ripple(() {
                     Get.to(() => OtherUserProfile(userId: winner.id));
                   }),
@@ -236,14 +207,14 @@ class CompletedCompetitionDetailState
                     '${LocalizationString.prize}: ',
                     style: Theme.of(context)
                         .textTheme
-                        .titleMedium!
+                        .bodyLarge!
                         .copyWith(fontWeight: FontWeight.w600),
                   ).hP4,
                   Text(
                       competition.awardType == 2
                           ? '${competition.awardedValueForUser(winner.id)} ${LocalizationString.coins}'
                           : '\$${competition.awardedValueForUser(winner.id)} ${LocalizationString.inRewards}',
-                      style: Theme.of(context).textTheme.titleMedium),
+                      style: Theme.of(context).textTheme.bodyLarge),
                 ],
               )
             ],
@@ -267,45 +238,45 @@ class CompletedCompetitionDetailState
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       competition.posts.isNotEmpty
           ? Text(LocalizationString.submittedPhotos,
-          style: Theme.of(context)
-              .textTheme
-              .titleLarge!
-              .copyWith(fontWeight: FontWeight.w800)
-              .copyWith(color: Theme.of(context).primaryColor))
-          .tP16
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleLarge!
+                      .copyWith(fontWeight: FontWeight.w800)
+                      .copyWith(color: Theme.of(context).primaryColor))
+              .tP16
           : Container(),
       competition.posts.isNotEmpty
           ? MasonryGridView.count(
-        shrinkWrap: true,
-        crossAxisCount: 2,
-        itemCount: competition.posts.length,
-        physics: const NeverScrollableScrollPhysics(),
-        itemBuilder: (BuildContext context, int index) => InkWell(
-            onTap: () async {
-              // File path = await AppUtil.findPath(
-              //     model.posts[index].gallery.first.filePath);
-              Get.to(() => EnlargeImageViewScreen(
-                model: competition.posts[index],
-                // file: path,
-                handler: () {},
-              ));
-            },
-            child: ClipRRect(
-                child: competition.posts[index].gallery.isNotEmpty
-                    ? CachedNetworkImage(
-                  imageUrl: competition
-                      .posts[index].gallery.first.filePath,
-                  fit: BoxFit.cover,
-                  placeholder: (context, url) =>
-                      AppUtil.addProgressIndicator(context,100),
-                  errorWidget: (context, url, error) =>
-                  const Icon(Icons.error),
-                ).round(10)
-                    : Container())),
-        // staggeredTileBuilder: (int index) => new StaggeredTile.count(1, 1),
-        mainAxisSpacing: 4.0,
-        crossAxisSpacing: 4.0,
-      )
+              shrinkWrap: true,
+              crossAxisCount: 2,
+              itemCount: competition.posts.length,
+              physics: const NeverScrollableScrollPhysics(),
+              itemBuilder: (BuildContext context, int index) => InkWell(
+                  onTap: () async {
+                    // File path = await AppUtil.findPath(
+                    //     model.posts[index].gallery.first.filePath);
+                    Get.to(() => EnlargeImageViewScreen(
+                          model: competition.posts[index],
+                          // file: path,
+                          handler: () {},
+                        ));
+                  },
+                  child: ClipRRect(
+                      child: competition.posts[index].gallery.isNotEmpty
+                          ? CachedNetworkImage(
+                              imageUrl: competition
+                                  .posts[index].gallery.first.filePath,
+                              fit: BoxFit.cover,
+                              placeholder: (context, url) =>
+                                  AppUtil.addProgressIndicator(context, 100),
+                              errorWidget: (context, url, error) =>
+                                  const Icon(Icons.error),
+                            ).round(10)
+                          : Container())),
+              // staggeredTileBuilder: (int index) => new StaggeredTile.count(1, 1),
+              mainAxisSpacing: 4.0,
+              crossAxisSpacing: 4.0,
+            )
           : Container(),
       const SizedBox(height: 65)
     ]);

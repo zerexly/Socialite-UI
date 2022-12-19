@@ -86,7 +86,7 @@ class PaymentWithdrawalState extends State<PaymentWithdrawalScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          LocalizationString.availableBalance,
+                          LocalizationString.availableBalanceToWithdraw,
                           style: Theme.of(context)
                               .textTheme
                               .bodySmall!
@@ -234,7 +234,7 @@ class PaymentWithdrawalState extends State<PaymentWithdrawalScreen> {
                             isSuccess: false);
                         return;
                       }
-                      _profileController.redeemRequest(coins, context);
+                      _profileController.redeemRequest(coins, context,(){});
                       textController.text = '';
                       Navigator.pop(dialogContext);
                     } else {
@@ -291,7 +291,6 @@ class PaymentWithdrawalState extends State<PaymentWithdrawalScreen> {
       ),
     );
   }
-
   redeemBtn() {
     return InkWell(
       onTap: () {
@@ -323,4 +322,5 @@ class PaymentWithdrawalState extends State<PaymentWithdrawalScreen> {
       ),
     );
   }
+
 }

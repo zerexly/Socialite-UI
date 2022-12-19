@@ -218,7 +218,6 @@ class OtherUserProfileState extends State<OtherUserProfile> {
                                   ? LocalizationString.unFollow
                                   : _profileController.user.value!.isFollower
                                       ? LocalizationString.followBack
-                                          .toUpperCase()
                                       : LocalizationString.follow.toUpperCase(),
                               onPress: () {
                                 _profileController.followUnFollowUserApi(

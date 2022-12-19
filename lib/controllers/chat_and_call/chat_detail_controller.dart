@@ -244,8 +244,9 @@ class ChatDetailController extends GetxController {
     localMessageModel.userName = LocalizationString.you;
     localMessageModel.senderId = getIt<UserProfileManager>().user!.id;
     localMessageModel.messageType = messageTypeId(MessageContentType.post);
-    localMessageModel.messageContent =
-        json.encode(content).replaceAll('\\', '');
+    // localMessageModel.messageContent = json.encode(content).replaceAll('\\', '');
+    localMessageModel.messageContent = json.encode(content);
+
     localMessageModel.createdAt =
         (DateTime.now().millisecondsSinceEpoch / 1000).round();
 
@@ -291,8 +292,9 @@ class ChatDetailController extends GetxController {
     localMessageModel.userName = LocalizationString.you;
     localMessageModel.senderId = getIt<UserProfileManager>().user!.id;
     localMessageModel.messageType = messageTypeId(MessageContentType.profile);
-    localMessageModel.messageContent =
-        json.encode(content).replaceAll('\\', '');
+    // localMessageModel.messageContent = json.encode(content).replaceAll('\\', '');
+    localMessageModel.messageContent = json.encode(content);
+
     localMessageModel.createdAt =
         (DateTime.now().millisecondsSinceEpoch / 1000).round();
 
@@ -341,7 +343,7 @@ class ChatDetailController extends GetxController {
 
         var replyContent = {
           'originalMessage': selectedMessage.value!.toJson(),
-          'reply': json.encode(currentMessage)
+          'reply': currentMessage
         };
 
         replyMessage = json.encode(replyContent);

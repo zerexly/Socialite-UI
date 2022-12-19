@@ -77,6 +77,9 @@ export 'package:razorpay_flutter/razorpay_flutter.dart';
 export 'package:razorpay_flutter/razorpay_flutter.dart';
 export 'package:flutter_braintree/flutter_braintree.dart';
 export 'package:sqflite/sqflite.dart';
+export 'package:qr_flutter/qr_flutter.dart';
+export 'package:widgets_to_image/widgets_to_image.dart';
+export 'package:lottie/lottie.dart';
 
 // export 'package:pip_flutter/pipflutter_player.dart';
 // export 'package:pip_flutter/pipflutter_player_configuration.dart';

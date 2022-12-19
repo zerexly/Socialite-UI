@@ -5,7 +5,6 @@ export 'dart:io';
 export '../../application_localizations.dart';
 export 'dart:async';
 export 'package:flutter/services.dart';
-
 export 'package:foap/helper/pub_import.dart';
 export 'package:foap/helper/languages.dart';
 export 'package:foap/helper/file_extension.dart';
@@ -63,7 +62,6 @@ export 'package:foap/universal_components/rounded_input_field.dart';
 export 'package:foap/universal_components/rounded_input_field.dart';
 export 'package:foap/universal_components/rounded_password_field.dart';
 
-
 export 'package:foap/segmentAndMenu/horizontal_menu.dart';
 
 export 'package:foap/components/payment_method_tile.dart';
@@ -94,10 +92,12 @@ export 'package:foap/components/reply_chat_cells/reply_chat_cell.dart';
 export 'package:foap/components/custom_camera/constants/config.dart';
 export 'package:foap/components/custom_camera/widgets/camera_picker.dart';
 export 'package:foap/components/event/event_card.dart';
+export 'package:foap/components/event/event_booking.dart';
 export 'package:foap/components/actionSheets/action_sheet1.dart';
 export 'package:foap/components/actionSheets/action_sheet.dart';
 export 'package:foap/components/notification_banner.dart';
 export 'package:foap/components/top_navigation_bar.dart';
+export 'package:foap/components/static_map_widget.dart';
 export 'package:foap/components/chat_cells/audio_chat_cell.dart';
 export 'package:foap/components/chat_cells/contact_chat_cell.dart';
 export 'package:foap/components/chat_cells/image_chat_cell.dart';
@@ -174,7 +174,10 @@ export 'package:foap/controllers/event/event_controller.dart';
 export 'package:foap/controllers/event/event_detail_controller.dart';
 export 'package:foap/controllers/event/buy_ticket_controller.dart';
 export 'package:foap/controllers/event/search_event_controller.dart';
-export 'package:foap/controllers/checkout_controller.dart';
+export 'package:foap/controllers/event/checkout_controller.dart';
+export 'package:foap/controllers/event/event_booking_controller.dart';
+export 'package:foap/controllers/event/booking_detail_controller.dart';
+export 'package:foap/controllers/reel/create_reel_controller.dart';
 
 export 'package:foap/model/story_model.dart';
 export 'package:foap/model/post_gallery.dart';
@@ -210,6 +213,8 @@ export 'package:foap/model/notification_modal.dart';
 export 'package:foap/model/competition_model.dart';
 export 'package:foap/model/live_model.dart';
 export 'package:foap/model/verification_request_model.dart';
+export 'package:foap/model/event_booking_model.dart';
+export 'package:foap/model/reel_music_model.dart';
 
 export 'package:foap/screens/dashboard/posts.dart';
 export 'package:foap/screens/dashboard/explore.dart';
@@ -267,6 +272,8 @@ export 'package:foap/screens/profile/update_profile.dart';
 export 'package:foap/screens/profile/other_user_profile.dart';
 export 'package:foap/screens/profile/my_profile.dart';
 
+export 'package:foap/screens/reel/create_reel_video.dart';
+
 export 'package:foap/screens/story/text_story.dart';
 export 'package:foap/screens/story/story_viewer.dart';
 export 'package:foap/screens/story/story_updates_bar.dart';
@@ -291,6 +298,11 @@ export 'package:foap/screens/event/events_listing.dart';
 export 'package:foap/screens/event/search_events.dart';
 export 'package:foap/screens/event/buy_ticket.dart';
 export 'package:foap/screens/event/event_checkout.dart';
+export 'package:foap/screens/event/event_bookings.dart';
+export 'package:foap/screens/event/events_dashboard.dart';
+export 'package:foap/screens/event/event_booking_detail.dart';
+export 'package:foap/screens/event/e_ticket.dart';
+export 'package:foap/screens/event/stripe_card_payment.dart';
 
 export 'package:foap/screens/post/add_post_screen.dart';
 export 'package:foap/screens/post/single_post_detail.dart';

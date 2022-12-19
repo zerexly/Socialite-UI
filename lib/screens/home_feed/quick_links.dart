@@ -120,7 +120,7 @@ class _QuickLinkWidgetState extends State<QuickLinkWidget> {
             } else if (link.linkType == QuickLinkType.tv) {
               Get.to(() => const TvListDashboard());
             } else if (link.linkType == QuickLinkType.event) {
-              Get.to(() => const EventsListing());
+              Get.to(() => const EventsDashboardScreen());
             }
           });
         },

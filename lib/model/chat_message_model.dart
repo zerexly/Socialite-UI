@@ -134,6 +134,8 @@ class ChatMessageModel {
   bool isDateSeparator = false;
 
   String localMessageId = "";
+  GlobalKey? globalKey;
+
   int roomId = 0;
   String liveTvId = '';
 
@@ -172,7 +174,8 @@ class ChatMessageModel {
 
     // model.roomType = json['type'] ?? 1;
     model.messageType = json['messageType'] ?? json['type'];
-    model.messageContent = json['message'];
+    model.messageContent =
+        json['message'].replaceAll('****doubleQuote****', '"');
     model.senderId = json['created_by'];
     model.createdAt = json['created_at'];
     model.viewedAt = json['viewed_at'];
@@ -258,11 +261,8 @@ class ChatMessageModel {
 
   ChatMessageModel get reply {
     // print('reply');
-    // print(replyMessageContent);
-
     return replyMessageContent ??
-        ChatMessageModel.fromJson(
-            json.decode(json.decode(messageContent)['reply']));
+        ChatMessageModel.fromJson(json.decode(messageContent)['reply']);
   }
 
   ChatMessageModel get originalMessage {

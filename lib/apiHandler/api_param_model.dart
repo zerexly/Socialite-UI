@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:foap/helper/common_import.dart';
 import 'package:foap/util/shared_prefs.dart';
 
 class ApiParamModel {
@@ -231,8 +232,17 @@ class ApiParamModel {
     required String userMessage,
   }) {
     return {
-      "user_message": userMessage,
+      'user_message': userMessage,
       'id': id.toString(),
+    };
+  }
+
+  dynamic paymentIntentParam({
+    required double amount,
+  }) {
+    return {
+      'amount': amount.toString(),
+      'currency': 'USD',
     };
   }
 }

@@ -33,7 +33,7 @@ class ClubsController extends GetxController {
   }
 
   selectedSegmentIndex(int index) {
-    if(isLoadingClubs.value == true){
+    if (isLoadingClubs.value == true) {
       return;
     }
     update();
@@ -77,7 +77,7 @@ class ClubsController extends GetxController {
     }
   }
 
-  clubDeleted(ClubModel club){
+  clubDeleted(ClubModel club) {
     clubs.removeWhere((element) => element.id == club.id);
     clubs.refresh();
   }

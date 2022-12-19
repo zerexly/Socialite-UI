@@ -22,6 +22,7 @@ class SettingModel {
   String? privacyPolicyUrl;
   String? termsOfServiceUrl;
   String? giphyApiKey;
+
   // String? agoraApiKey;
   // String? googleMapApiKey;
   String? interstitialAdUnitIdForAndroid;
@@ -35,10 +36,12 @@ class SettingModel {
   String? fbRewardInterstitialAdUnitIdForAndroid;
   String? fbRewardInterstitialAdUnitIdForiOS;
   String? networkToUse;
+  String? stripePublishableKey;
 
   int minWithdrawLimit;
   int minCoinsWithdrawLimit;
   double coinsValue;
+  double serviceFee;
 
   String? pid;
 
@@ -57,14 +60,12 @@ class SettingModel {
     required this.minCoinsWithdrawLimit,
     required this.coinsValue,
     this.pid,
-
     required this.siteName,
     required this.inAppPurchaseId,
     required this.isUploadImage,
     required this.isUploadVideo,
     required this.uploadMaxFile,
     required this.siteUrl,
-
     required this.maximumVideoDurationAllowed,
     required this.freeLiveTvDurationToView,
     required this.latestAppDownloadLink,
@@ -85,52 +86,60 @@ class SettingModel {
     required this.fbRewardInterstitialAdUnitIdForAndroid,
     required this.fbRewardInterstitialAdUnitIdForiOS,
     required this.networkToUse,
-
+    required this.serviceFee,
+    required this.stripePublishableKey,
   });
 
   factory SettingModel.fromJson(Map<String, dynamic> json) => SettingModel(
-    email: json["email"],
-    phone: json["phone"],
-    facebook: json["facebook"],
-    youtube: json["youtube"],
-    twitter: json["twitter"],
-    linkedin: json["linkedin"],
-    pinterest: json["pinterest"],
-    instagram: json["instagram"],
-    latestVersion: json["release_version"],
-    watchVideoRewardCoins: json["each_view_coin"] ?? 0,
-    minWithdrawLimit: json["min_widhdraw_price"] ?? 0,
-    minCoinsWithdrawLimit: json["min_coin_redeem"] ?? 0,
-    coinsValue: double.parse(json["per_coin_value"].toString()),
-    pid: json["user_p_id"],
+        email: json["email"],
+        phone: json["phone"],
+        facebook: json["facebook"],
+        youtube: json["youtube"],
+        twitter: json["twitter"],
+        linkedin: json["linkedin"],
+        pinterest: json["pinterest"],
+        instagram: json["instagram"],
+        latestVersion: json["release_version"],
+        watchVideoRewardCoins: json["each_view_coin"] ?? 0,
+        minWithdrawLimit: json["min_widhdraw_price"] ?? 0,
+        minCoinsWithdrawLimit: json["min_coin_redeem"] ?? 0,
+        coinsValue: double.parse(json["per_coin_value"].toString()),
+        pid: json["user_p_id"],
 
-    siteName: json["site_name"],
-    inAppPurchaseId: json["in_app_purchase_id"],
-    isUploadImage: json["is_upload_image"],
-    isUploadVideo: json["is_upload_video"],
-    uploadMaxFile: json["upload_max_file"],
-    siteUrl: json["site_url"],
-    maximumVideoDurationAllowed: json["maximum_video_duration_allowed"],
-    freeLiveTvDurationToView: json["free_live_tv_duration_to_view"],
-    latestAppDownloadLink: json["latest_app_download_link"],
-    disclaimerUrl: json["disclaimer_url"],
-    privacyPolicyUrl: json["privacy_policy_url"],
-    termsOfServiceUrl: json["terms_of_service_url"],
-    giphyApiKey: json["giphy_api_key"],
-    // agoraApiKey: json["agora_api_key"],
-    // googleMapApiKey: json["google_map_api_key"],
-    interstitialAdUnitIdForAndroid: json["interstitial_ad_unit_id_for_android"],
-    interstitialAdUnitIdForiOS: json["interstitial_ad_unit_id_for_IOS"],
-    rewardInterstitlAdUnitIdForAndroid: json["reward_Interstitl_ad_unit_id_for_android"],
-    rewardInterstitialAdUnitIdForiOS: json["reward_interstitial_ad_unit_id_for_IOS"],
-    bannerAdUnitIdForAndroid: json["banner_ad_unit_id_for_android"],
-    bannerAdUnitIdForiOS: json["banner_ad_unit_id_for_IOS"],
-    fbInterstitialAdUnitIdForAndroid: json["fb_interstitial_ad_unit_id_for_android"],
-    fbInterstitialAdUnitIdForiOS: json["fb_interstitial_ad_unit_id_for_IOS"],
-    fbRewardInterstitialAdUnitIdForAndroid: json["fb_reward_interstitial_ad_unit_id_for_android"],
-    fbRewardInterstitialAdUnitIdForiOS: json["fb_reward_interstitial_ad_unit_id_for_IOS"],
-    networkToUse: json["network_to_use"],
-
-  );
+        siteName: json["site_name"],
+        inAppPurchaseId: json["in_app_purchase_id"],
+        isUploadImage: json["is_upload_image"],
+        isUploadVideo: json["is_upload_video"],
+        uploadMaxFile: json["upload_max_file"],
+        siteUrl: json["site_url"],
+        maximumVideoDurationAllowed: json["maximum_video_duration_allowed"],
+        freeLiveTvDurationToView: json["free_live_tv_duration_to_view"],
+        latestAppDownloadLink: json["latest_app_download_link"],
+        disclaimerUrl: json["disclaimer_url"],
+        privacyPolicyUrl: json["privacy_policy_url"],
+        termsOfServiceUrl: json["terms_of_service_url"],
+        giphyApiKey: json["giphy_api_key"],
+        // agoraApiKey: json["agora_api_key"],
+        // googleMapApiKey: json["google_map_api_key"],
+        interstitialAdUnitIdForAndroid:
+            json["interstitial_ad_unit_id_for_android"],
+        interstitialAdUnitIdForiOS: json["interstitial_ad_unit_id_for_IOS"],
+        rewardInterstitlAdUnitIdForAndroid:
+            json["reward_Interstitl_ad_unit_id_for_android"],
+        rewardInterstitialAdUnitIdForiOS:
+            json["reward_interstitial_ad_unit_id_for_IOS"],
+        bannerAdUnitIdForAndroid: json["banner_ad_unit_id_for_android"],
+        bannerAdUnitIdForiOS: json["banner_ad_unit_id_for_IOS"],
+        fbInterstitialAdUnitIdForAndroid:
+            json["fb_interstitial_ad_unit_id_for_android"],
+        fbInterstitialAdUnitIdForiOS:
+            json["fb_interstitial_ad_unit_id_for_IOS"],
+        fbRewardInterstitialAdUnitIdForAndroid:
+            json["fb_reward_interstitial_ad_unit_id_for_android"],
+        fbRewardInterstitialAdUnitIdForiOS:
+            json["fb_reward_interstitial_ad_unit_id_for_IOS"],
+        networkToUse: json["network_to_use"],
+        serviceFee: json["serviceFee"] ?? 5,
+        stripePublishableKey: json["stripe_publishable_key"],
+      );
 }
-

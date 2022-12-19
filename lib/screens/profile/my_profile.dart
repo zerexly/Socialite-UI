@@ -2,7 +2,9 @@ import 'package:foap/helper/common_import.dart';
 import 'package:get/get.dart';
 
 class MyProfile extends StatefulWidget {
-  const MyProfile({Key? key}) : super(key: key);
+  final bool showBack;
+
+  const MyProfile({Key? key, required this.showBack}) : super(key: key);
 
   @override
   MyProfileState createState() => MyProfileState();
@@ -55,14 +57,23 @@ class MyProfileState extends State<MyProfile> {
             const SizedBox(
               height: 50,
             ),
-            titleNavigationBarWithIcon(
-                context: context,
-                title: profileController.user.value?.userName ??
-                    LocalizationString.loading,
-                icon: ThemeIcon.notification,
-                completion: () {
-                  Get.to(() => const NotificationsScreen());
-                }),
+            widget.showBack == true
+                ? Obx(() => backNavigationBarWithIcon(
+                    context: context,
+                    title: profileController.user.value?.userName ??
+                        LocalizationString.loading,
+                    icon: ThemeIcon.notification,
+                    iconBtnClicked: () {
+                      Get.to(() => const NotificationsScreen());
+                    }))
+                : Obx(() => titleNavigationBarWithIcon(
+                    context: context,
+                    title: profileController.user.value?.userName ??
+                        LocalizationString.loading,
+                    icon: ThemeIcon.notification,
+                    completion: () {
+                      Get.to(() => const NotificationsScreen());
+                    })),
             divider(context: context).tP8,
             Expanded(
               child: ListView(

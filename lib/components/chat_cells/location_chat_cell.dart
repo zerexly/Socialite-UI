@@ -4,9 +4,7 @@ import 'package:google_static_maps_controller/google_static_maps_controller.dart
 
 class LocationChatTile extends StatelessWidget {
   final ChatMessageModel message;
-
-  LocationChatTile({Key? key, required this.message}) : super(key: key);
-  SettingsController settingsController = Get.find();
+  const LocationChatTile({Key? key, required this.message}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

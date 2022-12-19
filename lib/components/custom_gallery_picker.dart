@@ -124,6 +124,9 @@ class _CustomGalleryPickerState extends State<CustomGalleryPicker> {
                       ).circular.ripple(() {
                         handleCameraPress();
                       }),
+                      // const SizedBox(
+                      //   width: 20,
+                      // ),
                     ],
                   ))),
         ));

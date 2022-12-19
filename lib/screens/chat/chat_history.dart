@@ -40,34 +40,13 @@ class _ChatHistoryState extends State<ChatHistory> {
           const SizedBox(
             height: 50,
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const SizedBox(
-                width: 15,
-              ),
-              // ThemeIconWidget(
-              //   ThemeIcon.chat,
-              //   color: Theme.of(context).iconTheme.color,
-              //   size: 15,
-              // ).p4.ripple(() {
-              //   selectUsers();
-              // }),
-              Text(
-                LocalizationString.chats,
-                style: Theme.of(context)
-                    .textTheme
-                    .titleMedium!
-                    .copyWith(fontWeight: FontWeight.w600),
-              ),
-              const ThemeIconWidget(
-                ThemeIcon.mobile,
-                size: 23,
-              ).ripple(() {
+          titleNavigationBarWithIcon(
+              context: context,
+              title: LocalizationString.chats,
+              icon: ThemeIcon.mobile,
+              completion: () {
                 Get.to(() => const CallHistory());
               }),
-            ],
-          ).setPadding(left: 16, right: 16, top: 8, bottom: 16),
           divider(context: context).tP8,
           SearchBar(
                   showSearchIcon: true,

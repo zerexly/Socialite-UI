@@ -429,7 +429,7 @@ class ProfileController extends GetxController {
       if (value) {
         EasyLoading.show(status: LocalizationString.loading);
         ApiController().performWithdrawalRequest().then((response) async {
-          getMyProfile();
+          await getMyProfile();
           EasyLoading.dismiss();
           AppUtil.showToast(
               context: context, message: response.message, isSuccess: true);
@@ -443,14 +443,14 @@ class ProfileController extends GetxController {
     });
   }
 
-  void redeemRequest(int coins, BuildContext context) {
+  void redeemRequest(int coins, BuildContext context, VoidCallback callback) {
     AppUtil.checkInternet().then((value) {
       if (value) {
         EasyLoading.show(status: LocalizationString.loading);
         ApiController().redeemCoinsRequest(coins).then((response) async {
           EasyLoading.dismiss();
-          getMyProfile();
-
+          await getMyProfile();
+          callback();
           AppUtil.showToast(
               context: context, message: response.message, isSuccess: true);
         });

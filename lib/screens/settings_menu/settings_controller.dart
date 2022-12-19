@@ -1,6 +1,7 @@
 import 'package:foap/helper/common_import.dart';
 import 'package:get/get.dart';
 import 'package:local_auth/error_codes.dart' as auth_error;
+import 'package:flutter_stripe/flutter_stripe.dart';
 
 class SettingsController extends GetxController {
   Rx<SettingModel?> setting = Rx<SettingModel?>(null);
@@ -11,9 +12,16 @@ class SettingsController extends GetxController {
   RxBool shareLocation = false.obs;
 
   RxInt redeemCoins = 0.obs;
+  RxBool forceUpdate = false.obs;
 
   var localAuth = LocalAuthentication();
   RxInt bioMetricType = 0.obs;
+  RateMyApp rateMyApp = RateMyApp(
+    preferencesPrefix: 'rateMyApp_',
+    minDays: 0, // Show rate popup on first day of install.
+    minLaunches:
+        0, // Show rate popup after 5 launches of app after minDays is passed.
+  );
 
   List<Map<String, String>> languagesList = [
     {'language_code': 'hi', 'language_name': 'Hindi'},
@@ -67,9 +75,18 @@ class SettingsController extends GetxController {
     }
   }
 
-  getSettings() {
-    ApiController().getSettings().then((response) {
+  getSettings() async{
+    ApiController().getSettings().then((response) async{
       setting.value = response.settings;
+      if (setting.value?.latestVersion! != AppConfigConstants.currentVersion) {
+        forceUpdate.value = true;
+      }
+
+      Stripe.publishableKey = setting.value!.stripePublishableKey!;
+      Stripe.merchantIdentifier = 'merchant.com.socialified';
+      Stripe.urlScheme = 'socialifiedstripe';
+      await Stripe.instance.applySettings();
+
       update();
     });
   }
@@ -108,5 +125,13 @@ class SettingsController extends GetxController {
         // Handle this exception here.
       }
     }
+  }
+
+  askForRating(BuildContext context) {
+    rateMyApp.init().then((value) {
+      if (rateMyApp.shouldOpenDialog) {
+        rateMyApp.showRateDialog(context);
+      }
+    });
   }
 }

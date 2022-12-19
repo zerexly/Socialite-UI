@@ -4,6 +4,7 @@ import 'package:foap/helper/common_import.dart';
 import 'package:get/get.dart';
 
 import '../model/faq_model.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 
 class ApiResponseModel {
   bool success = true;
@@ -52,6 +53,8 @@ class ApiResponseModel {
   List<EventModel> events = [];
   List<EventMemberModel> eventMembers = [];
   List<EventCategoryModel> eventCategories = [];
+  List<EventCoupon> eventCoupons = [];
+  List<EventBookingModel> eventBookings = [];
 
   List<TvModel> liveTvs = [];
   List<TvCategoryModel> tvCategories = [];
@@ -69,8 +72,10 @@ class ApiResponseModel {
   APIMetaData? metaData;
   SettingModel? settings;
   PostModel? post;
+  EventModel? event;
 
   int roomId = 0;
+  String? stripePaymentIntentClientSecret;
 
   ApiResponseModel();
 
@@ -136,6 +141,8 @@ class ApiResponseModel {
             model.hashtags =
                 List<Hashtag>.from(items.map((x) => Hashtag.fromJson(x)));
           }
+        } else if (data['client_secret'] != null) {
+          model.stripePaymentIntentClientSecret = data['client_secret'];
         } else if (data['club'] != null) {
           var items = data['club']['items'];
           if (items != null && items.length > 0) {
@@ -175,6 +182,24 @@ class ApiResponseModel {
             model.highlights = List<HighlightsModel>.from(
                 items.map((x) => HighlightsModel.fromJson(x)));
           }
+        } else if (data['event'] != null) {
+          if (url == NetworkConstantsUtil.eventDetails) {
+            model.event = EventModel.fromJson(data['event']);
+          } else {
+            var items = data['event']['items'];
+            if (items != null && items.length > 0) {
+              model.events = List<EventModel>.from(
+                  items.map((x) => EventModel.fromJson(x)));
+            }
+          }
+        } else if (data['eventBooking'] != null) {
+          var items = data['eventBooking']['items'];
+          if (items != null && items.length > 0) {
+            model.eventBookings = List<EventBookingModel>.from(
+                items.map((x) => EventBookingModel.fromJson(x)));
+            model.metaData =
+                APIMetaData.fromJson(data['eventBooking']['_meta']);
+          }
         } else if (data['category'] != null) {
           var items = data['category'];
 
@@ -186,10 +211,21 @@ class ApiResponseModel {
             if (url == NetworkConstantsUtil.giftsCategories) {
               model.giftCategories = List<GiftCategoryModel>.from(
                   items.map((x) => GiftCategoryModel.fromJson(x)));
+            }
+            if (url == NetworkConstantsUtil.eventsCategories) {
+              model.eventCategories = List<EventCategoryModel>.from(
+                  items.map((x) => EventCategoryModel.fromJson(x)));
             } else {
               model.categories = List<CategoryModel>.from(
                   items.map((x) => CategoryModel.fromJson(x)));
             }
+          }
+        } else if (data['coupon'] != null) {
+          var items = data['coupon'];
+
+          if (items != null && items.length > 0) {
+            model.eventCoupons = List<EventCoupon>.from(
+                items.map((x) => EventCoupon.fromJson(x)));
           }
         } else if (data['gift'] != null) {
           var items = data['gift']['items'];
