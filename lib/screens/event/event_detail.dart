@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:get/get.dart';
 import 'package:foap/helper/common_import.dart';
 
@@ -48,13 +50,13 @@ class EventDetailState extends State<EventDetail> {
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           SizedBox(
-                              height: 300,
+                              height: 400,
                               child: CachedNetworkImage(
                                 imageUrl: widget.event.image,
                                 fit: BoxFit.cover,
                               )),
                           const SizedBox(
-                            height: 30,
+                            height: 24,
                           ),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -62,174 +64,22 @@ class EventDetailState extends State<EventDetail> {
                               Text(widget.event.name,
                                   style: Theme.of(context)
                                       .textTheme
-                                      .displaySmall!
+                                      .titleLarge!
                                       .copyWith(fontWeight: FontWeight.w600)),
                               const SizedBox(
-                                height: 40,
-                              ),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const ThemeIconWidget(ThemeIcon.calendar),
-                                  const SizedBox(
-                                    width: 20,
-                                  ),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        widget.event.startAtFullDate,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyLarge!
-                                            .copyWith(
-                                                fontWeight: FontWeight.w600),
-                                      ),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      Text(
-                                        widget.event.startAtTime,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyLarge!
-                                            .copyWith(
-                                                fontWeight: FontWeight.w200),
-                                      )
-                                    ],
-                                  )
-                                ],
-                              ),
-                              const SizedBox(
                                 height: 20,
                               ),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const ThemeIconWidget(ThemeIcon.location),
-                                  const SizedBox(
-                                    width: 20,
-                                  ),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        widget.event.placeName,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyLarge!
-                                            .copyWith(
-                                                fontWeight: FontWeight.w600),
-                                      ),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      Text(
-                                        widget.event.completeAddress,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyLarge!
-                                            .copyWith(
-                                                fontWeight: FontWeight.w200),
-                                      )
-                                    ],
-                                  )
-                                ],
-                              ),
+                              attendingUsersList(),
+                              divider(context: context).vp(20),
+                              eventInfo(),
+                              divider(context: context).vp(20),
+                              eventOrganiserWidget(),
+                              divider(context: context).vp(20),
+                              eventGallery(),
                               const SizedBox(
-                                height: 40,
+                                height: 24,
                               ),
-                              Text(
-                                LocalizationString.organizer,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleSmall!
-                                    .copyWith(fontWeight: FontWeight.w600),
-                              ),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              Obx(() {
-                                return _eventDetailController.event.value
-                                            ?.organizers.isNotEmpty ==
-                                        true
-                                    ? Column(
-                                        children: [
-                                          for (EventOrganizer sponsor
-                                              in _eventDetailController.event
-                                                      .value?.organizers ??
-                                                  [])
-                                            Row(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: [
-                                                UserAvatarView(
-                                                  user: getIt<
-                                                          UserProfileManager>()
-                                                      .user!,
-                                                  size: 30,
-                                                ),
-                                                const SizedBox(
-                                                  width: 20,
-                                                ),
-                                                Text(
-                                                  sponsor.name,
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .titleLarge!
-                                                      .copyWith(
-                                                          fontWeight:
-                                                              FontWeight.w600),
-                                                )
-                                              ],
-                                            ).bP16,
-                                        ],
-                                      )
-                                    : Container();
-                              }),
-                              const SizedBox(
-                                height: 40,
-                              ),
-                              Text(
-                                LocalizationString.about,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleSmall!
-                                    .copyWith(fontWeight: FontWeight.w600),
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              Text(
-                                widget.event.description,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyLarge!
-                                    .copyWith(fontWeight: FontWeight.w200),
-                              ),
-                              const SizedBox(
-                                height: 40,
-                              ),
-                              Text(
-                                LocalizationString.location,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleSmall!
-                                    .copyWith(fontWeight: FontWeight.w600),
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              StaticMapWidget(
-                                latitude: double.parse(widget.event.latitude),
-                                longitude: double.parse(widget.event.longitude),
-                                height: 250,
-                                width: Get.width.toInt(),
-                              ).ripple(() {
-                                openDirections();
-                              }),
+                              eventLocation(),
                               const SizedBox(
                                 height: 150,
                               ),
@@ -253,6 +103,187 @@ class EventDetailState extends State<EventDetail> {
               ],
             );
           }),
+    );
+  }
+
+  Widget eventInfo() {
+    return Column(
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+                    color: Theme.of(context).primaryColor.withOpacity(0.2),
+                    child: ThemeIconWidget(ThemeIcon.calendar,
+                            color: Theme.of(context).primaryColor)
+                        .p8)
+                .circular,
+            const SizedBox(
+              width: 20,
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  widget.event.startAtFullDate,
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyLarge!
+                      .copyWith(fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                Text(
+                  widget.event.startAtTime,
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodySmall!
+                      .copyWith(fontWeight: FontWeight.w200),
+                )
+              ],
+            )
+          ],
+        ),
+        const SizedBox(
+          height: 20,
+        ),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+                    color: Theme.of(context).primaryColor.withOpacity(0.2),
+                    child: ThemeIconWidget(ThemeIcon.location,
+                            color: Theme.of(context).primaryColor)
+                        .p8)
+                .circular,
+            const SizedBox(
+              width: 20,
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  widget.event.placeName,
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyLarge!
+                      .copyWith(fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                Text(
+                  widget.event.completeAddress,
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodySmall!
+                      .copyWith(fontWeight: FontWeight.w200),
+                )
+              ],
+            )
+          ],
+        )
+      ],
+    );
+  }
+
+  Widget eventOrganiserWidget() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Obx(() {
+          return _eventDetailController.event.value?.organizers.isNotEmpty ==
+                  true
+              ? Column(
+                  children: [
+                    for (EventOrganizer sponsor
+                        in _eventDetailController.event.value?.organizers ?? [])
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          UserAvatarView(
+                            user: getIt<UserProfileManager>().user!,
+                            size: 30,
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                sponsor.name,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge!
+                                    .copyWith(fontWeight: FontWeight.w400),
+                              ),
+                              Text(
+                                LocalizationString.organizer,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall!
+                                    .copyWith(fontWeight: FontWeight.w200),
+                              ),
+                            ],
+                          )
+                        ],
+                      ).bP16,
+                  ],
+                )
+              : Container();
+        }),
+        Text(
+          LocalizationString.about,
+          style: Theme.of(context)
+              .textTheme
+              .titleSmall!
+              .copyWith(fontWeight: FontWeight.w600),
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+        Text(
+          widget.event.description,
+          style: Theme.of(context)
+              .textTheme
+              .bodyLarge!
+              .copyWith(fontWeight: FontWeight.w200),
+        ),
+        const SizedBox(
+          height: 40,
+        ),
+      ],
+    );
+  }
+
+  Widget eventLocation() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          LocalizationString.location,
+          style: Theme.of(context)
+              .textTheme
+              .titleSmall!
+              .copyWith(fontWeight: FontWeight.w600),
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+        StaticMapWidget(
+          latitude: double.parse(widget.event.latitude),
+          longitude: double.parse(widget.event.longitude),
+          height: 250,
+          width: Get.width.toInt(),
+        ).ripple(() {
+          openDirections();
+        }),
+        const SizedBox(
+          height: 40,
+        ),
+      ],
     );
   }
 
@@ -284,6 +315,40 @@ class EventDetailState extends State<EventDetail> {
             ],
           ).hP16,
         ));
+  }
+
+  Widget attendingUsersList() {
+    return Row(
+      children: [
+        SizedBox(
+          height: 20,
+          width: min(widget.event.gallery.length, 5) * 17,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemBuilder: (ctx, index) {
+              return Align(
+                widthFactor: 0.6,
+                child: CachedNetworkImage(
+                  imageUrl: widget.event.gallery[index],
+                  width: 20,
+                  height: 20,
+                  fit: BoxFit.cover,
+                ).borderWithRadius(context: context, value: 1, radius: 10),
+              );
+            },
+            itemCount: min(widget.event.gallery.length, 5),
+          ),
+        ),
+        Text(
+          '20000 + going',
+          style: Theme.of(context)
+              .textTheme
+              .bodySmall!
+              .copyWith(fontWeight: FontWeight.w200),
+        ),
+        const Spacer()
+      ],
+    );
   }
 
   Widget ticketNotAddedWidget() {
@@ -365,6 +430,54 @@ class EventDetailState extends State<EventDetail> {
             ],
           ).hP16,
         ));
+  }
+
+  Widget eventGallery() {
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            LocalizationString.eventGallery,
+            style: Theme.of(context)
+                .textTheme
+                .titleSmall!
+                .copyWith(fontWeight: FontWeight.w600),
+          ),
+          Text(
+            LocalizationString.seeAll,
+            style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                fontWeight: FontWeight.w600,
+                color: Theme.of(context).primaryColor),
+          ).ripple(() {
+            Get.to(() => EventGallery(event: widget.event));
+          }),
+        ],
+      ),
+      const SizedBox(
+        height: 20,
+      ),
+      SizedBox(
+        height: 80,
+        child: ListView.separated(
+          scrollDirection: Axis.horizontal,
+          itemBuilder: (ctx, index) {
+            return CachedNetworkImage(
+              imageUrl: widget.event.gallery[index],
+              width: 80,
+              height: 80,
+              fit: BoxFit.cover,
+            ).round(10);
+          },
+          separatorBuilder: (ctx, index) {
+            return const SizedBox(
+              width: 10,
+            );
+          },
+          itemCount: min(widget.event.gallery.length, 4),
+        ),
+      )
+    ]);
   }
 
   openDirections() async {

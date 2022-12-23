@@ -123,6 +123,8 @@ export 'package:foap/components/reply_chat_cells/text_reply_chat_cell.dart';
 export 'package:foap/components/reply_chat_cells/user_profile_reply_chat_cell.dart';
 export 'package:foap/components/reply_chat_cells/video_reply_chat_cell.dart';
 export 'package:foap/components/reply_chat_cells/file_reply_chat_cell.dart';
+export 'package:foap/components/reel/reel_video_player.dart';
+export 'package:foap/components/reel/audio_tile.dart';
 
 export 'package:foap/controllers/clubs/club_detail_controller.dart';
 export 'package:foap/controllers/clubs/clubs_controller.dart';
@@ -178,6 +180,7 @@ export 'package:foap/controllers/event/checkout_controller.dart';
 export 'package:foap/controllers/event/event_booking_controller.dart';
 export 'package:foap/controllers/event/booking_detail_controller.dart';
 export 'package:foap/controllers/reel/create_reel_controller.dart';
+export 'package:foap/controllers/reel/reels_controller.dart';
 
 export 'package:foap/model/story_model.dart';
 export 'package:foap/model/post_gallery.dart';
@@ -273,6 +276,7 @@ export 'package:foap/screens/profile/other_user_profile.dart';
 export 'package:foap/screens/profile/my_profile.dart';
 
 export 'package:foap/screens/reel/create_reel_video.dart';
+export 'package:foap/screens/reel/reels.dart';
 
 export 'package:foap/screens/story/text_story.dart';
 export 'package:foap/screens/story/story_viewer.dart';
@@ -290,6 +294,8 @@ export 'package:foap/screens/club/club_members.dart';
 export 'package:foap/screens/club/search_club.dart';
 export 'package:foap/screens/club/category_club_listing.dart';
 export 'package:foap/screens/club/invite_users_to_club.dart';
+export 'package:foap/screens/club/club_join_requests.dart';
+export 'package:foap/screens/club/club_join_invitations.dart';
 
 export 'package:foap/screens/event/category_event_listing.dart';
 export 'package:foap/screens/event/event_detail.dart';
@@ -303,6 +309,7 @@ export 'package:foap/screens/event/events_dashboard.dart';
 export 'package:foap/screens/event/event_booking_detail.dart';
 export 'package:foap/screens/event/e_ticket.dart';
 export 'package:foap/screens/event/stripe_card_payment.dart';
+export 'package:foap/screens/event/event_gallery.dart';
 
 export 'package:foap/screens/post/add_post_screen.dart';
 export 'package:foap/screens/post/single_post_detail.dart';

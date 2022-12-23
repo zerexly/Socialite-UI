@@ -60,6 +60,8 @@ class ApiResponseModel {
   List<TvCategoryModel> tvCategories = [];
   List<LiveModel> lives = [];
 
+  List<ReelMusicModel> audios = [];
+
   List<VerificationRequest> verificationRequests = [];
 
   //FAQ
@@ -76,6 +78,8 @@ class ApiResponseModel {
 
   int roomId = 0;
   String? stripePaymentIntentClientSecret;
+  String? paypalClientToken;
+  String? transactionId;
 
   ApiResponseModel();
 
@@ -143,12 +147,23 @@ class ApiResponseModel {
           }
         } else if (data['client_secret'] != null) {
           model.stripePaymentIntentClientSecret = data['client_secret'];
+        } else if (data['client_token'] != null) {
+          model.paypalClientToken = data['client_token'];
+        } else if (data['payment_id'] != null) {
+          model.transactionId = data['payment_id'];
         } else if (data['club'] != null) {
           var items = data['club']['items'];
           if (items != null && items.length > 0) {
             model.clubs =
                 List<ClubModel>.from(items.map((x) => ClubModel.fromJson(x)));
             model.metaData = APIMetaData.fromJson(data['club']['_meta']);
+          }
+        } else if (data['audio'] != null) {
+          var items = data['audio']['items'];
+          if (items != null && items.length > 0) {
+            model.audios = List<ReelMusicModel>.from(
+                items.map((x) => ReelMusicModel.fromJson(x)));
+            model.metaData = APIMetaData.fromJson(data['audio']['_meta']);
           }
         } else if (data['userList'] != null) {
           var items = data['userList']['items'];

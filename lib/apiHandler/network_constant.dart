@@ -109,6 +109,11 @@ class NetworkConstantsUtil {
   static String unBlockUser = 'blocked-users/un-blocked';
   static String deleteAccount = 'users/delete-account';
 
+  //******************** reel ******************//
+
+  static String reelAudioCategories = 'categories/reel-audio';
+  static String audios = 'audios?';
+
   ///////////// chat
   static String createChatRoom = 'chats/create-room';
   static String updateGroupChatRoom = 'chats/update-room?id=';
@@ -139,6 +144,7 @@ class NetworkConstantsUtil {
   static String leaveClub = 'clubs/left';
   static String removeUserFromClub = 'clubs/remove';
   static String clubMembers = 'clubs/club-joined-user?expand=user&id=';
+  static String clubJoinInvites = 'clubs/join-invitations';
 
   // Events
   static String joinEvent = 'clubs/join';
@@ -177,4 +183,6 @@ class NetworkConstantsUtil {
 
   // Payment
   static String createPaymentIntent = 'payments/payment-intent';
+  static String getPaypalClientToken = 'payments/paypal-client-token';
+  static String submitPaypalPayment = 'payments/paypal-payment';
 }

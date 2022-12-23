@@ -18,100 +18,85 @@ class EventCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: Get.width * 0.8,
+      width: Get.width * 0.5,
       color: Theme.of(context).cardColor,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Expanded(
-            child: Stack(
-              children: [
-                CachedNetworkImage(
-                  imageUrl: event.image,
-                  fit: BoxFit.cover,
-                  width: double.infinity,
-                ).topRounded(10).ripple(() {
-                  previewBtnClicked();
-                }),
+          Stack(
+            children: [
+              CachedNetworkImage(
+                imageUrl: event.image,
+                fit: BoxFit.cover,
+                width: double.infinity,
+                height: Get.width * 0.4,
+              ).round(25).ripple(() {
+                previewBtnClicked();
+              }),
+              if (event.isFree)
                 Positioned(
+                    top: 10,
                     right: 10,
-                    bottom: 10,
                     child: Container(
-                      color: Theme.of(context).cardColor,
-                      child: Text(
-                        event.startAtDate,
-                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                            color: Theme.of(context).primaryColor,
-                            fontWeight: FontWeight.w500),
-                      ).p8,
-                    ).round(20)),
-                Positioned(
-                    left: 10,
-                    bottom: 10,
-                    child: Container(
-                      color: Theme.of(context).cardColor,
-                      child: Row(
-                        children: [
-                          ThemeIconWidget(
-                            ThemeIcon.location,
-                            color: Theme.of(context).primaryColor,
-                          ),
-                          const SizedBox(
-                            width: 5,
-                          ),
-                          Text(
-                            event.placeName,
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyLarge!
-                                .copyWith(
-                                    color: Theme.of(context).primaryColor,
-                                    fontWeight: FontWeight.w900),
-                          ),
-                        ],
-                      ).p8,
-                    ).round(20)),
-                // Positioned(
-                //     right: 10,
-                //     top: 10,
-                //     child: Container(
-                //       color: Theme.of(context).cardColor,
-                //       height: 40,
-                //       width: 40,
-                //       child: ThemeIconWidget(
-                //         ThemeIcon.favFilled,
-                //         color: event.isFavourite ? Colors.red : Colors.white,
-                //       ).p4,
-                //     ).circular)
-              ],
-            ),
+                      color: Theme.of(context).primaryColor,
+                      child: Text(LocalizationString.free).p4,
+                    ).round(5))
+            ],
           ),
-          // const SizedBox(
-          //   height: 10,
-          // ),
+          const SizedBox(
+            height: 12,
+          ),
           Text(
             event.name,
             style: Theme.of(context)
                 .textTheme
                 .titleLarge!
-                .copyWith(fontWeight: FontWeight.w900),
-          ).p8,
-          // const SizedBox(
-          //   height: 5,
-          // ),
+                .copyWith(fontWeight: FontWeight.w700),
+          ),
+          const SizedBox(
+            height: 8,
+          ),
+          Text(
+            event.startAtDateTime,
+            style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                color: Theme.of(context).primaryColor,
+                fontWeight: FontWeight.w300),
+          ),
+          const SizedBox(
+            height: 8,
+          ),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                '${event.totalMembers.formatNumber} ${LocalizationString.clubMembers}',
-                style: Theme.of(context).textTheme.bodyLarge,
+              ThemeIconWidget(
+                ThemeIcon.location,
+                color: Theme.of(context).primaryColor,
+                size: 17,
               ),
-              const Spacer(),
+              const SizedBox(
+                width: 5,
+              ),
+              Text(
+                event.placeName,
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyLarge!
+                    .copyWith(fontWeight: FontWeight.w300),
+              ),
             ],
-          ).setPadding(left: 12, right: 12, bottom: 20)
+          ),
+          // Row(
+          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //   children: [
+          //     Text(
+          //       '${event.totalMembers.formatNumber} ${LocalizationString.clubMembers}',
+          //       style: Theme.of(context).textTheme.bodyLarge,
+          //     ),
+          //     const Spacer(),
+          //   ],
+          // ).setPadding(left: 12, right: 12, bottom: 20)
         ],
-      ),
-    ).round(15);
+      ).p(12),
+    ).round(25);
   }
 }
 
@@ -132,20 +117,32 @@ class EventCard2 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 150,
+      height: 140,
       color: Theme.of(context).cardColor,
       child: Row(
         children: [
-          CachedNetworkImage(
-            imageUrl: event.image,
-            fit: BoxFit.cover,
-            width: 100,
-            height: double.infinity,
-          ).round(15).ripple(() {
-            previewBtnClicked();
-          }),
+          Stack(
+            children: [
+              CachedNetworkImage(
+                imageUrl: event.image,
+                fit: BoxFit.cover,
+                width: 120,
+                height: double.infinity,
+              ).round(15).ripple(() {
+                previewBtnClicked();
+              }),
+              if (event.isFree)
+                Positioned(
+                    top: 10,
+                    right: 10,
+                    child: Container(
+                      color: Theme.of(context).primaryColor,
+                      child: Text(LocalizationString.free).p4,
+                    ).round(5))
+            ],
+          ),
           const SizedBox(
-            width: 10,
+            width: 15,
           ),
           Expanded(
             child: Stack(
@@ -155,23 +152,22 @@ class EventCard2 extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      '20 June 2022 10:20AM'.toUpperCase(),
-                      maxLines: 1,
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyLarge!
-                          .copyWith(fontWeight: FontWeight.w200),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Text(
                       event.name,
                       maxLines: 1,
                       style: Theme.of(context)
                           .textTheme
                           .titleLarge!
-                          .copyWith(fontWeight: FontWeight.w900),
+                          .copyWith(fontWeight: FontWeight.w700),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      event.startAtDateTime.toUpperCase(),
+                      maxLines: 1,
+                      style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                          fontWeight: FontWeight.w200,
+                          color: Theme.of(context).primaryColor),
                     ),
                     const SizedBox(
                       height: 10,
@@ -182,47 +178,46 @@ class EventCard2 extends StatelessWidget {
                         ThemeIconWidget(
                           ThemeIcon.location,
                           color: Theme.of(context).primaryColor,
+                          size: 17,
                         ),
                         const SizedBox(
                           width: 5,
                         ),
                         Text(
-                          'California',
+                          event.placeName,
                           style: Theme.of(context)
                               .textTheme
                               .bodyLarge!
-                              .copyWith(
-                                  color: Theme.of(context).primaryColor,
-                                  fontWeight: FontWeight.w900),
+                              .copyWith(fontWeight: FontWeight.w500),
                         ),
                       ],
                     ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Text(
-                      '${event.totalMembers.formatNumber} ${LocalizationString.going}',
-                      style: Theme.of(context).textTheme.bodyLarge,
-                    ),
+                    // const SizedBox(
+                    //   height: 20,
+                    // ),
+                    // Text(
+                    //   '${event.totalMembers.formatNumber} ${LocalizationString.going}',
+                    //   style: Theme.of(context).textTheme.bodyLarge,
+                    // ),
                   ],
                 ),
-                Positioned(
-                    right: 10,
-                    top: 10,
-                    child: Container(
-                      color: Theme.of(context).backgroundColor,
-                      height: 40,
-                      width: 40,
-                      child: ThemeIconWidget(
-                        ThemeIcon.favFilled,
-                        color: event.isFavourite ? Colors.red : Colors.white,
-                      ).p4,
-                    ).circular)
+                // Positioned(
+                //     right: 10,
+                //     top: 10,
+                //     child: Container(
+                //       color: Theme.of(context).backgroundColor,
+                //       height: 40,
+                //       width: 40,
+                //       child: ThemeIconWidget(
+                //         ThemeIcon.favFilled,
+                //         color: event.isFavourite ? Colors.red : Colors.white,
+                //       ).p4,
+                //     ).circular)
               ],
             ),
           ),
         ],
-      ),
-    ).round(15);
+      ).p(12),
+    ).round(25);
   }
 }

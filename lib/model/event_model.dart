@@ -117,7 +117,6 @@ class EventModel {
       );
 
   EventStatus get statusType {
-    print(eventCurrentStatus);
     switch (eventCurrentStatus) {
       case 1:
         return EventStatus.upcoming;
@@ -132,7 +131,6 @@ class EventModel {
   bool get ticketsAdded {
     List<EventTicketType> ticketTypes =
         tickets.where((element) => element.availableTicket > 0).toList();
-    print(tickets);
     return ticketTypes.isNotEmpty;
   }
 

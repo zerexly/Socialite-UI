@@ -151,7 +151,7 @@ class EventsListingState extends State<EventsListing> {
                                     height: 25,
                                   ),
                                   SizedBox(
-                                    height: 270,
+                                    height: 285,
                                     child: ListView.separated(
                                       padding: const EdgeInsets.only(
                                           left: 16, right: 16),

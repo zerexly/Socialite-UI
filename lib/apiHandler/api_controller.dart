@@ -234,6 +234,7 @@ class ApiController {
     String? authKey = await SharedPrefs().getAuthorizationKey();
     var url =
         '${NetworkConstantsUtil.baseUrl}${NetworkConstantsUtil.mentionedPosts}$userId&page=$page';
+    url = '$url&page=$page';
 
     return await http.get(Uri.parse(url), headers: {
       "Authorization": "Bearer ${authKey!}"
@@ -1538,6 +1539,7 @@ class ApiController {
     if (isJoined != null) {
       url = '$url&my_joined_club=$isJoined';
     }
+    url = '$url&page=$page';
 
     return await http.get(Uri.parse(url), headers: {
       "Authorization": "Bearer ${authKey!}"
@@ -1548,11 +1550,27 @@ class ApiController {
     });
   }
 
+  Future<ApiResponseModel> getClubInvitations({int page = 1}) async {
+    String? authKey = await SharedPrefs().getAuthorizationKey();
+    var url =
+        NetworkConstantsUtil.baseUrl + NetworkConstantsUtil.clubJoinInvites;
+    url = '$url&page=$page';
+
+    return await http.get(Uri.parse(url), headers: {
+      "Authorization": "Bearer ${authKey!}"
+    }).then((http.Response response) async {
+      final ApiResponseModel parsedResponse = await getResponse(
+          response.body, NetworkConstantsUtil.clubJoinInvites);
+      return parsedResponse;
+    });
+  }
+
   Future<ApiResponseModel> getClubMembers({int? clubId, int page = 1}) async {
     String? authKey = await SharedPrefs().getAuthorizationKey();
     var url = NetworkConstantsUtil.baseUrl +
         NetworkConstantsUtil.clubMembers +
         clubId.toString();
+    url = '$url&page=$page';
 
     return await http.get(Uri.parse(url), headers: {
       "Authorization": "Bearer ${authKey!}"
@@ -1647,7 +1665,7 @@ class ApiController {
       url = '$url&name=$name';
     }
 
-    print('url = $url');
+    url = '$url&page=$page';
 
     return await http.get(Uri.parse(url), headers: {
       "Authorization": "Bearer ${authKey!}"
@@ -1677,6 +1695,7 @@ class ApiController {
     var url = NetworkConstantsUtil.baseUrl +
         NetworkConstantsUtil.eventMembers +
         eventId.toString();
+    url = '$url&page=$page';
 
     return await http.get(Uri.parse(url), headers: {
       "Authorization": "Bearer ${authKey!}"
@@ -1738,6 +1757,7 @@ class ApiController {
       url = '$url&name=$name';
     }
     url = '$url&expand=payment,event,event.eventOrganisor';
+    url = '$url&page=$page';
 
     // print("Bearer ${authKey!}");
     return await http.get(Uri.parse(url), headers: {
@@ -1759,7 +1779,7 @@ class ApiController {
         headers: {"Authorization": "Bearer ${authKey!}"},
         body: {'id': eventId.toString()}).then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-          await getResponse(response.body, NetworkConstantsUtil.joinClub);
+          await getResponse(response.body, NetworkConstantsUtil.joinEvent);
       return parsedResponse;
     });
   }
@@ -1789,7 +1809,7 @@ class ApiController {
         headers: {"Authorization": "Bearer ${authKey!}"},
         body: {'id': clubId.toString()}).then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-          await getResponse(response.body, NetworkConstantsUtil.joinClub);
+          await getResponse(response.body, NetworkConstantsUtil.eventBookings);
       return parsedResponse;
     });
   }
@@ -1809,8 +1829,8 @@ class ApiController {
     }, body: {
       'id': bookingId.toString()
     }).then((http.Response response) async {
-      final ApiResponseModel parsedResponse =
-          await getResponse(response.body, NetworkConstantsUtil.joinClub);
+      final ApiResponseModel parsedResponse = await getResponse(
+          response.body, NetworkConstantsUtil.cancelEventBooking);
       return parsedResponse;
     });
   }
@@ -2048,6 +2068,84 @@ class ApiController {
     }).then((http.Response response) async {
       final ApiResponseModel parsedResponse = await getResponse(
           response.body, NetworkConstantsUtil.createPaymentIntent);
+      return parsedResponse;
+    });
+  }
+
+//*********************** Paypal payment ************************//
+  Future<ApiResponseModel> fetchPaypalClientToken() async {
+    String? authKey = await SharedPrefs().getAuthorizationKey();
+    var url =
+        '${NetworkConstantsUtil.baseUrl}${NetworkConstantsUtil.getPaypalClientToken}';
+
+    return await http.get(Uri.parse(url), headers: {
+      "Authorization": "Bearer ${authKey!}"
+    }).then((http.Response response) async {
+      final ApiResponseModel parsedResponse = await getResponse(
+          response.body, NetworkConstantsUtil.getPaypalClientToken);
+      return parsedResponse;
+    });
+  }
+
+  Future<ApiResponseModel> sendPaypalPayment({
+    required double amount,
+    required String nonce,
+    required String deviceData,
+  }) async {
+    var url =
+        NetworkConstantsUtil.baseUrl + NetworkConstantsUtil.submitPaypalPayment;
+    String? authKey = await SharedPrefs().getAuthorizationKey();
+
+    dynamic param = await ApiParamModel().submitPaypalPaymentParam(
+        amount: amount, nonce: nonce, deviceData: deviceData);
+
+    return http
+        .post(Uri.parse(url),
+            headers: {
+              "Authorization": "Bearer ${authKey!}",
+              'Content-Type': 'application/json',
+            },
+            body: jsonEncode(param))
+        .then((http.Response response) async {
+      final ApiResponseModel parsedResponse = await getResponse(
+          response.body, NetworkConstantsUtil.submitPaypalPayment);
+      return parsedResponse;
+    });
+  }
+
+  /****************** Reel *****************/
+
+  Future<ApiResponseModel> getReelCategories() async {
+    String? authKey = await SharedPrefs().getAuthorizationKey();
+    var url =
+        NetworkConstantsUtil.baseUrl + NetworkConstantsUtil.reelAudioCategories;
+
+    return await http.get(Uri.parse(url), headers: {
+      "Authorization": "Bearer ${authKey!}"
+    }).then((http.Response response) async {
+      final ApiResponseModel parsedResponse = await getResponse(
+          response.body, NetworkConstantsUtil.reelAudioCategories);
+      return parsedResponse;
+    });
+  }
+
+  Future<ApiResponseModel> getAudios({int? categoryId, String? title}) async {
+    String? authKey = await SharedPrefs().getAuthorizationKey();
+    var url = NetworkConstantsUtil.baseUrl + NetworkConstantsUtil.audios;
+    if (categoryId != null) {
+      url = '$url&category_id=$categoryId';
+    }
+    if (title != null) {
+      url = '$url&name=$title';
+    }
+
+    print(url);
+
+    return await http.get(Uri.parse(url), headers: {
+      "Authorization": "Bearer ${authKey!}"
+    }).then((http.Response response) async {
+      final ApiResponseModel parsedResponse =
+          await getResponse(response.body, NetworkConstantsUtil.audios);
       return parsedResponse;
     });
   }

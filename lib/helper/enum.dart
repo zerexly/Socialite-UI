@@ -86,7 +86,16 @@ enum AgoraCallType {
   video,
 }
 
-enum PaymentGateway { creditCard, applePay, paypal, razorpay, wallet, stripe,googlePay }
+enum PaymentGateway {
+  creditCard,
+  applePay,
+  paypal,
+  razorpay,
+  wallet,
+  stripe,
+  googlePay,
+  inAppPurchse
+}
 
 enum BookingStatus { confirmed, cancelled }
 

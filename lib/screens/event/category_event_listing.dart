@@ -18,7 +18,6 @@ class CategoryEventsListingState extends State<CategoryEventsListing> {
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _eventsController.getEvents(categoryId: widget.category.id);
-      // _eventsController.selectedSegmentIndex(0);
     });
 
     super.initState();

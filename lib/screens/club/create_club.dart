@@ -84,7 +84,7 @@ class CreateClubState extends State<CreateClub> {
                         hintText: LocalizationString.clubDescription,
                       ),
 
-                      // selectGroupPrivacyWidget(),
+                      selectGroupPrivacyWidget(),
 
                       if (widget.club.id == null)
                         Column(
@@ -235,7 +235,7 @@ class CreateClubState extends State<CreateClub> {
         ),
         // Spacer(),
         ThemeIconWidget(
-          isSelected ? ThemeIcon.selectedRadio : ThemeIcon.unSelectedRadio,
+          isSelected ? ThemeIcon.selectedCheckbox : ThemeIcon.emptyCheckbox,
           size: 25,
           color: isSelected
               ? Theme.of(context).primaryColor
@@ -247,32 +247,32 @@ class CreateClubState extends State<CreateClub> {
     });
   }
 
-  showActionSheet() {
-    showModalBottomSheet(
-        context: context,
-        backgroundColor: Colors.transparent,
-        builder: (context) => ActionSheet(
-              items: [
-                GenericItem(
-                    id: '1',
-                    title: LocalizationString.public,
-                    subTitle: LocalizationString.anyoneCanSeeClub,
-                    isSelected: selectedItem?.id == '1',
-                    icon: ThemeIcon.public),
-                GenericItem(
-                    id: '2',
-                    title: LocalizationString.private,
-                    subTitle: LocalizationString.onlyMembersCanSeeClub,
-                    isSelected: selectedItem?.id == '2',
-                    icon: ThemeIcon.lock),
-              ],
-              itemCallBack: (item) {
-                setState(() {
-                  selectedItem = item;
-                });
-              },
-            ));
-  }
+  // showActionSheet() {
+  //   showModalBottomSheet(
+  //       context: context,
+  //       backgroundColor: Colors.transparent,
+  //       builder: (context) => ActionSheet(
+  //             items: [
+  //               GenericItem(
+  //                   id: '1',
+  //                   title: LocalizationString.public,
+  //                   subTitle: LocalizationString.anyoneCanSeeClub,
+  //                   isSelected: selectedItem?.id == '1',
+  //                   icon: ThemeIcon.public),
+  //               GenericItem(
+  //                   id: '2',
+  //                   title: LocalizationString.private,
+  //                   subTitle: LocalizationString.onlyMembersCanSeeClub,
+  //                   isSelected: selectedItem?.id == '2',
+  //                   icon: ThemeIcon.lock),
+  //             ],
+  //             itemCallBack: (item) {
+  //               setState(() {
+  //                 selectedItem = item;
+  //               });
+  //             },
+  //           ));
+  // }
 
   nextBtnClicked() {
     if (nameText.text.isEmpty) {
