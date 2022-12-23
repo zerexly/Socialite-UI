@@ -1,5 +1,7 @@
 import 'package:foap/helper/common_import.dart';
 
+enum AccessLevel { private, public, request }
+
 class ClubModel {
   int? categoryId;
   int? id;
@@ -49,11 +51,21 @@ class ClubModel {
         isJoined: json["is_joined"] == 1,
         createdBy: json["created_by"],
         totalMembers: json["totalJoinedUser"],
-        createdByUser: json["createdByUser"] == null ? null :UserModel.fromJson(json["createdByUser"]),
+        createdByUser: json["createdByUser"] == null
+            ? null
+            : UserModel.fromJson(json["createdByUser"]),
       );
 
   bool get amIAdmin {
     return createdByUser!.isMe;
   }
 
+  AccessLevel get accessLevel {
+    if (privacyType == 1) {
+      return AccessLevel.private;
+    } else if (privacyType == 3) {
+      return AccessLevel.request;
+    }
+    return AccessLevel.public;
+  }
 }

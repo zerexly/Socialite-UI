@@ -245,4 +245,16 @@ class ApiParamModel {
       'currency': 'USD',
     };
   }
+
+  dynamic submitPaypalPaymentParam({
+    required double amount,
+    required String nonce,
+    required String deviceData,
+  }) {
+    return {
+      'amount': amount.toString(),
+      'payment_method_nonce': nonce,
+      'device_data': deviceData,
+    };
+  }
 }

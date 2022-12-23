@@ -1,4 +1,5 @@
 import 'package:foap/helper/common_import.dart';
+import 'package:foap/screens/reel/select_music.dart';
 import 'package:get/get.dart';
 import 'package:camera/camera.dart';
 
@@ -16,7 +17,7 @@ class _CreateReelScreenState extends State<CreateReelScreen> {
   @override
   void initState() {
     super.initState();
-    _initCamera();
+    // _initCamera();
   }
 
   _initCamera() async {
@@ -53,26 +54,52 @@ class _CreateReelScreenState extends State<CreateReelScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: controller == null
-          ? Container()
-          : Stack(
+      backgroundColor: Theme.of(context).backgroundColor,
+      body: Stack(
+        children: [
+          // CameraPreview(controller!),
+          Positioned(
+            left: 16,
+            right: 16,
+            top: 70,
+            child: Column(
               children: [
-                CameraPreview(controller!),
-                Column(
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Row(
-                      children: [
-                        Container(
-                                color: Theme.of(context).primaryColor,
-                                child:
-                                    const ThemeIconWidget(ThemeIcon.close).p4)
-                            .ripple(() {}),
-                      ],
+                    Container(
+                            color: Theme.of(context).primaryColor,
+                            child: const ThemeIconWidget(ThemeIcon.close).p4)
+                        .circular
+                        .ripple(() {
+                      Get.back();
+                    }),
+                    Container(
+                            color: Theme.of(context).primaryColor,
+                            child: Text(
+                              'Select music',
+                              style: Theme.of(context).textTheme.bodyLarge,
+                            ).p8)
+                        .circular
+                        .ripple(() {
+                      Get.bottomSheet(
+                        SelectMusic(selectedAudioCallback: (audio) {
+                          print('Audio selected = ${audio.url}');
+                        }),
+                        isScrollControlled: true,
+                        ignoreSafeArea: true,
+                      );
+                    }),
+                    const SizedBox(
+                      width: 20,
                     )
                   ],
                 )
               ],
             ),
+          )
+        ],
+      ),
     );
   }
 

@@ -32,7 +32,6 @@ class EventBookingModel {
     required this.ticketType,
     required this.event,
     required this.ticketUrl,
-
   });
 
   factory EventBookingModel.fromJson(Map<String, dynamic> json) =>
@@ -51,11 +50,9 @@ class EventBookingModel {
         ticketType: EventTicketType.fromJson(json["ticketDetail"]),
         event: EventModel.fromJson(json["event"]),
         ticketUrl: json["viewTicketUrl"],
-
       );
 
   BookingStatus get statusType {
-    print(event.isTicketBooked);
     switch (event.isTicketBooked) {
       case true:
         return BookingStatus.confirmed;
@@ -69,6 +66,6 @@ class EventBookingModel {
     DateTime callStartTime =
         DateTime.fromMillisecondsSinceEpoch(createdAt * 1000);
 
-    return DateFormat('dd-MM-yyyy hh:mm a').format(callStartTime);
+    return DateFormat('dd-MMM-yyyy hh:mm a').format(callStartTime);
   }
 }

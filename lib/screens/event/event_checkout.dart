@@ -456,6 +456,18 @@ class _EventCheckoutState extends State<EventCheckout> {
                 },
               ),
               // PaymentMethodTile(
+              //   text: LocalizationString.inAppPurchase,
+              //   icon: "assets/in_app_purchases.png",
+              //   price: '\$${_checkoutController.balanceToPay.value}',
+              //   isSelected: _checkoutController.selectedPaymentGateway.value ==
+              //       PaymentGateway.razorpay,
+              //   press: () {
+              //     // _checkoutController.launchRazorpayPayment();
+              //     _checkoutController
+              //         .selectPaymentGateway(PaymentGateway.inAppPurchse);
+              //   },
+              // ),
+              // PaymentMethodTile(
               //   text: LocalizationString.cash,
               //   icon: "assets/cash.png",
               //   price: _checkoutController.useWallet.value

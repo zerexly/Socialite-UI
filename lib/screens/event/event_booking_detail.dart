@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:foap/helper/common_import.dart';
+import 'dart:math';
 
 class EventBookingDetail extends StatefulWidget {
   final EventBookingModel booking;
@@ -63,11 +64,15 @@ class EventBookingDetailState extends State<EventBookingDetail> {
                                     Text(widget.booking.event.name,
                                         style: Theme.of(context)
                                             .textTheme
-                                            .displaySmall!
+                                            .titleLarge!
                                             .copyWith(
                                                 fontWeight: FontWeight.w600)),
-                                    divider(context: context).vP25,
-                                    eventTimeWidget(),
+                                    const SizedBox(
+                                      height: 20,
+                                    ),
+                                    attendingUsersList(),
+                                    divider(context: context).vp(20),
+                                    eventInfo(),
                                     divider(context: context).vP25,
                                     organizerWidget(),
                                     divider(context: context).vP25,
@@ -144,7 +149,41 @@ class EventBookingDetailState extends State<EventBookingDetail> {
     );
   }
 
-  Widget eventTimeWidget() {
+  Widget attendingUsersList() {
+    return Row(
+      children: [
+        SizedBox(
+          height: 20,
+          width: min(widget.booking.event.gallery.length, 5) * 17,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemBuilder: (ctx, index) {
+              return Align(
+                widthFactor: 0.6,
+                child: CachedNetworkImage(
+                  imageUrl: widget.booking.event.gallery[index],
+                  width: 20,
+                  height: 20,
+                  fit: BoxFit.cover,
+                ).borderWithRadius(context: context, value: 1, radius: 10),
+              );
+            },
+            itemCount: min(widget.booking.event.gallery.length, 5),
+          ),
+        ),
+        Text(
+          '20000 + going',
+          style: Theme.of(context)
+              .textTheme
+              .bodySmall!
+              .copyWith(fontWeight: FontWeight.w200),
+        ),
+        const Spacer()
+      ],
+    );
+  }
+
+  Widget eventInfo() {
     return Column(
       children: [
         Row(
@@ -152,10 +191,9 @@ class EventBookingDetailState extends State<EventBookingDetail> {
           children: [
             Container(
                     color: Theme.of(context).primaryColor.withOpacity(0.2),
-                    child: ThemeIconWidget(
-                      ThemeIcon.calendar,
-                      color: Theme.of(context).primaryColor,
-                    ).p8)
+                    child: ThemeIconWidget(ThemeIcon.calendar,
+                            color: Theme.of(context).primaryColor)
+                        .p8)
                 .circular,
             const SizedBox(
               width: 20,
@@ -192,10 +230,9 @@ class EventBookingDetailState extends State<EventBookingDetail> {
           children: [
             Container(
                     color: Theme.of(context).primaryColor.withOpacity(0.2),
-                    child: ThemeIconWidget(
-                      ThemeIcon.location,
-                      color: Theme.of(context).primaryColor,
-                    ).p8)
+                    child: ThemeIconWidget(ThemeIcon.location,
+                            color: Theme.of(context).primaryColor)
+                        .p8)
                 .circular,
             const SizedBox(
               width: 20,
@@ -232,19 +269,6 @@ class EventBookingDetailState extends State<EventBookingDetail> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
-          color: Theme.of(context).primaryColor.withOpacity(0.4),
-          child: Text(
-            LocalizationString.organizer,
-            style: Theme.of(context)
-                .textTheme
-                .titleSmall!
-                .copyWith(fontWeight: FontWeight.w600),
-          ).setPadding(top: 5, bottom: 5, left: 10, right: 10),
-        ).round(5),
-        const SizedBox(
-          height: 20,
-        ),
         Column(
           children: [
             for (EventOrganizer sponsor
@@ -259,17 +283,49 @@ class EventBookingDetailState extends State<EventBookingDetail> {
                   const SizedBox(
                     width: 10,
                   ),
-                  Text(
-                    sponsor.name,
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyLarge!
-                        .copyWith(fontWeight: FontWeight.w600),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        sponsor.name,
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyLarge!
+                            .copyWith(fontWeight: FontWeight.w400),
+                      ),
+                      Text(
+                        LocalizationString.organizer,
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodySmall!
+                            .copyWith(fontWeight: FontWeight.w200),
+                      ),
+                    ],
                   )
                 ],
               ).bP16,
           ],
-        )
+        ),
+        Text(
+          LocalizationString.about,
+          style: Theme.of(context)
+              .textTheme
+              .titleSmall!
+              .copyWith(fontWeight: FontWeight.w600),
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+        Text(
+          widget.booking.event.description,
+          style: Theme.of(context)
+              .textTheme
+              .bodyLarge!
+              .copyWith(fontWeight: FontWeight.w200),
+        ),
+        const SizedBox(
+          height: 40,
+        ),
       ],
     );
   }
@@ -487,16 +543,34 @@ class EventBookingDetailState extends State<EventBookingDetail> {
 
   Widget eventGallery() {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Container(
-        color: Theme.of(context).primaryColor.withOpacity(0.4),
-        child: Text(
-          LocalizationString.eventGallery,
-          style: Theme.of(context)
-              .textTheme
-              .titleSmall!
-              .copyWith(fontWeight: FontWeight.w600),
-        ).setPadding(top: 5, bottom: 5, left: 10, right: 10),
-      ).round(5),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Container(
+            color: Theme.of(context).primaryColor.withOpacity(0.4),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  LocalizationString.eventGallery,
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleSmall!
+                      .copyWith(fontWeight: FontWeight.w600),
+                ),
+              ],
+            ).setPadding(top: 5, bottom: 5, left: 10, right: 10),
+          ).round(5),
+          Text(
+            LocalizationString.seeAll,
+            style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                fontWeight: FontWeight.w600,
+                color: Theme.of(context).primaryColor),
+          ).ripple(() {
+            Get.to(() => EventGallery(event: widget.booking.event));
+          })
+        ],
+      ),
       const SizedBox(
         height: 20,
       ),
@@ -517,7 +591,7 @@ class EventBookingDetailState extends State<EventBookingDetail> {
               width: 10,
             );
           },
-          itemCount: widget.booking.event.gallery.length,
+          itemCount: min(widget.booking.event.gallery.length, 4),
         ),
       )
     ]);

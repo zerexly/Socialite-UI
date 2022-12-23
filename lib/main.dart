@@ -40,6 +40,7 @@ Future<void> main() async {
   Get.changeThemeMode(isDarkTheme ? ThemeMode.dark : ThemeMode.light);
   // Get.changeThemeMode(ThemeMode.dark);
 
+  Get.put(PlayerManager());
   Get.put(DashboardController());
   Get.put(SettingsController());
   Get.put(SubscriptionPackageController());
@@ -85,6 +86,9 @@ Future<void> main() async {
   Get.put(RequestVerificationController());
   Get.put(FAQController());
   Get.put(EventsController());
+  Get.put(ReelsController());
+
+  Get.put(CreateReelController());
 
   setupServiceLocator();
   await getIt<UserProfileManager>().refreshProfile();

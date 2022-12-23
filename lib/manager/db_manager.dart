@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:foap/helper/common_import.dart';
 import 'package:path/path.dart' as p;
-import 'package:encrypt/encrypt.dart' as encrypt;
 
 class DBManager {
   // final db = Localstore.instance;

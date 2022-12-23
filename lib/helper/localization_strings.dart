@@ -707,11 +707,12 @@ class LocalizationString {
   static String goLive = 'Go Live'.tr;
   static String liveNow = 'Now on live'.tr;
   static String reel = 'Reel'.tr;
+  static String reels = 'Reels'.tr;
 
   static String anyoneCanSeeClub =
-      'Anyone can see who\'s in the club and what they post'.tr;
+      'Anyone can see this club and join the club'.tr;
   static String onlyMembersCanSeeClub =
-      'Only members can see who\'s in the group and what they post'.tr;
+      'Only requested member or joined member can see it'.tr;
   static String communication = 'Communication'.tr;
 
   static String chatGroup = 'Chat group'.tr;
@@ -865,6 +866,7 @@ class LocalizationString {
   static String paypal = 'Paypal'.tr;
   static String razorPay = 'Razorpay'.tr;
   static String stripe = 'Stripe'.tr;
+  static String inAppPurchase = 'In App Purchase'.tr;
 
   static String cash = 'Cash'.tr;
   static String ticketBooked = 'Ticket booked successfully'.tr;
@@ -901,7 +903,17 @@ class LocalizationString {
   static String cancelBooking = 'Cancel booking'.tr;
 
   static String upcoming = 'Upcoming'.tr;
+  static String free = 'Free'.tr;
+  static String paid = 'Paid'.tr;
 
   static String suggestedForYou = 'Suggested for you'.tr;
+
+  static String publicGroup = "Public group".tr;
+  static String joinRequests = "Join requests".tr;
+  static String joinInvitations = "Join invitations".tr;
+  static String invites = "Invites".tr;
+
+  static String accept = 'Accept'.tr;
+  static String decline = 'Decline'.tr;
 
 }

@@ -62,7 +62,7 @@ class ClubDetailState extends State<ClubDetail> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       SizedBox(
-                          height: 250,
+                          height: 350,
                           child: CachedNetworkImage(
                             imageUrl: _clubDetailController.club.value!.image!,
                             fit: BoxFit.cover,
@@ -71,7 +71,7 @@ class ClubDetailState extends State<ClubDetail> {
 
                           ),
                       const SizedBox(
-                        height: 50,
+                        height: 24,
                       ),
                       Text(_clubDetailController.club.value!.name!,
                               style: Theme.of(context)
@@ -80,23 +80,14 @@ class ClubDetailState extends State<ClubDetail> {
                                   .copyWith(fontWeight: FontWeight.w600))
                           .hP16,
                       const SizedBox(
-                        height: 20,
-                      ),
-                      Text(_clubDetailController.club.value!.desc!,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleMedium!
-                                  .copyWith(fontWeight: FontWeight.w200))
-                          .hP16,
-                      const SizedBox(
-                        height: 20,
+                        height: 12,
                       ),
                       Row(
                         children: [
-                          const ThemeIconWidget(ThemeIcon.userGroup),
+                          // const ThemeIconWidget(ThemeIcon.userGroup),
                           // Text(
-                          //   'Public group',
-                          //   style: Theme.of(context).textTheme.titleMedium,
+                          //   LocalizationString.publicGroup,
+                          //   style: Theme.of(context).textTheme.bodyLarge,
                           // ).hP8,
                           Text(
                             '${_clubDetailController.club.value!.totalMembers!.formatNumber} ${LocalizationString.clubMembers}',
@@ -111,84 +102,15 @@ class ClubDetailState extends State<ClubDetail> {
                         ],
                       ).hP16,
                       const SizedBox(
-                        height: 25,
+                        height: 12,
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          _clubDetailController.club.value!.createdByUser!.isMe
-                              ? SizedBox(
-                                  height: 50,
-                                  width: _clubDetailController
-                                              .club.value!.enableChat ==
-                                          1
-                                      ? (MediaQuery.of(context).size.width -
-                                              32) *
-                                          0.7
-                                      : (MediaQuery.of(context).size.width -
-                                          32),
-                                  child: FilledButtonType1(
-                                      text: LocalizationString.post,
-                                      onPress: () {
-                                        Get.to(() => SelectMedia(
-                                              clubId: _clubDetailController
-                                                  .club.value!.id!,
-                                            ));
-                                      }))
-                              : SizedBox(
-                                  height: 50,
-                                  width: _clubDetailController
-                                                  .club.value!.enableChat ==
-                                              1 &&
-                                          _clubDetailController
-                                                  .club.value!.isJoined ==
-                                              true
-                                      ? (MediaQuery.of(context).size.width -
-                                              32) *
-                                          0.7
-                                      : (MediaQuery.of(context).size.width -
-                                          32),
-                                  child: FilledButtonType1(
-                                      text: _clubDetailController
-                                                  .club.value!.isJoined ==
-                                              true
-                                          ? LocalizationString.leaveClub
-                                          : LocalizationString.join,
-                                      onPress: () {
-                                        if (_clubDetailController
-                                                .club.value!.isJoined ==
-                                            true) {
-                                          _clubDetailController.leaveClub();
-                                        } else {
-                                          _clubDetailController.joinClub();
-                                        }
-                                      })),
-                          if (_clubDetailController.club.value!.enableChat ==
-                                  1 &&
-                              _clubDetailController.club.value!.isJoined ==
-                                  true)
-                            SizedBox(
-                                height: 50,
-                                width:
-                                    (MediaQuery.of(context).size.width - 32) *
-                                        0.25,
-                                child: FilledButtonType1(
-                                    enabledBackgroundColor:
-                                        Theme.of(context).cardColor.lighten(),
-                                    text: LocalizationString.chat,
-                                    onPress: () {
-                                      EasyLoading.show(
-                                          status: LocalizationString.loading);
-                                      _chatDetailController.getRoomDetail(
-                                          _clubDetailController
-                                              .club.value!.chatRoomId!, (room) {
-                                        EasyLoading.dismiss();
-                                        Get.to(
-                                            () => ChatDetail(chatRoom: room));
-                                      });
-                                    }))
-                        ],
-                      ).p16,
+                      buttonsWidget().p16,
+                      // Text(_clubDetailController.club.value!.desc!,
+                      //         style: Theme.of(context)
+                      //             .textTheme
+                      //             .titleMedium!
+                      //             .copyWith(fontWeight: FontWeight.w200))
+                      //     .hP16,
                     ],
                   );
                 }),
@@ -222,6 +144,106 @@ class ClubDetailState extends State<ClubDetail> {
           appBar()
         ],
       ),
+    );
+  }
+
+  Widget buttonsWidget() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        _clubDetailController.club.value!.createdByUser!.isMe
+            ? Expanded(
+                // height: 50,
+                // width: _clubDetailController
+                //     .club.value!.enableChat ==
+                //     1
+                //     ? (MediaQuery.of(context).size.width -
+                //     32) *
+                //     0.7
+                //     : (MediaQuery.of(context).size.width -
+                //     32),
+                child: FilledButtonType1(
+                    text: LocalizationString.post,
+                    onPress: () {
+                      Get.to(() => SelectMedia(
+                            clubId: _clubDetailController.club.value!.id!,
+                          ));
+                    }))
+            : Expanded(
+                // height: 50,
+                // width: _clubDetailController
+                //     .club.value!.enableChat ==
+                //     1 &&
+                //     _clubDetailController
+                //         .club.value!.isJoined ==
+                //         true
+                //     ? (MediaQuery.of(context).size.width -
+                //     32) *
+                //     0.7
+                //     : (MediaQuery.of(context).size.width -
+                //     32),
+                child: FilledButtonType1(
+                    text: _clubDetailController.club.value!.isJoined == true
+                        ? LocalizationString.leaveClub
+                        : LocalizationString.join,
+                    onPress: () {
+                      if (_clubDetailController.club.value!.isJoined == true) {
+                        _clubDetailController.leaveClub();
+                      } else {
+                        _clubDetailController.joinClub();
+                      }
+                    })),
+        if (_clubDetailController.club.value!.enableChat == 1 &&
+            _clubDetailController.club.value!.isJoined == true)
+          Row(
+            children: [
+              const SizedBox(
+                width: 10,
+              ),
+              SizedBox(
+                  height: 50,
+                  width: (MediaQuery.of(context).size.width - 32) * 0.25,
+                  child: FilledButtonType1(
+                      enabledBackgroundColor:
+                          Theme.of(context).cardColor.lighten(),
+                      text: LocalizationString.chat,
+                      onPress: () {
+                        EasyLoading.show(status: LocalizationString.loading);
+                        _chatDetailController.getRoomDetail(
+                            _clubDetailController.club.value!.chatRoomId!,
+                            (room) {
+                          EasyLoading.dismiss();
+                          Get.to(() => ChatDetail(chatRoom: room));
+                        });
+                      })),
+            ],
+          ),
+        // if (_clubDetailController.club.value!.createdByUser!.isMe &&
+        //     _clubDetailController.club.value!.accessLevel ==
+        //         AccessLevel.private)
+        //   Row(
+        //     children: [
+        //       const SizedBox(
+        //         width: 10,
+        //       ),
+        //       Container(
+        //               color: Theme.of(context).primaryColor,
+        //               height: 50,
+        //               width: 50,
+        //               child: Image.asset(
+        //                 'assets/request.png',
+        //                 fit: BoxFit.contain,
+        //                 color: Theme.of(context).iconTheme.color,
+        //               ).p(12))
+        //           .circular
+        //           .ripple(() {
+        //         Get.to(() => ClubJoinInvitations(
+        //               club: widget.club,
+        //             ));
+        //       }),
+        //     ],
+        //   )
+      ],
     );
   }
 

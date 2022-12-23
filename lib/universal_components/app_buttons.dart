@@ -36,7 +36,7 @@ class FilledButtonType1 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: double.infinity,
+      // width: double.infinity,
       height: height ?? 50,
       color: isEnabled == false
           ? disabledBackgroundColor ??

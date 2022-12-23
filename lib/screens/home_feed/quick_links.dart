@@ -9,7 +9,11 @@ enum QuickLinkType {
   clubs,
   pages,
   tv,
-  event
+  event,
+  story,
+  highlights,
+  goLive,
+  reel
 }
 
 class QuickLink {
@@ -26,119 +30,79 @@ class QuickLink {
 }
 
 class QuickLinkWidget extends StatefulWidget {
-  const QuickLinkWidget({Key? key}) : super(key: key);
+  final VoidCallback callback;
+
+  const QuickLinkWidget({Key? key, required this.callback}) : super(key: key);
 
   @override
   State<QuickLinkWidget> createState() => _QuickLinkWidgetState();
 }
 
 class _QuickLinkWidgetState extends State<QuickLinkWidget> {
-  List<QuickLink> quickLinks = [
-    // QuickLink(
-    //     icon: 'assets/live_broadcasting.png',
-    //     heading: LocalizationString.live,
-    //     subHeading: LocalizationString.joinLiveProfessionals,
-    //     linkType: QuickLinkType.live),
-    QuickLink(
-        icon: 'assets/competitions.png',
-        heading: LocalizationString.competition,
-        subHeading: LocalizationString.joinCompetitionsToEarn,
-        linkType: QuickLinkType.competition),
-    QuickLink(
-        icon: 'assets/club_colored.png',
-        heading: LocalizationString.clubs,
-        subHeading: LocalizationString.placeForPeopleOfCommonInterest,
-        linkType: QuickLinkType.clubs),
-    // QuickLink(
-    //     icon: 'assets/page_colored.png',
-    //     heading: LocalizationString.page,
-    //     subHeading: LocalizationString.spaceForBusiness,
-    //     linkType: QuickLinkType.pages),
-    // QuickLink(
-    //     icon: 'assets/random_call_colored.png',
-    //     heading: LocalizationString.randomCall,
-    //     subHeading: LocalizationString.haveFunByRandomCalling,
-    //     linkType: QuickLinkType.randomCall),
-    QuickLink(
-        icon: 'assets/events.png',
-        heading: LocalizationString.events,
-        subHeading: '',
-        linkType: QuickLinkType.event),
-    QuickLink(
-        icon: 'assets/chat_colored.png',
-        heading: LocalizationString.strangerChat,
-        subHeading: LocalizationString.haveFunByRandomChatting,
-        linkType: QuickLinkType.randomChat),
-
-    QuickLink(
-        icon: 'assets/television.png',
-        heading: LocalizationString.tvs,
-        subHeading: LocalizationString.watchTvs,
-        linkType: QuickLinkType.tv),
-  ];
+  final HomeController _homeController = Get.find();
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 50,
-      child: ListView.separated(
-        padding: const EdgeInsets.only(left: 16, right: 16),
-        scrollDirection: Axis.horizontal,
-        itemCount: quickLinks.length,
-        itemBuilder: (context, index) {
-          QuickLink link = quickLinks[index];
-          return quickLinkView(link).ripple(() {
-            if (link.linkType == QuickLinkType.live) {
-              Get.to(() => const RandomLiveListing());
-            } else if (link.linkType == QuickLinkType.competition) {
-              Get.to(() => const CompetitionsScreen());
-            } else if (link.linkType == QuickLinkType.randomChat) {
-              if (AppConfigConstants.isDemoApp) {
-                AppUtil.showDemoAppConfirmationAlert(
-                    title: 'Demo app',
-                    subTitle:
-                        'This is demo app so might not find online user to test it',
-                    cxt: context,
-                    okHandler: () {
+    return Obx(() => Wrap(
+            spacing: 10,
+            runSpacing: 10,
+            clipBehavior: Clip.hardEdge,
+            children: [
+              for (QuickLink link in _homeController.quickLinks)
+                quickLinkView(link).ripple(() {
+                  widget.callback();
+                  if (link.linkType == QuickLinkType.live) {
+                    Get.to(() => const RandomLiveListing());
+                  } else if (link.linkType == QuickLinkType.competition) {
+                    Get.to(() => const CompetitionsScreen());
+                  } else if (link.linkType == QuickLinkType.randomChat) {
+                    if (AppConfigConstants.isDemoApp) {
+                      AppUtil.showDemoAppConfirmationAlert(
+                          title: 'Demo app',
+                          subTitle:
+                              'This is demo app so might not find online user to test it',
+                          cxt: context,
+                          okHandler: () {
+                            Get.to(() => const FindRandomUser(
+                                  isCalling: false,
+                                ));
+                          });
+                      return;
+                    } else {
                       Get.to(() => const FindRandomUser(
                             isCalling: false,
                           ));
-                    });
-                return;
-              } else {
-                Get.to(() => const FindRandomUser(
-                      isCalling: false,
-                    ));
-              }
-            } else if (link.linkType == QuickLinkType.randomCall) {
-              Get.to(() => const FindRandomUser(
-                    isCalling: true,
-                  ));
-            } else if (link.linkType == QuickLinkType.clubs) {
-              Get.to(() => const ClubsListing());
-            } else if (link.linkType == QuickLinkType.pages) {
-            } else if (link.linkType == QuickLinkType.tv) {
-              Get.to(() => const TvListDashboard());
-            } else if (link.linkType == QuickLinkType.event) {
-              Get.to(() => const EventsDashboardScreen());
-            }
-          });
-        },
-        separatorBuilder: (context, index) {
-          return const SizedBox(
-            width: 10,
-          );
-        },
-      ),
-    );
+                    }
+                  } else if (link.linkType == QuickLinkType.randomCall) {
+                    Get.to(() => const FindRandomUser(
+                          isCalling: true,
+                        ));
+                  } else if (link.linkType == QuickLinkType.clubs) {
+                    Get.to(() => const ClubsListing());
+                  } else if (link.linkType == QuickLinkType.pages) {
+                  } else if (link.linkType == QuickLinkType.tv) {
+                    Get.to(() => const TvListDashboard());
+                  } else if (link.linkType == QuickLinkType.event) {
+                    Get.to(() => const EventsDashboardScreen());
+                  } else if (link.linkType == QuickLinkType.goLive) {
+                    Get.to(() => const CheckingLiveFeasibility());
+                  } else if (link.linkType == QuickLinkType.reel) {
+                    Get.to(() => const CreateReelScreen());
+                  } else if (link.linkType == QuickLinkType.story) {
+                    Get.to(() => const ChooseMediaForStory());
+                  } else if (link.linkType == QuickLinkType.highlights) {
+                    Get.to(() => const ChooseStoryForHighlights());
+                  }
+                })
+            ]).setPadding(left: 16, right: 16, top: 50));
   }
 
   Widget quickLinkView(QuickLink link) {
     return Container(
       height: 50,
-      // width: 200,
       color: Theme.of(context).cardColor,
       child: Row(
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Image.asset(
@@ -156,53 +120,8 @@ class _QuickLinkWidgetState extends State<QuickLinkWidget> {
                 fontWeight: FontWeight.w900,
                 color: Theme.of(context).primaryColor),
           ),
-          // const SizedBox(
-          //   height: 5,
-          // ),
-          // Text(
-          //   link.subHeading,
-          //   style: Theme.of(context).textTheme.bodyMedium,
-          // ),
-          // const SizedBox(
-          //   height: 5,
-          // ),
         ],
       ).hP16,
-    ).round(20);
+    ).round(40);
   }
-
-// Widget quickLinkView(QuickLink link) {
-//   return Container(
-//     height: 170,
-//     width: 170,
-//     color: Theme.of(context).cardColor,
-//     child: Column(
-//       crossAxisAlignment: CrossAxisAlignment.start,
-//       children: [
-//         Image.asset(
-//           link.icon,
-//           height: 60,
-//           width: 60,
-//         ),
-//         const Spacer(),
-//         Text(
-//           link.heading,
-//           style: Theme.of(context).textTheme.titleSmall!.copyWith(
-//               fontWeight: FontWeight.w900,
-//               color: Theme.of(context).primaryColor),
-//         ),
-//         const SizedBox(
-//           height: 5,
-//         ),
-//         Text(
-//           link.subHeading,
-//           style: Theme.of(context).textTheme.bodyMedium,
-//         ),
-//         const SizedBox(
-//           height: 5,
-//         ),
-//       ],
-//     ).p8,
-//   ).round(10);
-// }
 }

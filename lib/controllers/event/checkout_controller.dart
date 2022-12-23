@@ -83,6 +83,9 @@ class CheckoutController extends GetxController {
       case PaymentGateway.googlePay:
         payWithGooglePay(ticketOrder);
         break;
+      case PaymentGateway.inAppPurchse:
+        placeOrder();
+        break;
       case PaymentGateway.wallet:
         placeOrder();
         break;
@@ -179,73 +182,64 @@ class CheckoutController extends GetxController {
   }
 
   payWithPaypal(EventTicketOrderRequest ticketOrder) async {
-    final response = await ApiController()
-        .fetchPaymentIntentClientSecret(amount: ticketOrder.paidAmount!);
-    final clientSecret = response.stripePaymentIntentClientSecret!;
+    EasyLoading.show(status: LocalizationString.loading);
 
-    // 2. use the client secret to confirm the payment and handle the result.
-    try {
-      // final billingDetails = BillingDetails(
-      //   // email is mandatory
-      //   email: email,
-      //   address: Address(
-      //     city: 'Stockholm',
-      //     country: 'SV',
-      //     line1: 'Kungsgatan 1',
-      //     line2: '',
-      //     state: 'Stockholm county',
-      //     postalCode: '111 22',
-      //   ),
-      // );
+    ApiResponseModel response = await ApiController().fetchPaypalClientToken();
 
-      await stripe.Stripe.instance.confirmPayment(
-        paymentIntentClientSecret: clientSecret,
-        data: const stripe.PaymentMethodParams.payPal(
-          paymentMethodData: stripe.PaymentMethodData(),
-        ),
+    if (response.paypalClientToken != null) {
+      final request = BraintreePayPalRequest(
+          amount: ticketOrder.amountToBePaid!.toString());
+      BraintreePaymentMethodNonce? result = await Braintree.requestPaypalNonce(
+        response.paypalClientToken!,
+        request,
       );
+      if (result != null) {
+        // EasyLoading.dismiss();
+        // print(result!.nonce);
+        // return;
+        processingPayment.value = ProcessingPaymentStatus.inProcess;
 
-      AppUtil.showToast(
-          context: context!,
-          message: 'Payment successfully completed',
-          isSuccess: true);
-    } on Exception catch (e) {
-      if (e is stripe.StripeException) {
-        processingPayment.value = ProcessingPaymentStatus.failed;
-        AppUtil.showToast(
-            context: context!,
-            message: 'Error from Stripe: ${e.error.localizedMessage}',
-            isSuccess: true);
+        String deviceData = '';
+        if (Platform.isAndroid) {
+          DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+          AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+          deviceData = 'android, ${androidInfo.model}';
+        } else {
+          DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+          IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+          deviceData = 'iOS, ${iosInfo.utsname.machine}';
+        }
+        EasyLoading.dismiss();
+
+        ApiController()
+            .sendPaypalPayment(
+                amount: ticketOrder.amountToBePaid!,
+                nonce: result.nonce,
+                deviceData: deviceData)
+            .then((response) {
+          if (response.success) {
+            Map<String, String> payment = {
+              'payment_mode': '2',
+              'amount': balanceToPay.value.toString(),
+              'transaction_id': response.transactionId!
+            };
+
+            ticketOrder.payments
+                .removeWhere((element) => element['payment_mode'] == '2');
+            ticketOrder.payments.add(payment);
+            placeOrder();
+            // processingPayment.value = ProcessingPaymentStatus.completed;
+          } else {
+            processingPayment.value = ProcessingPaymentStatus.failed;
+          }
+        });
       } else {
-        processingPayment.value = ProcessingPaymentStatus.failed;
-
-        AppUtil.showToast(
-            context: context!,
-            message: 'Unforeseen error: $e',
-            isSuccess: true);
+        EasyLoading.dismiss();
       }
+    } else {
+      EasyLoading.dismiss();
+      processingPayment.value = ProcessingPaymentStatus.failed;
     }
-
-    // final request = BraintreeDropInRequest(
-    //   clientToken: AppConfigConstants.braintreeTokenizationKey,
-    //   collectDeviceData: true,
-    //   googlePaymentRequest: BraintreeGooglePaymentRequest(
-    //     totalPrice: balanceToPay.value.toString(),
-    //     currencyCode: 'USD',
-    //     billingAddressRequired: false,
-    //   ),
-    //   paypalRequest: BraintreePayPalRequest(
-    //     amount: balanceToPay.value.toString(),
-    //     displayName: 'Example company',
-    //   ),
-    // );
-    // BraintreeDropInResult? result = await BraintreeDropIn.start(request);
-    //
-    // if (result != null) {
-    //   print('Nonce: ${result.paymentMethodNonce.nonce}');
-    // } else {
-    //   print('Selection was canceled.');
-    // }
   }
 
   payWithStripe(EventTicketOrderRequest ticketOrder) async {

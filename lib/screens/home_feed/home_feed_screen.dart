@@ -18,15 +18,6 @@ class HomeFeedState extends State<HomeFeedScreen> {
 
   final _controller = ScrollController();
 
-  final List<String> options = [
-    LocalizationString.story,
-    LocalizationString.highlights,
-    LocalizationString.goLive,
-    LocalizationString.reel,
-
-    // LocalizationString.liveNow,
-  ];
-
   String? selectedValue;
 
   @override
@@ -35,6 +26,7 @@ class HomeFeedState extends State<HomeFeedScreen> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       loadData(isRecent: true);
+      _homeController.loadQuickLinksAccordingToSettings();
     });
 
     _controller.addListener(() {
@@ -61,6 +53,7 @@ class HomeFeedState extends State<HomeFeedScreen> {
   void dispose() {
     super.dispose();
     _homeController.clear();
+    _homeController.closeQuickLinks();
   }
 
   loadPosts(bool? isRecent) {
@@ -86,9 +79,27 @@ class HomeFeedState extends State<HomeFeedScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Theme.of(context).backgroundColor,
+        floatingActionButton: Container(
+          height: 50,
+          width: 50,
+          color: Theme.of(context).primaryColor,
+          child: const ThemeIconWidget(
+            ThemeIcon.edit,
+            size: 25,
+          ),
+        ).circular.ripple(() {
+          Future.delayed(
+            Duration.zero,
+            () => showGeneralDialog(
+                context: context,
+                pageBuilder: (context, animation, secondaryAnimation) =>
+                    const SelectMedia()),
+          );
+        }),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            menuView(),
             const SizedBox(
               height: 55,
             ),
@@ -125,46 +136,20 @@ class HomeFeedState extends State<HomeFeedScreen> {
                 const SizedBox(
                   width: 20,
                 ),
-                DropdownButtonHideUnderline(
-                  child: DropdownButton2(
-                    customButton: Container(
+                Obx(() => Container(
                       color: Theme.of(context).backgroundColor,
                       height: 25,
                       width: 25,
-                      child: const ThemeIconWidget(
-                        ThemeIcon.plus,
+                      child: ThemeIconWidget(
+                        _homeController.openQuickLinks.value == true
+                            ? ThemeIcon.close
+                            : ThemeIcon.menuIcon,
                         // color: Theme.of(context).primaryColor,
                         size: 25,
                       ),
-                    ),
-                    items: options
-                        .map((item) => DropdownMenuItem<String>(
-                              value: item,
-                              child: Text(
-                                item.tr,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyLarge!
-                                    .copyWith(fontWeight: FontWeight.w600),
-                              ),
-                            ))
-                        .toList(),
-                    value: selectedValue,
-                    onChanged: (value) {
-                      _homeController.contentOptionSelected(
-                          value as String, context);
-                    },
-                    itemPadding: const EdgeInsets.only(left: 16, right: 16),
-                    dropdownWidth: 150,
-                    dropdownPadding: const EdgeInsets.symmetric(vertical: 6),
-                    dropdownElevation: 8,
-                    offset: const Offset(0, 8),
-                    dropdownDecoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                ),
-                // const SizedBox(width: 15),
+                    ).ripple(() {
+                      _homeController.quickLinkSwitchToggle();
+                    })),
               ],
             ).hp(20),
             const SizedBox(
@@ -174,6 +159,18 @@ class HomeFeedState extends State<HomeFeedScreen> {
               child: postsView(),
             ),
           ],
+        ));
+  }
+
+  Widget menuView() {
+    return Obx(() => AnimatedContainer(
+          height: _homeController.openQuickLinks.value == true ? 320 : 0,
+          width: Get.width,
+          color: Theme.of(context).primaryColor,
+          duration: const Duration(milliseconds: 500),
+          child: QuickLinkWidget(callback: () {
+            _homeController.closeQuickLinks();
+          }),
         ));
   }
 
@@ -270,18 +267,20 @@ class HomeFeedState extends State<HomeFeedScreen> {
       return ListView.separated(
               controller: _controller,
               padding: const EdgeInsets.only(bottom: 100),
-              itemCount: _homeController.posts.length + 4,
+              itemCount: _homeController.posts.length + 3,
               itemBuilder: (context, index) {
                 if (index == 0) {
                   return Obx(() =>
                       _homeController.isRefreshingStories.value == true
                           ? const StoryAndHighlightsShimmer()
                           : storiesView());
-                } else if (index == 1) {
-                  return const QuickLinkWidget();
-                } else if (index == 2) {
+                }
+                // else if (index == 1) {
+                //   return const QuickLinkWidget();
+                // }
+                else if (index == 1) {
                   return postingView().hP16;
-                } else if (index == 3) {
+                } else if (index == 2) {
                   return Obx(() => Column(
                         children: [
                           HorizontalMenuBar(
@@ -323,7 +322,7 @@ class HomeFeedState extends State<HomeFeedScreen> {
                         ],
                       ));
                 } else {
-                  PostModel model = _homeController.posts[index - 4];
+                  PostModel model = _homeController.posts[index - 3];
 
                   return PostCard(
                     model: model,

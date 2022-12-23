@@ -654,3 +654,112 @@ class GifterUserTile extends StatelessWidget {
     );
   }
 }
+
+class ClubJoinRequestTile extends StatelessWidget {
+  final UserModel profile;
+  final VoidCallback acceptBtnClicked;
+  final VoidCallback declineBtnClicked;
+  final VoidCallback viewCallback;
+
+  const ClubJoinRequestTile({
+    Key? key,
+    required this.profile,
+    required this.viewCallback,
+    required this.acceptBtnClicked,
+    required this.declineBtnClicked,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final ProfileController profileController = Get.find();
+    final AgoraLiveController agoraLiveController = Get.find();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            UserAvatarView(
+              user: profile,
+              size: 40,
+              onTapHandler: () {
+                Live live = Live(
+                    channelName: profile.liveCallDetail!.channelName,
+                    isHosting: false,
+                    host: profile,
+                    token: profile.liveCallDetail!.token,
+                    liveId: profile.liveCallDetail!.id);
+                agoraLiveController.joinAsAudience(
+                  live: live,
+                );
+              },
+            ),
+            SizedBox(
+              width: MediaQuery.of(context).size.width - 200,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    profile.userName,
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyLarge!
+                        .copyWith(fontWeight: FontWeight.w900),
+                  ).bP4,
+                  profile.country != null
+                      ? Text(
+                          '${profile.city!}, ${profile.country!}',
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        )
+                      : Container()
+                ],
+              ).hP16,
+            ),
+            // const Spacer(),
+          ],
+        ).ripple(() {
+          viewCallback();
+        }),
+        const SizedBox(
+          height: 20,
+        ),
+        Row(
+          children: [
+            SizedBox(
+                height: 35,
+                width: 120,
+                child: BorderButtonType1(
+                    // icon: ThemeIcon.message,
+                    text: LocalizationString.account,
+                    textStyle: Theme.of(context)
+                        .textTheme
+                        .bodyLarge!
+                        .copyWith(fontWeight: FontWeight.w600)
+                        .copyWith(color: Theme.of(context).primaryColor),
+                    onPress: () {
+                      acceptBtnClicked();
+                    })),
+            const SizedBox(
+              width: 10,
+            ),
+            SizedBox(
+                height: 35,
+                width: 120,
+                child: BorderButtonType1(
+                    // icon: ThemeIcon.message,
+                    text: LocalizationString.decline,
+                    textStyle: Theme.of(context)
+                        .textTheme
+                        .bodyLarge!
+                        .copyWith(fontWeight: FontWeight.w600)
+                        .copyWith(color: Theme.of(context).primaryColor),
+                    onPress: () {
+                      declineBtnClicked();
+                    })),
+          ],
+        ),
+      ],
+    );
+  }
+}

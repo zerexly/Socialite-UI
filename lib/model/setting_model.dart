@@ -45,6 +45,38 @@ class SettingModel {
 
   String? pid;
 
+  bool enableImagePost;
+  bool enableVideoPost;
+  bool enableStories;
+  bool enableHighlights;
+  bool enableChat;
+  bool enableLocationSharingInChat;
+  bool enablePhotoSharingInChat;
+  bool enableVideoSharingInChat;
+  bool enableAudioSharingInChat;
+  bool enableFileSharingInChat;
+  bool enableGifSharingInChat;
+  bool enableDrawingSharingInChat;
+  bool enableClubSharingInChat;
+  bool enableProfileSharingInChat;
+  bool enableReplyInChat;
+  bool enableForwardingInChat;
+  bool enableStarMessage;
+  bool enableAudioCalling;
+  bool enableVideoCalling;
+  bool enableLive;
+  bool enableClubs;
+  bool enableCompetitions;
+  bool enableEvents;
+  bool enableStrangerChat;
+  bool enableProfileVerification;
+  bool enableDarkLightModeSwitch;
+  bool enableWatchTv;
+  bool enablePodcasts;
+
+  // nee to add
+  bool enableReel;
+
   SettingModel({
     required this.email,
     required this.phone,
@@ -88,6 +120,35 @@ class SettingModel {
     required this.networkToUse,
     required this.serviceFee,
     required this.stripePublishableKey,
+    required this.enableImagePost,
+    required this.enableVideoPost,
+    required this.enableStories,
+    required this.enableHighlights,
+    required this.enableChat,
+    required this.enableLocationSharingInChat,
+    required this.enablePhotoSharingInChat,
+    required this.enableVideoSharingInChat,
+    required this.enableAudioSharingInChat,
+    required this.enableFileSharingInChat,
+    required this.enableGifSharingInChat,
+    required this.enableDrawingSharingInChat,
+    required this.enableClubSharingInChat,
+    required this.enableProfileSharingInChat,
+    required this.enableReplyInChat,
+    required this.enableForwardingInChat,
+    required this.enableStarMessage,
+    required this.enableAudioCalling,
+    required this.enableVideoCalling,
+    required this.enableLive,
+    required this.enableClubs,
+    required this.enableCompetitions,
+    required this.enableEvents,
+    required this.enableStrangerChat,
+    required this.enableProfileVerification,
+    required this.enableDarkLightModeSwitch,
+    required this.enableWatchTv,
+    required this.enablePodcasts,
+    required this.enableReel,
   });
 
   factory SettingModel.fromJson(Map<String, dynamic> json) => SettingModel(
@@ -141,5 +202,35 @@ class SettingModel {
         networkToUse: json["network_to_use"],
         serviceFee: json["serviceFee"] ?? 5,
         stripePublishableKey: json["stripe_publishable_key"],
+
+        enableChat: json["enableChat"] == 1,
+        enableAudioCalling: json["enableAudioCalling"] == 1,
+        enableAudioSharingInChat: json["enableAudioSharingInChat"] == 1,
+        enableClubs: json["enableClubs"] == 1,
+        enableClubSharingInChat: json["enableClubSharingInChat"] == 1,
+        enableCompetitions: json["enableCompetitions"] == 1,
+        enableDarkLightModeSwitch: json["enableDarkLightModeSwitch"] == 1,
+        enableDrawingSharingInChat: json["enableDrawingSharingInChat"] == 1,
+        enableEvents: json["enableEvents"] == 1,
+        enableStrangerChat: json["enableStrangerChat"] == 1,
+        enableFileSharingInChat: json["enableFileSharingInChat"] == 1,
+        enableForwardingInChat: json["enableForwardingInChat"] == 1,
+        enableGifSharingInChat: json["enableGifSharingInChat"] == 1,
+        enableHighlights: json["enableHighlights"] == 1,
+        enableImagePost: json["enableImagePost"] == 1,
+        enableLive: json["enableLive"] == 1,
+        enableLocationSharingInChat: json["enableLocationSharingInChat"] == 1,
+        enablePhotoSharingInChat: json["enablePhotoSharingInChat"] == 1,
+        enablePodcasts: json["enablePodcasts"] == 1,
+        enableProfileSharingInChat: json["enableProfileSharingInChat"] == 1,
+        enableProfileVerification: json["enableProfileVerification"] == 1,
+        enableReplyInChat: json["enableReplyInChat"] == 1,
+        enableStarMessage: json["enableStarMessage"] == 1,
+        enableStories: json["enableStories"] == 1,
+        enableVideoCalling: json["enableVideoCalling"] == 1,
+        enableVideoPost: json["enableVideoPost"] == 1,
+        enableVideoSharingInChat: json["enableVideoSharingInChat"] == 1,
+        enableWatchTv: json["enableWatchTv"] == 1,
+        enableReel: json["enableReel"] != 1,
       );
 }
