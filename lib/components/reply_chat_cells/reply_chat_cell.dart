@@ -26,8 +26,9 @@ class ReplyOriginalMessageTile extends StatelessWidget {
                     color: Theme.of(context).primaryColor.darken(0.5)),
               ),
               const SizedBox(height: 15),
+
               messageTypeShortInfo(
-                model: message,
+                message: message,
                 context: context,
               )
             ],

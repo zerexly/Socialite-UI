@@ -272,7 +272,7 @@ class EventBookingDetailState extends State<EventBookingDetail> {
         Column(
           children: [
             for (EventOrganizer sponsor
-                in widget.booking.event.organizers ?? [])
+                in widget.booking.event.organizers )
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [

@@ -671,7 +671,6 @@ class ClubJoinRequestTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ProfileController profileController = Get.find();
     final AgoraLiveController agoraLiveController = Get.find();
 
     return Column(

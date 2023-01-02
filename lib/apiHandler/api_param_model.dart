@@ -1,7 +1,4 @@
-import 'dart:io';
-
 import 'package:foap/helper/common_import.dart';
-import 'package:foap/util/shared_prefs.dart';
 
 class ApiParamModel {
   dynamic getLoginParam(String email, String password) async {

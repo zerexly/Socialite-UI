@@ -1,5 +1,4 @@
 import 'package:foap/helper/common_import.dart';
-import 'package:get/get.dart';
 
 class EventGallery extends StatefulWidget {
   final EventModel event;

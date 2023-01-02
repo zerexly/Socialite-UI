@@ -322,12 +322,12 @@ class AgoraLiveController extends GetxController {
   sendTextMessage(String messageText) {
     // if (messageTf.value.text.removeAllWhitespace.trim().isNotEmpty) {
     String localMessageId = randomId();
-
+    String encrtyptedMessage = messageText.encrypted();
     var message = {
       'userId': getIt<UserProfileManager>().user!.id,
       'liveCallId': liveId,
       'messageType': messageTypeId(MessageContentType.text),
-      'message': messageText,
+      'message': encrtyptedMessage,
       'localMessageId': localMessageId,
       'picture': getIt<UserProfileManager>().user!.picture,
       'username': getIt<UserProfileManager>().user!.userName,
@@ -359,12 +359,13 @@ class AgoraLiveController extends GetxController {
   sendGiftMessage(String giftImage, int coins) {
     String localMessageId = randomId();
     var content = {'giftImage': giftImage, 'coins': coins.toString()};
+    String encrtyptedMessage = json.encode(content).encrypted();
 
     var message = {
       'userId': getIt<UserProfileManager>().user!.id,
       'liveCallId': liveId,
       'messageType': messageTypeId(MessageContentType.gift),
-      'message': json.encode(content),
+      'message': encrtyptedMessage,
       'localMessageId': localMessageId,
       'picture': getIt<UserProfileManager>().user!.picture,
       'username': getIt<UserProfileManager>().user!.userName,

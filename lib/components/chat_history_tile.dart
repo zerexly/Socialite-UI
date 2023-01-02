@@ -63,8 +63,9 @@ class ChatHistoryTile extends StatelessWidget {
                               )
                             : model.lastMessage == null
                                 ? Container()
-                                : messageTypeShortInfo(
-                                    model: model.lastMessage!,
+                                :
+                        messageTypeShortInfo(
+                                    message: model.lastMessage!,
                                     context: context,
                                   ),
                         const Spacer(),

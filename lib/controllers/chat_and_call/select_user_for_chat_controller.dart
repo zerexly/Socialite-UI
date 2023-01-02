@@ -53,34 +53,34 @@ class SelectUserForChatController extends GetxController {
     updateActionForUser(toUser, 1);
     if (post != null) {
       chatDetailController.getChatRoomWithUser(
-          toUser.id,
-          (room) => () {
-                chatDetailController
-                    .sendPostAsMessage(post: post, room: room)
-                    .then((status) {
-                  if (status == true) {
-                    updateActionForUser(toUser, 2);
-                  } else {
-                    updateActionForUser(toUser, 0);
-                  }
-                  update();
-                });
-              });
+          userId: toUser.id,
+          callback: (room) {
+            chatDetailController
+                .sendPostAsMessage(post: post, room: room)
+                .then((status) {
+              if (status == true) {
+                updateActionForUser(toUser, 2);
+              } else {
+                updateActionForUser(toUser, 0);
+              }
+              update();
+            });
+          });
     } else {
       chatDetailController.getChatRoomWithUser(
-          toUser.id,
-          (room) => () {
-                chatDetailController
-                    .forwardSelectedMessages(room:room)
-                    .then((status) {
-                  if (status == true) {
-                    updateActionForUser(toUser, 2);
-                  } else {
-                    updateActionForUser(toUser, 0);
-                  }
-                  update();
-                });
-              });
+          userId: toUser.id,
+          callback: (room) {
+            chatDetailController
+                .forwardSelectedMessages(room: room)
+                .then((status) {
+              if (status == true) {
+                updateActionForUser(toUser, 2);
+              } else {
+                updateActionForUser(toUser, 0);
+              }
+              update();
+            });
+          });
     }
   }
 

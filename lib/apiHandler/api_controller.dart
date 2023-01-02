@@ -164,17 +164,20 @@ class ApiController {
     });
   }
 
+
   Future<ApiResponseModel> getPosts(
       {int? userId,
-      int? isPopular,
-      int? isFollowing,
-      int? clubId,
-      int? isSold,
-      int? isMine,
-      int? isRecent,
-      String? title,
-      String? hashtag,
-      int page = 0}) async {
+        int? isPopular,
+        int? isFollowing,
+        int? clubId,
+        int? isSold,
+        int? isMine,
+        int? isRecent,
+        int? audioId,
+        int? isReel,
+        String? title,
+        String? hashtag,
+        int page = 0}) async {
     String? authKey = await SharedPrefs().getAuthorizationKey();
     var url = NetworkConstantsUtil.baseUrl + NetworkConstantsUtil.searchPost;
     if (userId != null) {
@@ -204,13 +207,19 @@ class ApiController {
     if (clubId != null) {
       url = '$url&club_id=$clubId';
     }
+    if (isReel != null) {
+      url = '$url&is_reel=$isReel';
+    }
+    if (audioId != null) {
+      url = '$url&audio_id=$audioId';
+    }
     url = '$url&page=$page';
 
     return await http.get(Uri.parse(url), headers: {
       "Authorization": "Bearer ${authKey!}"
     }).then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-          await getResponse(response.body, NetworkConstantsUtil.searchPost);
+      await getResponse(response.body, NetworkConstantsUtil.searchPost);
       return parsedResponse;
     });
   }
@@ -1304,13 +1313,13 @@ class ApiController {
 
   Future<ApiResponseModel> getChatRooms() async {
     String? authKey = await SharedPrefs().getAuthorizationKey();
-    var url = NetworkConstantsUtil.baseUrl + NetworkConstantsUtil.getRooms;
+    var url = NetworkConstantsUtil.baseUrl + NetworkConstantsUtil.getChatRooms;
 
     return await http.get(Uri.parse(url), headers: {
       "Authorization": "Bearer ${authKey!}"
     }).then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-          await getResponse(response.body, NetworkConstantsUtil.getRooms);
+          await getResponse(response.body, NetworkConstantsUtil.getChatRooms);
       return parsedResponse;
     });
   }
@@ -1326,6 +1335,24 @@ class ApiController {
     }).then((http.Response response) async {
       final ApiResponseModel parsedResponse = await getResponse(
           response.body, NetworkConstantsUtil.getChatRoomDetail);
+      return parsedResponse;
+    });
+  }
+
+  Future<ApiResponseModel> getChatHistory(
+      {required int roomId, required int lastMessageId}) async {
+    String? authKey = await SharedPrefs().getAuthorizationKey();
+    var url = NetworkConstantsUtil.baseUrl + NetworkConstantsUtil.chatHistory;
+    url = url
+        .replaceAll('{{room_id}}', roomId.toString())
+        .replaceAll('{{last_message_id}}', lastMessageId.toString());
+
+    print(url);
+    return await http.get(Uri.parse(url), headers: {
+      "Authorization": "Bearer ${authKey!}"
+    }).then((http.Response response) async {
+      final ApiResponseModel parsedResponse =
+          await getResponse(response.body, NetworkConstantsUtil.chatHistory);
       return parsedResponse;
     });
   }
@@ -1726,9 +1753,6 @@ class ApiController {
     String? authKey = await SharedPrefs().getAuthorizationKey();
     dynamic param = orderRequest.toJson();
 
-    print('url $url');
-    print('param $param');
-
     return http
         .post(Uri.parse(url),
             headers: {
@@ -1820,9 +1844,6 @@ class ApiController {
     var url =
         NetworkConstantsUtil.baseUrl + NetworkConstantsUtil.cancelEventBooking;
     String? authKey = await SharedPrefs().getAuthorizationKey();
-
-    print(url);
-    print({'id': bookingId.toString()});
 
     return http.post(Uri.parse(url), headers: {
       "Authorization": "Bearer ${authKey!}"
@@ -2113,7 +2134,7 @@ class ApiController {
     });
   }
 
-  /****************** Reel *****************/
+  /// **************** Reel *****************/
 
   Future<ApiResponseModel> getReelCategories() async {
     String? authKey = await SharedPrefs().getAuthorizationKey();
@@ -2138,8 +2159,6 @@ class ApiController {
     if (title != null) {
       url = '$url&name=$title';
     }
-
-    print(url);
 
     return await http.get(Uri.parse(url), headers: {
       "Authorization": "Bearer ${authKey!}"

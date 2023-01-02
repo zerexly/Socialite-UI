@@ -99,7 +99,8 @@ class ChatRoomDetailController extends GetxController {
     if (chatMediaDirectory.existsSync() == false) {
       await Directory(mediaFolderPath).create();
     }
-    List messages = await getIt<DBManager>().getAllMessages(roomId);
+    List messages =
+        await getIt<DBManager>().getAllMessages(roomId: roomId, offset: 0);
 
     File chatTextFile = File('${chatMediaDirectory.path}/chat.text');
     if (chatTextFile.existsSync()) {
@@ -113,7 +114,7 @@ class ChatRoomDetailController extends GetxController {
           message.isDateSeparator == false) {
         messagesString += '\n';
         messagesString +=
-            '[${message.messageTime}] ${message.isMineMessage ? 'Me' : message.userName}: ${message.isDeleted == 1 ? LocalizationString.thisMessageIsDeleted : message.messageContent}';
+            '[${message.messageTime}] ${message.isMineMessage ? 'Me' : message.userName}: ${message.isDeleted == true ? LocalizationString.thisMessageIsDeleted : message.messageContent}';
       }
     }
 
@@ -154,6 +155,6 @@ class ChatRoomDetailController extends GetxController {
   }
 
   deleteRoomChat(ChatRoomModel chatRoom) {
-    getIt<DBManager>().deleteRoom(chatRoom);
+    getIt<DBManager>().deleteMessagesInRoom(chatRoom);
   }
 }

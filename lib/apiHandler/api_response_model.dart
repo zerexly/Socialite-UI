@@ -1,10 +1,7 @@
 import 'dart:developer';
-
 import 'package:foap/helper/common_import.dart';
 import 'package:get/get.dart';
-
 import '../model/faq_model.dart';
-import 'package:flutter_stripe/flutter_stripe.dart';
 
 class ApiResponseModel {
   bool success = true;
@@ -69,6 +66,8 @@ class ApiResponseModel {
 
   // chat
   List<ChatRoomModel> chatRooms = [];
+  List<ChatMessageModel> messages = [];
+
   ChatRoomModel? room;
 
   APIMetaData? metaData;
@@ -408,7 +407,7 @@ class ApiResponseModel {
         } else if (data['room_id'] != null) {
           model.roomId = data['room_id'];
         } else if (data['room'] != null) {
-          if (url == NetworkConstantsUtil.getRooms) {
+          if (url == NetworkConstantsUtil.getChatRooms) {
             model.chatRooms = [];
             var room = data['room'] as List<dynamic>?;
             if (room != null && room.isNotEmpty) {
@@ -425,6 +424,12 @@ class ApiResponseModel {
               var roomData = data['room'];
               model.room = ChatRoomModel.fromJson(roomData);
             }
+          }
+        } else if (data['chatMessage'] != null) {
+          var items = data['chatMessage']['items'];
+          if (items != null && items.length > 0) {
+            model.messages = List<ChatMessageModel>.from(
+                items.map((x) => ChatMessageModel.fromJson(x)));
           }
         } else if (data['faq'] != null) {
           var items = data['faq']['items'];

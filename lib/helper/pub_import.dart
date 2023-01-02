@@ -74,7 +74,6 @@ export 'package:pinch_zoom/pinch_zoom.dart';
 export 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 export 'package:animate_do/animate_do.dart';
 export 'package:razorpay_flutter/razorpay_flutter.dart';
-export 'package:razorpay_flutter/razorpay_flutter.dart';
 export 'package:flutter_braintree/flutter_braintree.dart';
 export 'package:sqflite/sqflite.dart';
 export 'package:qr_flutter/qr_flutter.dart';
@@ -82,6 +81,8 @@ export 'package:widgets_to_image/widgets_to_image.dart';
 export 'package:lottie/lottie.dart';
 export 'package:device_info_plus/device_info_plus.dart';
 export 'package:marquee/marquee.dart';
+export 'package:video_compress/video_compress.dart';
+export 'package:aescryptojs/aescryptojs.dart';
 
 // export 'package:pip_flutter/pipflutter_player.dart';
 // export 'package:pip_flutter/pipflutter_player_configuration.dart';

@@ -1,5 +1,6 @@
 import 'package:foap/helper/common_import.dart';
 import 'package:get/get.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class ChatDetail extends StatefulWidget {
   final ChatRoomModel chatRoom;
@@ -13,6 +14,8 @@ class ChatDetail extends StatefulWidget {
 class _ChatDetailState extends State<ChatDetail> {
   final ChatDetailController _chatDetailController = Get.find();
   final ScrollController _controller = ScrollController();
+  final RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
 
   @override
   void initState() {
@@ -21,8 +24,15 @@ class _ChatDetailState extends State<ChatDetail> {
   }
 
   loadChat() {
-    _chatDetailController.loadChat(widget.chatRoom);
+    _chatDetailController.loadChat(widget.chatRoom, () {});
+    _chatDetailController.loadWallpaper(widget.chatRoom.id);
     scrollToBottom();
+  }
+
+  refreshData() {
+    _chatDetailController.loadChat(widget.chatRoom, () {
+      _refreshController.refreshCompleted();
+    });
   }
 
   @override
@@ -89,9 +99,11 @@ class _ChatDetailState extends State<ChatDetail> {
                               .borderWithRadius(
                                   context: context, value: 1, radius: 10)
                               .ripple(() {
-                            _chatDetailController.sendSmartMessage(
-                                smartMessage: _chatDetailController
+                            _chatDetailController.sendTextMessage(
+                                messageText: _chatDetailController
                                     .smartReplySuggestions[index],
+                                context: context,
+                                mode: _chatDetailController.actionMode.value,
                                 room: _chatDetailController.chatRoom.value!);
                           });
                         },
@@ -368,7 +380,7 @@ class _ChatDetailState extends State<ChatDetail> {
                       fontWeight: FontWeight.w600),
                 ).bP4,
                 Text(
-                  message.messageContent,
+                  message.textMessage,
                   style: Theme.of(context).textTheme.bodyLarge,
                 )
               ],
@@ -405,7 +417,7 @@ class _ChatDetailState extends State<ChatDetail> {
                       fontWeight: FontWeight.w600),
                 ).bP4,
                 messageTypeShortInfo(
-                  model: message,
+                  message: message,
                   context: context,
                 ),
               ],
@@ -557,25 +569,54 @@ class _ChatDetailState extends State<ChatDetail> {
                             fit: BoxFit.cover,
                           ),
                         ),
-                  child: ListView.builder(
-                    controller: _controller,
-                    // itemScrollController: _itemScrollController,
-                    // itemPositionsListener: _itemPositionsListener,
-                    padding: const EdgeInsets.only(
-                        top: 10, bottom: 50, left: 16, right: 16),
-                    itemCount: _chatDetailController.messages.length,
-                    itemBuilder: (ctx, index) {
-                      ChatMessageModel message =
-                          _chatDetailController.messages[index];
+                  child: ListView.separated(
+                          controller: _controller,
+                          // itemScrollController: _itemScrollController,
+                          // itemPositionsListener: _itemPositionsListener,
+                          padding: const EdgeInsets.only(
+                              top: 10, bottom: 50, left: 16, right: 16),
+                          itemCount: _chatDetailController.messages.length,
+                          itemBuilder: (ctx, index) {
+                            ChatMessageModel message =
+                                _chatDetailController.messages[index];
 
-                      return message.isDeleted == 1 ||
-                              message.isDateSeparator ||
-                              message.messageContentType ==
-                                  MessageContentType.groupAction
-                          ? messageTile(message)
-                          : chatMessageFocusMenu(message);
-                    },
-                  ));
+                            ChatMessageModel? lastMessage;
+
+                            if (index > 0) {
+                              lastMessage =
+                                  _chatDetailController.messages[index - 1];
+                            }
+
+                            String dateTimeStr = message.date;
+                            bool addDateSeparator = false;
+                            if (dateTimeStr != lastMessage?.date &&
+                                message.isDateSeparator == false) {
+                              addDateSeparator = true;
+                            }
+
+                            return Column(
+                              children: [
+                                if (addDateSeparator)
+                                  dateSeparatorWidget(message),
+                                message.isDeleted == true ||
+                                        message.isDateSeparator ||
+                                        message.messageContentType ==
+                                            MessageContentType.groupAction
+                                    ? messageTile(message)
+                                    : chatMessageFocusMenu(message),
+                              ],
+                            );
+                          },
+                          separatorBuilder: (ctx, index) {
+                            return const SizedBox(
+                              height: 20,
+                            );
+                          })
+                      .addPullToRefresh(
+                          refreshController: _refreshController,
+                          enablePullUp: false,
+                          onRefresh: refreshData,
+                          onLoading: () {}));
         });
   }
 
@@ -610,8 +651,7 @@ class _ChatDetailState extends State<ChatDetail> {
               ),
               trailingIcon: const Icon(Icons.file_copy, size: 18),
               onPressed: () async {
-                await Clipboard.setData(
-                    ClipboardData(text: message.messageContent));
+                await Clipboard.setData(ClipboardData(text: message.decrypt));
               }),
         if (_chatDetailController.chatRoom.value?.canIChat == true)
           FocusedMenuItem(
@@ -681,40 +721,31 @@ class _ChatDetailState extends State<ChatDetail> {
   }
 
   Widget messageTile(ChatMessageModel chatMessage) {
-    return Column(
-      children: [
-        chatMessage.isDateSeparator
-            ? Container(
-                color: Theme.of(context)
-                    .primaryColor
-                    .lighten(0.2)
-                    .withOpacity(0.5),
-                width: 120,
-                child: Center(
-                  child: Text(chatMessage.date)
-                      .setPadding(left: 8, right: 8, top: 4, bottom: 4),
-                ),
-              ).round(15).bP25
-            : ChatMessageTile(
-                message: chatMessage,
-                showName:
-                    _chatDetailController.chatRoom.value?.isGroupChat == true,
-                actionMode: _chatDetailController.actionMode.value ==
-                        ChatMessageActionMode.forward ||
-                    _chatDetailController.actionMode.value ==
-                        ChatMessageActionMode.delete,
-                replyMessageTapHandler: (message) {
-                  replyMessageTapped(chatMessage);
-                },
-                messageTapHandler: (message) {
-                  messageTapped(chatMessage);
-                },
-              ),
-        const SizedBox(
-          height: 20,
-        )
-      ],
+    return ChatMessageTile(
+      message: chatMessage,
+      showName: _chatDetailController.chatRoom.value?.isGroupChat == true,
+      actionMode: _chatDetailController.actionMode.value ==
+              ChatMessageActionMode.forward ||
+          _chatDetailController.actionMode.value ==
+              ChatMessageActionMode.delete,
+      replyMessageTapHandler: (message) {
+        replyMessageTapped(chatMessage);
+      },
+      messageTapHandler: (message) {
+        messageTapped(chatMessage);
+      },
     );
+  }
+
+  Widget dateSeparatorWidget(ChatMessageModel chatMessage) {
+    return Container(
+      color: Theme.of(context).primaryColor.lighten(0.2).withOpacity(0.5),
+      width: 120,
+      child: Center(
+        child: Text(chatMessage.date)
+            .setPadding(left: 8, right: 8, top: 4, bottom: 4),
+      ),
+    ).round(15).bP25;
   }
 
   void messageTapped(ChatMessageModel model) async {
@@ -835,6 +866,7 @@ class _ChatDetailState extends State<ChatDetail> {
   sendMessage() {
     // if (messageTf.text.removeAllWhitespace.trim().isNotEmpty) {
     _chatDetailController.sendTextMessage(
+        messageText: _chatDetailController.messageTf.value.text,
         context: context,
         mode: _chatDetailController.actionMode.value,
         room: _chatDetailController.chatRoom.value!);
@@ -878,12 +910,11 @@ class _ChatDetailState extends State<ChatDetail> {
         builder: (context) =>
             SelectFollowingUserForMessageSending(sendToUserCallback: (user) {
               _chatDetailController.getChatRoomWithUser(
-                  user.id,
-                  (room) => () {
-                        _chatDetailController.forwardSelectedMessages(
-                            room: room);
-                        Get.back();
-                      });
+                  userId: user.id,
+                  callback: (room) {
+                    _chatDetailController.forwardSelectedMessages(room: room);
+                    Get.back();
+                  });
             })).then((value) {
       _chatDetailController.setToActionMode(mode: ChatMessageActionMode.none);
     });

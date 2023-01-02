@@ -19,8 +19,6 @@ class _FileChatTileState extends State<FileChatTile> {
 
   @override
   void initState() {
-    // TODO: implement initState
-
     if (widget.message.isMineMessage == false) {
       _task = TaskInfo(name: '', link: widget.message.mediaContent.file!.path);
 

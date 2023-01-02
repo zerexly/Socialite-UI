@@ -16,7 +16,7 @@ class _PaymentAndCoinsState extends State<PaymentAndCoins> {
   @override
   void initState() {
     super.initState();
-    coin = getIt<UserProfileManager>().user!.coins ?? 0;
+    coin = getIt<UserProfileManager>().user!.coins ;
   }
 
   @override

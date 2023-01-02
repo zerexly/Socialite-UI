@@ -105,6 +105,7 @@ class SelectUserForChatState extends State<SelectUserForChat> {
                                             ],
                                           ),
                                         ).ripple(() {
+                                          Get.back();
                                           Get.to(() =>
                                               const SelectUserForGroupChat());
                                         }).hP16;

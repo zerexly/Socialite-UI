@@ -10,34 +10,8 @@ class ImageChatTile extends StatelessWidget {
     return Stack(
       children: [
         SizedBox(
-          // width: message.messageContentType == MessageContentType.photo
-          //     ? double.infinity
-          //     : null,
           height: 280,
-          child:
-              // message.media != null
-              //     ? Stack(
-              //         children: [
-              //           message.media!.file != null
-              //               ? Image.file(
-              //                   message.media!.file!,
-              //                   fit: BoxFit.cover,
-              //                   height: double.infinity,
-              //                   width: double.infinity,
-              //                 )
-              //               : Image.memory(
-              //                   message.media!.mediaByte!,
-              //                   fit: BoxFit.cover,
-              //                   height: double.infinity,
-              //                   width: double.infinity,
-              //                 ),
-              //           Positioned(
-              //               child:
-              //                   Center(child: AppUtil.addProgressIndicator(context))),
-              //         ],
-              //       )
-              //     :
-              MessageImage(
+          child: MessageImage(
             message: message,
             fitMode: BoxFit.cover,
           ),

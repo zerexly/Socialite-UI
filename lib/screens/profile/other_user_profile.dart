@@ -243,8 +243,8 @@ class OtherUserProfileState extends State<OtherUserProfile> {
                                   EasyLoading.show(
                                       status: LocalizationString.loading);
                                   _chatDetailController.getChatRoomWithUser(
-                                      _profileController.user.value!.id,
-                                      (room) {
+                                      userId:_profileController.user.value!.id,
+                                      callback:(room) {
                                     EasyLoading.dismiss();
                                     Get.to(() => ChatDetail(
                                           chatRoom: room,

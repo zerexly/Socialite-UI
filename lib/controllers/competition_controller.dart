@@ -57,7 +57,7 @@ class CompetitionController extends GetxController {
 
 
   void joinCompetition(CompetitionModel competition, BuildContext context) {
-    int coin = getIt<UserProfileManager>().user!.coins ?? 0;
+    int coin = getIt<UserProfileManager>().user!.coins;
 
     if (coin > competition.joiningFee) {
       AppUtil.checkInternet().then((value) {

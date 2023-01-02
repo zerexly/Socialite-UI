@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:foap/helper/common_import.dart';
 
 class ChatRoomMember {
@@ -48,6 +47,7 @@ class ChatRoomModel {
 
   // List<UserModel> users = [];
   ChatMessageModel? lastMessage;
+  String? lastMessageId;
 
   // bool isTyping = false;
   List<String> whoIsTyping = [];
@@ -64,11 +64,11 @@ class ChatRoomModel {
 
   ChatRoomModel({
     required this.id,
+    this.lastMessageId,
     this.name,
     required this.status,
     required this.createdAt,
     this.updatedAt,
-
     required this.createdBy,
     // required this.users,
     required this.isOnline,
@@ -84,6 +84,7 @@ class ChatRoomModel {
 
   factory ChatRoomModel.fromJson(dynamic jsonData) => ChatRoomModel(
       id: jsonData['id'],
+      lastMessageId: jsonData['last_message_id'],
       name: jsonData['title'] ?? 'No Group name added',
       status: jsonData['status'],
       createdAt:

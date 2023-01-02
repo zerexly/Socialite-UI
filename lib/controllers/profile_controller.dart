@@ -20,8 +20,13 @@ class ProfileController extends GetxController {
   int postsCurrentPage = 1;
   bool canLoadMorePosts = true;
 
+  bool isLoadingMoments = false;
+  int momentsCurrentPage = 1;
+  bool canLoadMoreMoments = true;
+
   RxList<PostModel> posts = <PostModel>[].obs;
   RxList<PostModel> mentions = <PostModel>[].obs;
+  RxList<PostModel> moments = <PostModel>[].obs;
 
   int mentionsPostPage = 1;
   bool canLoadMoreMentionsPosts = true;
@@ -36,14 +41,19 @@ class ProfileController extends GetxController {
     postsCurrentPage = 1;
     canLoadMorePosts = true;
 
+    isLoadingMoments = false;
+    momentsCurrentPage = 1;
+    canLoadMoreMoments = true;
+
     mentionsPostPage = 1;
     canLoadMoreMentionsPosts = true;
     mentionsPostsIsLoading = false;
 
     totalPages = 100;
 
-    posts.value = [];
-    mentions.value = [];
+    posts.clear();
+    mentions.clear();
+    moments.clear();
   }
 
   getMyProfile() async {
@@ -67,8 +77,8 @@ class ProfileController extends GetxController {
 
   void updateLocation(
       {required String country,
-      required String city,
-      required BuildContext context}) {
+        required String city,
+        required BuildContext context}) {
     if (FormValidator().isTextEmpty(country)) {
       AppUtil.showToast(
           context: context,
@@ -117,9 +127,9 @@ class ProfileController extends GetxController {
 
   void resetPassword(
       {required String oldPassword,
-      required String newPassword,
-      required String confirmPassword,
-      required BuildContext context}) {
+        required String newPassword,
+        required String confirmPassword,
+        required BuildContext context}) {
     if (FormValidator().isTextEmpty(oldPassword)) {
       AppUtil.showToast(
           context: context,
@@ -203,8 +213,8 @@ class ProfileController extends GetxController {
 
   void updateMobile(
       {required String countryCode,
-      required String phoneNumber,
-      required BuildContext context}) {
+        required String phoneNumber,
+        required BuildContext context}) {
     if (FormValidator().isTextEmpty(phoneNumber)) {
       AppUtil.showToast(
           context: context,
@@ -223,8 +233,8 @@ class ProfileController extends GetxController {
             if (response.success) {
               getIt<UserProfileManager>().refreshProfile();
               Get.to(() => VerifyOTPPhoneNumberChange(
-                    token: response.token!,
-                  ));
+                token: response.token!,
+              ));
             }
           });
         } else {
@@ -429,7 +439,7 @@ class ProfileController extends GetxController {
       if (value) {
         EasyLoading.show(status: LocalizationString.loading);
         ApiController().performWithdrawalRequest().then((response) async {
-          await getMyProfile();
+          getMyProfile();
           EasyLoading.dismiss();
           AppUtil.showToast(
               context: context, message: response.message, isSuccess: true);
@@ -502,8 +512,8 @@ class ProfileController extends GetxController {
             // posts.value = [];
             posts.addAll(response.success
                 ? response.posts
-                    .where((element) => element.gallery.isNotEmpty)
-                    .toList()
+                .where((element) => element.gallery.isNotEmpty)
+                .toList()
                 : []);
             posts.sort((a, b) => b.createDate!.compareTo(a.createDate!));
             isLoadingPosts = false;
@@ -516,6 +526,37 @@ class ProfileController extends GetxController {
               canLoadMorePosts = false;
             }
             totalPages = response.metaData!.pageCount;
+            update();
+          });
+        }
+      });
+    }
+  }
+
+  void getMoments(int userId) async {
+    if (canLoadMoreMoments == true) {
+      AppUtil.checkInternet().then((value) async {
+        if (value) {
+          isLoadingMoments = true;
+          ApiController()
+              .getPosts(userId: userId, isReel: 1, page: momentsCurrentPage)
+              .then((response) async {
+            moments.addAll(response.success
+                ? response.posts
+                .where((element) => element.gallery.isNotEmpty)
+                .toList()
+                : []);
+            moments.sort((a, b) => b.createDate!.compareTo(a.createDate!));
+            isLoadingMoments = false;
+
+            momentsCurrentPage += 1;
+
+            if (response.posts.length == response.metaData?.perPage) {
+              canLoadMoreMoments = true;
+            } else {
+              canLoadMoreMoments = false;
+            }
+            // totalPages = response.metaData!.pageCount;
             update();
           });
         }
@@ -553,7 +594,7 @@ class ProfileController extends GetxController {
       sendingGift.value = gift;
       ApiController()
           .sendGift(
-              gift: gift, liveId: null, userId: user.value!.id, postId: null)
+          gift: gift, liveId: null, userId: user.value!.id, postId: null)
           .then((value) {
         Timer(const Duration(seconds: 1), () {
           sendingGift.value = null;

@@ -303,7 +303,9 @@ class _ChatMediaSharingOptionPopupState
         builder: (context) =>
             SelectFollowingUserForMessageSending(sendToUserCallback: (user) {
               _chatDetailController.sendUserProfileAsMessage(
-                  user: user, room: _chatDetailController.chatRoom.value!);
+                  user: user,
+                  room: _chatDetailController.chatRoom.value!,
+                  mode: _chatDetailController.actionMode.value);
             }));
   }
 

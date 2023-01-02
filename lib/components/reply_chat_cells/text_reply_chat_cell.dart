@@ -19,18 +19,18 @@ class ReplyTextChatTile extends StatelessWidget {
       children: [
         Container(
             height: 70,
-            color: message.originalMessage.isMineMessage
+            color: message.isMineMessage
                 ? Theme.of(context).disabledColor
                 : Theme.of(context).primaryColor,
             child: ReplyOriginalMessageTile(
-              message: message.originalMessage,
+              message: message.repliedOnMessage,
               replyMessageTapHandler: replyMessageTapHandler,
             )).round(8),
         const SizedBox(
           height: 10,
         ),
         Text(
-          message.reply.messageContent,
+          message.textMessage,
           maxLines: 1,
           style: Theme.of(context).textTheme.bodyLarge,
         ).round(8),

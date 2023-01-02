@@ -1,3 +1,5 @@
+import 'common_import.dart';
+
 extension StringExtension on String {
   bool get isValidUrl {
     String pattern =
@@ -31,5 +33,48 @@ extension StringExtension on String {
       }
     });
     return mentions;
+  }
+
+  String encrypted() {
+    // final encryptionKey =
+    //     encrypt.Key.fromUtf8(AppConfigConstants.encryptionKey);
+    //
+    // final iv = encrypt.IV.fromLength(16);
+    //
+    // final encrypter = encrypt.Encrypter(
+    //     encrypt.AES(encryptionKey, mode: encrypt.AESMode.ecb));
+    //
+    // final encryptedMessageContent = encrypter.encrypt(this, iv: iv);
+    //
+    // return encryptedMessageContent.base64;
+    if (isEmpty) {
+      return '';
+    }
+    if (AppConfigConstants.enableEncryption == 1) {
+      return encryptAESCryptoJS(this, AppConfigConstants.encryptionKey);
+    } else {
+      return this;
+    }
+  }
+
+  String decrypted() {
+    // final encryptionKey =
+    //     encrypt.Key.fromUtf8(AppConfigConstants.encryptionKey);
+    //
+    // final iv = encrypt.IV.fromLength(16);
+    //
+    // final encrypter = encrypt.Encrypter(
+    //     encrypt.AES(encryptionKey, mode: encrypt.AESMode.ecb));
+    //
+    // final decrypted = encrypter.decrypt64(this, iv: iv);
+    // return decrypted.replaceAll('\\', '');
+    if (isEmpty) {
+      return '';
+    }
+    try {
+      return decryptAESCryptoJS(this, AppConfigConstants.encryptionKey);
+    } catch (error) {
+      return this;
+    }
   }
 }

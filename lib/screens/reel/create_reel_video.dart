@@ -17,7 +17,7 @@ class _CreateReelScreenState extends State<CreateReelScreen> {
   @override
   void initState() {
     super.initState();
-    // _initCamera();
+    _initCamera();
   }
 
   _initCamera() async {
@@ -84,7 +84,7 @@ class _CreateReelScreenState extends State<CreateReelScreen> {
                         .ripple(() {
                       Get.bottomSheet(
                         SelectMusic(selectedAudioCallback: (audio) {
-                          print('Audio selected = ${audio.url}');
+                          // print('Audio selected = ${audio.url}');
                         }),
                         isScrollControlled: true,
                         ignoreSafeArea: true,
@@ -105,7 +105,7 @@ class _CreateReelScreenState extends State<CreateReelScreen> {
 
   _recordVideo() async {
     if (_isRecording) {
-      final file = await controller!.stopVideoRecording();
+      // final file = await controller!.stopVideoRecording();
       setState(() => _isRecording = false);
       // final route = MaterialPageRoute(
       //   fullscreenDialog: true,

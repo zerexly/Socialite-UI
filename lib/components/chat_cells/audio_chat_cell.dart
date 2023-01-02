@@ -78,8 +78,8 @@ class AudioProgressBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() => ProgressBar(
-          thumbColor: Theme.of(context).backgroundColor,
-          progressBarColor: Theme.of(context).backgroundColor,
+          thumbColor: Theme.of(context).primaryColor.darken(),
+          progressBarColor: Theme.of(context).primaryColor,
           baseBarColor: Theme.of(context).backgroundColor.lighten(),
           thumbRadius: 8,
           barHeight: 2,

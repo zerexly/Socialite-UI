@@ -94,15 +94,17 @@ class _CallHistoryState extends State<CallHistory> {
         backgroundColor: Colors.transparent,
         context: context,
         builder: (context) => SelectUserForChat(userSelected: (user) {
-              _chatDetailController.getChatRoomWithUser(user.id, (room) {
-                EasyLoading.dismiss();
+              _chatDetailController.getChatRoomWithUser(
+                  userId: user.id,
+                  callback: (room) {
+                    EasyLoading.dismiss();
 
-                Get.back();
-                Get.to(() => ChatDetail(
-                      // opponent: usersList[index - 1].toChatRoomMember,
-                      chatRoom: room,
-                    ));
-              });
+                    Get.back();
+                    Get.to(() => ChatDetail(
+                          // opponent: usersList[index - 1].toChatRoomMember,
+                          chatRoom: room,
+                        ));
+                  });
             }));
   }
 }

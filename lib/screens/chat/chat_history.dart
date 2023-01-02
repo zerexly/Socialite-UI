@@ -132,7 +132,7 @@ class _ChatHistoryState extends State<ChatHistory> {
         builder: (context) => FractionallySizedBox(
               heightFactor: 0.9,
               child: SelectUserForChat(userSelected: (user) {
-                _chatDetailController.getChatRoomWithUser(user.id, (room) {
+                _chatDetailController.getChatRoomWithUser(userId:user.id, callback:(room) {
                   EasyLoading.dismiss();
 
                   Get.back();

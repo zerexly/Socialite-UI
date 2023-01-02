@@ -177,7 +177,7 @@ class _ETicketState extends State<ETicket> {
                 height: 10,
               ),
               for (EventOrganizer sponsor
-                  in widget.booking.event.organizers ?? [])
+                  in widget.booking.event.organizers )
                 Wrap(
                   children: [
                     Text(

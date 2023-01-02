@@ -1,5 +1,4 @@
 import 'package:foap/helper/common_import.dart';
-import 'package:get/get.dart';
 import 'package:google_static_maps_controller/google_static_maps_controller.dart';
 
 class LocationChatTile extends StatelessWidget {

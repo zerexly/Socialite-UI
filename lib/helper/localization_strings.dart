@@ -915,5 +915,6 @@ class LocalizationString {
 
   static String accept = 'Accept'.tr;
   static String decline = 'Decline'.tr;
+  static String addComment = 'Add comment'.tr;
 
 }

@@ -57,7 +57,7 @@ class EventMembersState extends State<EventMembers> {
                           scrollController.position.pixels) {
                         if (!_eventsController.isLoadingMembers) {
                           _eventsController.getMembers(
-                              eventId: widget.event.id!);
+                              eventId: widget.event.id);
                         }
                       }
                     });

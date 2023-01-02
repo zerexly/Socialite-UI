@@ -104,9 +104,11 @@
 	<key>NSFaceIDUsageDescription</key>
 	<string>Want to access biometric authentication for login</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Need access to current location for sharing loctaion</string>
+	<string>Need access to current location for sharing location</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+    <string>$(PRODUCT_NAME) Need access to current location for sharing location</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Need access to current location for sharing loctaion</string>
+	<string>Need access to current location for sharing location</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>This app is requires Mic permission</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>

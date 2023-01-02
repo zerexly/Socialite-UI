@@ -24,7 +24,7 @@ class _ReplyAudioChatTileState extends State<ReplyAudioChatTile> {
   playAudio() {
     Audio audio = Audio(
         id: widget.message.localMessageId,
-        url: widget.message.reply.mediaContent.audio!);
+        url: widget.message.mediaContent.audio!);
     _playerManager.playAudio(audio);
   }
 
@@ -38,11 +38,11 @@ class _ReplyAudioChatTileState extends State<ReplyAudioChatTile> {
       children: [
         Container(
                 height: 70,
-                color: widget.message.originalMessage.isMineMessage
+                color: widget.message.isMineMessage
                     ? Theme.of(context).disabledColor.withOpacity(0.2)
                     : Theme.of(context).primaryColor.withOpacity(0.2),
                 child: ReplyOriginalMessageTile(
-                    message: widget.message.originalMessage,
+                    message: widget.message.repliedOnMessage,
                     replyMessageTapHandler: widget.replyMessageTapHandler))
             .round(8),
         const SizedBox(
@@ -52,7 +52,7 @@ class _ReplyAudioChatTileState extends State<ReplyAudioChatTile> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 _playerManager.currentlyPlayingAudio.value?.id ==
-                        widget.message.reply.id.toString()
+                        widget.message.id.toString()
                     ? const ThemeIconWidget(
                         ThemeIcon.stop,
                         color: Colors.white,
@@ -67,6 +67,7 @@ class _ReplyAudioChatTileState extends State<ReplyAudioChatTile> {
                       ).ripple(() {
                         playAudio();
                       }),
+                const SizedBox(width: 10,),
                 Expanded(
                   child: SizedBox(
                     height: 20,
@@ -78,6 +79,9 @@ class _ReplyAudioChatTileState extends State<ReplyAudioChatTile> {
                 )
               ],
             )),
+        const SizedBox(
+          height: 10,
+        ),
       ],
     );
   }

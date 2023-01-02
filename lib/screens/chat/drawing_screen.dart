@@ -351,7 +351,7 @@ class _DrawingScreenState extends State<DrawingScreen> {
               mediaByte: imageBytes,
               mediaType: GalleryMediaType.photo,
               creationTime: DateTime.now()),
-          mode: ChatMessageActionMode.none,
+          mode: _chatDetailController.actionMode.value,
           room: _chatDetailController.chatRoom.value!);
       Get.back();
     }

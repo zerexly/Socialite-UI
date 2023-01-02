@@ -15,6 +15,15 @@ class AppConfigConstants {
   // Socket api url
   static const socketApiBaseUrl = "http://fwdtechnology.co:3000/";
 
+  // Socket api url
+  static const encryptionKey = "bbC2H19lkVbQDfakxcrtNMQdd0FloLyw";
+
+  // chat version
+  static const int enableEncryption = 1;
+
+  // chat version
+  static const int chatVersion = 1;
+
   // is demo app
   static const bool isDemoApp = true;
 

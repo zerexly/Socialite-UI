@@ -156,6 +156,9 @@ dependencies:
   lottie: ^2.1.0
   device_info_plus: ^8.0.0
   marquee: ^2.2.3
+  encrypt: ^5.0.1
+  video_compress: ^3.1.2
+  aescryptojs: ^1.0.0
   open_file:
     git:
       url: https://github.com/crazecoder/open_file

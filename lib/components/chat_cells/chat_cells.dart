@@ -56,16 +56,14 @@ class ChatMessageTile extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       showName ? nameWidget(context) : Container(),
-                      message.messageContentType ==
-                                  MessageContentType.forward &&
-                              message.isMineMessage == false
+                      message.messageContentType == MessageContentType.forward
                           ? Row(
                               children: [
                                 ThemeIconWidget(
                                   ThemeIcon.fwd,
                                   size: 15,
                                   color: Theme.of(context).iconTheme.color,
-                                ).rP4,
+                                ).rotate(-40).rP4,
                                 Text(
                                   LocalizationString.forward,
                                   style: Theme.of(context).textTheme.bodyLarge,
@@ -76,7 +74,7 @@ class ChatMessageTile extends StatelessWidget {
                       const SizedBox(
                         height: 5,
                       ),
-                      message.isDeleted == 1
+                      message.isDeleted == true
                           ? deletedMessageWidget()
                           : message.isReply
                               ? replyContentWidget()
@@ -103,47 +101,47 @@ class ChatMessageTile extends StatelessWidget {
   }
 
   Widget replyContentWidget() {
-    if (message.reply.messageContentType == MessageContentType.text) {
+    if (message.messageReplyContentType == MessageContentType.text) {
       return ReplyTextChatTile(
         message: message,
         messageTapHandler: messageTapHandler,
         replyMessageTapHandler: replyMessageTapHandler,
       );
-    } else if (message.reply.messageContentType == MessageContentType.photo) {
+    } else if (message.messageReplyContentType == MessageContentType.photo) {
       return ReplyImageChatTile(
           message: message,
           messageTapHandler: messageTapHandler,
           replyMessageTapHandler: replyMessageTapHandler);
-    } else if (message.reply.messageContentType == MessageContentType.gif) {
+    } else if (message.messageReplyContentType == MessageContentType.gif) {
       return ReplyStickerChatTile(
           message: message,
           messageTapHandler: messageTapHandler,
           replyMessageTapHandler: replyMessageTapHandler);
-    } else if (message.reply.messageContentType == MessageContentType.video) {
+    } else if (message.messageReplyContentType == MessageContentType.video) {
       return ReplyVideoChatTile(
           message: message,
           messageTapHandler: messageTapHandler,
           replyMessageTapHandler: replyMessageTapHandler);
-    } else if (message.reply.messageContentType == MessageContentType.audio) {
+    } else if (message.messageReplyContentType == MessageContentType.audio) {
       return ReplyAudioChatTile(
           message: message, replyMessageTapHandler: replyMessageTapHandler);
-    } else if (message.reply.messageContentType == MessageContentType.contact) {
+    } else if (message.messageReplyContentType == MessageContentType.contact) {
       return ReplyContactChatTile(
           message: message,
           messageTapHandler: messageTapHandler,
           replyMessageTapHandler: replyMessageTapHandler);
-    } else if (message.reply.messageContentType ==
+    } else if (message.messageReplyContentType ==
         MessageContentType.location) {
       return ReplyLocationChatTile(
           message: message,
           messageTapHandler: messageTapHandler,
           replyMessageTapHandler: replyMessageTapHandler);
-    } else if (message.reply.messageContentType == MessageContentType.profile) {
+    } else if (message.messageReplyContentType == MessageContentType.profile) {
       return ReplyUserProfileChatTile(
           message: message,
           messageTapHandler: messageTapHandler,
           replyMessageTapHandler: replyMessageTapHandler);
-    } else if (message.reply.messageContentType == MessageContentType.reply) {
+    } else if (message.messageReplyContentType == MessageContentType.file) {
       return ReplyFileChatTile(
           message: message,
           messageTapHandler: messageTapHandler,
@@ -181,7 +179,7 @@ class ChatMessageTile extends StatelessWidget {
 
   Widget nameWidget(BuildContext context) {
     return Text(
-      message.userName,
+      message.isMineMessage ? LocalizationString.you : message.sender!.userName,
       style: Theme.of(context)
           .textTheme
           .bodyLarge!

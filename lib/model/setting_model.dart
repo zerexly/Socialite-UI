@@ -202,11 +202,10 @@ class SettingModel {
         networkToUse: json["network_to_use"],
         serviceFee: json["serviceFee"] ?? 5,
         stripePublishableKey: json["stripe_publishable_key"],
-
         enableChat: json["enableChat"] == 1,
         enableAudioCalling: json["enableAudioCalling"] == 1,
         enableAudioSharingInChat: json["enableAudioSharingInChat"] == 1,
-        enableClubs: json["enableClubs"] == 1,
+        enableClubs: json["enableClubs"] != 1,
         enableClubSharingInChat: json["enableClubSharingInChat"] == 1,
         enableCompetitions: json["enableCompetitions"] == 1,
         enableDarkLightModeSwitch: json["enableDarkLightModeSwitch"] == 1,

@@ -369,13 +369,13 @@ class CheckoutController extends GetxController {
 
   void _handlePaymentError(PaymentFailureResponse response) {
     // Do something when payment fails
-    print(response.message);
+    // print(response.message);
   }
 
   void _handleExternalWallet(ExternalWalletResponse response) {
     // Do something when an external wallet is selected
     // Do something when payment fails
-    print(response.walletName);
+    // print(response.walletName);
   }
 
   placeOrder() {

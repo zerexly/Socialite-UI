@@ -73,7 +73,7 @@ class StripeCardPaymentState extends State<StripeCardPayment> {
     final clientSecret = await fetchPaymentIntentClientSecret();
 
     // 2. Gather customer billing information (ex. email)
-    final billingDetails = stripe.BillingDetails(
+    const billingDetails = stripe.BillingDetails(
       // email: _email,
       phone: '+48888000888',
       address: stripe.Address(
@@ -91,7 +91,7 @@ class StripeCardPaymentState extends State<StripeCardPayment> {
     // ignore: unused_local_variable
     final paymentIntent = await stripe.Stripe.instance.confirmPayment(
       paymentIntentClientSecret: clientSecret['clientSecret'],
-      data: stripe.PaymentMethodParams.card(
+      data: const stripe.PaymentMethodParams.card(
         paymentMethodData: stripe.PaymentMethodData(
           billingDetails: billingDetails,
         ),
