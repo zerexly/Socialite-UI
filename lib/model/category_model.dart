@@ -1,4 +1,5 @@
 import 'package:foap/helper/common_import.dart';
+import 'package:foap/model/podcast_model.dart';
 
 class CategoryModel {
   int id;
@@ -105,5 +106,30 @@ class EventCategoryModel extends CategoryModel {
         name: json["name"],
         id: json["id"],
         coverImage: json["imageUrl"],
+      );
+}
+
+class PodcastCategoryModel extends CategoryModel {
+  List<PodcastModel> podcasts = [];
+
+  PodcastCategoryModel({
+    required String name,
+    required int id,
+    required this.podcasts,
+    required String coverImage,
+
+    // required this.subCategories,
+  }) : super(name: name, id: id, coverImage: coverImage);
+
+  factory PodcastCategoryModel.fromJson(Map<String, dynamic> json) =>
+      PodcastCategoryModel(
+        name: json["name"],
+        id: json["id"],
+        coverImage: json["imageUrl"],
+        podcasts: json["podcastList"] == null
+            ? []
+            : (json["podcastList"] as List<dynamic>)
+            .map((e) => PodcastModel.fromJson(e))
+            .toList(),
       );
 }

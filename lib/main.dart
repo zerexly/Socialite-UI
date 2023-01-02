@@ -1,4 +1,5 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:foap/controllers/podcast_streaming_controller.dart';
 import 'package:foap/helper/common_import.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:get/get.dart';
@@ -24,8 +25,8 @@ Future<void> main() async {
       debug: true,
       // optional: set to false to disable printing logs to console (default: true)
       ignoreSsl:
-          true // option: set to false to disable working with http links (default: false)
-      );
+      true // option: set to false to disable working with http links (default: false)
+  );
   // await CustomGalleryPermissions.requestPermissionExtend();
 
   final firebaseMessaging = FCM();
@@ -40,7 +41,6 @@ Future<void> main() async {
   bool isDarkTheme = await SharedPrefs().isDarkMode();
   Get.changeThemeMode(isDarkTheme ? ThemeMode.dark : ThemeMode.light);
   // Get.changeThemeMode(ThemeMode.dark);
-
   Get.put(DashboardController());
   Get.put(SettingsController());
   Get.put(SubscriptionPackageController());
@@ -86,6 +86,7 @@ Future<void> main() async {
   Get.put(RequestVerificationController());
   Get.put(FAQController());
   Get.put(EventsController());
+  Get.put(PodcastStreamingController());
 
   setupServiceLocator();
   await getIt<UserProfileManager>().refreshProfile();

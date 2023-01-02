@@ -1,4 +1,5 @@
 import 'package:foap/helper/common_import.dart';
+import 'package:foap/screens/podcast/podcast_list_dashboard.dart';
 import 'package:get/get.dart';
 
 class HomeController extends GetxController {
@@ -140,6 +141,8 @@ class HomeController extends GetxController {
     } else if (option == LocalizationString.liveTv) {
       Get.to(() => const TvListDashboard());
       // Get.to(() => const LiveTVStreaming());
+    } else if (option == LocalizationString.podcast) {
+      Get.to(() => const PodcastListDashboard());
     }
   }
 

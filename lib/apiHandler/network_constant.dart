@@ -120,14 +120,25 @@ class NetworkConstantsUtil {
   static String callHistory =
       'chats/call-history?expand=callerDetail,receiverDetail,receiverDetail.userLiveDetail';
 
+  ///////////// live TVs
   static String getTVCategories =
       'categories/live-tv?expand=liveTv,liveTv.currentViewer';
-
-  ///////////// live TVs
+  static String getTVShows =
+      'live-tvs/tv-shows?expand=tvShowEpisode';
   static String liveTvs = 'live-tvs?expand=currentViewer';
+  static String tvBanners='tv-banners';
   static String subscribeLiveTv = 'live-tvs/subscribe';
   static String stopWatchingTv = 'live-tvs/stop-viewing';
   static String liveHistory = 'user-live-histories?expand=giftSummary';
+
+  ///////////// Podcast
+  static String getPodcastCategories ='categories/podcast?expand=podcastList,podcastList.currentViewer';
+  static String podcastBanners ='podcast-banners';
+  static String getHosts = 'podcasts?expand=currentViewer';
+  static String getPodcastShows =
+      'podcast-shows?expand=podcastShow';
+  static String getPodcastShowsEpisode =
+      'podcast-shows/podcast-show-episodes?';
 
   ///////////// Clubs
   static String getClubCategories = 'clubs/category';

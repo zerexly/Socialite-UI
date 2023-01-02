@@ -1,30 +1,34 @@
 import 'package:foap/helper/common_import.dart';
+import 'package:foap/screens/podcast/podcast_show_detail.dart';
 import 'package:get/get.dart';
 
-import 'live_tv_show_detail.dart';
+import '../../controllers/podcast_streaming_controller.dart';
+import '../../model/podcast_model.dart';
 
-class TvListByCategory extends StatefulWidget {
-  final TvCategoryModel category;
 
-  const TvListByCategory({Key? key, required this.category}) : super(key: key);
+class PodcastListByCategory extends StatefulWidget {
+  final PodcastCategoryModel category;
+
+  const PodcastListByCategory({Key? key, required this.category}) : super(key: key);
 
   @override
-  State<TvListByCategory> createState() => _TvListByCategoryState();
+  State<PodcastListByCategory> createState() => _PodcastListByCategoryState();
 }
 
-class _TvListByCategoryState extends State<TvListByCategory> {
-  final TvStreamingController _tvStreamingController = Get.find();
+class _PodcastListByCategoryState extends State<PodcastListByCategory> {
+  final PodcastStreamingController _podcastStreamingController = Get.find();
 
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _tvStreamingController.getLiveTvs(categoryId: widget.category.id);
+      _podcastStreamingController.getPodCastList(categoryId: widget.category.id);
     });
     super.initState();
   }
 
   @override
   void dispose() {
+    _podcastStreamingController.clearPodcast();
     super.dispose();
   }
 
@@ -42,7 +46,7 @@ class _TvListByCategoryState extends State<TvListByCategory> {
                   sliver: SliverSafeArea(
                     top: false,
                     sliver: SliverPadding(
-                        padding: EdgeInsets.only(bottom: 8.0),
+                        padding: const EdgeInsets.only(bottom: 8.0),
                         sliver : SliverAppBar(
                           backgroundColor: Theme.of(context).backgroundColor,
                           expandedHeight: 200.0,
@@ -58,7 +62,7 @@ class _TvListByCategoryState extends State<TvListByCategory> {
                               title: Text(
                                 widget.category.name,
                                 textScaleFactor: 1,
-                                style: TextStyle(color: Colors.white),
+                                style: const TextStyle(color: Colors.white),
                               ),
                               background: CachedNetworkImage(
                                 imageUrl: widget.category.coverImage,
@@ -73,18 +77,16 @@ class _TvListByCategoryState extends State<TvListByCategory> {
           body:
           CustomScrollView(
             slivers: [
-              // Add the app bar to the CustomScrollView.
-
               // Next, create a SliverList
-              GetBuilder<TvStreamingController>(
-                  init: _tvStreamingController,
+              GetBuilder<PodcastStreamingController>(
+                  init: _podcastStreamingController,
                   builder: (ctx) {
                     return
-                      _tvStreamingController.liveTvs.isEmpty
+                      _podcastStreamingController.podcasts.isEmpty
                           ?
                       SliverToBoxAdapter(
                           child:
-                          Container(
+                          SizedBox(
                               height: (MediaQuery.of(context).size.height/1.5),
                               width: (MediaQuery.of(context).size.width),
                               child:const Center(
@@ -99,8 +101,8 @@ class _TvListByCategoryState extends State<TvListByCategory> {
                         ),
                         delegate: SliverChildBuilderDelegate(
                               (BuildContext context, int index) {
-                            TvModel tvModel =
-                            _tvStreamingController.liveTvs[index];
+                            PodcastModel podcastModel =
+                            _podcastStreamingController.podcasts[index];
                             return Card(
                                 margin: const EdgeInsets.all(1),
                                 clipBehavior: Clip.hardEdge,
@@ -108,16 +110,16 @@ class _TvListByCategoryState extends State<TvListByCategory> {
                                   borderRadius: BorderRadius.circular(5),
                                 ),
                                 child: CachedNetworkImage(
-                                  imageUrl: tvModel.image,
+                                  imageUrl: podcastModel.image,
                                   fit: BoxFit.fitHeight,
                                   height: 230,
                                 ).round(10).ripple(() {
-                                  Get.to(() => TVShowDetail(
-                                    tvModel: tvModel,
+                                  Get.to(() => PodcastShowDetail(
+                                    podcastModel: podcastModel,
                                   ));
                                 }));
                           },
-                          childCount: _tvStreamingController.liveTvs.length,
+                          childCount: _podcastStreamingController.podcasts.length,
                         ),
                       );
                   })
@@ -125,51 +127,4 @@ class _TvListByCategoryState extends State<TvListByCategory> {
           ),
         ));
   }
-
-// @override
-// Widget build(BuildContext context) {
-//   return Scaffold(
-//     backgroundColor: Theme.of(context).backgroundColor,
-//     body: Column(
-//       children: [
-//         const SizedBox(
-//           height: 50,
-//         ),
-//         backNavigationBar(
-//           context: context,
-//           title: LocalizationString.tvs,
-//         ),
-//         divider(context: context).tP8,
-//         Expanded(
-//             child: GetBuilder<TvStreamingController>(
-//                 init: _tvStreamingController,
-//                 builder: (ctx) {
-//                   return GridView.builder(
-//                       padding: const EdgeInsets.only(
-//                           left: 16, right: 16, top: 25, bottom: 25),
-//                       gridDelegate:
-//                           const SliverGridDelegateWithFixedCrossAxisCount(
-//                               crossAxisCount: 3,
-//                               crossAxisSpacing: 10.0,
-//                               mainAxisSpacing: 10.0,
-//                               childAspectRatio: 1),
-//                       itemCount: _tvStreamingController.liveTvs.length,
-//                       itemBuilder: (ctx, index) {
-//                         TvModel tvModel =
-//                             _tvStreamingController.liveTvs[index];
-//
-//                         return CachedNetworkImage(
-//                           imageUrl: tvModel.image,
-//                           fit: BoxFit.cover,
-//                           height: 130,
-//                           width: 110,
-//                         ).round(10).ripple(() {
-//                           Get.to(() =>  LiveTVStreaming(tvModel: tvModel,));
-//                         });
-//                       });
-//                 }))
-//       ],
-//     ),
-//   );
-// }
 }

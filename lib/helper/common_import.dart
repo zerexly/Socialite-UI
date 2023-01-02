@@ -313,8 +313,6 @@ export 'package:foap/screens/live/live_joined_users.dart';
 export 'package:foap/screens/live/live_history.dart';
 
 export 'package:foap/screens/tvs/live_tv_streaming.dart';
-export 'package:foap/screens/tvs/live_tv_categories.dart';
-
 export 'package:foap/screens/tvs/tv_list_dashboard.dart';
 export 'package:foap/screens/tvs/tv_list_by_category.dart';
 

@@ -754,6 +754,8 @@ class LocalizationString {
   static String yourFollowersCanViewYourLocation =
       'Your Followers can view your location'.tr;
 
+  static String podcast = 'Podcast'.tr;
+
   static String liveChat = 'Live chat'.tr;
   static String subscribeChannelToView = 'Subscribe channel to view'.tr;
   static String subscribeUsing = 'Subscribe using'.tr;

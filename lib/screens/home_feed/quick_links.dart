@@ -1,6 +1,8 @@
 import 'package:foap/helper/common_import.dart';
 import 'package:get/get.dart';
 
+import '../podcast/podcast_list_dashboard.dart';
+
 enum QuickLinkType {
   live,
   randomChat,
@@ -9,7 +11,8 @@ enum QuickLinkType {
   clubs,
   pages,
   tv,
-  event
+  event,
+  podcast
 }
 
 class QuickLink {
@@ -75,6 +78,12 @@ class _QuickLinkWidgetState extends State<QuickLinkWidget> {
         heading: LocalizationString.tvs,
         subHeading: LocalizationString.watchTvs,
         linkType: QuickLinkType.tv),
+
+    QuickLink(
+        icon: 'assets/television.png',
+        heading: LocalizationString.podcast,
+        subHeading: LocalizationString.podcast,
+        linkType: QuickLinkType.podcast),
   ];
 
   @override
@@ -121,6 +130,8 @@ class _QuickLinkWidgetState extends State<QuickLinkWidget> {
               Get.to(() => const TvListDashboard());
             } else if (link.linkType == QuickLinkType.event) {
               Get.to(() => const EventsListing());
+            } else if (link.linkType == QuickLinkType.podcast) {
+              Get.to(() => const PodcastListDashboard());
             }
           });
         },
