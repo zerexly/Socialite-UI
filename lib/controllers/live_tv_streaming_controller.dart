@@ -1,15 +1,20 @@
 import 'package:foap/helper/common_import.dart';
 import 'package:get/get.dart';
 
+import '../model/tv_banner_model.dart';
+import '../model/tv_show_model.dart';
+
 class TvStreamingController extends GetxController {
   RxInt currentPage = 0.obs;
   RxMap<String, List<ChatMessageModel>> messagesMap =
       <String, List<ChatMessageModel>>{}.obs;
 
   RxBool showChatMessages = false.obs;
-  RxList<TvModel> banners = <TvModel>[].obs;
+  RxList<TVBannersModel> banners = <TVBannersModel>[].obs;
   RxList<TvModel> liveTvs = <TvModel>[].obs;
   RxList<TvCategoryModel> categories = <TvCategoryModel>[].obs;
+  RxList<TVShowModel> tvShows = <TVShowModel>[].obs;
+
   RxInt currentBannerIndex = 0.obs;
 
   clearCategories() {
@@ -36,11 +41,11 @@ class TvStreamingController extends GetxController {
     });
   }
 
-  getBannersTvs({int? categoryId, String? name}) {
+  getTvBanners() {
     ApiController()
-        .getLiveTvs(categoryId: categoryId, name: name)
+        .getTvBanners()
         .then((response) {
-      banners.value = response.liveTvs;
+      banners.value = response.tvBanners;
       update();
     });
   }
@@ -50,6 +55,14 @@ class TvStreamingController extends GetxController {
         .getLiveTvs(categoryId: categoryId, name: name)
         .then((response) {
       liveTvs.value = response.liveTvs;
+      update();
+    });
+  }
+
+  getTvShows({int? liveTvId, String? name}) {
+    ApiController().getTVShows(liveTvId: liveTvId, name: name).then((response) {
+      tvShows.value = response.tvShows;
+      tvShows.refresh();
       update();
     });
   }

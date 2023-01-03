@@ -404,4 +404,6 @@ class CheckoutController extends GetxController {
       }
     });
   }
+
+
 }

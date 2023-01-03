@@ -13,6 +13,7 @@ class AppConfigConstants {
       'https://fwdtechnology.co/media_selling/api/web/v1/';
 
   // Socket api url
+
   static const socketApiBaseUrl = "http://fwdtechnology.co:3000/";
 
   // Socket api url
@@ -23,6 +24,7 @@ class AppConfigConstants {
 
   // chat version
   static const int chatVersion = 1;
+
 
   // is demo app
   static const bool isDemoApp = true;

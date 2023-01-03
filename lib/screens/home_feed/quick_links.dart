@@ -13,7 +13,8 @@ enum QuickLinkType {
   story,
   highlights,
   goLive,
-  reel
+  reel,
+  podcast
 }
 
 class QuickLink {
@@ -80,8 +81,6 @@ class _QuickLinkWidgetState extends State<QuickLinkWidget> {
                   } else if (link.linkType == QuickLinkType.clubs) {
                     Get.to(() => const ClubsListing());
                   } else if (link.linkType == QuickLinkType.pages) {
-                  } else if (link.linkType == QuickLinkType.tv) {
-                    Get.to(() => const TvListDashboard());
                   } else if (link.linkType == QuickLinkType.event) {
                     Get.to(() => const EventsDashboardScreen());
                   } else if (link.linkType == QuickLinkType.goLive) {
@@ -92,6 +91,10 @@ class _QuickLinkWidgetState extends State<QuickLinkWidget> {
                     Get.to(() => const ChooseMediaForStory());
                   } else if (link.linkType == QuickLinkType.highlights) {
                     Get.to(() => const ChooseStoryForHighlights());
+                  } else if (link.linkType == QuickLinkType.tv) {
+                    Get.to(() => const TvListDashboard());
+                  } else if (link.linkType == QuickLinkType.podcast) {
+                    Get.to(() => const PodcastListDashboard());
                   }
                 })
             ]).setPadding(left: 16, right: 16, top: 50));

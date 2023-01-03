@@ -1,4 +1,5 @@
 import 'package:foap/helper/common_import.dart';
+import 'package:foap/screens/podcast/podcast_list_dashboard.dart';
 import 'package:get/get.dart';
 
 class HomeController extends GetxController {
@@ -109,6 +110,20 @@ class HomeController extends GetxController {
           heading: LocalizationString.reel,
           subHeading: LocalizationString.reel,
           linkType: QuickLinkType.reel));
+    }
+    if (_settingsController.setting.value!.enableWatchTv) {
+      quickLinks.add(QuickLink(
+          icon: 'assets/television.png',
+          heading: LocalizationString.tvs,
+          subHeading: LocalizationString.tvs,
+          linkType: QuickLinkType.tv));
+    }
+    if (_settingsController.setting.value!.enablePodcasts) {
+      quickLinks.add(QuickLink(
+          icon: 'assets/podcast.png',
+          heading: LocalizationString.podcast,
+          subHeading: LocalizationString.podcast,
+          linkType: QuickLinkType.podcast));
     }
   }
 
@@ -221,6 +236,10 @@ class HomeController extends GetxController {
     } else if (option == LocalizationString.liveTv) {
       Get.to(() => const TvListDashboard());
       // Get.to(() => const LiveTVStreaming());
+
+    } else if (option == LocalizationString.podcast) {
+      Get.to(() => const PodcastListDashboard());
+
     } else if (option == LocalizationString.reel) {
       Get.to(() => const CreateReelScreen());
       // Get.to(() => const LiveTVStreaming());
