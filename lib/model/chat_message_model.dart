@@ -371,6 +371,9 @@ class ChatMessageModel {
   // }
 
   ChatMessageModel get repliedOnMessage {
+    print('chatVersion $chatVersion');
+    print('AppConfigConstants.chatVersion ${AppConfigConstants.chatVersion}');
+
     if (chatVersion < AppConfigConstants.chatVersion) {
       // return cachedReplyMessage ??
       //     ChatMessageModel.fromJson(json.decode(decrypt)['reply']);
