@@ -111,6 +111,20 @@ class HomeController extends GetxController {
           subHeading: LocalizationString.reel,
           linkType: QuickLinkType.reel));
     }
+    if (_settingsController.setting.value!.enableWatchTv) {
+      quickLinks.add(QuickLink(
+          icon: 'assets/television.png',
+          heading: LocalizationString.tvs,
+          subHeading: LocalizationString.tvs,
+          linkType: QuickLinkType.tv));
+    }
+    if (_settingsController.setting.value!.enablePodcasts) {
+      quickLinks.add(QuickLink(
+          icon: 'assets/podcast.png',
+          heading: LocalizationString.podcast,
+          subHeading: LocalizationString.podcast,
+          linkType: QuickLinkType.podcast));
+    }
   }
 
   categoryIndexChanged({required int index, required VoidCallback callback}) {

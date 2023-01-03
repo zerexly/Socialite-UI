@@ -1,8 +1,6 @@
 import 'package:foap/helper/common_import.dart';
 import 'package:get/get.dart';
 
-import 'live_tv_show_detail.dart';
-
 class TvListByCategory extends StatefulWidget {
   final TvCategoryModel category;
 

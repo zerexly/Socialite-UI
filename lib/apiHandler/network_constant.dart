@@ -124,20 +124,14 @@ class NetworkConstantsUtil {
   static String deleteChatRoom = 'chats/delete-room?room_id=';
   static String callHistory =
       'chats/call-history?expand=callerDetail,receiverDetail,receiverDetail.userLiveDetail';
-
-  ///////////// live TVs
-  static String getTVCategories =
-      'categories/live-tv?expand=liveTv,liveTv.currentViewer';
-  static String getTVShows =
-      'live-tvs/tv-shows?expand=tvShowEpisode';
-
   static String chatHistory =
       'chats/chat-message?expand=chatMessageUser,user&room_id={{room_id}}&last_message_id={{last_message_id}}';
 
   ///////////// live TVs
   static String getTVCategories =
       'categories/live-tv?expand=liveTv,liveTv.currentViewer';
-
+  static String getTVShows =
+      'live-tvs/tv-shows?expand=tvShowEpisode';
   static String liveTvs = 'live-tvs?expand=currentViewer';
   static String tvBanners='tv-banners';
   static String subscribeLiveTv = 'live-tvs/subscribe';
