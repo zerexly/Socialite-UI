@@ -100,8 +100,8 @@ class _FindRandomUserState extends State<FindRandomUser> {
                                       status: LocalizationString.loading);
 
                                   _chatDetailController.getChatRoomWithUser(
-                                      _randomChatAndCallController
-                                          .randomOnlineUser.value!.id, (room) {
+                                      userId:_randomChatAndCallController
+                                          .randomOnlineUser.value!.id, callback:(room) {
                                     EasyLoading.dismiss();
 
                                     Get.back();

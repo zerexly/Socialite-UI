@@ -109,12 +109,17 @@ class NetworkConstantsUtil {
   static String unBlockUser = 'blocked-users/un-blocked';
   static String deleteAccount = 'users/delete-account';
 
+  //******************** reel ******************//
+
+  static String reelAudioCategories = 'categories/reel-audio';
+  static String audios = 'audios?';
+
   ///////////// chat
   static String createChatRoom = 'chats/create-room';
   static String updateGroupChatRoom = 'chats/update-room?id=';
   static String getChatRoomDetail =
       'chats/room-detail?room_id={room_id}&expand=createdByUser,chatRoomUser.user,chatRoomUser.user.userLiveDetail';
-  static String getRooms =
+  static String getChatRooms =
       'chats/room?expand=createdByUser,chatRoomUser,chatRoomUser.user,lastMessage,chatRoomUser.user.userLiveDetail';
   static String deleteChatRoom = 'chats/delete-room?room_id=';
   static String callHistory =
@@ -125,6 +130,14 @@ class NetworkConstantsUtil {
       'categories/live-tv?expand=liveTv,liveTv.currentViewer';
   static String getTVShows =
       'live-tvs/tv-shows?expand=tvShowEpisode';
+
+  static String chatHistory =
+      'chats/chat-message?expand=chatMessageUser,user&room_id={{room_id}}&last_message_id={{last_message_id}}';
+
+  ///////////// live TVs
+  static String getTVCategories =
+      'categories/live-tv?expand=liveTv,liveTv.currentViewer';
+
   static String liveTvs = 'live-tvs?expand=currentViewer';
   static String tvBanners='tv-banners';
   static String subscribeLiveTv = 'live-tvs/subscribe';
@@ -150,15 +163,21 @@ class NetworkConstantsUtil {
   static String leaveClub = 'clubs/left';
   static String removeUserFromClub = 'clubs/remove';
   static String clubMembers = 'clubs/club-joined-user?expand=user&id=';
+  static String clubJoinInvites = 'clubs/join-invitations';
 
   // Events
-  static String searchEvents = 'clubs?expand=createdByUser,totalJoinedUser';
   static String joinEvent = 'clubs/join';
-  static String eventBooking = 'clubs/join';
   static String leaveEvent = 'clubs/left';
   static String eventMembers = 'clubs/club-joined-user?expand=user&id=';
-  static String cancelEventBooking = 'clubs/left';
-  static String getEventCategories = 'clubs/category';
+
+  static String eventsCategories = 'categories/event?expand=event';
+  static String searchEvents = 'events?';
+  static String eventCoupons = 'events/coupon';
+  static String eventDetails =
+      'events/{{id}}?expand=eventTicket,eventOrganisor';
+  static String buyTicket = 'events/buy-ticket';
+  static String eventBookings = 'events/my-booked-event?';
+  static String cancelEventBooking = 'events/cancel-ticket-booking';
 
   // random live and chat
   static String randomLives = 'chats/live-user?expand=userLiveDetail';
@@ -180,4 +199,9 @@ class NetworkConstantsUtil {
 
   // FAQ
   static String getFAQs = 'faqs';
+
+  // Payment
+  static String createPaymentIntent = 'payments/payment-intent';
+  static String getPaypalClientToken = 'payments/paypal-client-token';
+  static String submitPaypalPayment = 'payments/paypal-payment';
 }

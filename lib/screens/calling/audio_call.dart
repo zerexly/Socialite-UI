@@ -256,7 +256,7 @@ class _AudioCallingScreenState extends State<AudioCallingScreen> {
                 color: Colors.white,
               ),
             ).circular.ripple(() {
-              agoraCallController.declineCall(call:widget.call);
+              agoraCallController.declineCall(call: widget.call);
             }),
             Container(
               color: Theme.of(context).primaryColor,

@@ -9,7 +9,7 @@ class SearchEventListing extends StatefulWidget {
 }
 
 class SearchEventListingState extends State<SearchEventListing> {
-  final SearchClubsController _searchClubsController = Get.find();
+  final EventsController _eventsController = Get.find();
 
   @override
   void initState() {
@@ -19,7 +19,7 @@ class SearchEventListingState extends State<SearchEventListing> {
   @override
   void dispose() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _searchClubsController.clear();
+      _eventsController.clear();
     });
     super.dispose();
   }
@@ -50,7 +50,7 @@ class SearchEventListingState extends State<SearchEventListing> {
                     showSearchIcon: true,
                     iconColor: Theme.of(context).primaryColor,
                     onSearchChanged: (value) {
-                      _searchClubsController.searchTextChanged(value);
+                      _eventsController.searchTextChanged(value);
                     },
                     onSearchStarted: () {
                       //controller.startSearch();
@@ -61,88 +61,52 @@ class SearchEventListingState extends State<SearchEventListing> {
           ).setPadding(left: 16, right: 16, top: 25, bottom: 20),
           divider(context: context).tP8,
           Expanded(
-            child: CustomScrollView(
-              slivers: [
-                SliverList(
-                    delegate: SliverChildListDelegate([
-                  const SizedBox(
-                    height: 40,
-                  ),
-                  Obx(() {
-                    ScrollController scrollController = ScrollController();
-                    scrollController.addListener(() {
-                      if (scrollController.position.maxScrollExtent ==
-                          scrollController.position.pixels) {
-                        if (!_searchClubsController.isLoadingClubs.value) {
-                          _searchClubsController.searchClubs(
-                              name: _searchClubsController.searchText.value);
-                        }
-                      }
-                    });
+            child: Obx(() {
+              ScrollController scrollController = ScrollController();
+              scrollController.addListener(() {
+                if (scrollController.position.maxScrollExtent ==
+                    scrollController.position.pixels) {
+                  if (!_eventsController.isLoadingEvents.value) {
+                    _eventsController.getEvents();
+                  }
+                }
+              });
 
-                    List<ClubModel> clubs = _searchClubsController.clubs;
-
-                    return _searchClubsController.clubs.isEmpty
-                        ? Container()
-                        : Column(
-                            children: [
-                              SizedBox(
-                                height: clubs.length * 350,
-                                child: ListView.separated(
-                                    padding: const EdgeInsets.only(
-                                        left: 16, right: 16),
-                                    itemCount: clubs.length,
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
-                                    itemBuilder: (BuildContext ctx, int index) {
-                                      return ClubCard(
-                                        club: clubs[index],
-                                        joinBtnClicked: () {
-                                          _searchClubsController
-                                              .joinClub(clubs[index]);
-                                        },
-                                        leaveBtnClicked: () {
-                                          _searchClubsController
-                                              .leaveClub(clubs[index]);
-                                        },
-                                        previewBtnClicked: () {
-                                          Get.to(() => ClubDetail(
-                                                club: clubs[index],
-                                                needRefreshCallback: () {
-                                                  _searchClubsController
-                                                      .searchClubs(
-                                                          name:
-                                                              _searchClubsController
-                                                                  .searchText
-                                                                  .value);
-                                                },
-                                                deleteCallback: (club) {
-                                                  AppUtil.showToast(
-                                                      context: context,
-                                                      message:
-                                                          LocalizationString
-                                                              .clubIsDeleted,
-                                                      isSuccess: true);
-                                                  _searchClubsController
-                                                      .clubDeleted(club);
-                                                },
-                                              ));
-                                        },
-                                      );
-                                    },
-                                    separatorBuilder:
-                                        (BuildContext ctx, int index) {
-                                      return const SizedBox(
-                                        height: 25,
-                                      );
-                                    }),
-                              ),
-                            ],
-                          ).bP16;
-                  }),
-                ]))
-              ],
-            ),
+              List<EventModel> events = _eventsController.events;
+              return events.isEmpty
+                  ? Container()
+                  : SizedBox(
+                      height: events.length * 200,
+                      child: ListView.separated(
+                          padding: const EdgeInsets.only(
+                              left: 16, right: 16, top: 20, bottom: 50),
+                          itemCount: events.length,
+                          itemBuilder: (BuildContext ctx, int index) {
+                            return EventCard2(
+                              event: events[index],
+                              joinBtnClicked: () {
+                                _eventsController.joinEvent(events[index]);
+                              },
+                              leaveBtnClicked: () {
+                                _eventsController.leaveEvent(events[index]);
+                              },
+                              previewBtnClicked: () {
+                                Get.to(() => EventDetail(
+                                      event: events[index],
+                                      needRefreshCallback: () {
+                                        _eventsController.getEvents();
+                                      },
+                                    ));
+                              },
+                            );
+                          },
+                          separatorBuilder: (BuildContext ctx, int index) {
+                            return const SizedBox(
+                              height: 25,
+                            );
+                          }),
+                    );
+            }),
           ),
         ],
       ),

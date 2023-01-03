@@ -136,6 +136,7 @@ class ClubsListingState extends State<ClubsListing> {
                                   LocalizationString.all,
                                   LocalizationString.joined,
                                   LocalizationString.myClub,
+                                  // LocalizationString.invites,
                                 ]),
                           ),
                         ],

@@ -10,34 +10,32 @@ class EventsListing extends StatefulWidget {
 
 class EventsListingState extends State<EventsListing> {
   final EventsController _eventsController = Get.find();
-  final _controller = ScrollController();
 
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _eventsController.getCategories();
-      _eventsController.getEvents();
-      _eventsController.selectedSegmentIndex(0);
+      // _eventsController.getEvents();
+      // _eventsController.selectedSegmentIndex(0);
     });
 
-    _controller.addListener(() {
-      if (_controller.position.atEdge) {
-        bool isTop = _controller.position.pixels == 0;
-        if (isTop) {
-        } else {
-          _eventsController.getEvents();
-        }
-      }
-    });
+    // _controller.addListener(() {
+    //   if (_controller.position.atEdge) {
+    //     bool isTop = _controller.position.pixels == 0;
+    //     if (isTop) {
+    //     } else {
+    //       _eventsController.getEvents();
+    //     }
+    //   }
+    // });
 
     super.initState();
   }
 
-  loadClubs() {
+  loadEvents() {
     _eventsController.clear();
     _eventsController.clearMembers();
-
-    _eventsController.getEvents();
+    // _eventsController.getEvents();
   }
 
   @override
@@ -58,16 +56,10 @@ class EventsListingState extends State<EventsListing> {
           const SizedBox(
             height: 50,
           ),
-          backNavigationBarWithIcon(
-              context: context,
-              title: LocalizationString.events,
-              iconBtnClicked: () {
-                _eventsController.clear();
-                Get.to(() => const SearchEventListing())!.then((value) {
-                  _eventsController.getEvents();
-                });
-              },
-              icon: ThemeIcon.search),
+          backNavigationBar(
+            context: context,
+            title: LocalizationString.events,
+          ),
           divider(context: context).tP8,
           Expanded(
             child: Column(
@@ -78,23 +70,22 @@ class EventsListingState extends State<EventsListing> {
                 SizedBox(
                   height: 40,
                   child: Obx(() {
-                    List<CategoryModel> categories =
+                    List<EventCategoryModel> categories =
                         _eventsController.categories;
                     return _eventsController.isLoadingCategories.value
                         ? const EventCategoriesScreenShimmer()
                         : ListView.separated(
                             padding: const EdgeInsets.only(left: 16),
                             scrollDirection: Axis.horizontal,
-                            itemCount: 10,
+                            itemCount: categories.length,
                             itemBuilder: (BuildContext ctx, int index) {
-                              EventCategoryModel category = EventCategoryModel(
-                                  id: 1, name: "Category name", coverImage: "");
+                              EventCategoryModel category = categories[index];
                               return CategoryAvatarType2(category: category)
                                   .ripple(() {
                                 Get.to(() => CategoryEventsListing(
                                         category: category))!
                                     .then((value) {
-                                  loadClubs();
+                                  loadEvents();
                                 });
                               });
                             },
@@ -121,10 +112,12 @@ class EventsListingState extends State<EventsListing> {
                                   Row(
                                     children: [
                                       Text(
-                                        'Test',
+                                        _eventsController
+                                            .categories[categoryGroupIndex]
+                                            .name,
                                         style: Theme.of(context)
                                             .textTheme
-                                            .titleSmall!
+                                            .bodyLarge!
                                             .copyWith(
                                               fontWeight: FontWeight.w900,
                                             ),
@@ -145,17 +138,12 @@ class EventsListingState extends State<EventsListing> {
                                         const ThemeIconWidget(
                                           ThemeIcon.nextArrow,
                                           size: 15,
-                                        ).rP16.ripple(() {
-                                          // Get.to(() => CategoryEventsListing(
-                                          //     category: _eventsController
-                                          //         .categories[categoryGroupIndex]));
-                                        }),
+                                        ).rP16,
                                       ]).ripple(() {
                                         Get.to(() => CategoryEventsListing(
-                                            category: EventCategoryModel(
-                                                id: 1,
-                                                coverImage: '',
-                                                name: 'name')));
+                                            category:
+                                                _eventsController.categories[
+                                                    categoryGroupIndex]));
                                       })
                                     ],
                                   ),
@@ -163,36 +151,20 @@ class EventsListingState extends State<EventsListing> {
                                     height: 25,
                                   ),
                                   SizedBox(
-                                    height: 270,
+                                    height: 285,
                                     child: ListView.separated(
                                       padding: const EdgeInsets.only(
                                           left: 16, right: 16),
                                       scrollDirection: Axis.horizontal,
-                                      // itemCount: _eventsController
-                                      //     .categories[categoryGroupIndex]
-                                      //     .events
-                                      //     .length,
-                                      itemCount: 10,
+                                      itemCount: _eventsController
+                                          .categories[categoryGroupIndex]
+                                          .events
+                                          .length,
                                       itemBuilder: (ctx, tvIndex) {
-                                        // EventModel event = _eventsController
-                                        //     .categories[categoryGroupIndex]
-                                        //     .events[tvIndex];
-                                        EventModel event = EventModel(
-                                            id: 1,
-                                            categoryId: 1,
-                                            address: 'test address',
-                                            createdBy: 1,
-                                            desc: 'test desc',
-                                            image:
-                                                'https://plus.unsplash.com/premium_photo-1667857742833-a97de5712d81?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8cGFydHl8ZW58MHx8MHx8&auto=format&fit=crop&w=800&q=60',
-                                            imageName: 'name',
-                                            isJoined: false,
-                                            name: 'Event name',
-                                            sponsorImage:
-                                                'https://images.unsplash.com/photo-1512850692650-c382e34f7fb2?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8bWFsZSUyMG1vZGVsfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=800&q=60',
-                                            sponsorName: 'Sponsor name',
-                                            isFavourite: true,
-                                            totalMembers: 200);
+                                        EventModel event = _eventsController
+                                            .categories[categoryGroupIndex]
+                                            .events[tvIndex];
+
                                         return EventCard(
                                           event: event,
                                           joinBtnClicked: () {},
@@ -217,7 +189,7 @@ class EventsListingState extends State<EventsListing> {
                                 height: 40,
                               );
                             },
-                            itemCount: 5);
+                            itemCount: _eventsController.categories.length);
                       }),
                 ),
               ],

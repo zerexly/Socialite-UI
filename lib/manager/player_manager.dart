@@ -1,20 +1,32 @@
 import 'package:foap/helper/common_import.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:get/get.dart';
 
 enum PlayStateState { paused, playing, loading, idle }
 
-class PlayerManager {
+class Audio {
+  String id;
+  String url;
+
+  Audio({
+    required this.id,
+    required this.url,
+  });
+}
+
+class PlayerManager extends GetxController {
   final player = AudioPlayer();
-  final playStateNotifier = ValueNotifier<String?>(null);
-  final progressNotifier = ProgressNotifier();
 
   Duration totalDuration = const Duration(seconds: 0);
   Duration currentPosition = const Duration(seconds: 0);
 
-  playAudio(ChatMessageModel message) async {
-    playStateNotifier.value = message.id.toString();
+  Rx<Audio?> currentlyPlayingAudio = Rx<Audio?>(null);
+  Rx<ProgressBarState?> progress = Rx<ProgressBarState?>(null);
 
-    await player.setUrl(message.mediaContent.audio!);
+  playAudio(Audio audio) async {
+    currentlyPlayingAudio.value = audio;
+    // await player.setUrl(message.mediaContent.audio!);
+    await player.setUrl(audio.url);
 
     player.play();
     listenToStates();
@@ -23,18 +35,20 @@ class PlayerManager {
   listenToStates() {
     player.positionStream.listen((event) {
       currentPosition = event;
-      progressNotifier.value = ProgressBarState(current: currentPosition, total: totalDuration);
+      progress.value =
+          ProgressBarState(current: currentPosition, total: totalDuration);
     });
 
     player.durationStream.listen((event) {
-      totalDuration = event!;
+      totalDuration = event ?? const Duration(seconds: 0);
     });
 
     player.playerStateStream.listen((state) {
       if (state.playing) {
       } else {}
       switch (state.processingState) {
-        case ProcessingState.idle:{
+        case ProcessingState.idle:
+          {
             return;
           }
         case ProcessingState.loading:
@@ -44,8 +58,7 @@ class PlayerManager {
         case ProcessingState.ready:
           return;
         case ProcessingState.completed:
-          playStateNotifier.value = null;
-
+          currentlyPlayingAudio.value = null;
           return;
       }
     });
@@ -53,6 +66,6 @@ class PlayerManager {
 
   stopAudio() {
     player.stop();
-    playStateNotifier.value = null;
+    currentlyPlayingAudio.value = null;
   }
 }

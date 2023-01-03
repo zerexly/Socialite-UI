@@ -59,7 +59,7 @@ class CompetitionDetailState extends State<CompetitionDetailScreen> {
                     style: Theme.of(context)
                         .textTheme
                         .bodyLarge!
-                        .copyWith(fontWeight: FontWeight.w900),
+                        .copyWith(fontWeight: FontWeight.w600),
                   ).ripple(() {
                     Get.to(() => WebViewScreen(
                         header: LocalizationString.disclaimer,

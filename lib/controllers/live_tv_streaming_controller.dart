@@ -117,13 +117,14 @@ class TvStreamingController extends GetxController {
   sendTextMessage(String messageText, int id) {
     String localMessageId = randomId();
     var liveTvId = 'tv_$id';
+    String encrtyptedMessage = messageText.encrypted();
 
     var message = {
       'userId': getIt<UserProfileManager>().user!.id,
       'liveTvId': liveTvId,
       'local_message_id': localMessageId,
       'messageType': messageTypeId(MessageContentType.text),
-      'message': messageText,
+      'message': encrtyptedMessage,
       'picture': getIt<UserProfileManager>().user!.picture,
       'username': getIt<UserProfileManager>().user!.userName,
       'created_at': (DateTime.now().millisecondsSinceEpoch / 1000).round()

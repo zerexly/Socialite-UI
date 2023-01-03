@@ -32,15 +32,15 @@ class NotificationTileType4 extends StatelessWidget {
                   style: subTitleTextStyle ??
                       Theme.of(context)
                           .textTheme
-                          .bodyLarge!
-                          .copyWith(fontWeight: FontWeight.w900)),
+                          .bodyMedium!
+                          .copyWith(fontWeight: FontWeight.w700)),
             ),
             Text(notification.notificationTime(),
-                style: dateTextStyle ?? Theme.of(context).textTheme.bodyMedium),
+                style: dateTextStyle ?? Theme.of(context).textTheme.bodySmall),
           ],
         ).bP8,
         Text(notification.message,
-            style: titleTextStyle ?? Theme.of(context).textTheme.bodyLarge),
+            style: titleTextStyle ?? Theme.of(context).textTheme.bodyMedium),
       ],
     ).setPadding(top: 16, bottom: 16, left: 8, right: 8).shadowWithBorder(
         context: context,

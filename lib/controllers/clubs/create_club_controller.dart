@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 
 class CreateClubController extends GetxController {
   RxInt privacyType = 1.obs;
+
   RxBool enableChat = false.obs;
   Rx<CategoryModel?> category = Rx<CategoryModel?>(null);
   Rx<File?> imageFile = Rx<File?>(null);
@@ -26,6 +27,7 @@ class CreateClubController extends GetxController {
         ApiController()
             .createClub(
                 categoryId: club.categoryId!,
+                // privacyMode: privacyType.value,
                 privacyMode: 1,
                 enableChatRoom: club.enableChat!,
                 name: club.name!,

@@ -1,9 +1,7 @@
 import 'dart:developer';
-
 import 'package:foap/helper/common_import.dart';
 import 'package:foap/model/podcast_banner_model.dart';
 import 'package:get/get.dart';
-
 import '../model/faq_model.dart';
 import '../model/podcast_model.dart';
 import '../model/tv_banner_model.dart';
@@ -56,6 +54,8 @@ class ApiResponseModel {
   List<EventModel> events = [];
   List<EventMemberModel> eventMembers = [];
   List<EventCategoryModel> eventCategories = [];
+  List<EventCoupon> eventCoupons = [];
+  List<EventBookingModel> eventBookings = [];
 
   List<TvCategoryModel> tvCategories = [];
   List<TvModel> liveTvs = [];
@@ -68,6 +68,8 @@ class ApiResponseModel {
   List<PodcastModel> podcasts = [];
   List<PodcastShowModel> podcastShows = [];
   List<PodcastShowSongModel> podcastShowSongs = [];
+  List<ReelMusicModel> audios = [];
+
 
   List<VerificationRequest> verificationRequests = [];
 
@@ -76,13 +78,19 @@ class ApiResponseModel {
 
   // chat
   List<ChatRoomModel> chatRooms = [];
+  List<ChatMessageModel> messages = [];
+
   ChatRoomModel? room;
 
   APIMetaData? metaData;
   SettingModel? settings;
   PostModel? post;
+  EventModel? event;
 
   int roomId = 0;
+  String? stripePaymentIntentClientSecret;
+  String? paypalClientToken;
+  String? transactionId;
 
   ApiResponseModel();
 
@@ -148,12 +156,25 @@ class ApiResponseModel {
             model.hashtags =
             List<Hashtag>.from(items.map((x) => Hashtag.fromJson(x)));
           }
+        } else if (data['client_secret'] != null) {
+          model.stripePaymentIntentClientSecret = data['client_secret'];
+        } else if (data['client_token'] != null) {
+          model.paypalClientToken = data['client_token'];
+        } else if (data['payment_id'] != null) {
+          model.transactionId = data['payment_id'];
         } else if (data['club'] != null) {
           var items = data['club']['items'];
           if (items != null && items.length > 0) {
             model.clubs =
             List<ClubModel>.from(items.map((x) => ClubModel.fromJson(x)));
             model.metaData = APIMetaData.fromJson(data['club']['_meta']);
+          }
+        } else if (data['audio'] != null) {
+          var items = data['audio']['items'];
+          if (items != null && items.length > 0) {
+            model.audios = List<ReelMusicModel>.from(
+                items.map((x) => ReelMusicModel.fromJson(x)));
+            model.metaData = APIMetaData.fromJson(data['audio']['_meta']);
           }
         } else if (data['userList'] != null) {
           var items = data['userList']['items'];
@@ -187,6 +208,24 @@ class ApiResponseModel {
             model.highlights = List<HighlightsModel>.from(
                 items.map((x) => HighlightsModel.fromJson(x)));
           }
+        } else if (data['event'] != null) {
+          if (url == NetworkConstantsUtil.eventDetails) {
+            model.event = EventModel.fromJson(data['event']);
+          } else {
+            var items = data['event']['items'];
+            if (items != null && items.length > 0) {
+              model.events = List<EventModel>.from(
+                  items.map((x) => EventModel.fromJson(x)));
+            }
+          }
+        } else if (data['eventBooking'] != null) {
+          var items = data['eventBooking']['items'];
+          if (items != null && items.length > 0) {
+            model.eventBookings = List<EventBookingModel>.from(
+                items.map((x) => EventBookingModel.fromJson(x)));
+            model.metaData =
+                APIMetaData.fromJson(data['eventBooking']['_meta']);
+          }
         } else if (data['category'] != null) {
           var items = data['category'];
 
@@ -202,11 +241,16 @@ class ApiResponseModel {
             } else if (url == NetworkConstantsUtil.giftsCategories) {
               model.giftCategories = List<GiftCategoryModel>.from(
                   items.map((x) => GiftCategoryModel.fromJson(x)));
+            }
+            if (url == NetworkConstantsUtil.eventsCategories) {
+              model.eventCategories = List<EventCategoryModel>.from(
+                  items.map((x) => EventCategoryModel.fromJson(x)));
             } else {
               model.categories = List<CategoryModel>.from(
                   items.map((x) => CategoryModel.fromJson(x)));
             }
           }
+
         }
 
         else if (data['tv_show'] != null) {
@@ -270,7 +314,15 @@ class ApiResponseModel {
             }
           }
         }
-        else if (data['gift'] != null) {
+         else if (data['coupon'] != null) {
+          var items = data['coupon'];
+
+          if (items != null && items.length > 0) {
+            model.eventCoupons = List<EventCoupon>.from(
+                items.map((x) => EventCoupon.fromJson(x)));
+          }
+        } else if (data['gift'] != null) {
+
           var items = data['gift']['items'];
 
           if (url == NetworkConstantsUtil.giftsReceived) {
@@ -436,7 +488,7 @@ class ApiResponseModel {
         } else if (data['room_id'] != null) {
           model.roomId = data['room_id'];
         } else if (data['room'] != null) {
-          if (url == NetworkConstantsUtil.getRooms) {
+          if (url == NetworkConstantsUtil.getChatRooms) {
             model.chatRooms = [];
             var room = data['room'] as List<dynamic>?;
             if (room != null && room.isNotEmpty) {
@@ -453,6 +505,12 @@ class ApiResponseModel {
               var roomData = data['room'];
               model.room = ChatRoomModel.fromJson(roomData);
             }
+          }
+        } else if (data['chatMessage'] != null) {
+          var items = data['chatMessage']['items'];
+          if (items != null && items.length > 0) {
+            model.messages = List<ChatMessageModel>.from(
+                items.map((x) => ChatMessageModel.fromJson(x)));
           }
         } else if (data['faq'] != null) {
           var items = data['faq']['items'];

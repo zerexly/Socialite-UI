@@ -1,35 +1,32 @@
-enum RecordType{
+enum RecordType {
   profile,
   post,
   hashtag,
   location,
 }
 
-enum SearchFrom{
+enum SearchFrom {
   username,
   email,
   phone,
 }
 
-enum PostSource{
-  posts,
-  mentions
-}
+enum PostSource { posts, mentions }
 
-enum PostMediaType{
+enum PostMediaType {
   all,
   photo,
   video,
 }
 
-enum MessageStatus{
+enum MessageStatus {
   sending,
   sent,
   delivered,
   read,
 }
 
-enum MessageContentType{
+enum MessageContentType {
   text,
   photo,
   video,
@@ -50,13 +47,7 @@ enum MessageContentType{
   gift
 }
 
-enum UploadMediaType{
-  post,
-  storyOrHighlights,
-  chat,
-  club,
-  verification
-}
+enum UploadMediaType { post, storyOrHighlights, chat, club, verification }
 
 ///Media picker selection type
 enum GalleryMediaType {
@@ -88,16 +79,24 @@ enum GalleryMediaType {
   all,
 }
 
-enum ChatMessageActionMode{
-  none,
-  reply,
-  forward,
-  star,
-  delete,
-  edit
-}
+enum ChatMessageActionMode { none, reply, forward, star, delete, edit }
 
-enum AgoraCallType{
+enum AgoraCallType {
   audio,
   video,
 }
+
+enum PaymentGateway {
+  creditCard,
+  applePay,
+  paypal,
+  razorpay,
+  wallet,
+  stripe,
+  googlePay,
+  inAppPurchse
+}
+
+enum BookingStatus { confirmed, cancelled }
+
+enum EventStatus { upcoming, active, completed }

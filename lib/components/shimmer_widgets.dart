@@ -529,3 +529,121 @@ class StoriesShimmerWidget extends StatelessWidget {
         }).hP16;
   }
 }
+
+class EventBookingShimmerWidget extends StatefulWidget {
+  const EventBookingShimmerWidget({Key? key}) : super(key: key);
+
+  @override
+  State<EventBookingShimmerWidget> createState() =>
+      _EventBookingShimmerWidgetState();
+}
+
+class _EventBookingShimmerWidgetState extends State<EventBookingShimmerWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return ListView.separated(
+        padding:
+            const EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 16),
+        itemCount: 20,
+        itemBuilder: (BuildContext ctx, int index) {
+          return Column(
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      'National music festival',
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleSmall!
+                          .copyWith(fontWeight: FontWeight.w700),
+                    ),
+                  ),
+                  Container(
+                    height: 50,
+                    width: 50,
+                    color: Theme.of(context).cardColor,
+                  ).round(10)
+                ],
+              ).p16,
+              divider(context: context).vP8,
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        LocalizationString.date,
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      Container(
+                        height: 2,
+                        width: 30,
+                        color: Theme.of(context).primaryColor,
+                      ),
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      Text(
+                        '10-Nov-2022',
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyLarge!
+                            .copyWith(fontWeight: FontWeight.w700),
+                      )
+                    ],
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        LocalizationString.time,
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      Container(
+                        height: 2,
+                        width: 30,
+                        color: Theme.of(context).primaryColor,
+                      ),
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      Text(
+                        '10:00 AM',
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyLarge!
+                            .copyWith(fontWeight: FontWeight.w700),
+                      )
+                    ],
+                  ),
+                  const Spacer(),
+                  Container(
+                    color: Theme.of(context).backgroundColor,
+                    child: Text(
+                      'VIP',
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ).setPadding(left: 16, right: 16, top: 8, bottom: 8),
+                  ).round(10)
+                ],
+              ).p16
+            ],
+          ).addShimmer(context);
+        },
+        separatorBuilder: (BuildContext ctx, int index) {
+          return const SizedBox(
+            height: 20,
+          );
+        });
+  }
+}

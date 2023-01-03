@@ -14,8 +14,9 @@ class ChatHistoryController extends GetxController {
   getChatRooms() async {
     isLoading = true;
     allRooms = await getIt<DBManager>().getAllRooms();
-
-    // allRooms = await getIt<DBManager>().mapUnReadCount(allRooms);
+    // for(ChatRoomModel room in allRooms){
+    //   getIt<DBManager>().deleteMessagesInRoom(room);
+    // }
     searchedRooms.value = allRooms;
     update();
 
@@ -27,6 +28,7 @@ class ChatHistoryController extends GetxController {
             .toList();
         await getIt<DBManager>().saveRooms(groupChatRooms);
         allRooms = await getIt<DBManager>().getAllRooms();
+
         // allRooms = await getIt<DBManager>().mapUnReadCount(groupChatRooms);
         searchedRooms.value = allRooms;
         update();
@@ -56,13 +58,6 @@ class ChatHistoryController extends GetxController {
         await getIt<DBManager>().roomsWithUnreadMessages();
     _dashboardController.updateUnreadMessageCount(roomsWithUnreadMessageCount);
 
-    // allRooms = allRooms.map((element) {
-    //   if (element.id == chatRoom.id) {
-    //     element.unreadMessages = 0;
-    //   }
-    //   return element;
-    // }).toList();
-
     getChatRooms();
     update();
   }
@@ -71,7 +66,7 @@ class ChatHistoryController extends GetxController {
     allRooms.removeWhere((element) => element.id == chatRoom.id);
     getIt<DBManager>().deleteRoom(chatRoom);
     update();
-    // ApiController().deleteChatRoom(chatRoom.id);
+    ApiController().deleteChatRoom(chatRoom.id);
   }
 
   // ******************* updates from socket *****************//

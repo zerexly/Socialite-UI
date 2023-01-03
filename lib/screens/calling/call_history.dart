@@ -34,34 +34,13 @@ class _CallHistoryState extends State<CallHistory> {
             const SizedBox(
               height: 50,
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                ThemeIconWidget(
-                  ThemeIcon.backArrow,
-                  color: Theme.of(context).iconTheme.color,
-                  size: 20,
-                ).p8.ripple(() {
-                  Get.back();
+            backNavigationBarWithIcon(
+                context: context,
+                icon: ThemeIcon.mobile,
+                title: LocalizationString.callLog,
+                iconBtnClicked: () {
+                  selectUsers();
                 }),
-                Text(
-                  LocalizationString.callLog,
-                  style: Theme.of(context)
-                      .textTheme
-                      .titleMedium!
-                      .copyWith(fontWeight: FontWeight.w600),
-                ),
-                Container(
-                  child: ThemeIconWidget(
-                    ThemeIcon.mobile,
-                    color: Theme.of(context).iconTheme.color,
-                    size: 15,
-                  ).p4.ripple(() {
-                    selectUsers();
-                  }),
-                ).borderWithRadius(context: context, value: 2, radius: 8),
-              ],
-            ).setPadding(left: 16, right: 16, top: 8, bottom: 16),
             divider(context: context).tP8,
             Expanded(
               child: GetBuilder<CallHistoryController>(
@@ -115,15 +94,17 @@ class _CallHistoryState extends State<CallHistory> {
         backgroundColor: Colors.transparent,
         context: context,
         builder: (context) => SelectUserForChat(userSelected: (user) {
-              _chatDetailController.getChatRoomWithUser(user.id, (room) {
-                EasyLoading.dismiss();
+              _chatDetailController.getChatRoomWithUser(
+                  userId: user.id,
+                  callback: (room) {
+                    EasyLoading.dismiss();
 
-                Get.back();
-                Get.to(() => ChatDetail(
-                      // opponent: usersList[index - 1].toChatRoomMember,
-                      chatRoom: room,
-                    ));
-              });
+                    Get.back();
+                    Get.to(() => ChatDetail(
+                          // opponent: usersList[index - 1].toChatRoomMember,
+                          chatRoom: room,
+                        ));
+                  });
             }));
   }
 }

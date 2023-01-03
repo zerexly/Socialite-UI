@@ -323,10 +323,6 @@ class PostCardState extends State<PostCard> {
                     style: Theme.of(context).textTheme.bodySmall,
                   )
                 : Container()
-            // Text(
-            //   'Location to add',
-            //   style: Theme.of(context).textTheme.bodyLarge,
-            // )
           ],
         )),
         SizedBox(
@@ -460,7 +456,13 @@ class PostCardState extends State<PostCard> {
   }
 
   void openProfile() async {
-    Get.to(() => OtherUserProfile(userId: widget.model.user.id));
+    if (widget.model.user.isMe) {
+      Get.to(() => const MyProfile(
+            showBack: true,
+          ));
+    } else {
+      Get.to(() => OtherUserProfile(userId: widget.model.user.id));
+    }
   }
 
   void openClubDetail() async {

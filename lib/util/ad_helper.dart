@@ -201,7 +201,7 @@ class InterstitialAds {
   SettingsController settingsController = Get.find();
 
   void show() {
-    if (settingsController.setting.value!.networkToUse == 1) {
+    if (settingsController.setting.value!.networkToUse == '1') {
       FacebookInterstitialAd.loadInterstitialAd(
         placementId: FacebookAudienceNetworkKeys().interstitialAdUnitId,
         listener: (result, value) {

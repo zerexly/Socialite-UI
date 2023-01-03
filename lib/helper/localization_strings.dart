@@ -119,7 +119,7 @@ class LocalizationString {
   static String forgotPwd = 'Forgot Password?'.tr;
   static String passwordIsEmpty = 'Please enter password'.tr;
   static String emailPwdIsIncorrect = 'Email or password is incorrect'.tr;
-  static String passwordChanged = 'Please changed successfully'.tr;
+  static String passwordChanged = 'Password changed successfully'.tr;
   static String weHaveSentOTP = 'We have sent an OTP'.tr;
   static String enterOTP = 'Enter OTP'.tr;
   static String wrongOTP = 'Wrong OTP, please enter the correct OTP'.tr;
@@ -187,7 +187,7 @@ class LocalizationString {
 
   static String coins = 'Coins'.tr;
   static String totalCoins = 'Total Coins'.tr;
-  static String availableBalance = 'Available balance to withdraw'.tr;
+  static String availableBalanceToWithdraw = 'Available balance to withdraw'.tr;
   static String availableCoins = 'Available coins'.tr;
 
   static String buyCoins = 'Buy more coins'.tr;
@@ -706,11 +706,13 @@ class LocalizationString {
   static String recent = 'Recent'.tr;
   static String goLive = 'Go Live'.tr;
   static String liveNow = 'Now on live'.tr;
+  static String reel = 'Reel'.tr;
+  static String reels = 'Reels'.tr;
 
   static String anyoneCanSeeClub =
-      'Anyone can see who\'s in the club and what they post'.tr;
+      'Anyone can see this club and join the club'.tr;
   static String onlyMembersCanSeeClub =
-      'Only members can see who\'s in the group and what they post'.tr;
+      'Only requested member or joined member can see it'.tr;
   static String communication = 'Communication'.tr;
 
   static String chatGroup = 'Chat group'.tr;
@@ -813,10 +815,23 @@ class LocalizationString {
 
   // v 1.6 keys
   static String events = 'Events'.tr;
+  static String event = 'Event'.tr;
+  static String dateAndTime = 'Date and Time'.tr;
+  static String eventLocation = 'Event Location'.tr;
+  static String eventOrganizer = 'Event Organizer'.tr;
+
   static String going = "Going".tr;
   static String buyTicket = 'Buy Ticket'.tr;
+
+  static String ticketWillBeAvailableSoon = 'Tickets will be available soon'.tr;
+
+  static String eventIsSoldOut = 'Event is sold out'.tr;
   static String ticketType = 'Ticket type'.tr;
   static String orderSummary = 'Order Summary'.tr;
+  static String organizer = 'Organizer'.tr;
+  static String totalSeats = 'Total seats'.tr;
+  static String availableSeats = 'Available seats'.tr;
+  static String payAndBuy = 'Pay and buy'.tr;
 
   static String subTotal = 'Sub Total'.tr;
   static String fees = 'Fees'.tr;
@@ -824,6 +839,12 @@ class LocalizationString {
   static String total = 'Total'.tr;
   static String checkout = 'Checkout'.tr;
   static String couponCode = 'Coupon code'.tr;
+  static String code = 'Code'.tr;
+  static String minimumOrderPrice = 'Minimum order price'.tr;
+  static String discount = 'Discount'.tr;
+  static String price = 'Price'.tr;
+  static String serviceFee = 'Service fee'.tr;
+
   static String enterCouponCode = 'Enter coupon coupon'.tr;
   static String apply = 'Apply'.tr;
   static String applyCoupon = 'Apply coupon'.tr;
@@ -831,14 +852,71 @@ class LocalizationString {
   static String couponApplied = 'coupon applied'.tr;
   static String makePayment = 'Make payment'.tr;
   static String selectPaymentGateway = 'Select payment gateway'.tr;
+  static String payUsing = 'Pay using'.tr;
+  static String pay = 'Pay'.tr;
 
   // checkout
+  static String wallet = 'Wallet'.tr;
+  static String availableBalance = 'Available balance'.tr;
+  static String useBalance = 'Use balance'.tr;
+  static String payableAmount = 'Payable amount'.tr;
 
   static String choosePaymentMethod = 'Choose payment method'.tr;
   static String creditCard = 'Credit card'.tr;
   static String applePay = 'Apple Pay'.tr;
+  static String googlePay = 'Google Pay'.tr;
   static String paypal = 'Paypal'.tr;
   static String razorPay = 'Razorpay'.tr;
+  static String stripe = 'Stripe'.tr;
+  static String inAppPurchase = 'In App Purchase'.tr;
+
   static String cash = 'Cash'.tr;
+  static String ticketBooked = 'Ticket booked successfully'.tr;
+
+  // bookings
+  static String bookings = 'Bookings'.tr;
+  static String bookingInfo = 'Booking info'.tr;
+  static String bookingId = 'Booking Id'.tr;
+  static String bookingStatus = 'Booking status'.tr;
+  static String bookingDate = 'Booking date'.tr;
+  static String viewETicket = 'View E-Ticket'.tr;
+  static String eTicket = 'E-Ticket'.tr;
+  static String saveETicket = 'Save E-Ticket'.tr;
+  static String ticketSaved = 'Ticket Saved'.tr;
+  static String bookingCancelled = 'Booking cancelled successfully'.tr;
+  static String confirmed = 'Confirmed'.tr;
+  static String placingOrder = 'Placing order, please wait...'.tr;
+  static String doNotCloseApp =
+      'Do not close or refresh the app until the process is completed'.tr;
+  static String bookingConfirmed = 'Your booking is confirmed'.tr;
+  static String bookMoreTickets = 'Book more'.tr;
+
+  static String errorInBooking = 'Error in booking..'.tr;
+  static String pleaseTryAgain = 'Please try again later'.tr;
+  static String tryAgain = 'Try again'.tr;
+
+  static String noBookingFound = 'No booking found'.tr;
+  static String goToEventAndBook = 'Go to events and book tickets'.tr;
+
+  static String eventGallery = 'Event Gallery'.tr;
+
+  static String time = 'Time'.tr;
+  static String date = 'Date'.tr;
+  static String cancelBooking = 'Cancel booking'.tr;
+
+  static String upcoming = 'Upcoming'.tr;
+  static String free = 'Free'.tr;
+  static String paid = 'Paid'.tr;
+
+  static String suggestedForYou = 'Suggested for you'.tr;
+
+  static String publicGroup = "Public group".tr;
+  static String joinRequests = "Join requests".tr;
+  static String joinInvitations = "Join invitations".tr;
+  static String invites = "Invites".tr;
+
+  static String accept = 'Accept'.tr;
+  static String decline = 'Decline'.tr;
+  static String addComment = 'Add comment'.tr;
 
 }

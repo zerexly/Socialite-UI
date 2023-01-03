@@ -45,9 +45,12 @@ class ChatMedia {
     model.gif = data["image"] as String?;
     model.video = data["video"] as String?;
     model.audio = data["audio"] as String?;
-    model.location = (data["location"] as Map<String, dynamic>?) != null
-        ? LocationModel.fromJson(data["location"])
-        : null;
+    if ((data["location"] is Map<String, dynamic>)) {
+      model.location = (data["location"] as Map<String, dynamic>?) != null
+          ? LocationModel.fromJson(data["location"])
+          : null;
+    }
+
     model.file = (data["file"] as Map<String, dynamic>?) != null
         ? FileModel(
             path: data["file"]["path"],
@@ -110,6 +113,19 @@ class GiftContent {
   }
 }
 
+class TextContent {
+  String message = "";
+
+  TextContent();
+
+  factory TextContent.fromJson(dynamic json) {
+    TextContent model = TextContent();
+    model.message = json['text'];
+
+    return model;
+  }
+}
+
 class ProfileMinimumContent {
   int userId = 0;
   String? userPicture;
@@ -129,16 +145,40 @@ class ProfileMinimumContent {
   }
 }
 
+class ChatMessageUser {
+  int id = 0;
+  int messageId = 0;
+  int userId = 0;
+  int status = 0;
+
+  ChatMessageUser();
+
+  factory ChatMessageUser.fromJson(dynamic json) {
+    ChatMessageUser model = ChatMessageUser();
+    model.id = json['id'] ?? 0;
+    model.messageId = json['chat_message_id'] ?? 0;
+    model.userId = json['user_id'] ?? 0;
+    model.status = json['status'] ?? 0;
+
+    return model;
+  }
+}
+
 class ChatMessageModel {
   int id = 0;
   bool isDateSeparator = false;
 
   String localMessageId = "";
+  GlobalKey? globalKey;
+
   int roomId = 0;
   String liveTvId = '';
+  int isEncrypted = 0;
 
   // int roomType = 0;
   String messageContent = "";
+  String? repliedOnMessageContent;
+
   int senderId = 0;
   int createdAt = 0;
   int? viewedAt;
@@ -152,42 +192,68 @@ class ChatMessageModel {
   String? userPicture;
   int messageType = 0;
   int status = 0;
+
   int isDeleted = 0;
   int isStar = 0;
 
   Media? media;
   Contact? contact;
 
-  ChatMessageModel? replyMessageContent;
-  ChatMessageModel? originalMessageContent;
+  ChatMessageModel? cachedReplyMessage;
+  List<ChatMessageUser> chatMessageUser = [];
+  UserModel? sender;
+
+  int chatVersion = 1;
 
   ChatMessageModel();
 
-  factory ChatMessageModel.fromJson(dynamic json) {
+  factory ChatMessageModel.fromJson(dynamic jsonObj) {
+    Map<dynamic, dynamic> jsonMap;
+    if (jsonObj is String) {
+      jsonMap = json.decode(jsonObj);
+    } else {
+      jsonMap = jsonObj;
+    }
     ChatMessageModel model = ChatMessageModel();
-    model.id = json['id'] ?? 0;
-    model.localMessageId = json['local_message_id'] ?? json['localMessageId'];
-    model.roomId = json['room'] ?? json['room_id'] ?? json['liveCallId'] ?? 0;
-    model.liveTvId = json['liveTvId'] ?? '';
+    model.id = jsonMap['id'] ?? 0;
+    model.sender =
+        jsonMap['user'] == null ? null : UserModel.fromJson(jsonMap['user']);
 
+    model.localMessageId =
+        jsonMap['local_message_id'] ?? jsonMap['localMessageId'];
+    model.roomId =
+        jsonMap['room'] ?? jsonMap['room_id'] ?? jsonMap['liveCallId'] ?? 0;
+    model.liveTvId = jsonMap['liveTvId'] ?? '';
+    model.isEncrypted = jsonMap['is_encrypted'] ?? 0;
+    model.chatVersion = jsonMap['chat_version'] ?? 0;
     // model.roomType = json['type'] ?? 1;
-    model.messageType = json['messageType'] ?? json['type'];
-    model.messageContent = json['message'];
-    model.senderId = json['created_by'];
-    model.createdAt = json['created_at'];
-    model.viewedAt = json['viewed_at'];
-    model.deleteAfter =
-        json['deleteAfter'] ?? getIt<UserProfileManager>().user!.chatDeleteTime;
+
+    // if (model.isEncrypted == 1) {
+    //   model.messageContent = (jsonMap['message'] as String).decrypted();
+    // } else {
+    model.messageContent = jsonMap['message'].replaceAll('\\', '');
+    model.repliedOnMessageContent = jsonMap['replied_on_message'];
+    // }
+
+    model.messageType = jsonMap['messageType'] ?? jsonMap['type'];
+    model.senderId = jsonMap['created_by'];
+    model.createdAt = jsonMap['created_at'];
+    model.viewedAt = jsonMap['viewed_at'];
+    model.deleteAfter = jsonMap['deleteAfter'] ??
+        getIt<UserProfileManager>().user!.chatDeleteTime;
 
     // model.messageTime = createDate.messageTimeForChat();
-    model.isDeleted = json['isDeleted'] ?? 0;
-    model.isStar = json['isStar'] ?? 0;
-
-    model.opponentId = json['opponent_id'] ?? 0;
-    model.userName = json['username'] ?? '';
-    model.userPicture = json['picture'] ?? '';
-    model.status = json['status'] ?? 0;
+    model.isDeleted = jsonMap['isDeleted'] ?? 0;
+    model.isStar = jsonMap['isStar'] ?? 0;
+    model.opponentId = jsonMap['opponent_id'] ?? 0;
+    model.userName = jsonMap['username'] ?? '';
+    model.userPicture = jsonMap['picture'] ?? '';
+    model.status = jsonMap['current_status'] ?? 0;
     model.isDateSeparator = false;
+    model.chatMessageUser = jsonMap['chatMessageUser'] == null
+        ? []
+        : List<ChatMessageUser>.from(
+            jsonMap['chatMessageUser'].map((x) => ChatMessageUser.fromJson(x)));
 
     return model;
   }
@@ -196,45 +262,87 @@ class ChatMessageModel {
         'id': id,
         'local_message_id': localMessageId,
         'room_id': roomId,
-        // 'type': roomType,
         'messageType': messageType,
         'message': messageContent,
+        'replied_on_message': repliedOnMessageContent,
         'created_by': senderId,
         'created_at': createdAt,
         'username': userName,
-        'isDeleted': isDeleted,
+        'is_encrypted': isEncrypted,
         'isStar': isStar,
       };
 
+  // bool get isDeleted {
+  //   if (chatMessageUser.isEmpty) {
+  //     return false;
+  //   }
+  //   int status = chatMessageUser
+  //       .where(
+  //           (element) => element.userId == getIt<UserProfileManager>().user!.id)
+  //       .first
+  //       .status;
+  //
+  //   //TODO: delete status needs to add
+  //   return status == 4;
+  // }
+
   int get originalMessageId {
-    return ChatContentJson.fromJson(messageContent).originalMessageId;
+    return ChatContentJson.fromJson(decrypt).originalMessageId;
   }
 
   ChatMedia get mediaContent {
-    return ChatMedia.fromJson(json.decode(messageContent));
+    // if (messageContentType == MessageContentType.reply) {
+    //   ChatMessageModel message =
+    //       ChatMessageModel.fromJson(json.decode(messageContent.decrypted()));
+    //   return ChatMedia.fromJson(json.decode(message.decrypt));
+    // } else {
+    // print(messageContent.decrypted());
+    //   ChatMessageModel message =
+    //       ChatMessageModel.fromJson(json.decode(messageContent.decrypted()));
+    return ChatMedia.fromJson(json.decode(messageContent.decrypted()));
+    // }
+  }
+
+  TextContent get textContent {
+    return TextContent.fromJson(json.decode(messageContent.decrypted()));
+  }
+
+  String get textMessage {
+    return textContent.message.decrypted();
   }
 
   ChatPost get postContent {
-    return ChatPost.fromJson(json.decode(messageContent));
+    // if (messageContentType == MessageContentType.reply) {
+    //   ChatMessageModel message =
+    //       ChatMessageModel.fromJson(json.decode(messageContent.decrypted()));
+    //   return ChatPost.fromJson(json.decode(message.decrypt));
+    // } else {
+    //   return ChatPost.fromJson(json.decode(decrypt));
+    // }
+    ChatMessageModel message =
+        ChatMessageModel.fromJson(json.decode(messageContent.decrypted()));
+    return ChatPost.fromJson(json.decode(message.decrypt));
   }
 
   GiftContent get giftContent {
-    return GiftContent.fromJson(json.decode(messageContent));
+    // ChatMessageModel message = ChatMessageModel.fromJson(json.decode(messageContent.decrypted()));
+    return GiftContent.fromJson(json.decode(decrypt));
   }
 
   ProfileMinimumContent get profileContent {
-    return ProfileMinimumContent.fromJson(json.decode(messageContent));
+    return ProfileMinimumContent.fromJson(
+        json.decode(messageContent.decrypted()));
   }
 
   String? get copyContent {
-    if (messageContentType == MessageContentType.text) {
-      return messageContent;
-    } else if (messageContentType == MessageContentType.reply) {
-      return reply.messageContent;
-    } else if (messageContentType == MessageContentType.forward) {
-      return originalMessage.messageContent;
-    }
-    return null;
+    // if (messageContentType == MessageContentType.text) {
+    return messageContent;
+    // } else if (messageContentType == MessageContentType.reply) {
+    //   return reply.messageContent;
+    // } else if (messageContentType == MessageContentType.forward) {
+    //   return originalMessage.messageContent;
+    // }
+    //return null;
   }
 
   MessageStatus get messageStatusType {
@@ -256,23 +364,74 @@ class ChatMessageModel {
     return messageContentType == MessageContentType.forward;
   }
 
-  ChatMessageModel get reply {
-    // print('reply');
-    // print(replyMessageContent);
+  // ChatMessageModel get reply {
+  //   return cachedReplyMessage ??
+  //       ChatMessageModel.fromJson(json.decode(decrypt));
+  //   // return ChatMessageModel.fromJson(json.decode(decrypt));
+  // }
 
-    return replyMessageContent ??
-        ChatMessageModel.fromJson(
-            json.decode(json.decode(messageContent)['reply']));
+  ChatMessageModel get repliedOnMessage {
+    if (chatVersion < AppConfigConstants.chatVersion) {
+      // return cachedReplyMessage ??
+      //     ChatMessageModel.fromJson(json.decode(decrypt)['reply']);
+      return ChatMessageModel.fromJson(json.decode(decrypt)['reply']);
+    }
+    // return cachedReplyMessage ??
+    //     ChatMessageModel.fromJson(json.decode(repliedOnMessageDecrypt));
+    return ChatMessageModel.fromJson(json.decode(repliedOnMessageDecrypt));
   }
 
   ChatMessageModel get originalMessage {
-    var formattedString = messageContent;
-    return originalMessageContent ??
-        ChatMessageModel.fromJson(
-            json.decode(formattedString)['originalMessage']);
+    var formattedString = decrypt;
+    return ChatMessageModel.fromJson(
+        json.decode(formattedString)['originalMessage']);
   }
 
   MessageContentType get messageContentType {
+    if (messageType == 1) {
+      return MessageContentType.text;
+    } else if (messageType == 2) {
+      return MessageContentType.photo;
+    } else if (messageType == 3) {
+      return MessageContentType.video;
+    } else if (messageType == 4) {
+      return MessageContentType.audio;
+    } else if (messageType == 5) {
+      return MessageContentType.gif;
+    } else if (messageType == 6) {
+      return MessageContentType.sticker;
+    } else if (messageType == 7) {
+      return MessageContentType.contact;
+    } else if (messageType == 8) {
+      return MessageContentType.location;
+    } else if (messageType == 9) {
+      return MessageContentType.reply;
+    } else if (messageType == 10) {
+      return MessageContentType.forward;
+    } else if (messageType == 11) {
+      return MessageContentType.post;
+    } else if (messageType == 12) {
+      return MessageContentType.story;
+    } else if (messageType == 13) {
+      return MessageContentType.drawing;
+    } else if (messageType == 14) {
+      return MessageContentType.profile;
+    } else if (messageType == 15) {
+      return MessageContentType.group;
+    } else if (messageType == 16) {
+      return MessageContentType.file;
+    } else if (messageType == 100) {
+      return MessageContentType.groupAction;
+    } else if (messageType == 200) {
+      return MessageContentType.gift;
+    }
+    return MessageContentType.text;
+  }
+
+  MessageContentType get messageReplyContentType {
+    Map data = json.decode(decrypt);
+    int messageType = data['messageType'];
+
     if (messageType == 1) {
       return MessageContentType.text;
     } else if (messageType == 2) {
@@ -331,7 +490,7 @@ class ChatMessageModel {
     } else if (messageType == 8) {
       return false;
     } else if (messageType == 9) {
-      return reply.isMediaMessage;
+      return isMediaMessage;
     } else if (messageType == 10) {
       return originalMessage.isMediaMessage;
     } else if (messageType == 11) {
@@ -385,7 +544,7 @@ class ChatMessageModel {
 
   String get shortInfo {
     if (messageType == 1) {
-      return messageContent;
+      return decrypt;
     } else if (messageType == 2) {
       return LocalizationString.sentAPhoto;
     } else if (messageType == 3) {
@@ -401,7 +560,7 @@ class ChatMessageModel {
     } else if (messageType == 8) {
       return LocalizationString.sentALocation;
     } else if (messageType == 9) {
-      return reply.shortInfo;
+      return shortInfo;
     } else if (messageType == 10) {
       return originalMessage.shortInfo;
     } else if (messageType == 11) {
@@ -413,7 +572,7 @@ class ChatMessageModel {
     } else if (messageType == 14) {
       return LocalizationString.sentAProfile;
     } else if (messageType == 100) {
-      Map<String, dynamic> actionMessage = json.decode(messageContent);
+      Map<String, dynamic> actionMessage = json.decode(decrypt);
       int action = actionMessage['action'] as int;
 
       if (action == 1) {
@@ -438,7 +597,7 @@ class ChatMessageModel {
         return '$userName ${LocalizationString.leftTheGroup}';
       }
     }
-    return messageContent;
+    return decrypt;
   }
 
   String get filePath {
@@ -452,5 +611,19 @@ class ChatMessageModel {
       return mediaContent.audio!;
     }
     return mediaContent.file!.path;
+  }
+
+  String get decrypt {
+    if (isEncrypted == 1) {
+      return messageContent.decrypted();
+    }
+    return messageContent;
+  }
+
+  String get repliedOnMessageDecrypt {
+    if (isEncrypted == 1) {
+      return repliedOnMessageContent!.decrypted();
+    }
+    return repliedOnMessageContent!.decrypted();
   }
 }

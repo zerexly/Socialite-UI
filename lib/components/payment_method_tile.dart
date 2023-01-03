@@ -4,12 +4,15 @@ class PaymentMethodTile extends StatelessWidget {
   const PaymentMethodTile({
     Key? key,
     required this.text,
+    required this.price,
     required this.icon,
+    required this.isSelected,
     this.press,
   }) : super(key: key);
 
-  final String? text, icon;
+  final String text, price, icon;
   final VoidCallback? press;
+  final bool isSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -18,30 +21,54 @@ class PaymentMethodTile extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            height: 40,
-            width: 40,
+            height: 35,
+            width: 35,
             color: Theme.of(context).primaryColor.lighten(),
             child: Image.asset(
-              icon!,
+              icon,
               // width: 40,
             ).p8,
           ).circular,
-          const SizedBox(width: 20),
+          const SizedBox(width: 15),
           Expanded(
-              child: Text(
-            text!,
-            style: Theme.of(context)
-                .textTheme
-                .titleSmall!
-                .copyWith(fontWeight: FontWeight.w700),
+              child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                text,
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyLarge!
+                    .copyWith(fontWeight: FontWeight.w700),
+              ),
+              const SizedBox(height: 5),
+              Row(
+                children: [
+                  Text(
+                    LocalizationString.pay,
+                    style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                        fontWeight: FontWeight.w500,
+                        color: Theme.of(context).primaryColor),
+                  ),
+                  const SizedBox(
+                    width: 5,
+                  ),
+                  Text(
+                    price,
+                    style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                        fontWeight: FontWeight.w900,
+                        color: Theme.of(context).primaryColor),
+                  ),
+                ],
+              )
+            ],
           )),
-          Icon(
-            Icons.arrow_forward_ios,
-            size: 15,
-            color: Theme.of(context).iconTheme.color,
+          ThemeIconWidget(
+            isSelected ? ThemeIcon.selectedCheckbox : ThemeIcon.emptyCheckbox,
+            color: isSelected ? Theme.of(context).primaryColor : null,
           ),
         ],
-      ).p16,
+      ).vP16,
     ).ripple(press!);
   }
 }

@@ -1,4 +1,6 @@
 //Initialize Socket Connection
+import 'dart:developer';
+
 import 'package:socket_io_client/socket_io_client.dart' as io;
 import 'package:foap/helper/common_import.dart';
 import 'dart:convert';
@@ -118,9 +120,9 @@ class SocketManager {
 
 //To Emit Event Into Socket
   bool emit(String event, Map<String, dynamic> data) {
-    print('emiting ${_socketInstance!.connected}');
+    log('emiting ${_socketInstance!.connected}');
     if (_socketInstance!.connected == true) {
-      print(
+      log(
           'event == $event ========== data = ${jsonDecode(json.encode(data))}');
       _socketInstance?.emit(event, jsonDecode(json.encode(data)));
     } else {
@@ -217,10 +219,11 @@ class SocketManager {
     int deleteScope = response['deleteScope'] as int;
     int roomId = response['room'] as int;
     int messageId = response['id'] as int;
+    int userId = response['user_id'] as int;
 
     if (deleteScope == 2) {
       _chatDetailController.messagedDeleted(
-          messageId: messageId, roomId: roomId);
+          messageId: messageId, roomId: roomId, userId: userId);
     }
   }
 

@@ -12,6 +12,10 @@ class ClubsController extends GetxController {
   bool canLoadMoreClubs = true;
   RxBool isLoadingClubs = false.obs;
 
+  int invitationsPage = 1;
+  bool canLoadMoreInvitations = true;
+  RxBool isLoadingInvitations = false.obs;
+
   int membersPage = 1;
   bool canLoadMoreMembers = true;
   bool isLoadingMembers = false;
@@ -33,7 +37,7 @@ class ClubsController extends GetxController {
   }
 
   selectedSegmentIndex(int index) {
-    if(isLoadingClubs.value == true){
+    if (isLoadingClubs.value == true) {
       return;
     }
     update();
@@ -47,6 +51,8 @@ class ClubsController extends GetxController {
     } else if (index == 2 && segmentIndex.value != index) {
       clear();
       getClubs(userId: getIt<UserProfileManager>().user!.id);
+    } else if (index == 3 && segmentIndex.value != index) {
+      getClubInvitations();
     }
 
     segmentIndex.value = index;
@@ -77,7 +83,25 @@ class ClubsController extends GetxController {
     }
   }
 
-  clubDeleted(ClubModel club){
+  getClubInvitations() {
+    if (canLoadMoreClubs) {
+      isLoadingClubs.value = true;
+      ApiController().getClubInvitations(page: clubsPage).then((response) {
+        clubs.addAll(response.clubs);
+        isLoadingClubs.value = false;
+
+        clubsPage += 1;
+        if (response.clubs.length == response.metaData?.perPage) {
+          canLoadMoreClubs = true;
+        } else {
+          canLoadMoreClubs = false;
+        }
+        update();
+      });
+    }
+  }
+
+  clubDeleted(ClubModel club) {
     clubs.removeWhere((element) => element.id == club.id);
     clubs.refresh();
   }

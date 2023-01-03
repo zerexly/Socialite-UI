@@ -4,7 +4,6 @@ import 'package:foap/helper/common_import.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:get/get.dart';
 import 'package:giphy_get/l10n.dart';
-
 import 'controllers/faq_controller.dart';
 // import 'package:easy_localization/easy_localization.dart';
 
@@ -41,6 +40,9 @@ Future<void> main() async {
   bool isDarkTheme = await SharedPrefs().isDarkMode();
   Get.changeThemeMode(isDarkTheme ? ThemeMode.dark : ThemeMode.light);
   // Get.changeThemeMode(ThemeMode.dark);
+
+  Get.put(PlayerManager());
+
   Get.put(DashboardController());
   Get.put(SettingsController());
   Get.put(SubscriptionPackageController());
@@ -86,7 +88,13 @@ Future<void> main() async {
   Get.put(RequestVerificationController());
   Get.put(FAQController());
   Get.put(EventsController());
+
   Get.put(PodcastStreamingController());
+
+  Get.put(ReelsController());
+
+  Get.put(CreateReelController());
+
 
   setupServiceLocator();
   await getIt<UserProfileManager>().refreshProfile();
@@ -158,7 +166,6 @@ class _SocialifiedAppState extends State<SocialifiedApp> {
         child: FutureBuilder<String>(
             future: SharedPrefs().getLanguage(),
             builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-              List<Widget> children;
               if (snapshot.hasData) {
                 return GetMaterialApp(
                   translations: Languages(),

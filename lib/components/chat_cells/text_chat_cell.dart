@@ -8,46 +8,46 @@ class TextChatTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // bool validURL = Uri.parse(message.messageContent).isAbsolute;
-    bool validURL = message.messageContent.isValidUrl;
+    String messageString = message.textMessage;
 
+    bool validURL = messageString.isValidUrl;
     return validURL == true
         ? Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        LinkPreviewGenerator(
-          bodyMaxLines: 3,
-          link: message.messageContent,
-          linkPreviewStyle: LinkPreviewStyle.large,
-          showGraphic: true,
-          errorBody: message.messageContent,
-        ),
-        const SizedBox(
-          height: 10,
-        ),
-        Linkify(
-          onOpen: (link) async {
-            if (await canLaunchUrl(Uri.parse(link.url))) {
-              await launchUrl(Uri.parse(link.url));
-            } else {
-              throw 'Could not launch $link';
-            }
-          },
-          text: message.messageContent,
-          style: Theme.of(context).textTheme.bodyLarge,
-        )
-      ],
-    )
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              LinkPreviewGenerator(
+                bodyMaxLines: 3,
+                link: messageString,
+                linkPreviewStyle: LinkPreviewStyle.large,
+                showGraphic: true,
+                errorBody: messageString,
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              Linkify(
+                onOpen: (link) async {
+                  if (await canLaunchUrl(Uri.parse(link.url))) {
+                    await launchUrl(Uri.parse(link.url));
+                  } else {
+                    throw 'Could not launch $link';
+                  }
+                },
+                text: messageString,
+                style: Theme.of(context).textTheme.bodyLarge,
+              )
+            ],
+          )
         : Linkify(
-      onOpen: (link) async {
-        if (await canLaunchUrl(Uri.parse(link.url))) {
-          await launchUrl(Uri.parse(link.url));
-        } else {
-          throw 'Could not launch $link';
-        }
-      },
-      text: message.messageContent,
-      style: Theme.of(context).textTheme.bodyLarge,
-    );
+            onOpen: (link) async {
+              if (await canLaunchUrl(Uri.parse(link.url))) {
+                await launchUrl(Uri.parse(link.url));
+              } else {
+                throw 'Could not launch $link';
+              }
+            },
+            text: messageString,
+            style: Theme.of(context).textTheme.bodyLarge,
+          );
   }
 }

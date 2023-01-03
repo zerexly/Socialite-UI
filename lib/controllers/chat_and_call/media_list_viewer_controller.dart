@@ -25,8 +25,8 @@ class MediaListViewerController extends GetxController {
     getIt<FileManager>().deleteMessageMedia(messageToDelete);
 
     // remove message in local database
-    await getIt<DBManager>().deleteMessages(
-        chatRoom: inChatRoom, messagesToDelete: [messageToDelete]);
+    await getIt<DBManager>()
+        .softDeleteMessages(messagesToDelete: [messageToDelete]);
     messages.removeAt(currentIndex);
     if (messages.isEmpty) {
       Get.back();

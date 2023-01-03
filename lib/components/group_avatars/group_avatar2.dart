@@ -58,11 +58,11 @@ class ClubCard extends StatelessWidget {
                     height: 40,
                     width: 120,
                     child: FilledButtonType1(
-                        text: club.isJoined == 1
+                        text: club.isJoined == true
                             ? LocalizationString.leaveClub
                             : LocalizationString.join,
                         onPress: () {
-                          if (club.isJoined == 1) {
+                          if (club.isJoined == true) {
                             leaveBtnClicked();
                           } else {
                             joinBtnClicked();

@@ -17,6 +17,7 @@ class EventsController extends GetxController {
   bool isLoadingMembers = false;
 
   RxInt segmentIndex = (-1).obs;
+  RxString searchText = ''.obs;
 
   clear() {
     isLoadingEvents.value = false;
@@ -30,6 +31,13 @@ class EventsController extends GetxController {
     members.value = [];
     membersPage = 1;
     canLoadMoreMembers = true;
+  }
+
+  searchTextChanged(String text) {
+    events.value = [];
+    canLoadMoreEvents = true;
+    searchText.value = text;
+    getEvents(name: text);
   }
 
   selectedSegmentIndex(int index) {
@@ -46,20 +54,20 @@ class EventsController extends GetxController {
       getEvents(isJoined: 1);
     } else if (index == 2 && segmentIndex.value != index) {
       clear();
-      getEvents(userId: getIt<UserProfileManager>().user!.id);
+      // getEvents(userId: getIt<UserProfileManager>().user!.id);
     }
 
     segmentIndex.value = index;
   }
 
-  getEvents({String? name, int? categoryId, int? userId, int? isJoined}) {
+  getEvents({String? name, int? categoryId, int? status, int? isJoined}) {
     if (canLoadMoreEvents) {
       isLoadingEvents.value = true;
       ApiController()
           .getEvents(
               name: name,
+              status: status,
               categoryId: categoryId,
-              userId: userId,
               isJoined: isJoined,
               page: eventsPage)
           .then((response) {
@@ -105,7 +113,9 @@ class EventsController extends GetxController {
   getCategories() {
     isLoadingCategories.value = true;
     ApiController().getEventCategories().then((response) {
-      categories.value = response.eventCategories;
+      categories.value = response.eventCategories
+          .where((element) => element.events.isNotEmpty)
+          .toList();
       isLoadingCategories.value = false;
 
       update();

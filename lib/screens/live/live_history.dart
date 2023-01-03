@@ -32,6 +32,7 @@ class LiveHistoryState extends State<LiveHistory> {
   @override
   void dispose() {
     super.dispose();
+    _liveHistoryController.clear();
   }
 
   @override

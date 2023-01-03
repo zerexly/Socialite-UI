@@ -8,6 +8,12 @@ class LiveHistoryController extends GetxController {
   int currentPage = 1;
   bool canLoadMore = true;
 
+  clear() {
+    isLoading = false;
+    currentPage = 1;
+    canLoadMore = true;
+  }
+
   getLiveHistory() {
     if (canLoadMore == true) {
       AppUtil.checkInternet().then((value) async {

@@ -21,18 +21,20 @@ class FileManager {
 
   multipleDeleteMessageMedia(List<ChatMessageModel> messages) async {
     for (ChatMessageModel message in messages) {
-      final tempDir = await getApplicationDocumentsDirectory();
+      if (message.isMediaMessage) {
+        final tempDir = await getApplicationDocumentsDirectory();
 
-      String messageMediaDirectoryPath =
-          '${tempDir.path}/${message.roomId.toString()}/${message.localMessageId}';
+        String messageMediaDirectoryPath =
+            '${tempDir.path}/${message.roomId.toString()}/${message.localMessageId}';
 
-      try {
-        if (await Directory(messageMediaDirectoryPath).exists()) {
-          await Directory(messageMediaDirectoryPath).delete(recursive: true);
-        } else {}
-      } catch (e) {
-        // print(e);
-        // Error in getting access to the file.
+        try {
+          if (await Directory(messageMediaDirectoryPath).exists()) {
+            await Directory(messageMediaDirectoryPath).delete(recursive: true);
+          } else {}
+        } catch (e) {
+          // print(e);
+          // Error in getting access to the file.
+        }
       }
     }
   }

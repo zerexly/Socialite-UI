@@ -299,8 +299,8 @@ class _StarredMessagesState extends State<StarredMessages> {
         builder: (context) =>
             SelectFollowingUserForMessageSending(sendToUserCallback: (user) {
               _chatDetailController.getChatRoomWithUser(
-                  user.id,
-                  (room) => () {
+                  userId:user.id,
+                  callback: (room) {
                         _chatDetailController.forwardSelectedMessages(
                             room: room);
                         Get.back();

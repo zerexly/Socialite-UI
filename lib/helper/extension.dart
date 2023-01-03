@@ -1,9 +1,17 @@
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:foap/helper/common_import.dart';
+import 'dart:math' as math;
 
 extension RoundedHelper on Widget {
   ClipRRect round(double value) => ClipRRect(
         borderRadius: BorderRadius.all(Radius.circular(value)),
+        child: this,
+      );
+}
+
+extension Trnasform on Widget {
+  Transform rotate(double value) => Transform.rotate(
+        angle: value * math.pi / 180,
         child: this,
       );
 }
@@ -417,10 +425,8 @@ extension PinchZoomImage on Widget {
   Widget addPinchAndZoom() => PinchZoom(
         resetDuration: const Duration(milliseconds: 100),
         maxScale: 2.5,
-        onZoomStart: () {
-        },
-        onZoomEnd: () {
-        },
+        onZoomStart: () {},
+        onZoomEnd: () {},
         child: this,
       );
 

@@ -18,7 +18,6 @@ class CategoryEventsListingState extends State<CategoryEventsListing> {
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _eventsController.getEvents(categoryId: widget.category.id);
-      _eventsController.selectedSegmentIndex(0);
     });
 
     super.initState();
@@ -59,35 +58,17 @@ class CategoryEventsListingState extends State<CategoryEventsListing> {
               });
 
               List<EventModel> events = _eventsController.events;
-
-              return events.isNotEmpty
+              return events.isEmpty
                   ? Container()
                   : SizedBox(
-                      height: 10 * 200,
+                      height:  events.length * 200,
                       child: ListView.separated(
                           padding: const EdgeInsets.only(
                               left: 16, right: 16, top: 20, bottom: 50),
-                          itemCount: 10,
+                          itemCount: events.length,
                           itemBuilder: (BuildContext ctx, int index) {
-                            EventModel event = EventModel(
-                                id: 1,
-                                categoryId: 1,
-                                address: 'test address',
-                                createdBy: 1,
-                                desc: 'test desc',
-                                image:
-                                    'https://plus.unsplash.com/premium_photo-1667857742833-a97de5712d81?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8cGFydHl8ZW58MHx8MHx8&auto=format&fit=crop&w=800&q=60',
-                                imageName: 'name',
-                                isJoined: false,
-                                name: 'Event name',
-                                sponsorImage:
-                                    'https://images.unsplash.com/photo-1512850692650-c382e34f7fb2?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8bWFsZSUyMG1vZGVsfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=800&q=60',
-                                sponsorName: 'Sponsor name',
-                                isFavourite: true,
-                                totalMembers: 200);
-
                             return EventCard2(
-                              event: event,
+                              event: events[index],
                               joinBtnClicked: () {
                                 _eventsController.joinEvent(events[index]);
                               },

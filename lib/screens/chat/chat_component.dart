@@ -1,16 +1,31 @@
 import 'package:foap/helper/common_import.dart';
 
 Widget messageTypeShortInfo({
-  required ChatMessageModel model,
+  required ChatMessageModel message,
   required BuildContext context,
 }) {
-  return model.messageContentType == MessageContentType.text
+  return message.messageContentType == MessageContentType.reply
+      ? messageTypeShortInfoFromType(
+          type: message.messageReplyContentType,
+          message: message,
+          context: context,
+        )
+      : messageTypeShortInfoFromType(
+          message: message, type: message.messageContentType, context: context);
+}
+
+Widget messageTypeShortInfoFromType({
+  required ChatMessageModel message,
+  required MessageContentType type,
+  required BuildContext context,
+}) {
+  return type == MessageContentType.text
       ? Text(
-          model.messageContent,
+          message.textMessage,
           maxLines: 1,
           style: Theme.of(context).textTheme.bodyMedium,
         )
-      : model.messageContentType == MessageContentType.photo
+      : type == MessageContentType.photo
           ? Row(
               children: [
                 const ThemeIconWidget(
@@ -27,7 +42,7 @@ Widget messageTypeShortInfo({
                 ),
               ],
             )
-          : model.messageContentType == MessageContentType.video
+          : type == MessageContentType.video
               ? Row(
                   children: [
                     const ThemeIconWidget(ThemeIcon.videoPost, size: 15).rP4,
@@ -41,8 +56,8 @@ Widget messageTypeShortInfo({
                     ),
                   ],
                 )
-              : model.messageContentType == MessageContentType.gif ||
-                      model.messageContentType == MessageContentType.sticker
+              : type == MessageContentType.gif ||
+                      type == MessageContentType.sticker
                   ? Row(
                       children: [
                         const ThemeIconWidget(ThemeIcon.gif, size: 15).rP4,
@@ -56,25 +71,46 @@ Widget messageTypeShortInfo({
                         ),
                       ],
                     )
-                  : model.messageContentType == MessageContentType.reply
-                      ? messageTypeShortInfo(
-                          model: model.reply,
-                          context: context,
+                  : type == MessageContentType.post
+                      ? Row(
+                          children: [
+                            const ThemeIconWidget(
+                              ThemeIcon.camera,
+                              size: 15,
+                            ).rP4,
+                            Text(
+                              LocalizationString.post,
+                              maxLines: 1,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium!
+                                  .copyWith(fontWeight: FontWeight.w300),
+                            ),
+                          ],
                         )
-                      : model.messageContentType == MessageContentType.forward
-                          ? messageTypeShortInfo(
-                              model: model.originalMessage,
-                              context: context,
+                      : type == MessageContentType.audio
+                          ? Row(
+                              children: [
+                                const ThemeIconWidget(ThemeIcon.mic, size: 15)
+                                    .rP4,
+                                Text(
+                                  LocalizationString.audio,
+                                  maxLines: 1,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium!
+                                      .copyWith(fontWeight: FontWeight.w300),
+                                ),
+                              ],
                             )
-                          : model.messageContentType == MessageContentType.post
+                          : type == MessageContentType.contact
                               ? Row(
                                   children: [
-                                    const ThemeIconWidget(
-                                      ThemeIcon.camera,
-                                      size: 15,
-                                    ).rP4,
+                                    const ThemeIconWidget(ThemeIcon.contacts,
+                                            size: 15)
+                                        .rP4,
                                     Text(
-                                      LocalizationString.post,
+                                      LocalizationString.contact,
                                       maxLines: 1,
                                       style: Theme.of(context)
                                           .textTheme
@@ -84,15 +120,15 @@ Widget messageTypeShortInfo({
                                     ),
                                   ],
                                 )
-                              : model.messageContentType ==
-                                      MessageContentType.audio
+                              : type == MessageContentType.location
                                   ? Row(
                                       children: [
-                                        const ThemeIconWidget(ThemeIcon.mic,
+                                        const ThemeIconWidget(
+                                                ThemeIcon.location,
                                                 size: 15)
                                             .rP4,
                                         Text(
-                                          LocalizationString.audio,
+                                          LocalizationString.location,
                                           maxLines: 1,
                                           style: Theme.of(context)
                                               .textTheme
@@ -102,16 +138,15 @@ Widget messageTypeShortInfo({
                                         ),
                                       ],
                                     )
-                                  : model.messageContentType ==
-                                          MessageContentType.contact
+                                  : type == MessageContentType.file
                                       ? Row(
                                           children: [
                                             const ThemeIconWidget(
-                                                    ThemeIcon.contacts,
+                                                    ThemeIcon.files,
                                                     size: 15)
                                                 .rP4,
                                             Text(
-                                              LocalizationString.contact,
+                                              LocalizationString.file,
                                               maxLines: 1,
                                               style: Theme.of(context)
                                                   .textTheme
@@ -122,16 +157,15 @@ Widget messageTypeShortInfo({
                                             ),
                                           ],
                                         )
-                                      : model.messageContentType ==
-                                              MessageContentType.location
+                                      : type == MessageContentType.profile
                                           ? Row(
                                               children: [
                                                 const ThemeIconWidget(
-                                                        ThemeIcon.location,
+                                                        ThemeIcon.account,
                                                         size: 15)
                                                     .rP4,
                                                 Text(
-                                                  LocalizationString.location,
+                                                  LocalizationString.profile,
                                                   maxLines: 1,
                                                   style: Theme.of(context)
                                                       .textTheme
@@ -142,28 +176,7 @@ Widget messageTypeShortInfo({
                                                 ),
                                               ],
                                             )
-                                          : model.messageContentType ==
-                                                  MessageContentType.file
-                                              ? Row(
-                                                  children: [
-                                                    const ThemeIconWidget(
-                                                            ThemeIcon.files,
-                                                            size: 15)
-                                                        .rP4,
-                                                    Text(
-                                                      LocalizationString.file,
-                                                      maxLines: 1,
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .bodyMedium!
-                                                          .copyWith(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w300),
-                                                    ),
-                                                  ],
-                                                )
-                                              : Container();
+                                          : Container();
 }
 
 Widget messageMainContent(ChatMessageModel message) {

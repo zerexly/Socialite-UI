@@ -218,7 +218,6 @@ class OtherUserProfileState extends State<OtherUserProfile> {
                                   ? LocalizationString.unFollow
                                   : _profileController.user.value!.isFollower
                                       ? LocalizationString.followBack
-                                          .toUpperCase()
                                       : LocalizationString.follow.toUpperCase(),
                               onPress: () {
                                 _profileController.followUnFollowUserApi(
@@ -244,8 +243,8 @@ class OtherUserProfileState extends State<OtherUserProfile> {
                                   EasyLoading.show(
                                       status: LocalizationString.loading);
                                   _chatDetailController.getChatRoomWithUser(
-                                      _profileController.user.value!.id,
-                                      (room) {
+                                      userId:_profileController.user.value!.id,
+                                      callback:(room) {
                                     EasyLoading.dismiss();
                                     Get.to(() => ChatDetail(
                                           chatRoom: room,

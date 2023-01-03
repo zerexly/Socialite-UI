@@ -44,6 +44,8 @@ class EnterGroupInfoController extends GetxController {
       ApiController()
           .uploadFile(file: image, type: UploadMediaType.chat)
           .then((response) {
+        EasyLoading.dismiss();
+
         publishUpdatedGroup(
             group: group,
             name: name,
@@ -60,12 +62,14 @@ class EnterGroupInfoController extends GetxController {
       required String? description,
       String? image,
       required BuildContext context}) {
+    EasyLoading.show(status: LocalizationString.loading);
+
     ApiController()
         .updateGroupChatRoom(group.id, name, image, description, null)
         .then((response) {
       ApiController().getChatRoomDetail(response.roomId).then((response) {
         EasyLoading.dismiss();
-        Get.back();
+        Get.close(2);
         AppUtil.showToast(
             context: context,
             message: LocalizationString.groupUpdated,
@@ -92,6 +96,8 @@ class EnterGroupInfoController extends GetxController {
       ApiController().getChatRoomDetail(response.roomId).then((response) {
         EasyLoading.dismiss();
         if (response.room != null) {
+          Get.close(2);
+
           Get.to(() => ChatDetail(chatRoom: response.room!));
 
           // save group in local storage

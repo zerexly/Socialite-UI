@@ -20,18 +20,18 @@ class ReplyLocationChatTile extends StatelessWidget {
       children: [
         Container(
             height: 70,
-            color: message.originalMessage.isMineMessage
+            color: message.isMineMessage
                 ? Theme.of(context).disabledColor.withOpacity(0.2)
                 : Theme.of(context).primaryColor.withOpacity(0.2),
             child: ReplyOriginalMessageTile(
-                message: message.originalMessage,
+                message: message.repliedOnMessage,
                 replyMessageTapHandler: replyMessageTapHandler))
             .round(8),
         const SizedBox(
           height: 10,
         ),
-        LocationChatTile(message: message.reply).ripple(() {
-          messageTapHandler(message.reply);
+        LocationChatTile(message: message).ripple(() {
+          messageTapHandler(message);
         }),
       ],
     );

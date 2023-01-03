@@ -15,7 +15,7 @@ import androidx.annotation.NonNull
 import android.provider.MediaStore
 import android.content.pm.PackageManager
 
-class MainActivity : FlutterActivity() {
+class MainActivity : FlutterFragmentActivity() {
 
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)

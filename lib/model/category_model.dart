@@ -97,16 +97,31 @@ class EventCategoryModel extends CategoryModel {
     required String name,
     required int id,
     required String coverImage,
+    required this.events,
 
     // required this.subCategories,
   }) : super(name: name, id: id, coverImage: coverImage);
 
-  factory EventCategoryModel.fromJson(Map<String, dynamic> json) =>
-      EventCategoryModel(
-        name: json["name"],
-        id: json["id"],
-        coverImage: json["imageUrl"],
-      );
+  factory EventCategoryModel.fromJson(Map<String, dynamic> json) {
+    EventCategoryModel category = EventCategoryModel(
+      name: json["name"],
+      id: json["id"],
+      coverImage: json["imageUrl"],
+      events: json["event"] == null
+          ? []
+          : (json["event"] as List<dynamic>)
+              .map((e) => EventModel.fromJson(e))
+              .toList(),
+    );
+    // category.events = json["event"] == null
+    //     ? []
+    //     : (json["event"] as List<dynamic>)
+    //     .map((e) => EventModel.fromJson(e))
+    //     .toList();
+    // print('json["event"] ${category.events}');
+
+    return category;
+  }
 }
 
 class PodcastCategoryModel extends CategoryModel {

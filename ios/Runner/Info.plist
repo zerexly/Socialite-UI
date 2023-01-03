@@ -29,6 +29,7 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
+			    <string>socialifiedstripe</string>
 				<string>com.googleusercontent.apps.258656413911-5bqj5jcr6oqledsen49qf9oba5l8tcm8</string>
 			</array>
 		</dict>
@@ -81,6 +82,9 @@
 		<string>here-location</string>
 		<string>tomtomgo</string>
 		<string>itms</string>
+		<string>tez</string>
+		<string>phonepe</string>
+		<string>paytmmp</string>
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
@@ -100,9 +104,11 @@
 	<key>NSFaceIDUsageDescription</key>
 	<string>Want to access biometric authentication for login</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Need access to current location for sharing loctaion</string>
+	<string>Need access to current location for sharing location</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+    <string>$(PRODUCT_NAME) Need access to current location for sharing location</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Need access to current location for sharing loctaion</string>
+	<string>Need access to current location for sharing location</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>This app is requires Mic permission</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
@@ -260,6 +266,8 @@
 			<string>3qcr597p9d.skadnetwork</string>
 		</dict>
 	</array>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
@@ -285,7 +293,5 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>UIApplicationSupportsIndirectInputEvents</key>
-	<true/>
 </dict>
 </plist>

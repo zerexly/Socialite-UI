@@ -14,7 +14,7 @@ class AppUtil {
         message,
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: isSuccess == true
-            ? Theme.of(context).primaryColor
+            ? Theme.of(context).primaryColor.darken()
             : Theme.of(context).errorColor.lighten(),
         icon: Icon(Icons.error, color: Theme.of(context).iconTheme.color));
   }

@@ -4,7 +4,6 @@ import 'package:get_it/get_it.dart';
 GetIt getIt = GetIt.instance;
 
 Future<void> setupServiceLocator() async {
-  getIt.registerLazySingleton<PlayerManager>(() => PlayerManager());
   getIt.registerLazySingleton<DBManager>(() => DBManager());
   getIt.registerLazySingleton<UserProfileManager>(() => UserProfileManager());
   // getIt.registerLazySingleton<MediaManager>(() => MediaManager());
