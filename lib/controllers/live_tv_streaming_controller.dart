@@ -14,6 +14,7 @@ class TvStreamingController extends GetxController {
   RxList<TvModel> liveTvs = <TvModel>[].obs;
   RxList<TvCategoryModel> categories = <TvCategoryModel>[].obs;
   RxList<TVShowModel> tvShows = <TVShowModel>[].obs;
+  RxList<TVShowEpisodeModel> tvEpisodes = <TVShowEpisodeModel>[].obs;
 
   RxInt currentBannerIndex = 0.obs;
 
@@ -63,6 +64,14 @@ class TvStreamingController extends GetxController {
     ApiController().getTVShows(liveTvId: liveTvId, name: name).then((response) {
       tvShows.value = response.tvShows;
       tvShows.refresh();
+      update();
+    });
+  }
+
+  getTvShowEpisodes({int? showId, String? name}) {
+    ApiController().getTVShowEpisodes(showId: showId, name: name).then((response) {
+      tvEpisodes.value = response.tvEpisodes;
+      tvEpisodes.refresh();
       update();
     });
   }

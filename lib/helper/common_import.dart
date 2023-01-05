@@ -125,6 +125,7 @@ export 'package:foap/components/reply_chat_cells/video_reply_chat_cell.dart';
 export 'package:foap/components/reply_chat_cells/file_reply_chat_cell.dart';
 export 'package:foap/components/reel/reel_video_player.dart';
 export 'package:foap/components/reel/audio_tile.dart';
+export 'package:foap/components/media_card.dart';
 
 export 'package:foap/controllers/clubs/club_detail_controller.dart';
 export 'package:foap/controllers/clubs/clubs_controller.dart';
@@ -181,6 +182,7 @@ export 'package:foap/controllers/event/event_booking_controller.dart';
 export 'package:foap/controllers/event/booking_detail_controller.dart';
 export 'package:foap/controllers/reel/create_reel_controller.dart';
 export 'package:foap/controllers/reel/reels_controller.dart';
+export 'package:foap/controllers/podcast_streaming_controller.dart';
 
 export 'package:foap/model/story_model.dart';
 export 'package:foap/model/post_gallery.dart';
@@ -218,6 +220,9 @@ export 'package:foap/model/competition_model.dart';
 export 'package:foap/model/live_model.dart';
 export 'package:foap/model/verification_request_model.dart';
 export 'package:foap/model/reel_music_model.dart';
+export 'package:foap/model/podcast_banner_model.dart';
+export 'package:foap/model/podcast_model.dart';
+export 'package:foap/model/tv_banner_model.dart';
 
 export 'package:foap/screens/dashboard/posts.dart';
 export 'package:foap/screens/dashboard/explore.dart';
@@ -387,5 +392,4 @@ export 'package:foap/screens/podcast/podcast_list_dashboard.dart';
 export 'package:foap/screens/podcast/podcast_show_detail.dart';
 export 'package:foap/screens/podcast/podcasts_by_category.dart';
 export 'package:foap/screens/podcast/seekbar_data.dart';
-
-
+export 'package:foap/screens/podcast/podcast_episode_detail.dart';
