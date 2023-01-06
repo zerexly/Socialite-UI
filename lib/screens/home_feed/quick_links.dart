@@ -97,7 +97,7 @@ class _QuickLinkWidgetState extends State<QuickLinkWidget> {
                     Get.to(() => const PodcastListDashboard());
                   }
                 })
-            ]).setPadding(left: 16, right: 16, top: 50));
+            ]).setPadding(left: 16, right: 16, top: 70));
   }
 
   Widget quickLinkView(QuickLink link) {

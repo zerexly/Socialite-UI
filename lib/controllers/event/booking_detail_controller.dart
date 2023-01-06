@@ -1,13 +1,16 @@
 import 'package:foap/helper/common_import.dart';
 import 'package:get/get.dart';
 
+enum ProcessingBookingStatus { inProcess, gifted, cancelled, failed }
+
 class EventBookingDetailController extends GetxController {
   Rx<EventBookingModel?> eventBooking = Rx<EventBookingModel?>(null);
   RxList<EventCoupon> coupons = <EventCoupon>[].obs;
   double? minTicketPrice;
   double? maxTicketPrice;
 
-  RxBool bookingCancelled = false.obs;
+  Rx<ProcessingBookingStatus?> processingBooking =
+      Rx<ProcessingBookingStatus?>(null);
 
   setEventBooking(EventBookingModel eventBooking) {
     this.eventBooking.value = eventBooking;
@@ -35,23 +38,34 @@ class EventBookingDetailController extends GetxController {
     });
   }
 
+  giftToUser(UserModel user) {
+    processingBooking.value = ProcessingBookingStatus.inProcess;
+    update();
+    ApiController()
+        .giftEventTicket(ticketId: eventBooking.value!.id, toUserId: user.id)
+        .then((response) {
+      if (response.success) {
+        processingBooking.value = ProcessingBookingStatus.gifted;
+      } else {
+        processingBooking.value = ProcessingBookingStatus.failed;
+      }
+      update();
+    });
+  }
+
   cancelBooking(BuildContext context) {
-    EasyLoading.show(status: LocalizationString.loading);
+    processingBooking.value = ProcessingBookingStatus.inProcess;
+    update();
     ApiController()
         .cancelEventBooking(bookingId: eventBooking.value!.id)
         .then((result) {
       EasyLoading.dismiss();
       if (result.success) {
-        // AppUtil.showToast(
-        //     context: context,
-        //     message: LocalizationString.bookingCancelled,
-        //     isSuccess: true);
-        bookingCancelled.value = true;
-        update();
+        processingBooking.value = ProcessingBookingStatus.cancelled;
       } else {
-        AppUtil.showToast(
-            context: context, message: result.message, isSuccess: false);
+        processingBooking.value = ProcessingBookingStatus.failed;
       }
+      update();
     });
   }
 }

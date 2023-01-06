@@ -16,7 +16,7 @@ class ApiController {
         .post(Uri.parse(url), body: param)
         .then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.login);
+          await getResponse(response.body, NetworkConstantsUtil.login);
       return parsedResponse;
     });
   }
@@ -31,7 +31,7 @@ class ApiController {
         .post(Uri.parse(url), body: param)
         .then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.socialLogin);
+          await getResponse(response.body, NetworkConstantsUtil.socialLogin);
       return parsedResponse;
     });
   }
@@ -45,7 +45,7 @@ class ApiController {
         .post(Uri.parse(url), body: param)
         .then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.register);
+          await getResponse(response.body, NetworkConstantsUtil.register);
       return parsedResponse;
     });
   }
@@ -58,7 +58,7 @@ class ApiController {
       "Authorization": "Bearer $authKey"
     }).then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.deleteAccount);
+          await getResponse(response.body, NetworkConstantsUtil.deleteAccount);
       return parsedResponse;
     });
   }
@@ -74,7 +74,7 @@ class ApiController {
       "Authorization": "Bearer ${authKey!}"
     }).then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.login);
+          await getResponse(response.body, NetworkConstantsUtil.login);
       return parsedResponse;
     });
   }
@@ -86,7 +86,7 @@ class ApiController {
         .post(Uri.parse(url), body: param)
         .then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.checkUserName);
+          await getResponse(response.body, NetworkConstantsUtil.checkUserName);
       return parsedResponse;
     });
   }
@@ -101,7 +101,7 @@ class ApiController {
         .post(Uri.parse(url), body: param)
         .then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.forgotPassword);
+          await getResponse(response.body, NetworkConstantsUtil.forgotPassword);
       return parsedResponse;
     });
   }
@@ -113,7 +113,7 @@ class ApiController {
         .post(Uri.parse(url), body: param)
         .then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.resetPassword);
+          await getResponse(response.body, NetworkConstantsUtil.resetPassword);
       return parsedResponse;
     });
   }
@@ -126,7 +126,7 @@ class ApiController {
         .post(Uri.parse(url), body: param)
         .then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.resendOTP);
+          await getResponse(response.body, NetworkConstantsUtil.resendOTP);
       return parsedResponse;
     });
   }
@@ -166,17 +166,17 @@ class ApiController {
 
   Future<ApiResponseModel> getPosts(
       {int? userId,
-        int? isPopular,
-        int? isFollowing,
-        int? clubId,
-        int? isSold,
-        int? isReel,
-        int? audioId,
-        int? isMine,
-        int? isRecent,
-        String? title,
-        String? hashtag,
-        int page = 0}) async {
+      int? isPopular,
+      int? isFollowing,
+      int? clubId,
+      int? isSold,
+      int? isReel,
+      int? audioId,
+      int? isMine,
+      int? isRecent,
+      String? title,
+      String? hashtag,
+      int page = 0}) async {
     String? authKey = await SharedPrefs().getAuthorizationKey();
     var url = NetworkConstantsUtil.baseUrl + NetworkConstantsUtil.searchPost;
     if (userId != null) {
@@ -218,7 +218,7 @@ class ApiController {
       "Authorization": "Bearer ${authKey!}"
     }).then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.searchPost);
+          await getResponse(response.body, NetworkConstantsUtil.searchPost);
       return parsedResponse;
     });
   }
@@ -232,7 +232,7 @@ class ApiController {
       "Authorization": "Bearer ${authKey!}"
     }).then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.postDetail);
+          await getResponse(response.body, NetworkConstantsUtil.postDetail);
       return parsedResponse;
     });
   }
@@ -247,7 +247,7 @@ class ApiController {
       "Authorization": "Bearer ${authKey!}"
     }).then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.mentionedPosts);
+          await getResponse(response.body, NetworkConstantsUtil.mentionedPosts);
       return parsedResponse;
     });
   }
@@ -257,7 +257,7 @@ class ApiController {
   }) async {
     String? authKey = await SharedPrefs().getAuthorizationKey();
     var postUri =
-    Uri.parse(NetworkConstantsUtil.baseUrl + NetworkConstantsUtil.addStory);
+        Uri.parse(NetworkConstantsUtil.baseUrl + NetworkConstantsUtil.addStory);
 
     var parameters = {
       "stories": gallery,
@@ -265,14 +265,14 @@ class ApiController {
 
     return http
         .post(postUri,
-        headers: {
-          "Authorization": "Bearer ${authKey!}",
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode(parameters))
+            headers: {
+              "Authorization": "Bearer ${authKey!}",
+              'Content-Type': 'application/json',
+            },
+            body: jsonEncode(parameters))
         .then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.addStory);
+          await getResponse(response.body, NetworkConstantsUtil.addStory);
       return parsedResponse;
     });
   }
@@ -285,7 +285,7 @@ class ApiController {
       "Authorization": "Bearer ${authKey!}"
     }).then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.myStories);
+          await getResponse(response.body, NetworkConstantsUtil.myStories);
       return parsedResponse;
     });
   }
@@ -307,14 +307,14 @@ class ApiController {
 
     return http
         .post(postUri,
-        headers: {
-          "Authorization": "Bearer ${authKey!}",
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode(parameters))
+            headers: {
+              "Authorization": "Bearer ${authKey!}",
+              'Content-Type': 'application/json',
+            },
+            body: jsonEncode(parameters))
         .then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.addHighlight);
+          await getResponse(response.body, NetworkConstantsUtil.addHighlight);
       return parsedResponse;
     });
   }
@@ -332,14 +332,14 @@ class ApiController {
 
     return http
         .post(postUri,
-        headers: {
-          "Authorization": "Bearer ${authKey!}",
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode(parameters))
+            headers: {
+              "Authorization": "Bearer ${authKey!}",
+              'Content-Type': 'application/json',
+            },
+            body: jsonEncode(parameters))
         .then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.addHighlight);
+          await getResponse(response.body, NetworkConstantsUtil.addHighlight);
       return parsedResponse;
     });
   }
@@ -360,7 +360,7 @@ class ApiController {
       },
     ).then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.deleteStory);
+          await getResponse(response.body, NetworkConstantsUtil.deleteStory);
       return parsedResponse;
     });
   }
@@ -380,14 +380,14 @@ class ApiController {
 
     return http
         .post(postUri,
-        headers: {
-          "Authorization": "Bearer ${authKey!}",
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode(parameters))
+            headers: {
+              "Authorization": "Bearer ${authKey!}",
+              'Content-Type': 'application/json',
+            },
+            body: jsonEncode(parameters))
         .then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.addHighlight);
+          await getResponse(response.body, NetworkConstantsUtil.addHighlight);
       return parsedResponse;
     });
   }
@@ -402,7 +402,7 @@ class ApiController {
       "Authorization": "Bearer ${authKey!}"
     }).then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.highlights);
+          await getResponse(response.body, NetworkConstantsUtil.highlights);
       return parsedResponse;
     });
   }
@@ -437,7 +437,7 @@ class ApiController {
       "Authorization": "Bearer ${authKey!}"
     }).then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.getComments);
+          await getResponse(response.body, NetworkConstantsUtil.getComments);
       return parsedResponse;
     });
   }
@@ -468,7 +468,7 @@ class ApiController {
       'comment': comment
     }).then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.addComment);
+          await getResponse(response.body, NetworkConstantsUtil.addComment);
       return parsedResponse;
     });
   }
@@ -483,7 +483,7 @@ class ApiController {
       "post_id": postId.toString()
     }).then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.reportPost);
+          await getResponse(response.body, NetworkConstantsUtil.reportPost);
       return parsedResponse;
     });
   }
@@ -497,7 +497,7 @@ class ApiController {
       "Authorization": "Bearer ${authKey!}"
     }).then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.deletePost);
+          await getResponse(response.body, NetworkConstantsUtil.deletePost);
       return parsedResponse;
     });
   }
@@ -512,7 +512,7 @@ class ApiController {
       "Authorization": "Bearer ${authKey!}"
     }).then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.otherUser);
+          await getResponse(response.body, NetworkConstantsUtil.otherUser);
       return parsedResponse;
     });
   }
@@ -525,7 +525,7 @@ class ApiController {
       "Authorization": "Bearer ${authKey!}"
     }).then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.getMyProfile);
+          await getResponse(response.body, NetworkConstantsUtil.getMyProfile);
       return parsedResponse;
     });
   }
@@ -575,7 +575,7 @@ class ApiController {
       "password": newPassword
     }).then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.updatePassword);
+          await getResponse(response.body, NetworkConstantsUtil.updatePassword);
       return parsedResponse;
     });
   }
@@ -591,7 +591,7 @@ class ApiController {
       "phone": phone
     }).then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.updatePhone);
+          await getResponse(response.body, NetworkConstantsUtil.updatePhone);
       return parsedResponse;
     });
   }
@@ -631,10 +631,10 @@ class ApiController {
 
     return http
         .post(Uri.parse(url),
-        headers: {"Authorization": "Bearer ${authKey!}"}, body: data)
+            headers: {"Authorization": "Bearer ${authKey!}"}, body: data)
         .then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.updateLocation);
+          await getResponse(response.body, NetworkConstantsUtil.updateLocation);
       return parsedResponse;
     });
   }
@@ -648,10 +648,10 @@ class ApiController {
 
     return http
         .post(Uri.parse(url),
-        headers: {"Authorization": "Bearer ${authKey!}"}, body: data)
+            headers: {"Authorization": "Bearer ${authKey!}"}, body: data)
         .then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.updateLocation);
+          await getResponse(response.body, NetworkConstantsUtil.updateLocation);
       return parsedResponse;
     });
   }
@@ -670,7 +670,7 @@ class ApiController {
     return request.send().then((response) async {
       final respStr = await response.stream.bytesToString();
       final ApiResponseModel parsedResponse =
-      await getResponse(respStr, NetworkConstantsUtil.updateProfileImage);
+          await getResponse(respStr, NetworkConstantsUtil.updateProfileImage);
       return parsedResponse;
     });
   }
@@ -705,7 +705,7 @@ class ApiController {
       "Authorization": "Bearer ${authKey!}"
     }).then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.stories);
+          await getResponse(response.body, NetworkConstantsUtil.stories);
       return parsedResponse;
     });
   }
@@ -751,7 +751,7 @@ class ApiController {
       "report_to_user_id": userId.toString()
     }).then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.reportUser);
+          await getResponse(response.body, NetworkConstantsUtil.reportUser);
       return parsedResponse;
     });
   }
@@ -766,7 +766,7 @@ class ApiController {
       "blocked_user_id": userId.toString()
     }).then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.blockUser);
+          await getResponse(response.body, NetworkConstantsUtil.blockUser);
       return parsedResponse;
     });
   }
@@ -781,7 +781,7 @@ class ApiController {
       "blocked_user_id": userId.toString()
     }).then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.unBlockUser);
+          await getResponse(response.body, NetworkConstantsUtil.unBlockUser);
       return parsedResponse;
     });
   }
@@ -795,20 +795,23 @@ class ApiController {
       "Authorization": "Bearer ${authKey!}"
     }).then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.blockedUsers);
+          await getResponse(response.body, NetworkConstantsUtil.blockedUsers);
       return parsedResponse;
     });
   }
 
-  Future<ApiResponseModel> addPost({
-    required int postType,
-    required String title,
-    required List<Map<String, String>> gallery,
-    String? hashTag,
-    String? mentions,
-    int? competitionId,
-    int? clubId,
-  }) async {
+  Future<ApiResponseModel> addPost(
+      {required int postType,
+      required String title,
+      required List<Map<String, String>> gallery,
+      String? hashTag,
+      String? mentions,
+      int? competitionId,
+      int? clubId,
+      int? audioId,
+      double? audioStartTime,
+      double? audioEndTime,
+      bool? addToPost}) async {
     String? authKey = await SharedPrefs().getAuthorizationKey();
     var postUri = Uri.parse(NetworkConstantsUtil.baseUrl +
         (competitionId == null
@@ -823,18 +826,22 @@ class ApiController {
       "gallary": gallery,
       'competition_id': competitionId,
       'club_id': clubId,
-      'post_content_type': 2
+      'post_content_type': 2,
+      'audio_id': audioId,
+      'audio_start_time': audioStartTime,
+      'audio_end_time': audioEndTime,
+      'is_add_to_post': addToPost == true ? 1 : 0
     };
 
     log('parameters $parameters');
 
     return http
         .post(postUri,
-        headers: {
-          "Authorization": "Bearer ${authKey!}",
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode(parameters))
+            headers: {
+              "Authorization": "Bearer ${authKey!}",
+              'Content-Type': 'application/json',
+            },
+            body: jsonEncode(parameters))
         .then((http.Response response) async {
       final ApiResponseModel parsedResponse = await getResponse(
           response.body,
@@ -856,7 +863,7 @@ class ApiController {
     var responseData = await res.stream.toBytes();
     var responseString = String.fromCharCodes(responseData);
     final ApiResponseModel parsedResponse =
-    await getResponse(responseString, NetworkConstantsUtil.uploadPostImage);
+        await getResponse(responseString, NetworkConstantsUtil.uploadPostImage);
 
     return parsedResponse;
   }
@@ -874,7 +881,7 @@ class ApiController {
     var responseData = await res.stream.toBytes();
     var responseString = String.fromCharCodes(responseData);
     final ApiResponseModel parsedResponse =
-    await getResponse(responseString, NetworkConstantsUtil.uploadFileImage);
+        await getResponse(responseString, NetworkConstantsUtil.uploadFileImage);
 
     return parsedResponse;
   }
@@ -940,7 +947,7 @@ class ApiController {
 
     return await http
         .post(Uri.parse(url),
-        headers: {"Authorization": "Bearer ${authKey!}"}, body: params)
+            headers: {"Authorization": "Bearer ${authKey!}"}, body: params)
         .then((http.Response response) async {
       final ApiResponseModel parsedResponse = await getArrayResponse(
           response.body, NetworkConstantsUtil.searchUsers);
@@ -956,7 +963,7 @@ class ApiController {
       "Authorization": "Bearer ${authKey!}"
     }).then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.getPackages);
+          await getResponse(response.body, NetworkConstantsUtil.getPackages);
       return parsedResponse;
     });
   }
@@ -988,7 +995,7 @@ class ApiController {
 
     return await http
         .post(Uri.parse(url),
-        headers: {"Authorization": "Bearer ${authKey!}"}, body: params)
+            headers: {"Authorization": "Bearer ${authKey!}"}, body: params)
         .then((http.Response response) async {
       final ApiResponseModel parsedResponse = await getResponse(
           response.body, NetworkConstantsUtil.updatePaymentDetail);
@@ -1032,10 +1039,10 @@ class ApiController {
 
     return await http
         .post(Uri.parse(url),
-        headers: {"Authorization": "Bearer ${authKey!}"}, body: params)
+            headers: {"Authorization": "Bearer ${authKey!}"}, body: params)
         .then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.redeemCoins);
+          await getResponse(response.body, NetworkConstantsUtil.redeemCoins);
       return parsedResponse;
     });
   }
@@ -1063,7 +1070,7 @@ class ApiController {
       "Authorization": "Bearer ${authKey!}"
     }).then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.followers);
+          await getResponse(response.body, NetworkConstantsUtil.followers);
       return parsedResponse;
     });
   }
@@ -1078,7 +1085,7 @@ class ApiController {
       "Authorization": "Bearer ${authKey!}"
     }).then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.following);
+          await getResponse(response.body, NetworkConstantsUtil.following);
       return parsedResponse;
     });
   }
@@ -1114,9 +1121,9 @@ class ApiController {
 
   Future<ApiResponseModel> findFriends(
       {required int isExactMatch,
-        required String searchText,
-        SearchFrom? searchFrom,
-        int page = 1}) async {
+      required String searchText,
+      SearchFrom? searchFrom,
+      int page = 1}) async {
     String? authKey = await SharedPrefs().getAuthorizationKey();
     var url = NetworkConstantsUtil.baseUrl + NetworkConstantsUtil.findFriends;
 
@@ -1125,12 +1132,12 @@ class ApiController {
     String searchFromValue = searchFrom == null
         ? ''
         : searchFrom == SearchFrom.username
-        ? '1'
-        : searchFrom == SearchFrom.email
-        ? '2'
-        : '3';
+            ? '1'
+            : searchFrom == SearchFrom.email
+                ? '2'
+                : '3';
     url =
-    '${url}searchText=$searchText&searchFrom=$searchFromValue&isExactMatch=$isExactMatch&page=$page';
+        '${url}searchText=$searchText&searchFrom=$searchFromValue&isExactMatch=$isExactMatch&page=$page';
 
     return await http.get(Uri.parse(url), headers: {
       "Authorization": "Bearer ${authKey!}"
@@ -1147,13 +1154,13 @@ class ApiController {
 
     var url = NetworkConstantsUtil.baseUrl + NetworkConstantsUtil.submitRequest;
     dynamic param =
-    ApiParamModel().getSupportRequestParam(name, email, phone, message);
+        ApiParamModel().getSupportRequestParam(name, email, phone, message);
     return http
         .post(Uri.parse(url),
-        headers: {"Authorization": "Bearer ${authKey!}"}, body: param)
+            headers: {"Authorization": "Bearer ${authKey!}"}, body: param)
         .then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.submitRequest);
+          await getResponse(response.body, NetworkConstantsUtil.submitRequest);
       return parsedResponse;
     });
   }
@@ -1170,7 +1177,7 @@ class ApiController {
         likesNotificationStatus, commentNotificationStatus);
     return http
         .post(Uri.parse(url),
-        headers: {"Authorization": "Bearer ${authKey!}"}, body: param)
+            headers: {"Authorization": "Bearer ${authKey!}"}, body: param)
         .then((http.Response response) async {
       final ApiResponseModel parsedResponse = await getResponse(
           response.body, NetworkConstantsUtil.notificationSettings);
@@ -1202,41 +1209,9 @@ class ApiController {
       "Authorization": "Bearer ${authKey!}"
     }).then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.searchUsers);
+          await getResponse(response.body, NetworkConstantsUtil.searchUsers);
       return parsedResponse;
     });
-  }
-
-  Future<ApiResponseModel> getResponse(String res, String url) async {
-    try {
-      dynamic data = _decoder.convert(res);
-      if (data['status'] == 401 && data['data'] == null) {
-        return ApiResponseModel.fromJson(
-            {"message": data['message'], "isInvalidLogin": true}, url);
-      } else {
-        return ApiResponseModel.fromJson(data, url);
-      }
-    } catch (e) {
-      return ApiResponseModel.fromJson({"message": e.toString()}, url);
-    }
-  }
-
-  Future<ApiResponseModel> getArrayResponse(String res, String url) async {
-    try {
-      dynamic data = _decoder.convert(res);
-
-      if (data['status'] == 401 && data['data'] == null) {
-        // SharedPrefs().clearPreferences();
-        // NavigationService.instance
-        //     .navigateToReplacementWithScale(ScaleRoute(page: TutorialScreen()));
-        return ApiResponseModel.fromJson(
-            {"message": data['message'], "isInvalidLogin": true}, url);
-      } else {
-        return ApiResponseModel.fromUsersJson(data);
-      }
-    } catch (e) {
-      return ApiResponseModel.fromJson({"message": e.toString()}, url);
-    }
   }
 
   //****************************** Chat **************************//
@@ -1251,7 +1226,7 @@ class ApiController {
       "Authorization": "Bearer ${authKey!}"
     }).then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.createChatRoom);
+          await getResponse(response.body, NetworkConstantsUtil.createChatRoom);
       return parsedResponse;
     });
   }
@@ -1268,7 +1243,7 @@ class ApiController {
       "Authorization": "Bearer ${authKey!}"
     }).then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.createChatRoom);
+          await getResponse(response.body, NetworkConstantsUtil.createChatRoom);
       return parsedResponse;
     });
   }
@@ -1289,7 +1264,7 @@ class ApiController {
       "Authorization": "Bearer ${authKey!}"
     }).then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.createChatRoom);
+          await getResponse(response.body, NetworkConstantsUtil.createChatRoom);
       return parsedResponse;
     });
   }
@@ -1304,7 +1279,24 @@ class ApiController {
       "Authorization": "Bearer ${authKey!}"
     }).then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.createChatRoom);
+          await getResponse(response.body, NetworkConstantsUtil.createChatRoom);
+      return parsedResponse;
+    });
+  }
+
+  Future<ApiResponseModel> deleteChatRoomMessages(int roomId) async {
+    var url = NetworkConstantsUtil.baseUrl +
+        NetworkConstantsUtil.deleteChatRoomMessages +
+        roomId.toString();
+    String? authKey = await SharedPrefs().getAuthorizationKey();
+
+    return http.post(Uri.parse(url), headers: {
+      "Authorization": "Bearer ${authKey!}",
+    }, body: {
+      'room_id': roomId.toString()
+    }).then((http.Response response) async {
+      final ApiResponseModel parsedResponse =
+          await getResponse(response.body, NetworkConstantsUtil.deleteChatRoomMessages);
       return parsedResponse;
     });
   }
@@ -1317,7 +1309,7 @@ class ApiController {
       "Authorization": "Bearer ${authKey!}"
     }).then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.getChatRooms);
+          await getResponse(response.body, NetworkConstantsUtil.getChatRooms);
       return parsedResponse;
     });
   }
@@ -1350,7 +1342,7 @@ class ApiController {
       "Authorization": "Bearer ${authKey!}"
     }).then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.chatHistory);
+          await getResponse(response.body, NetworkConstantsUtil.chatHistory);
       return parsedResponse;
     });
   }
@@ -1364,7 +1356,7 @@ class ApiController {
       "Authorization": "Bearer ${authKey!}"
     }).then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.callHistory);
+          await getResponse(response.body, NetworkConstantsUtil.callHistory);
       return parsedResponse;
     });
   }
@@ -1401,8 +1393,7 @@ class ApiController {
 
   Future<ApiResponseModel> getTVShows({int? liveTvId, String? name}) async {
     String? authKey = await SharedPrefs().getAuthorizationKey();
-    var url =
-        NetworkConstantsUtil.baseUrl + NetworkConstantsUtil.getTVShows;
+    var url = NetworkConstantsUtil.baseUrl + NetworkConstantsUtil.getTVShows;
 
     if (liveTvId != null) {
       url = '$url&tv_channel_id=$liveTvId';
@@ -1414,8 +1405,8 @@ class ApiController {
     return await http.get(Uri.parse(url), headers: {
       "Authorization": "Bearer ${authKey!}"
     }).then((http.Response response) async {
-      final ApiResponseModel parsedResponse = await getResponse(
-          response.body, NetworkConstantsUtil.getTVShows);
+      final ApiResponseModel parsedResponse =
+          await getResponse(response.body, NetworkConstantsUtil.getTVShows);
       return parsedResponse;
     });
   }
@@ -1428,7 +1419,7 @@ class ApiController {
       "Authorization": "Bearer ${authKey!}"
     }).then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.postDetail);
+          await getResponse(response.body, NetworkConstantsUtil.postDetail);
       return parsedResponse;
     });
   }
@@ -1448,7 +1439,7 @@ class ApiController {
       "Authorization": "Bearer ${authKey!}"
     }).then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.liveTvs);
+          await getResponse(response.body, NetworkConstantsUtil.liveTvs);
       return parsedResponse;
     });
   }
@@ -1461,7 +1452,7 @@ class ApiController {
       "Authorization": "Bearer ${authKey!}"
     }).then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.tvBanners);
+          await getResponse(response.body, NetworkConstantsUtil.tvBanners);
       return parsedResponse;
     });
   }
@@ -1498,7 +1489,7 @@ class ApiController {
       'id': tvModel.id.toString(),
     }).then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.stopWatchingTv);
+          await getResponse(response.body, NetworkConstantsUtil.stopWatchingTv);
       return parsedResponse;
     });
   }
@@ -1507,31 +1498,34 @@ class ApiController {
 
   Future<ApiResponseModel> getPodcastBanners() async {
     String? authKey = await SharedPrefs().getAuthorizationKey();
-    var url = NetworkConstantsUtil.baseUrl + NetworkConstantsUtil.podcastBanners;
+    var url =
+        NetworkConstantsUtil.baseUrl + NetworkConstantsUtil.podcastBanners;
 
     return await http.get(Uri.parse(url), headers: {
       "Authorization": "Bearer ${authKey!}"
     }).then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.podcastBanners);
+          await getResponse(response.body, NetworkConstantsUtil.podcastBanners);
       return parsedResponse;
     });
   }
 
   Future<ApiResponseModel> getPodcastCategories() async {
     String? authKey = await SharedPrefs().getAuthorizationKey();
-    var url = NetworkConstantsUtil.baseUrl + NetworkConstantsUtil.getPodcastCategories;
+    var url = NetworkConstantsUtil.baseUrl +
+        NetworkConstantsUtil.getPodcastCategories;
 
     return await http.get(Uri.parse(url), headers: {
       "Authorization": "Bearer ${authKey!}"
     }).then((http.Response response) async {
-      final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.getPodcastCategories);
+      final ApiResponseModel parsedResponse = await getResponse(
+          response.body, NetworkConstantsUtil.getPodcastCategories);
       return parsedResponse;
     });
   }
 
-  Future<ApiResponseModel> getPodcastList({int? categoryId, String? name}) async {
+  Future<ApiResponseModel> getPodcastList(
+      {int? categoryId, String? name}) async {
     String? authKey = await SharedPrefs().getAuthorizationKey();
     var url = NetworkConstantsUtil.baseUrl + NetworkConstantsUtil.getHosts;
 
@@ -1546,12 +1540,13 @@ class ApiController {
       "Authorization": "Bearer ${authKey!}"
     }).then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.getHosts);
+          await getResponse(response.body, NetworkConstantsUtil.getHosts);
       return parsedResponse;
     });
   }
 
-  Future<ApiResponseModel> getPodcastShows({int? podcastId, String? name}) async {
+  Future<ApiResponseModel> getPodcastShows(
+      {int? podcastId, String? name}) async {
     String? authKey = await SharedPrefs().getAuthorizationKey();
     var url =
         NetworkConstantsUtil.baseUrl + NetworkConstantsUtil.getPodcastShows;
@@ -1572,11 +1567,11 @@ class ApiController {
     });
   }
 
-
-  Future<ApiResponseModel> getPodcastShowsEpisode({int? podcastShowId, String? name}) async {
+  Future<ApiResponseModel> getPodcastShowsEpisode(
+      {int? podcastShowId, String? name}) async {
     String? authKey = await SharedPrefs().getAuthorizationKey();
-    var url =
-        NetworkConstantsUtil.baseUrl + NetworkConstantsUtil.getPodcastShowsEpisode;
+    var url = NetworkConstantsUtil.baseUrl +
+        NetworkConstantsUtil.getPodcastShowsEpisode;
 
     if (podcastShowId != null) {
       url = '$url&podcast_show_id=$podcastShowId';
@@ -1612,11 +1607,11 @@ class ApiController {
 
   Future<ApiResponseModel> createClub(
       {required int categoryId,
-        required int privacyMode,
-        required int enableChatRoom,
-        required String name,
-        required String image,
-        required String description}) async {
+      required int privacyMode,
+      required int enableChatRoom,
+      required String name,
+      required String image,
+      required String description}) async {
     var url = NetworkConstantsUtil.baseUrl + NetworkConstantsUtil.createClub;
     String? authKey = await SharedPrefs().getAuthorizationKey();
 
@@ -1630,21 +1625,21 @@ class ApiController {
 
     return http
         .post(Uri.parse(url),
-        headers: {"Authorization": "Bearer ${authKey!}"}, body: param)
+            headers: {"Authorization": "Bearer ${authKey!}"}, body: param)
         .then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.createClub);
+          await getResponse(response.body, NetworkConstantsUtil.createClub);
       return parsedResponse;
     });
   }
 
   Future<ApiResponseModel> updateClub(
       {required int categoryId,
-        required int clubId,
-        required int privacyMode,
-        required String name,
-        required String image,
-        required String description}) async {
+      required int clubId,
+      required int privacyMode,
+      required String name,
+      required String image,
+      required String description}) async {
     var url = NetworkConstantsUtil.baseUrl +
         NetworkConstantsUtil.updateClub +
         clubId.toString();
@@ -1659,10 +1654,10 @@ class ApiController {
 
     return http
         .put(Uri.parse(url),
-        headers: {"Authorization": "Bearer ${authKey!}"}, body: param)
+            headers: {"Authorization": "Bearer ${authKey!}"}, body: param)
         .then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.updateClub);
+          await getResponse(response.body, NetworkConstantsUtil.updateClub);
       return parsedResponse;
     });
   }
@@ -1677,17 +1672,17 @@ class ApiController {
       "Authorization": "Bearer $authKey"
     }).then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.deleteClub);
+          await getResponse(response.body, NetworkConstantsUtil.deleteClub);
       return parsedResponse;
     });
   }
 
   Future<ApiResponseModel> getClubs(
       {String? name,
-        int? categoryId,
-        int? userId,
-        int? isJoined,
-        int page = 1}) async {
+      int? categoryId,
+      int? userId,
+      int? isJoined,
+      int page = 1}) async {
     String? authKey = await SharedPrefs().getAuthorizationKey();
     var url = NetworkConstantsUtil.baseUrl + NetworkConstantsUtil.searchClubs;
     if (userId != null) {
@@ -1707,7 +1702,7 @@ class ApiController {
       "Authorization": "Bearer ${authKey!}"
     }).then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.searchClubs);
+          await getResponse(response.body, NetworkConstantsUtil.searchClubs);
       return parsedResponse;
     });
   }
@@ -1722,7 +1717,7 @@ class ApiController {
       "Authorization": "Bearer ${authKey!}"
     }).then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.clubMembers);
+          await getResponse(response.body, NetworkConstantsUtil.clubMembers);
       return parsedResponse;
     });
   }
@@ -1752,7 +1747,7 @@ class ApiController {
         headers: {"Authorization": "Bearer ${authKey!}"},
         body: {'id': clubId.toString()}).then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.joinClub);
+          await getResponse(response.body, NetworkConstantsUtil.joinClub);
       return parsedResponse;
     });
   }
@@ -1767,7 +1762,7 @@ class ApiController {
         headers: {"Authorization": "Bearer ${authKey!}"},
         body: {'id': clubId.toString()}).then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.leaveClub);
+          await getResponse(response.body, NetworkConstantsUtil.leaveClub);
       return parsedResponse;
     });
   }
@@ -1780,11 +1775,11 @@ class ApiController {
         NetworkConstantsUtil.baseUrl + NetworkConstantsUtil.removeUserFromClub;
     String? authKey = await SharedPrefs().getAuthorizationKey();
     dynamic param =
-    await ApiParamModel().removeFromClub(userId: userId, clubId: clubId);
+        await ApiParamModel().removeFromClub(userId: userId, clubId: clubId);
 
     return http
         .post(Uri.parse(url),
-        headers: {"Authorization": "Bearer ${authKey!}"}, body: param)
+            headers: {"Authorization": "Bearer ${authKey!}"}, body: param)
         .then((http.Response response) async {
       final ApiResponseModel parsedResponse = await getResponse(
           response.body, NetworkConstantsUtil.removeUserFromClub);
@@ -1810,10 +1805,10 @@ class ApiController {
 
   Future<ApiResponseModel> getEvents(
       {String? name,
-        int? categoryId,
-        int? status,
-        int? isJoined,
-        int page = 1}) async {
+      int? categoryId,
+      int? status,
+      int? isJoined,
+      int page = 1}) async {
     String? authKey = await SharedPrefs().getAuthorizationKey();
     var url = NetworkConstantsUtil.baseUrl + NetworkConstantsUtil.searchEvents;
     if (categoryId != null) {
@@ -1832,7 +1827,7 @@ class ApiController {
       "Authorization": "Bearer ${authKey!}"
     }).then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.searchClubs);
+          await getResponse(response.body, NetworkConstantsUtil.searchClubs);
       return parsedResponse;
     });
   }
@@ -1846,7 +1841,7 @@ class ApiController {
       "Authorization": "Bearer ${authKey!}"
     }).then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.eventDetails);
+          await getResponse(response.body, NetworkConstantsUtil.eventDetails);
       return parsedResponse;
     });
   }
@@ -1862,7 +1857,7 @@ class ApiController {
       "Authorization": "Bearer ${authKey!}"
     }).then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.clubMembers);
+          await getResponse(response.body, NetworkConstantsUtil.clubMembers);
       return parsedResponse;
     });
   }
@@ -1875,7 +1870,7 @@ class ApiController {
       "Authorization": "Bearer ${authKey!}"
     }).then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.eventCoupons);
+          await getResponse(response.body, NetworkConstantsUtil.eventCoupons);
       return parsedResponse;
     });
   }
@@ -1889,24 +1884,24 @@ class ApiController {
 
     return http
         .post(Uri.parse(url),
-        headers: {
-          "Authorization": "Bearer ${authKey!}",
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode(param))
+            headers: {
+              "Authorization": "Bearer ${authKey!}",
+              'Content-Type': 'application/json',
+            },
+            body: jsonEncode(param))
         .then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.buyTicket);
+          await getResponse(response.body, NetworkConstantsUtil.buyTicket);
       return parsedResponse;
     });
   }
 
   Future<ApiResponseModel> getEventBookings(
       {String? name,
-        required int currentStatus,
-        int? status,
-        int? isJoined,
-        int page = 1}) async {
+      required int currentStatus,
+      int? status,
+      int? isJoined,
+      int page = 1}) async {
     String? authKey = await SharedPrefs().getAuthorizationKey();
     var url = NetworkConstantsUtil.baseUrl + NetworkConstantsUtil.eventBookings;
     url = '$url&current_status=$currentStatus';
@@ -1914,7 +1909,8 @@ class ApiController {
     if (name != null && name.isNotEmpty) {
       url = '$url&name=$name';
     }
-    url = '$url&expand=payment,event,event.eventOrganisor';
+    url =
+        '$url&expand=payment,event,event.eventOrganisor,giftedToUser,giftedByUser';
     url = '$url&page=$page';
 
     // print("Bearer ${authKey!}");
@@ -1922,7 +1918,7 @@ class ApiController {
       "Authorization": "Bearer ${authKey!}"
     }).then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.eventBookings);
+          await getResponse(response.body, NetworkConstantsUtil.eventBookings);
       return parsedResponse;
     });
   }
@@ -1937,7 +1933,7 @@ class ApiController {
         headers: {"Authorization": "Bearer ${authKey!}"},
         body: {'id': eventId.toString()}).then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.joinEvent);
+          await getResponse(response.body, NetworkConstantsUtil.joinEvent);
       return parsedResponse;
     });
   }
@@ -1952,7 +1948,26 @@ class ApiController {
         headers: {"Authorization": "Bearer ${authKey!}"},
         body: {'id': eventId.toString()}).then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.leaveClub);
+          await getResponse(response.body, NetworkConstantsUtil.leaveClub);
+      return parsedResponse;
+    });
+  }
+
+  Future<ApiResponseModel> giftEventTicket({
+    required int ticketId,
+    required int toUserId,
+  }) async {
+    var url = NetworkConstantsUtil.baseUrl + NetworkConstantsUtil.giftTicket;
+    String? authKey = await SharedPrefs().getAuthorizationKey();
+
+    return http.post(Uri.parse(url), headers: {
+      "Authorization": "Bearer ${authKey!}"
+    }, body: {
+      'id': ticketId.toString(),
+      'gifted_to': toUserId.toString()
+    }).then((http.Response response) async {
+      final ApiResponseModel parsedResponse =
+          await getResponse(response.body, NetworkConstantsUtil.giftTicket);
       return parsedResponse;
     });
   }
@@ -1967,7 +1982,7 @@ class ApiController {
         headers: {"Authorization": "Bearer ${authKey!}"},
         body: {'id': clubId.toString()}).then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.eventBookings);
+          await getResponse(response.body, NetworkConstantsUtil.eventBookings);
       return parsedResponse;
     });
   }
@@ -2018,7 +2033,7 @@ class ApiController {
       "Authorization": "Bearer ${authKey!}"
     }).then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.randomLives);
+          await getResponse(response.body, NetworkConstantsUtil.randomLives);
       return parsedResponse;
     });
   }
@@ -2031,7 +2046,7 @@ class ApiController {
       "Authorization": "Bearer ${authKey!}"
     }).then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.liveHistory);
+          await getResponse(response.body, NetworkConstantsUtil.liveHistory);
       return parsedResponse;
     });
   }
@@ -2040,8 +2055,8 @@ class ApiController {
 
   Future<ApiResponseModel> receivedGifts(
       {required int sendOnType,
-        required int? postId,
-        required int? liveId}) async {
+      required int? postId,
+      required int? liveId}) async {
     String? authKey = await SharedPrefs().getAuthorizationKey();
     var url = NetworkConstantsUtil.baseUrl + NetworkConstantsUtil.giftsReceived;
     url = url.replaceAll('{{send_on_type}}', sendOnType.toString());
@@ -2054,7 +2069,7 @@ class ApiController {
       "Authorization": "Bearer ${authKey!}"
     }).then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.giftsReceived);
+          await getResponse(response.body, NetworkConstantsUtil.giftsReceived);
       return parsedResponse;
     });
   }
@@ -2102,16 +2117,16 @@ class ApiController {
       "Authorization": "Bearer ${authKey!}"
     }).then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.mostUsedGifts);
+          await getResponse(response.body, NetworkConstantsUtil.mostUsedGifts);
       return parsedResponse;
     });
   }
 
   Future<ApiResponseModel> sendGift(
       {required GiftModel gift,
-        required int? liveId,
-        required int? postId,
-        required int userId}) async {
+      required int? liveId,
+      required int? postId,
+      required int userId}) async {
     String? authKey = await SharedPrefs().getAuthorizationKey();
     var url = '${NetworkConstantsUtil.baseUrl}${NetworkConstantsUtil.sendGift}';
 
@@ -2123,14 +2138,14 @@ class ApiController {
         source: liveId != null
             ? 1
             : postId != null
-            ? 3
-            : 2);
+                ? 3
+                : 2);
 
     return await http.post(Uri.parse(url), body: param, headers: {
       "Authorization": "Bearer ${authKey!}"
     }).then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.sendGift);
+          await getResponse(response.body, NetworkConstantsUtil.sendGift);
       return parsedResponse;
     });
   }
@@ -2139,8 +2154,8 @@ class ApiController {
 
   Future<ApiResponseModel> sendProfileVerificationRequest(
       {required String userMessage,
-        required String documentType,
-        required List<Map<String, String>> images}) async {
+      required String documentType,
+      required List<Map<String, String>> images}) async {
     String? authKey = await SharedPrefs().getAuthorizationKey();
     var url =
         '${NetworkConstantsUtil.baseUrl}${NetworkConstantsUtil.requestVerification}';
@@ -2202,7 +2217,7 @@ class ApiController {
       "Authorization": "Bearer ${authKey!}"
     }).then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.getFAQs);
+          await getResponse(response.body, NetworkConstantsUtil.getFAQs);
       return parsedResponse;
     });
   }
@@ -2256,11 +2271,11 @@ class ApiController {
 
     return http
         .post(Uri.parse(url),
-        headers: {
-          "Authorization": "Bearer ${authKey!}",
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode(param))
+            headers: {
+              "Authorization": "Bearer ${authKey!}",
+              'Content-Type': 'application/json',
+            },
+            body: jsonEncode(param))
         .then((http.Response response) async {
       final ApiResponseModel parsedResponse = await getResponse(
           response.body, NetworkConstantsUtil.submitPaypalPayment);
@@ -2297,8 +2312,40 @@ class ApiController {
       "Authorization": "Bearer ${authKey!}"
     }).then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-      await getResponse(response.body, NetworkConstantsUtil.audios);
+          await getResponse(response.body, NetworkConstantsUtil.audios);
       return parsedResponse;
     });
+  }
+
+  Future<ApiResponseModel> getResponse(String res, String url) async {
+    try {
+      dynamic data = _decoder.convert(res);
+      if (data['status'] == 401 && data['data'] == null) {
+        return ApiResponseModel.fromJson(
+            {"message": data['message'], "isInvalidLogin": true}, url);
+      } else {
+        return ApiResponseModel.fromJson(data, url);
+      }
+    } catch (e) {
+      return ApiResponseModel.fromJson({"message": e.toString()}, url);
+    }
+  }
+
+  Future<ApiResponseModel> getArrayResponse(String res, String url) async {
+    try {
+      dynamic data = _decoder.convert(res);
+
+      if (data['status'] == 401 && data['data'] == null) {
+        // SharedPrefs().clearPreferences();
+        // NavigationService.instance
+        //     .navigateToReplacementWithScale(ScaleRoute(page: TutorialScreen()));
+        return ApiResponseModel.fromJson(
+            {"message": data['message'], "isInvalidLogin": true}, url);
+      } else {
+        return ApiResponseModel.fromUsersJson(data);
+      }
+    } catch (e) {
+      return ApiResponseModel.fromJson({"message": e.toString()}, url);
+    }
   }
 }

@@ -99,8 +99,8 @@ class _ReelsListState extends State<ReelsList> {
                             },
                             children: [
                               for (int i = 0;
-                              i < _reelsController.filteredMoments.length;
-                              i++)
+                                  i < _reelsController.filteredMoments.length;
+                                  i++)
                                 SizedBox(
                                   height: Get.height,
                                   width: Get.width,

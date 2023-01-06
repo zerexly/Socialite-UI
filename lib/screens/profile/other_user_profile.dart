@@ -14,6 +14,7 @@ class OtherUserProfileState extends State<OtherUserProfile> {
   final ProfileController _profileController = Get.find();
   final HighlightsController _highlightsController = Get.find();
   final ChatDetailController _chatDetailController = Get.find();
+  final SettingsController _settingsController = Get.find();
 
   @override
   void initState() {
@@ -226,56 +227,55 @@ class OtherUserProfileState extends State<OtherUserProfile> {
                                         .user.value!.isFollowing);
                               }),
                         ),
-                        // const Spacer(),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.25,
-                            child: FilledButtonType1(
-                                height: 35,
-                                enabledBackgroundColor:
-                                    Theme.of(context).disabledColor,
-                                enabledTextStyle:
-                                    Theme.of(context).textTheme.bodyLarge,
-                                text: LocalizationString.chat,
-                                onPress: () {
-                                  EasyLoading.show(
-                                      status: LocalizationString.loading);
-                                  _chatDetailController.getChatRoomWithUser(
-                                      userId:_profileController.user.value!.id,
-                                      callback:(room) {
-                                    EasyLoading.dismiss();
-                                    Get.to(() => ChatDetail(
-                                          chatRoom: room,
-                                        ));
-                                  });
-                                })),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.30,
-                            child: FilledButtonType1(
-                                height: 35,
-                                enabledBackgroundColor:
-                                    Theme.of(context).disabledColor,
-                                enabledTextStyle:
-                                    Theme.of(context).textTheme.bodyLarge,
-                                text: LocalizationString.sendGift,
-                                onPress: () {
-                                  showModalBottomSheet<void>(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return FractionallySizedBox(
-                                            heightFactor: 0.8,
-                                            child: GiftsPageView(
-                                                giftSelectedCompletion: (gift) {
-                                              Get.back();
-                                              _profileController.sendGift(gift);
-                                            }));
-                                      });
-                                })),
+
+                        if (_settingsController.setting.value!.enableChat)
+                          SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.25,
+                              child: FilledButtonType1(
+                                  height: 35,
+                                  enabledBackgroundColor:
+                                      Theme.of(context).disabledColor,
+                                  enabledTextStyle:
+                                      Theme.of(context).textTheme.bodyLarge,
+                                  text: LocalizationString.chat,
+                                  onPress: () {
+                                    EasyLoading.show(
+                                        status: LocalizationString.loading);
+                                    _chatDetailController.getChatRoomWithUser(
+                                        userId:
+                                            _profileController.user.value!.id,
+                                        callback: (room) {
+                                          EasyLoading.dismiss();
+                                          Get.to(() => ChatDetail(
+                                                chatRoom: room,
+                                              ));
+                                        });
+                                  })).lP8,
+                        if (_settingsController.setting.value!.enableGift)
+                          SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.30,
+                              child: FilledButtonType1(
+                                  height: 35,
+                                  enabledBackgroundColor:
+                                      Theme.of(context).disabledColor,
+                                  enabledTextStyle:
+                                      Theme.of(context).textTheme.bodyLarge,
+                                  text: LocalizationString.sendGift,
+                                  onPress: () {
+                                    showModalBottomSheet<void>(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return FractionallySizedBox(
+                                              heightFactor: 0.8,
+                                              child: GiftsPageView(
+                                                  giftSelectedCompletion:
+                                                      (gift) {
+                                                Get.back();
+                                                _profileController
+                                                    .sendGift(gift);
+                                              }));
+                                        });
+                                  })).lP8,
                       ],
                     )
                   ],

@@ -4,9 +4,11 @@ import 'package:get/get.dart';
 class CommentsScreen extends StatefulWidget {
   final PostModel? model;
   final int? postId;
+  final bool? isPopup;
   final VoidCallback? handler;
 
-  const CommentsScreen({Key? key, this.model, this.postId, this.handler})
+  const CommentsScreen(
+      {Key? key, this.model, this.postId, this.handler, this.isPopup})
       : super(key: key);
 
   @override
@@ -30,47 +32,47 @@ class CommentsScreenState extends State<CommentsScreen> {
         backgroundColor: Theme.of(context).backgroundColor,
         body: Column(
           children: <Widget>[
-            const SizedBox(
-              height: 50,
+            SizedBox(
+              height: widget.isPopup == true ? 20 : 50,
             ),
             backNavigationBar(
                 context: context, title: LocalizationString.comments),
             divider(context: context).tP8,
             Obx(() => _commentsController.hashTags.isNotEmpty ||
-                    _commentsController.searchedUsers.isNotEmpty
+                _commentsController.searchedUsers.isNotEmpty
                 ? Expanded(
-                    child: Container(
-                      // height: 500,
-                      width: double.infinity,
-                      color: Theme.of(context).disabledColor.withOpacity(0.1),
-                      child: _commentsController.hashTags.isNotEmpty
-                          ? hashTagView()
-                          : _commentsController.searchedUsers.isNotEmpty
-                              ? usersView()
-                              : Container(),
-                    ),
-                  )
+              child: Container(
+                // height: 500,
+                width: double.infinity,
+                color: Theme.of(context).disabledColor.withOpacity(0.1),
+                child: _commentsController.hashTags.isNotEmpty
+                    ? hashTagView()
+                    : _commentsController.searchedUsers.isNotEmpty
+                    ? usersView()
+                    : Container(),
+              ),
+            )
                 : Flexible(
-                    child: GetBuilder<CommentsController>(
-                        init: _commentsController,
-                        builder: (ctx) {
-                          return ListView.separated(
-                            padding: const EdgeInsets.only(
-                                top: 20, left: 16, right: 16),
-                            itemCount: _commentsController.comments.length,
-                            // reverse: true,
-                            controller: _controller,
-                            itemBuilder: (context, index) {
-                              return CommentTile(
-                                  model: _commentsController.comments[index]);
-                            },
-                            separatorBuilder: (ctx, index) {
-                              return const SizedBox(
-                                height: 20,
-                              );
-                            },
+                child: GetBuilder<CommentsController>(
+                    init: _commentsController,
+                    builder: (ctx) {
+                      return ListView.separated(
+                        padding: const EdgeInsets.only(
+                            top: 20, left: 16, right: 16),
+                        itemCount: _commentsController.comments.length,
+                        // reverse: true,
+                        controller: _controller,
+                        itemBuilder: (context, index) {
+                          return CommentTile(
+                              model: _commentsController.comments[index]);
+                        },
+                        separatorBuilder: (ctx, index) {
+                          return const SizedBox(
+                            height: 20,
                           );
-                        }))),
+                        },
+                      );
+                    }))),
             buildMessageTextField(),
             const SizedBox(
               height: 20,
@@ -89,8 +91,8 @@ class CommentsScreenState extends State<CommentsScreen> {
               child: Obx(() {
                 commentInputField.value = TextEditingValue(
                     text: _commentsController.searchText.value,
-                    selection: TextSelection.fromPosition(TextPosition(
-                        offset: _commentsController.position.value)));
+                    selection: TextSelection.fromPosition(
+                        TextPosition(offset: _commentsController.position.value)));
 
                 return TextField(
                   controller: commentInputField,
@@ -117,7 +119,7 @@ class CommentsScreenState extends State<CommentsScreen> {
                   onTap: () {
                     Timer(
                         const Duration(milliseconds: 300),
-                        () => _controller
+                            () => _controller
                             .jumpTo(_controller.position.maxScrollExtent));
                   },
                 ).hP8;
@@ -156,7 +158,7 @@ class CommentsScreenState extends State<CommentsScreen> {
       // widget.model?.totalComment = comments.length;
 
       Timer(const Duration(milliseconds: 500),
-          () => _controller.jumpTo(_controller.position.maxScrollExtent));
+              () => _controller.jumpTo(_controller.position.maxScrollExtent));
     }
   }
 

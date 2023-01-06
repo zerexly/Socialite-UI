@@ -122,6 +122,8 @@ class NetworkConstantsUtil {
   static String getChatRooms =
       'chats/room?expand=createdByUser,chatRoomUser,chatRoomUser.user,lastMessage,chatRoomUser.user.userLiveDetail';
   static String deleteChatRoom = 'chats/delete-room?room_id=';
+  static String deleteChatRoomMessages = 'chats/delete-room-chat';
+
   static String callHistory =
       'chats/call-history?expand=callerDetail,receiverDetail,receiverDetail.userLiveDetail';
   static String chatHistory =
@@ -130,22 +132,20 @@ class NetworkConstantsUtil {
   ///////////// live TVs
   static String getTVCategories =
       'categories/live-tv?expand=liveTv,liveTv.currentViewer';
-  static String getTVShows =
-      'live-tvs/tv-shows?expand=tvShowEpisode';
+  static String getTVShows = 'live-tvs/tv-shows?expand=tvShowEpisode';
   static String liveTvs = 'live-tvs?expand=currentViewer';
-  static String tvBanners='tv-banners';
+  static String tvBanners = 'tv-banners';
   static String subscribeLiveTv = 'live-tvs/subscribe';
   static String stopWatchingTv = 'live-tvs/stop-viewing';
   static String liveHistory = 'user-live-histories?expand=giftSummary';
 
   ///////////// Podcast
-  static String getPodcastCategories ='categories/podcast?expand=podcastList,podcastList.currentViewer';
-  static String podcastBanners ='podcast-banners';
+  static String getPodcastCategories =
+      'categories/podcast?expand=podcastList,podcastList.currentViewer';
+  static String podcastBanners = 'podcast-banners';
   static String getHosts = 'podcasts?expand=currentViewer';
-  static String getPodcastShows =
-      'podcast-shows?expand=podcastShow';
-  static String getPodcastShowsEpisode =
-      'podcast-shows/podcast-show-episodes?';
+  static String getPodcastShows = 'podcast-shows?expand=podcastShow';
+  static String getPodcastShowsEpisode = 'podcast-shows/podcast-show-episodes?';
 
   ///////////// Clubs
   static String getClubCategories = 'clubs/category';
@@ -172,6 +172,8 @@ class NetworkConstantsUtil {
   static String buyTicket = 'events/buy-ticket';
   static String eventBookings = 'events/my-booked-event?';
   static String cancelEventBooking = 'events/cancel-ticket-booking';
+
+  static String giftTicket = 'events/gift-ticket';
 
   // random live and chat
   static String randomLives = 'chats/live-user?expand=userLiveDetail';

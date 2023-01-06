@@ -6,7 +6,7 @@ class BuyTicketController extends GetxController {
   Rx<EventTicketType?> selectedTicketType = Rx<EventTicketType?>(null);
   Rx<EventCoupon?> selectedCoupon = Rx<EventCoupon?>(null);
   final SettingsController _settingsController = Get.find();
-
+  UserModel? giftToUser;
   // EventTicketOrderRequest ticketOrder = EventTicketOrderRequest();
   late EventModel event;
   EventCoupon? coupon;
@@ -26,6 +26,8 @@ class BuyTicketController extends GetxController {
     ticketOrder.coupon = coupon?.code ?? '';
     ticketOrder.discount = coupon?.discount ?? 0;
     ticketOrder.itemName = event.name;
+    ticketOrder.gifToUser = giftToUser;
+
     ticketOrder.ticketAmount =
         (selectedTicketType.value?.price ?? 0) * numberOfTickets.value;
     ticketOrder.amountToBePaid = ((selectedTicketType.value?.price ?? 0) *
@@ -36,8 +38,9 @@ class BuyTicketController extends GetxController {
     return ticketOrder;
   }
 
-  setEvent(EventModel event) {
+  setData({required EventModel event,UserModel? giftToUser}) {
     this.event = event;
+    this.giftToUser = giftToUser;
   }
 
   selectTicketType(EventTicketType type) {

@@ -161,6 +161,8 @@ dependencies:
   encrypt: ^5.0.1
   video_compress: ^3.1.2
   aescryptojs: ^1.0.0
+  ffmpeg_kit_flutter: ^5.1.0
+  simple_downloader: ^0.0.3+1
 
   open_file:
     git:

@@ -12,6 +12,7 @@ class AppAccount extends StatefulWidget {
 class _AppAccountState extends State<AppAccount> {
   final RequestVerificationController _requestVerificationController =
       Get.find();
+  final SettingsController _settingsController = Get.find();
 
   @override
   void initState() {
@@ -49,17 +50,19 @@ class _AppAccountState extends State<AppAccount> {
                         LocalizationString.manageBlockedUser, () {
                       Get.to(() => const BlockedUsersList());
                     }),
-                    addTileEvent('assets/verification.png',
-                        LocalizationString.requestVerification, '', () {
-                      if (_requestVerificationController
-                          .isVerificationInProcess) {
-                        Get.to(() => RequestVerificationList(
-                            requests: _requestVerificationController
-                                .verificationRequests));
-                      } else {
-                        Get.to(() => const RequestVerification());
-                      }
-                    }),
+                    if (_settingsController
+                        .setting.value!.enableProfileVerification)
+                      addTileEvent('assets/verification.png',
+                          LocalizationString.requestVerification, '', () {
+                        if (_requestVerificationController
+                            .isVerificationInProcess) {
+                          Get.to(() => RequestVerificationList(
+                              requests: _requestVerificationController
+                                  .verificationRequests));
+                        } else {
+                          Get.to(() => const RequestVerification());
+                        }
+                      }),
                   ],
                 ),
                 const SizedBox(

@@ -708,6 +708,9 @@ class LocalizationString {
   static String liveNow = 'Now on live'.tr;
   static String reel = 'Reel'.tr;
   static String reels = 'Reels'.tr;
+  static String selectMusic = 'Select music'.tr;
+  static String originalAudio = 'Original audio'.tr;
+  static String use = 'Use'.tr;
 
   static String anyoneCanSeeClub =
       'Anyone can see this club and join the club'.tr;
@@ -822,6 +825,15 @@ class LocalizationString {
 
   static String going = "Going".tr;
   static String buyTicket = 'Buy Ticket'.tr;
+  static String giftTicket = 'Gift Ticket'.tr;
+  static String selectUser = 'Select user'.tr;
+  static String giftingTo = 'Gifting to'.tr;
+  static String gift = 'Gift'.tr;
+  static String giftedTo = 'Gifted to :'.tr;
+  static String giftedBy = 'Gifted by :'.tr;
+
+  static String ticketGifted = 'Ticket is gifted successfully'.tr;
+  static String bookingCancelled = 'Booking is cancelled successfully'.tr;
 
   static String ticketWillBeAvailableSoon = 'Tickets will be available soon'.tr;
 
@@ -883,7 +895,6 @@ class LocalizationString {
   static String eTicket = 'E-Ticket'.tr;
   static String saveETicket = 'Save E-Ticket'.tr;
   static String ticketSaved = 'Ticket Saved'.tr;
-  static String bookingCancelled = 'Booking cancelled successfully'.tr;
   static String confirmed = 'Confirmed'.tr;
   static String placingOrder = 'Placing order, please wait...'.tr;
   static String doNotCloseApp =
@@ -918,5 +929,4 @@ class LocalizationString {
   static String accept = 'Accept'.tr;
   static String decline = 'Decline'.tr;
   static String addComment = 'Add comment'.tr;
-
 }

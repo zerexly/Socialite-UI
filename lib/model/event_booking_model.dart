@@ -17,6 +17,9 @@ class EventBookingModel {
   EventModel event;
   String? ticketUrl;
 
+  UserModel? giftedToUser;
+  UserModel? giftedByUser;
+
   EventBookingModel({
     required this.id,
     required this.eventId,
@@ -32,6 +35,8 @@ class EventBookingModel {
     required this.ticketType,
     required this.event,
     required this.ticketUrl,
+    this.giftedByUser,
+    this.giftedToUser,
   });
 
   factory EventBookingModel.fromJson(Map<String, dynamic> json) =>
@@ -50,6 +55,12 @@ class EventBookingModel {
         ticketType: EventTicketType.fromJson(json["ticketDetail"]),
         event: EventModel.fromJson(json["event"]),
         ticketUrl: json["viewTicketUrl"],
+        giftedByUser: json["giftedByUser"] == null
+            ? null
+            : UserModel.fromJson(json["giftedByUser"]),
+        giftedToUser: json["giftedToUser"] == null
+            ? null
+            : UserModel.fromJson(json["giftedToUser"]),
       );
 
   BookingStatus get statusType {

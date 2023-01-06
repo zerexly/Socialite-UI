@@ -3,8 +3,10 @@ import 'package:get/get.dart';
 
 class BuyTicket extends StatefulWidget {
   final EventModel event;
+  final UserModel? giftToUser;
 
-  const BuyTicket({Key? key, required this.event}) : super(key: key);
+  const BuyTicket({Key? key, required this.event, this.giftToUser})
+      : super(key: key);
 
   @override
   State<BuyTicket> createState() => _BuyTicketState();
@@ -19,7 +21,8 @@ class _BuyTicketState extends State<BuyTicket> {
 
   @override
   void initState() {
-    _buyTicketController.setEvent(widget.event);
+    _buyTicketController.setData(
+        event: widget.event, giftToUser: widget.giftToUser);
     _eventDetailController.loadEventCoupons(widget.event.id);
     super.initState();
   }
@@ -48,6 +51,7 @@ class _BuyTicketState extends State<BuyTicket> {
                               const SizedBox(
                                 height: 25,
                               ),
+                              if (widget.giftToUser != null) giftTo().bP25,
                               ticketType(),
                               const SizedBox(
                                 height: 25,
@@ -61,9 +65,9 @@ class _BuyTicketState extends State<BuyTicket> {
                                           height: 25,
                                         ),
                                         couponsList(),
-                                        const SizedBox(
-                                          height: 25,
-                                        ),
+                                        // const SizedBox(
+                                        //   height: 25,
+                                        // ),
                                         divider(context: context).tP8,
                                         const SizedBox(
                                           height: 25,
@@ -176,6 +180,55 @@ class _BuyTicketState extends State<BuyTicket> {
     ).round(15);
   }
 
+  Widget giftTo() {
+    return Container(
+      color: Theme.of(context).cardColor.withOpacity(0.4),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            LocalizationString.giftingTo,
+            style: Theme.of(context)
+                .textTheme
+                .bodyLarge!
+                .copyWith(fontWeight: FontWeight.w700),
+          ),
+          const SizedBox(
+            height: 15,
+          ),
+          Row(
+            children: [
+              UserAvatarView(
+                user: widget.giftToUser!,
+                size: 50,
+              ),
+              const SizedBox(width: 10),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.giftToUser!.userName,
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyLarge!
+                        .copyWith(fontWeight: FontWeight.w500),
+                  ),
+                  Text(
+                    '${widget.giftToUser!.city} ${widget.giftToUser!.country}',
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodySmall!
+                        .copyWith(fontWeight: FontWeight.w200),
+                  ),
+                ],
+              )
+            ],
+          )
+        ],
+      ).p16,
+    ).round(10).hP16;
+  }
+
   Widget ticketType() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -184,14 +237,14 @@ class _BuyTicketState extends State<BuyTicket> {
           LocalizationString.ticketType,
           style: Theme.of(context)
               .textTheme
-              .titleSmall!
-              .copyWith(fontWeight: FontWeight.w500),
+              .bodyLarge!
+              .copyWith(fontWeight: FontWeight.w700),
         ).hP16,
         const SizedBox(
-          height: 40,
+          height: 25,
         ),
         SizedBox(
-          height: 165,
+          height: 150,
           child: ListView.separated(
             padding: const EdgeInsets.only(left: 16, right: 16),
             scrollDirection: Axis.horizontal,
@@ -231,14 +284,17 @@ class _BuyTicketState extends State<BuyTicket> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                      color: Theme.of(context).primaryColor.withOpacity(0.5),
+                      color: Theme.of(context)
+                          .primaryColor
+                          .darken()
+                          .withOpacity(0.2),
                       child: Text(
                         ticket.name,
                         style: Theme.of(context)
                             .textTheme
                             .titleLarge!
                             .copyWith(fontWeight: FontWeight.w500),
-                      ).p4)
+                      ).setPadding(left: 16, right: 16, top: 4, bottom: 4))
                   .round(5),
               const SizedBox(
                 height: 15,
@@ -248,7 +304,7 @@ class _BuyTicketState extends State<BuyTicket> {
                 style: Theme.of(context)
                     .textTheme
                     .bodyLarge!
-                    .copyWith(fontWeight: FontWeight.w500),
+                    .copyWith(fontWeight: FontWeight.w900),
               ),
               const SizedBox(
                 height: 5,
@@ -269,7 +325,7 @@ class _BuyTicketState extends State<BuyTicket> {
                     style: Theme.of(context)
                         .textTheme
                         .bodyLarge!
-                        .copyWith(fontWeight: FontWeight.w500),
+                        .copyWith(fontWeight: FontWeight.w300),
                   ),
                 ],
               ),
@@ -292,65 +348,67 @@ class _BuyTicketState extends State<BuyTicket> {
                     style: Theme.of(context)
                         .textTheme
                         .bodyLarge!
-                        .copyWith(fontWeight: FontWeight.w500),
+                        .copyWith(fontWeight: FontWeight.w300),
                   ),
                 ],
               )
             ],
           ),
-          const Spacer(),
-          // const ThemeIconWidget(ThemeIcon.checkMarkWithCircle, size: 28),
         ],
       ).p16,
     ).borderWithRadius(
         context: context,
-        value: isSelected == true ? 4 : 1,
+        value: isSelected == true ? 2 : 1,
         radius: 20,
         color: isSelected == true ? Theme.of(context).primaryColor : null);
   }
 
   Widget couponsList() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          LocalizationString.applyCoupon,
-          style: Theme.of(context)
-              .textTheme
-              .titleSmall!
-              .copyWith(fontWeight: FontWeight.w500),
-        ).hP16,
-        const SizedBox(
-          height: 40,
-        ),
-        SizedBox(
-          height: 150,
-          child: Obx(() => ListView.separated(
-                padding: const EdgeInsets.only(left: 16, right: 16),
-                scrollDirection: Axis.horizontal,
-                itemCount: _eventDetailController.coupons.length,
-                itemBuilder: (context, index) {
-                  return Obx(() => couponWidget(
-                              coupon: _eventDetailController.coupons[index],
-                              isSelected: _buyTicketController
-                                      .selectedCoupon.value?.id ==
-                                  _eventDetailController.coupons[index].id)
-                          .ripple(() {
-                        if (_buyTicketController.selectedTicketType.value!.availableTicket > 0) {
-                          _buyTicketController.selectEventCoupon(
-                              _eventDetailController.coupons[index]);
-                        }
-                      }));
-                },
-                separatorBuilder: (context, index) {
-                  return const SizedBox(
-                    width: 20,
-                  );
-                },
-              )),
-        )
-      ],
-    );
+    return Obx(() => _eventDetailController.coupons.isNotEmpty
+        ? Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                LocalizationString.applyCoupon,
+                style: Theme.of(context)
+                    .textTheme
+                    .titleSmall!
+                    .copyWith(fontWeight: FontWeight.w500),
+              ).hP16,
+              const SizedBox(
+                height: 40,
+              ),
+              SizedBox(
+                height: 150,
+                child: ListView.separated(
+                  padding: const EdgeInsets.only(left: 16, right: 16),
+                  scrollDirection: Axis.horizontal,
+                  itemCount: _eventDetailController.coupons.length,
+                  itemBuilder: (context, index) {
+                    return Obx(() => couponWidget(
+                                coupon: _eventDetailController.coupons[index],
+                                isSelected: _buyTicketController
+                                        .selectedCoupon.value?.id ==
+                                    _eventDetailController.coupons[index].id)
+                            .ripple(() {
+                          if (_buyTicketController
+                                  .selectedTicketType.value!.availableTicket >
+                              0) {
+                            _buyTicketController.selectEventCoupon(
+                                _eventDetailController.coupons[index]);
+                          }
+                        }));
+                  },
+                  separatorBuilder: (context, index) {
+                    return const SizedBox(
+                      width: 20,
+                    );
+                  },
+                ),
+              )
+            ],
+          )
+        : Container());
   }
 
   Widget couponWidget({required EventCoupon coupon, required bool isSelected}) {

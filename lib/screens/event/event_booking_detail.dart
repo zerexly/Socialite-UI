@@ -38,8 +38,8 @@ class EventBookingDetailState extends State<EventBookingDetail> {
       body: GetBuilder<EventBookingDetailController>(
           init: _eventBookingDetailController,
           builder: (ctx) {
-            return _eventBookingDetailController.bookingCancelled.value == true
-                ? cancelledView()
+            return _eventBookingDetailController.processingBooking.value != null
+                ? statusView()
                 : Stack(
                     children: [
                       CustomScrollView(
@@ -78,9 +78,12 @@ class EventBookingDetailState extends State<EventBookingDetail> {
                                     divider(context: context).vP25,
                                     bookingInfoWidget(),
                                     divider(context: context).vP25,
-                                    eventInfoWidget(),
+                                    if (widget.booking.giftedToUser != null)
+                                      giftTo().bP25,
+                                    eventLocationInfoWidget(),
                                     divider(context: context).vP25,
-                                    eventGallery(),
+                                    if (widget.booking.event.gallery.isNotEmpty)
+                                      eventGallery(),
                                     const SizedBox(
                                       height: 150,
                                     ),
@@ -96,57 +99,194 @@ class EventBookingDetailState extends State<EventBookingDetail> {
                               BookingStatus.confirmed &&
                           widget.booking.event.statusType ==
                               EventStatus.upcoming)
-                        Positioned(
-                            bottom: 20,
-                            left: 16,
-                            right: 16,
-                            child: FilledButtonType1(
-                              text: LocalizationString.cancelBooking,
-                              onPress: () {
-                                _eventBookingDetailController
-                                    .cancelBooking(context);
-                              },
-                            ))
+                        buttonsWidget()
                     ],
                   );
           }),
     );
   }
 
-  Widget cancelledView() {
-    return SizedBox(
-      height: Get.height,
-      width: Get.width,
+  Widget giftTo() {
+    return Container(
+      color: Theme.of(context).cardColor.withOpacity(0.4),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Lottie.asset('assets/lottie/error.json'),
-          const SizedBox(
-            height: 40,
-          ),
           Text(
-            LocalizationString.bookingCancelled,
+            LocalizationString.giftedTo,
             style: Theme.of(context)
                 .textTheme
-                .titleLarge!
+                .bodyLarge!
                 .copyWith(fontWeight: FontWeight.w700),
-            textAlign: TextAlign.center,
           ),
           const SizedBox(
-            height: 40,
+            height: 15,
           ),
-          SizedBox(
-              width: 120,
-              height: 40,
-              child: BorderButtonType1(
-                  text: LocalizationString.bookMoreTickets,
+          Row(
+            children: [
+              UserAvatarView(
+                user: widget.booking.giftedToUser!,
+                size: 50,
+              ),
+              const SizedBox(width: 10),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.booking.giftedToUser!.userName,
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyLarge!
+                        .copyWith(fontWeight: FontWeight.w500),
+                  ),
+                  Text(
+                    '${widget.booking.giftedToUser!.city} ${widget.booking.giftedToUser!.country}',
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodySmall!
+                        .copyWith(fontWeight: FontWeight.w200),
+                  ),
+                ],
+              ),
+              const Spacer(),
+              BorderButtonType1(
+                  width: 90,
+                  height: 35,
+                  text: LocalizationString.viewProfile,
+                  textStyle: Theme.of(context).textTheme.bodySmall,
                   onPress: () {
-                    Get.back();
-                  }))
+                    Get.to(() => OtherUserProfile(
+                        userId: widget.booking.giftedToUser!.id));
+                  }),
+            ],
+          )
         ],
-      ).hP16,
-    );
+      ).p16,
+    ).round(10);
+  }
+
+  Widget giftBy() {
+    return Container(
+      color: Theme.of(context).cardColor.withOpacity(0.4),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            LocalizationString.giftedBy,
+            style: Theme.of(context)
+                .textTheme
+                .bodyLarge!
+                .copyWith(fontWeight: FontWeight.w700),
+          ),
+          const SizedBox(
+            height: 15,
+          ),
+          Row(
+            children: [
+              UserAvatarView(
+                user: widget.booking.giftedByUser!,
+                size: 50,
+              ),
+              const SizedBox(width: 10),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.booking.giftedByUser!.userName,
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyLarge!
+                        .copyWith(fontWeight: FontWeight.w500),
+                  ),
+                  Text(
+                    '${widget.booking.giftedByUser!.city} ${widget.booking.giftedByUser!.country}',
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodySmall!
+                        .copyWith(fontWeight: FontWeight.w200),
+                  ),
+                ],
+              ),
+              const Spacer(),
+              BorderButtonType1(
+                  width: 90,
+                  height: 35,
+                  text: LocalizationString.viewProfile,
+                  textStyle: Theme.of(context).textTheme.bodySmall,
+                  onPress: () {
+                    Get.to(() => OtherUserProfile(
+                        userId: widget.booking.giftedToUser!.id));
+                  }),
+            ],
+          ),
+        ],
+      ).p16,
+    ).round(10).hP16;
+  }
+
+  Widget buttonsWidget() {
+    return Positioned(
+        bottom: 0,
+        left: 0,
+        right: 0,
+        child: Container(
+          color: Theme.of(context).cardColor,
+          height: widget.booking.giftedToUser == null ? 150 : 90,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              if (widget.booking.giftedToUser == null)
+                SizedBox(
+                    height: 40,
+                    width: Get.width * 0.8,
+                    // color: Theme.of(context).primaryColor,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ThemeIconWidget(
+                          ThemeIcon.gift,
+                          color: Theme.of(context).primaryColor,
+                          size: 28,
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Text(
+                          LocalizationString.giftTicket,
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleSmall!
+                              .copyWith(
+                                  fontWeight: FontWeight.w800,
+                                  color: Theme.of(context).primaryColor),
+                        )
+                      ],
+                    ).hP8.ripple(() {
+                      Get.bottomSheet(SelectUserToGiftEventTicket(
+                        event: widget.booking.event,
+                        isAlreadyBooked: true,
+                        selectUserCallback: (user) {
+                          _eventBookingDetailController.giftToUser(user);
+                        },
+                      ));
+                    })).round(5),
+              SizedBox(
+                height: 40,
+                width: Get.width * 0.8,
+                child: FilledButtonType1(
+                  text: LocalizationString.cancelBooking,
+                  onPress: () {
+                    _eventBookingDetailController.cancelBooking(context);
+                  },
+                ),
+              ),
+              const SizedBox(
+                height: 10,
+              )
+            ],
+          ).p16,
+        ).topRounded(widget.booking.giftedToUser == null ? 50 : 25));
   }
 
   Widget attendingUsersList() {
@@ -241,7 +381,7 @@ class EventBookingDetailState extends State<EventBookingDetail> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  widget.booking.event.placeName,
+                  LocalizationString.location,
                   style: Theme.of(context)
                       .textTheme
                       .bodyLarge!
@@ -251,7 +391,7 @@ class EventBookingDetailState extends State<EventBookingDetail> {
                   height: 5,
                 ),
                 Text(
-                  widget.booking.event.completeAddress,
+                  '${widget.booking.event.placeName} ${widget.booking.event.completeAddress}',
                   style: Theme.of(context)
                       .textTheme
                       .bodySmall!
@@ -271,8 +411,7 @@ class EventBookingDetailState extends State<EventBookingDetail> {
       children: [
         Column(
           children: [
-            for (EventOrganizer sponsor
-                in widget.booking.event.organizers )
+            for (EventOrganizer sponsor in widget.booking.event.organizers)
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -306,6 +445,7 @@ class EventBookingDetailState extends State<EventBookingDetail> {
               ).bP16,
           ],
         ),
+        const SizedBox(height: 25),
         Text(
           LocalizationString.about,
           style: Theme.of(context)
@@ -314,7 +454,7 @@ class EventBookingDetailState extends State<EventBookingDetail> {
               .copyWith(fontWeight: FontWeight.w600),
         ),
         const SizedBox(
-          height: 10,
+          height: 20,
         ),
         Text(
           widget.booking.event.description,
@@ -489,33 +629,10 @@ class EventBookingDetailState extends State<EventBookingDetail> {
     );
   }
 
-  Widget eventInfoWidget() {
+  Widget eventLocationInfoWidget() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
-          color: Theme.of(context).primaryColor.withOpacity(0.4),
-          child: Text(
-            LocalizationString.about,
-            style: Theme.of(context)
-                .textTheme
-                .titleSmall!
-                .copyWith(fontWeight: FontWeight.w600),
-          ).setPadding(top: 5, bottom: 5, left: 10, right: 10),
-        ).round(5),
-        const SizedBox(
-          height: 10,
-        ),
-        Text(
-          widget.booking.event.description,
-          style: Theme.of(context)
-              .textTheme
-              .bodyLarge!
-              .copyWith(fontWeight: FontWeight.w200),
-        ),
-        const SizedBox(
-          height: 40,
-        ),
         Container(
           color: Theme.of(context).primaryColor.withOpacity(0.4),
           child: Text(
@@ -627,7 +744,8 @@ class EventBookingDetailState extends State<EventBookingDetail> {
             ).ripple(() {
               Get.back();
             }),
-            if (widget.booking.statusType != BookingStatus.cancelled)
+            if (widget.booking.statusType != BookingStatus.cancelled &&
+                widget.booking.giftedToUser == null)
               Container(
                 color: Theme.of(context).primaryColor.withOpacity(0.7),
                 child: Text(
@@ -683,6 +801,174 @@ class EventBookingDetailState extends State<EventBookingDetail> {
           ),
         );
       },
+    );
+  }
+
+  Widget statusView() {
+    return _eventBookingDetailController.processingBooking.value ==
+            ProcessingBookingStatus.inProcess
+        ? processingView()
+        : _eventBookingDetailController.processingBooking.value ==
+                ProcessingBookingStatus.gifted
+            ? ticketGiftedView()
+            : _eventBookingDetailController.processingBooking.value ==
+                    ProcessingBookingStatus.cancelled
+                ? bookingCancelledView()
+                : errorView();
+  }
+
+  Widget processingView() {
+    return SizedBox(
+      height: Get.height,
+      width: Get.width,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Lottie.asset('assets/lottie/loading.json'),
+          const SizedBox(
+            height: 40,
+          ),
+          Text(
+            LocalizationString.inProcessing,
+            style: Theme.of(context)
+                .textTheme
+                .titleLarge!
+                .copyWith(fontWeight: FontWeight.w700),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          Text(
+            LocalizationString.doNotCloseApp,
+            style: Theme.of(context)
+                .textTheme
+                .bodyLarge!
+                .copyWith(fontWeight: FontWeight.w400),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ).hP16,
+    );
+  }
+
+  Widget errorView() {
+    return SizedBox(
+      height: Get.height,
+      width: Get.width,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Lottie.asset('assets/lottie/error.json'),
+          const SizedBox(
+            height: 40,
+          ),
+          Text(
+            LocalizationString.errorInBooking,
+            style: Theme.of(context)
+                .textTheme
+                .titleLarge!
+                .copyWith(fontWeight: FontWeight.w700),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          Text(
+            LocalizationString.pleaseTryAgain,
+            style: Theme.of(context)
+                .textTheme
+                .bodyLarge!
+                .copyWith(fontWeight: FontWeight.w400),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(
+            height: 40,
+          ),
+          SizedBox(
+              width: 100,
+              height: 40,
+              child: BorderButtonType1(
+                  text: LocalizationString.tryAgain,
+                  onPress: () {
+                    Get.back();
+                  }))
+        ],
+      ).hP16,
+    );
+  }
+
+  Widget ticketGiftedView() {
+    return SizedBox(
+      height: Get.height,
+      width: Get.width,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Lottie.asset('assets/lottie/success.json'),
+          const SizedBox(
+            height: 40,
+          ),
+          Text(
+            LocalizationString.ticketGifted,
+            style: Theme.of(context)
+                .textTheme
+                .titleLarge!
+                .copyWith(fontWeight: FontWeight.w700),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(
+            height: 40,
+          ),
+          SizedBox(
+              width: 200,
+              height: 50,
+              child: BorderButtonType1(
+                  text: LocalizationString.bookMoreTickets,
+                  onPress: () {
+                    Get.back();
+                  }))
+        ],
+      ).hP16,
+    );
+  }
+
+  Widget bookingCancelledView() {
+    return SizedBox(
+      height: Get.height,
+      width: Get.width,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Lottie.asset('assets/lottie/success.json'),
+          const SizedBox(
+            height: 40,
+          ),
+          Text(
+            LocalizationString.bookingCancelled,
+            style: Theme.of(context)
+                .textTheme
+                .titleLarge!
+                .copyWith(fontWeight: FontWeight.w700),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(
+            height: 40,
+          ),
+          SizedBox(
+              width: 200,
+              height: 50,
+              child: BorderButtonType1(
+                  text: LocalizationString.bookMoreTickets,
+                  onPress: () {
+                    Get.back();
+                  }))
+        ],
+      ).hP16,
     );
   }
 }

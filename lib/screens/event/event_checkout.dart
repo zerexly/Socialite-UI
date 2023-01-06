@@ -4,8 +4,10 @@ import 'package:get/get.dart';
 
 class EventCheckout extends StatefulWidget {
   final EventTicketOrderRequest ticketOrder;
+  final UserModel? giftToUser;
 
-  const EventCheckout({Key? key, required this.ticketOrder}) : super(key: key);
+  const EventCheckout({Key? key, required this.ticketOrder, this.giftToUser})
+      : super(key: key);
 
   @override
   State<EventCheckout> createState() => _EventCheckoutState();
@@ -84,11 +86,11 @@ class _EventCheckoutState extends State<EventCheckout> {
                                 ),
                               ]),
                         ),
-                        Positioned(
-                            bottom: 20,
-                            left: 25,
-                            right: 25,
-                            child: checkoutButton())
+                        // Positioned(
+                        //     bottom: 20,
+                        //     left: 25,
+                        //     right: 25,
+                        //     child: checkoutButton())
                       ],
                     ),
                   ),
@@ -367,12 +369,28 @@ class _EventCheckoutState extends State<EventCheckout> {
               const SizedBox(
                 height: 20,
               ),
-              Text(
-                LocalizationString.payUsing,
-                style: Theme.of(context)
-                    .textTheme
-                    .titleSmall!
-                    .copyWith(fontWeight: FontWeight.w800),
+              Row(
+                children: [
+                  Text(
+                    LocalizationString.payUsing,
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleSmall!
+                        .copyWith(fontWeight: FontWeight.w800),
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Container(
+                    color: Theme.of(context).cardColor,
+                    child: Text(
+                      '\$${_checkoutController.balanceToPay.value}',
+                      style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                          fontWeight: FontWeight.w500,
+                          color: Theme.of(context).primaryColor),
+                    ).p4,
+                  ).round(5)
+                ],
               ),
               const SizedBox(
                 height: 20,
@@ -392,7 +410,9 @@ class _EventCheckoutState extends State<EventCheckout> {
               if (Stripe.instance.isApplePaySupported.value)
                 PaymentMethodTile(
                   text: LocalizationString.applePay,
-                  icon: "assets/applePay.png",
+                  icon: _settingsController.isDarkMode.value
+                      ? "assets/apple_pay.png"
+                      : "assets/apple_pay_light.png",
                   price: '\$${_checkoutController.balanceToPay.value}',
                   isSelected:
                       _checkoutController.selectedPaymentGateway.value ==
@@ -401,6 +421,7 @@ class _EventCheckoutState extends State<EventCheckout> {
                     // _checkoutController.applePay();
                     _checkoutController
                         .selectPaymentGateway(PaymentGateway.applePay);
+                    checkout();
                   },
                 ),
 
@@ -416,21 +437,22 @@ class _EventCheckoutState extends State<EventCheckout> {
                         // _checkoutController.applePay();
                         _checkoutController
                             .selectPaymentGateway(PaymentGateway.googlePay);
+                        checkout();
                       },
                     )
                   : Container()),
-              PaymentMethodTile(
-                text: LocalizationString.paypal,
-                icon: "assets/paypal.png",
-                price: '\$${_checkoutController.balanceToPay.value}',
-                isSelected: _checkoutController.selectedPaymentGateway.value ==
-                    PaymentGateway.paypal,
-                press: () {
-                  // _checkoutController.launchBrainTree();
-                  _checkoutController
-                      .selectPaymentGateway(PaymentGateway.paypal);
-                },
-              ),
+              // PaymentMethodTile(
+              //   text: LocalizationString.paypal,
+              //   icon: "assets/paypal.png",
+              //   price: '\$${_checkoutController.balanceToPay.value}',
+              //   isSelected: _checkoutController.selectedPaymentGateway.value ==
+              //       PaymentGateway.paypal,
+              //   press: () {
+              //     // _checkoutController.launchBrainTree();
+              //     _checkoutController
+              //         .selectPaymentGateway(PaymentGateway.paypal);
+              //   },
+              // ),
               PaymentMethodTile(
                 text: LocalizationString.stripe,
                 icon: "assets/stripe.png",
@@ -441,6 +463,7 @@ class _EventCheckoutState extends State<EventCheckout> {
                   // _checkoutController.launchRazorpayPayment();
                   _checkoutController
                       .selectPaymentGateway(PaymentGateway.stripe);
+                  checkout();
                 },
               ),
               PaymentMethodTile(
@@ -450,9 +473,9 @@ class _EventCheckoutState extends State<EventCheckout> {
                 isSelected: _checkoutController.selectedPaymentGateway.value ==
                     PaymentGateway.razorpay,
                 press: () {
-                  // _checkoutController.launchRazorpayPayment();
                   _checkoutController
                       .selectPaymentGateway(PaymentGateway.razorpay);
+                  checkout();
                 },
               ),
               // PaymentMethodTile(
@@ -494,20 +517,27 @@ class _EventCheckoutState extends State<EventCheckout> {
     return FilledButtonType1(
         text: LocalizationString.payAndBuy,
         onPress: () {
-          if (_checkoutController.useWallet.value) {
-            if (widget.ticketOrder.amountToBePaid! <
-                double.parse(getIt<UserProfileManager>().user!.balance)) {
-              _checkoutController.payAndBuy(
-                  widget.ticketOrder, PaymentGateway.wallet);
-            } else {
-              _checkoutController.payAndBuy(widget.ticketOrder,
-                  _checkoutController.selectedPaymentGateway.value);
-            }
-          } else {
-            _checkoutController.payAndBuy(widget.ticketOrder,
-                _checkoutController.selectedPaymentGateway.value);
-          }
+          checkout();
         });
+  }
+
+  checkout() {
+    if (_checkoutController.useWallet.value) {
+      if (widget.ticketOrder.amountToBePaid! <
+          double.parse(getIt<UserProfileManager>().user!.balance)) {
+        _checkoutController.payAndBuy(
+            ticketOrder: widget.ticketOrder,
+            paymentGateway: PaymentGateway.wallet);
+      } else {
+        _checkoutController.payAndBuy(
+            ticketOrder: widget.ticketOrder,
+            paymentGateway: _checkoutController.selectedPaymentGateway.value);
+      }
+    } else {
+      _checkoutController.payAndBuy(
+          ticketOrder: widget.ticketOrder,
+          paymentGateway: _checkoutController.selectedPaymentGateway.value);
+    }
   }
 
   Widget processingView() {

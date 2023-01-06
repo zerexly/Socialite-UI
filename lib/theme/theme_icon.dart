@@ -700,6 +700,12 @@ class ThemeIconWidget extends StatelessWidget {
           size: size ?? 20,
           color: color ?? Theme.of(context).iconTheme.color,
         );
+      case ThemeIcon.gift:
+        return Icon(
+          Icons.card_giftcard,
+          size: size ?? 20,
+          color: color ?? Theme.of(context).iconTheme.color,
+        );
     }
   }
 }

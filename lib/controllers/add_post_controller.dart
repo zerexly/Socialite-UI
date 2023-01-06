@@ -202,8 +202,11 @@ class AddPostController extends GetxController {
       required String title,
       required BuildContext context,
       int? competitionId,
-      int? clubId}) async {
-    // do this to show posting indicator in home screen
+      int? clubId,
+      bool isReel = false,
+      int? audioId,
+      double? audioStartTime,
+      double? audioEndTime}) async {
     postingMedia = items;
     postingTitle = title;
     isPosting.value = true;
@@ -225,6 +228,10 @@ class AddPostController extends GetxController {
         mentions: title.getMentions(),
         competitionId: competitionId,
         clubId: clubId,
+        isReel: isReel,
+        audioId: audioId,
+        audioStartTime: audioStartTime,
+        audioEndTime: audioEndTime,
         context: context);
   }
 
@@ -294,31 +301,40 @@ class AddPostController extends GetxController {
     return gallery;
   }
 
-  void publishAction(
-      {required List<Map<String, String>> galleryItems,
-      required String title,
-      required List<String> tags,
-      required List<String> mentions,
-      required BuildContext context,
-      int? competitionId,
-      int? clubId}) {
+  void publishAction({
+    required List<Map<String, String>> galleryItems,
+    required String title,
+    required List<String> tags,
+    required List<String> mentions,
+    required BuildContext context,
+    int? competitionId,
+    int? clubId,
+    bool isReel = false,
+    int? audioId,
+    double? audioStartTime,
+    double? audioEndTime,
+  }) {
     AppUtil.checkInternet().then((value) async {
       // EasyLoading.dismiss();
       if (value) {
         ApiController()
             .addPost(
-          postType: competitionId != null
-              ? 2
-              : clubId != null
-                  ? 3
-                  : 1,
-          title: title,
-          gallery: galleryItems,
-          hashTag: tags.join(','),
-          mentions: mentions.join(','),
-          competitionId: competitionId,
-          clubId: clubId,
-        )
+                postType: isReel == true
+                    ? 4
+                    : competitionId != null
+                        ? 2
+                        : clubId != null
+                            ? 3
+                            : 1,
+                title: title,
+                gallery: galleryItems,
+                hashTag: tags.join(','),
+                mentions: mentions.join(','),
+                competitionId: competitionId,
+                clubId: clubId,
+                audioId: audioId,
+                audioStartTime: audioStartTime,
+                audioEndTime: audioEndTime)
             .then((response) async {
           // Get.offAll(() => const DashboardScreen());
 

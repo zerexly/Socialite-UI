@@ -164,7 +164,7 @@ class EventDetailState extends State<EventDetail> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  widget.event.placeName,
+                  LocalizationString.location,
                   style: Theme.of(context)
                       .textTheme
                       .bodyLarge!
@@ -174,7 +174,7 @@ class EventDetailState extends State<EventDetail> {
                   height: 5,
                 ),
                 Text(
-                  widget.event.completeAddress,
+                  '${widget.event.placeName} ${widget.event.completeAddress}',
                   style: Theme.of(context)
                       .textTheme
                       .bodySmall!
@@ -183,7 +183,44 @@ class EventDetailState extends State<EventDetail> {
               ],
             )
           ],
-        )
+        ),
+        if (!widget.event.isFree)
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                      color: Theme.of(context).primaryColor.withOpacity(0.2),
+                      child: ThemeIconWidget(ThemeIcon.calendar,
+                              color: Theme.of(context).primaryColor)
+                          .p8)
+                  .circular,
+              const SizedBox(
+                width: 20,
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    LocalizationString.price,
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyLarge!
+                        .copyWith(fontWeight: FontWeight.w600),
+                  ),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  Text(
+                    '\$${_eventDetailController.minTicketPrice} - \$${_eventDetailController.maxTicketPrice} ',
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodySmall!
+                        .copyWith(fontWeight: FontWeight.w200),
+                  )
+                ],
+              )
+            ],
+          ).tp(20),
       ],
     );
   }
@@ -234,6 +271,9 @@ class EventDetailState extends State<EventDetail> {
                 )
               : Container();
         }),
+        const SizedBox(
+          height: 25,
+        ),
         Text(
           LocalizationString.about,
           style: Theme.of(context)
@@ -320,27 +360,27 @@ class EventDetailState extends State<EventDetail> {
   Widget attendingUsersList() {
     return Row(
       children: [
-        SizedBox(
-          height: 20,
-          width: min(widget.event.gallery.length, 5) * 17,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemBuilder: (ctx, index) {
-              return Align(
-                widthFactor: 0.6,
-                child: CachedNetworkImage(
-                  imageUrl: widget.event.gallery[index],
-                  width: 20,
-                  height: 20,
-                  fit: BoxFit.cover,
-                ).borderWithRadius(context: context, value: 1, radius: 10),
-              );
-            },
-            itemCount: min(widget.event.gallery.length, 5),
-          ),
-        ),
+        // SizedBox(
+        //   height: 20,
+        //   width: min(widget.event.gallery.length, 5) * 17,
+        //   child: ListView.builder(
+        //     scrollDirection: Axis.horizontal,
+        //     itemBuilder: (ctx, index) {
+        //       return Align(
+        //         widthFactor: 0.6,
+        //         child: CachedNetworkImage(
+        //           imageUrl: widget.event.gallery[index],
+        //           width: 20,
+        //           height: 20,
+        //           fit: BoxFit.cover,
+        //         ).borderWithRadius(context: context, value: 1, radius: 10),
+        //       );
+        //     },
+        //     itemCount: min(widget.event.gallery.length, 5),
+        //   ),
+        // ),
         Text(
-          '20000 + going',
+          '${widget.event.totalMembers} ${LocalizationString.going.toLowerCase()}',
           style: Theme.of(context)
               .textTheme
               .bodySmall!
@@ -389,35 +429,45 @@ class EventDetailState extends State<EventDetail> {
         right: 0,
         child: Container(
           color: Theme.of(context).cardColor,
-          height: 100,
+          height: 90,
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              if (_eventDetailController.minTicketPrice != null)
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      LocalizationString.price,
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyLarge!
-                          .copyWith(fontWeight: FontWeight.w700),
-                    ),
-                    Text(
-                      '\$${_eventDetailController.minTicketPrice} - \$${_eventDetailController.maxTicketPrice} ',
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodySmall!
-                          .copyWith(fontWeight: FontWeight.w500),
-                    )
-                  ],
-                ),
-              const Spacer(),
+              SizedBox(
+                  height: 40,
+                  width: Get.width * 0.4,
+                  // color: Theme.of(context).primaryColor,
+                  child: Row(
+                    children: [
+                      ThemeIconWidget(
+                        ThemeIcon.gift,
+                        color: Theme.of(context).primaryColor,
+                        size: 28,
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        LocalizationString.giftTicket,
+                        style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                            fontWeight: FontWeight.w800,
+                            color: Theme.of(context).primaryColor),
+                      )
+                    ],
+                  ).hP8.ripple(() {
+                    Get.bottomSheet(SelectUserToGiftEventTicket(
+                      event: _eventDetailController.event.value!,
+                      isAlreadyBooked: false,
+                    ));
+                  })).round(5),
+              Text(
+                LocalizationString.or,
+                style: Theme.of(context).textTheme.bodyLarge,
+              ).hP16,
               SizedBox(
                 height: 40,
-                width: 120,
+                width: Get.width * 0.3,
                 child: FilledButtonType1(
                   text: LocalizationString.buyTicket,
                   onPress: () {
@@ -428,56 +478,58 @@ class EventDetailState extends State<EventDetail> {
                 ),
               )
             ],
-          ).hP16,
+          ).p16,
         ));
   }
 
   Widget eventGallery() {
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            LocalizationString.eventGallery,
-            style: Theme.of(context)
-                .textTheme
-                .titleSmall!
-                .copyWith(fontWeight: FontWeight.w600),
-          ),
-          Text(
-            LocalizationString.seeAll,
-            style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                fontWeight: FontWeight.w600,
-                color: Theme.of(context).primaryColor),
-          ).ripple(() {
-            Get.to(() => EventGallery(event: widget.event));
-          }),
-        ],
-      ),
-      const SizedBox(
-        height: 20,
-      ),
-      SizedBox(
-        height: 80,
-        child: ListView.separated(
-          scrollDirection: Axis.horizontal,
-          itemBuilder: (ctx, index) {
-            return CachedNetworkImage(
-              imageUrl: widget.event.gallery[index],
-              width: 80,
+    return widget.event.gallery.isNotEmpty
+        ? Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  LocalizationString.eventGallery,
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleSmall!
+                      .copyWith(fontWeight: FontWeight.w600),
+                ),
+                Text(
+                  LocalizationString.seeAll,
+                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: Theme.of(context).primaryColor),
+                ).ripple(() {
+                  Get.to(() => EventGallery(event: widget.event));
+                }),
+              ],
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            SizedBox(
               height: 80,
-              fit: BoxFit.cover,
-            ).round(10);
-          },
-          separatorBuilder: (ctx, index) {
-            return const SizedBox(
-              width: 10,
-            );
-          },
-          itemCount: min(widget.event.gallery.length, 4),
-        ),
-      )
-    ]);
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                itemBuilder: (ctx, index) {
+                  return CachedNetworkImage(
+                    imageUrl: widget.event.gallery[index],
+                    width: 80,
+                    height: 80,
+                    fit: BoxFit.cover,
+                  ).round(10);
+                },
+                separatorBuilder: (ctx, index) {
+                  return const SizedBox(
+                    width: 10,
+                  );
+                },
+                itemCount: min(widget.event.gallery.length, 4),
+              ),
+            )
+          ])
+        : Container();
   }
 
   openDirections() async {

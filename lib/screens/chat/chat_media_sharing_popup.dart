@@ -23,50 +23,66 @@ class ChatMediaSharingOptionPopup extends StatefulWidget {
 class _ChatMediaSharingOptionPopupState
     extends State<ChatMediaSharingOptionPopup> {
   final ChatDetailController _chatDetailController = Get.find();
-  SettingsController settingsController = Get.find();
+  final SettingsController _settingsController = Get.find();
 
-  List<SharingMediaType> mediaTypes = [
-    SharingMediaType(
-        icon: ThemeIcon.camera,
-        text: LocalizationString.photo,
-        contentType: MessageContentType.photo),
-    SharingMediaType(
-        icon: ThemeIcon.files,
-        text: LocalizationString.files,
-        contentType: MessageContentType.file),
-    SharingMediaType(
-        icon: ThemeIcon.gif,
-        text: LocalizationString.gif,
-        contentType: MessageContentType.gif),
-    SharingMediaType(
-        icon: ThemeIcon.contacts,
-        text: LocalizationString.contact,
-        contentType: MessageContentType.contact),
-    SharingMediaType(
-        icon: ThemeIcon.location,
-        text: LocalizationString.location,
-        contentType: MessageContentType.location),
-    SharingMediaType(
-        icon: ThemeIcon.mic,
-        text: LocalizationString.audio,
-        contentType: MessageContentType.audio),
-    SharingMediaType(
-        icon: ThemeIcon.drawing,
-        text: LocalizationString.drawing,
-        contentType: MessageContentType.drawing),
-    SharingMediaType(
-        icon: ThemeIcon.account,
-        text: LocalizationString.user,
-        contentType: MessageContentType.profile),
-    // SharingMediaType(
-    //     icon: ThemeIcon.group,
-    //     text: LocalizationString.group,
-    //     contentType: MessageContentType.group),
-  ];
+  List<SharingMediaType> mediaTypes = [];
 
   @override
   void initState() {
+    loadChatSharingOptions();
     super.initState();
+  }
+
+  loadChatSharingOptions() {
+    if (_settingsController.setting.value!.enablePhotoSharingInChat ||
+        _settingsController.setting.value!.enableVideoSharingInChat) {
+      mediaTypes.add(SharingMediaType(
+          icon: ThemeIcon.camera,
+          text: LocalizationString.photo,
+          contentType: MessageContentType.photo));
+    }
+    if (_settingsController.setting.value!.enableFileSharingInChat) {
+      mediaTypes.add(SharingMediaType(
+          icon: ThemeIcon.files,
+          text: LocalizationString.files,
+          contentType: MessageContentType.file));
+    }
+    if (_settingsController.setting.value!.enableGifSharingInChat) {
+      mediaTypes.add(SharingMediaType(
+          icon: ThemeIcon.gif,
+          text: LocalizationString.gif,
+          contentType: MessageContentType.gif));
+    }
+    if (_settingsController.setting.value!.enableContactSharingInChat) {
+      mediaTypes.add(SharingMediaType(
+          icon: ThemeIcon.contacts,
+          text: LocalizationString.contact,
+          contentType: MessageContentType.contact));
+    }
+    if (_settingsController.setting.value!.enableLocationSharingInChat) {
+      mediaTypes.add(SharingMediaType(
+          icon: ThemeIcon.location,
+          text: LocalizationString.location,
+          contentType: MessageContentType.location));
+    }
+    if (_settingsController.setting.value!.enableAudioSharingInChat) {
+      mediaTypes.add(SharingMediaType(
+          icon: ThemeIcon.mic,
+          text: LocalizationString.audio,
+          contentType: MessageContentType.audio));
+    }
+    if (_settingsController.setting.value!.enableDrawingSharingInChat) {
+      mediaTypes.add(SharingMediaType(
+          icon: ThemeIcon.drawing,
+          text: LocalizationString.drawing,
+          contentType: MessageContentType.drawing));
+    }
+    if (_settingsController.setting.value!.enableProfileSharingInChat) {
+      mediaTypes.add(SharingMediaType(
+          icon: ThemeIcon.account,
+          text: LocalizationString.user,
+          contentType: MessageContentType.profile));
+    }
   }
 
   @override
@@ -178,7 +194,7 @@ class _ChatMediaSharingOptionPopupState
     GiphyGif? gif = await GiphyGet.getGif(
       context: context,
       //Required
-      apiKey: settingsController.setting.value!.giphyApiKey!,
+      apiKey: _settingsController.setting.value!.giphyApiKey!,
       //Required.
       lang: GiphyLanguage.english,
       //Optional - Language for query.

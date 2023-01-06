@@ -16,6 +16,7 @@ class _ChatDetailState extends State<ChatDetail> {
   final ScrollController _controller = ScrollController();
   final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
+  final SettingsController _settingsController = Get.find();
 
   @override
   void initState() {
@@ -156,23 +157,22 @@ class _ChatDetailState extends State<ChatDetail> {
             Obx(() => _chatDetailController.chatRoom.value?.isGroupChat == false
                 ? Row(
                     children: [
-                      ThemeIconWidget(
-                        ThemeIcon.mobile,
-                        color: Theme.of(context).iconTheme.color,
-                        size: 25,
-                      ).p4.ripple(() {
-                        audioCall();
-                      }),
-                      const SizedBox(
-                        width: 20,
-                      ),
-                      ThemeIconWidget(
-                        ThemeIcon.videoCamera,
-                        color: Theme.of(context).iconTheme.color,
-                        size: 25,
-                      ).p4.ripple(() {
-                        videoCall();
-                      })
+                      if (_settingsController.setting.value!.enableAudioCalling)
+                        ThemeIconWidget(
+                          ThemeIcon.mobile,
+                          color: Theme.of(context).iconTheme.color,
+                          size: 25,
+                        ).p4.ripple(() {
+                          audioCall();
+                        }).rp(20),
+                      if (_settingsController.setting.value!.enableVideoCalling)
+                        ThemeIconWidget(
+                          ThemeIcon.videoCamera,
+                          color: Theme.of(context).iconTheme.color,
+                          size: 25,
+                        ).p4.ripple(() {
+                          videoCall();
+                        })
                     ],
                   )
                 : Container()),
