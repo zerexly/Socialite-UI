@@ -758,8 +758,13 @@ class LocalizationString {
   static String shareLocation = 'Share location'.tr;
   static String yourFollowersCanViewYourLocation =
       'Your Followers can view your location'.tr;
+  static String moreFrom = 'More from'.tr;
 
   static String podcast = 'Podcast'.tr;
+  static String showMore = 'Show more'.tr;
+  static String showLess = 'Show less'.tr;
+  static String albums = 'Albums'.tr;
+  static String songs = 'Songs'.tr;
 
   static String liveChat = 'Live chat'.tr;
   static String subscribeChannelToView = 'Subscribe channel to view'.tr;

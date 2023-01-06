@@ -133,6 +133,9 @@ class NetworkConstantsUtil {
   static String getTVCategories =
       'categories/live-tv?expand=liveTv,liveTv.currentViewer';
   static String getTVShows = 'live-tvs/tv-shows?expand=tvShowEpisode';
+  static String getTVShows =
+      'live-tvs/tv-shows?expand=tvShowEpisode';
+  static String getTVShowEpisodes = 'tv-shows/tv-show-episodes?';
   static String liveTvs = 'live-tvs?expand=currentViewer';
   static String tvBanners = 'tv-banners';
   static String subscribeLiveTv = 'live-tvs/subscribe';

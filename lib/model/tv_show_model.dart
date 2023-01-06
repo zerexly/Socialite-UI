@@ -43,3 +43,32 @@ class TVShowModel {
     imageUrl = json['imageUrl'];
   }
 }
+
+class TVShowEpisodeModel {
+  int? id;
+  String? name;
+  int? tvShowId;
+  String? createdAt;
+  String? episodePeriod;
+  String? imageUrl;
+  String? videoUrl;
+
+  TVShowEpisodeModel(
+      {this.id,
+        this.name,
+        this.tvShowId,
+        this.createdAt,
+        this.episodePeriod,
+        this.imageUrl,
+        this.videoUrl});
+
+  TVShowEpisodeModel.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    name = json['name'];
+    tvShowId = json['tv_show_id'];
+    episodePeriod = json['episode_period'];
+    createdAt = DateFormat('dd-MM-yyyy hh:mm a').format(DateTime.fromMillisecondsSinceEpoch(json['created_at'] * 1000));
+    imageUrl = json['imageUrl'];
+    videoUrl = json['videoUrl'];
+  }
+}

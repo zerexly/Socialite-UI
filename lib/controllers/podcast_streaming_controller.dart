@@ -8,6 +8,8 @@ class PodcastStreamingController extends GetxController {
   RxList<PodcastCategoryModel> categories = <PodcastCategoryModel>[].obs;
   RxList<PodcastModel> podcasts = <PodcastModel>[].obs;
   RxList<PodcastShowModel> podcastShows = <PodcastShowModel>[].obs;
+  RxList<PodcastShowSongModel> podcastShowEpisodes =
+      <PodcastShowSongModel>[].obs;
 
   clearCategories() {
     categories.clear();
@@ -35,9 +37,7 @@ class PodcastStreamingController extends GetxController {
   }
 
   getPodcastBanners() {
-    ApiController()
-        .getPodcastBanners()
-        .then((response) {
+    ApiController().getPodcastBanners().then((response) {
       banners.value = response.podcastBanners;
       update();
     });
@@ -53,16 +53,23 @@ class PodcastStreamingController extends GetxController {
   }
 
   getPodcastShows({int? podcastId, String? name}) {
-    ApiController().getPodcastShows(podcastId: podcastId, name: name).then((response) {
+    ApiController()
+        .getPodcastShows(podcastId: podcastId, name: name)
+        .then((response) {
       podcastShows.value = response.podcastShows;
       podcastShows.refresh();
       update();
     });
   }
 
-  Future<ApiResponseModel> getPodcastShowsEpisode({int? podcastShowId, String? name}) async {
-    return await ApiController().getPodcastShowsEpisode(podcastShowId: podcastShowId, name: name).then((response) {
-      return  response;
+  getPodcastShowsEpisode(
+      {int? podcastShowId, String? name}) async {
+    return ApiController()
+        .getPodcastShowsEpisode(podcastShowId: podcastShowId, name: name)
+        .then((response) {
+      podcastShowEpisodes.value = response.podcastShowSongs;
+      podcastShowEpisodes.refresh();
+      update();
     });
   }
 

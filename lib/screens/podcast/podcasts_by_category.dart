@@ -1,10 +1,5 @@
 import 'package:foap/helper/common_import.dart';
-import 'package:foap/screens/podcast/podcast_show_detail.dart';
 import 'package:get/get.dart';
-
-import '../../controllers/podcast_streaming_controller.dart';
-import '../../model/podcast_model.dart';
-
 
 class PodcastListByCategory extends StatefulWidget {
   final PodcastCategoryModel category;
@@ -36,7 +31,6 @@ class _PodcastListByCategoryState extends State<PodcastListByCategory> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Theme.of(context).backgroundColor,
-        // CustomScrollView.
         body: NestedScrollView(
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
             return <Widget>[
@@ -53,10 +47,13 @@ class _PodcastListByCategoryState extends State<PodcastListByCategory> {
                           floating: true,
                           pinned: true,
                           forceElevated: true,
-                          leading: IconButton(
-                            icon: const Icon(Icons.arrow_back, color: Colors.white),
-                            onPressed: () => Navigator.of(context).pop(),
-                          ),
+                          leading: ThemeIconWidget(
+                            ThemeIcon.backArrow,
+                            size: 18,
+                            color: Theme.of(context).iconTheme.color,
+                          ).ripple(() {
+                            Get.back();
+                          }),
                           flexibleSpace: FlexibleSpaceBar(
                               centerTitle: true,
                               title: Text(
@@ -105,10 +102,6 @@ class _PodcastListByCategoryState extends State<PodcastListByCategory> {
                             _podcastStreamingController.podcasts[index];
                             return Card(
                                 margin: const EdgeInsets.all(1),
-                                clipBehavior: Clip.hardEdge,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(5),
-                                ),
                                 child: CachedNetworkImage(
                                   imageUrl: podcastModel.image,
                                   fit: BoxFit.fitHeight,
@@ -117,7 +110,7 @@ class _PodcastListByCategoryState extends State<PodcastListByCategory> {
                                   Get.to(() => PodcastShowDetail(
                                     podcastModel: podcastModel,
                                   ));
-                                }));
+                                })).round(5);
                           },
                           childCount: _podcastStreamingController.podcasts.length,
                         ),

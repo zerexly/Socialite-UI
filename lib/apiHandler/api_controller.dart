@@ -1411,6 +1411,27 @@ class ApiController {
     });
   }
 
+  Future<ApiResponseModel> getTVShowEpisodes({int? showId, String? name}) async {
+    String? authKey = await SharedPrefs().getAuthorizationKey();
+    var url =
+        NetworkConstantsUtil.baseUrl + NetworkConstantsUtil.getTVShowEpisodes;
+
+    if (showId != null) {
+      url = '$url&tv_show_id=$showId';
+    }
+    if (name != null) {
+      url = '$url&name=$name';
+    }
+
+    return await http.get(Uri.parse(url), headers: {
+      "Authorization": "Bearer ${authKey!}"
+    }).then((http.Response response) async {
+      final ApiResponseModel parsedResponse = await getResponse(
+          response.body, NetworkConstantsUtil.getTVShowEpisodes);
+      return parsedResponse;
+    });
+  }
+
   Future<ApiResponseModel> getTvCategories(int id) async {
     String? authKey = await SharedPrefs().getAuthorizationKey();
     var url = NetworkConstantsUtil.baseUrl + NetworkConstantsUtil.postDetail;

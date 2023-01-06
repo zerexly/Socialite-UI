@@ -61,7 +61,10 @@ class ApiResponseModel {
   List<TvModel> liveTvs = [];
   List<TVShowModel> tvShows = [];
   List<TVBannersModel> tvBanners = [];
+  List<TVShowEpisodeModel> tvEpisodes = [];
   List<LiveModel> lives = [];
+
+
 
   List<PodcastBannerModel> podcastBanners = [];
   List<PodcastCategoryModel> podcastCategories = [];
@@ -263,7 +266,6 @@ class ApiResponseModel {
             }
           }
         }
-
         else if (data['tv_banner'] != null) {
           var tvBanners = data['tv_banner'];
           var items=tvBanners['items'];
@@ -274,7 +276,16 @@ class ApiResponseModel {
             }
           }
         }
-
+        else if (data['tvShowEpisode'] != null) {
+          var tvShowEpisode = data['tvShowEpisode'];
+          var items = tvShowEpisode['items'];
+          if (items != null && items.length > 0) {
+            if (url == NetworkConstantsUtil.getTVShowEpisodes) {
+              model.tvEpisodes = List<TVShowEpisodeModel>.from(
+                  items.map((x) => TVShowEpisodeModel.fromJson(x)));
+            }
+          }
+        }
         else if (data['podcast_banner'] != null) {
           var podcastBanners = data['podcast_banner'];
           var items= podcastBanners['items'];
@@ -304,7 +315,8 @@ class ApiResponseModel {
                   items.map((x) => PodcastShowModel.fromJson(x)));
             }
           }
-        } else if (data['podcastShowEpisode'] != null) {
+        }
+        else if (data['podcastShowEpisode'] != null) {
           var showEpisodes = data['podcastShowEpisode'];
           var items= showEpisodes['items'];
           if (items != null && items.length > 0) {
@@ -314,14 +326,15 @@ class ApiResponseModel {
             }
           }
         }
-         else if (data['coupon'] != null) {
+        else if (data['coupon'] != null) {
           var items = data['coupon'];
 
           if (items != null && items.length > 0) {
             model.eventCoupons = List<EventCoupon>.from(
                 items.map((x) => EventCoupon.fromJson(x)));
           }
-        } else if (data['gift'] != null) {
+        }
+        else if (data['gift'] != null) {
 
           var items = data['gift']['items'];
 

@@ -1,10 +1,14 @@
 import 'package:foap/helper/common_import.dart';
 import 'package:get/get.dart';
 
+import '../../model/tv_show_model.dart';
+
 class LiveTVStreaming extends StatefulWidget {
   final TvModel tvModel;
+  final TVShowModel? showModel;
 
-  const LiveTVStreaming({Key? key, required this.tvModel}) : super(key: key);
+  const LiveTVStreaming({Key? key, required this.tvModel, this.showModel})
+      : super(key: key);
 
   @override
   State<LiveTVStreaming> createState() => _LiveTVStreamingState();
@@ -30,6 +34,9 @@ class _LiveTVStreamingState extends State<LiveTVStreaming> {
       } else {
         AutoOrientation.landscapeAutoMode();
       }
+
+      _liveTvStreamingController.getTvShowEpisodes(
+          showId: widget.showModel?.id);
     });
   }
 
@@ -71,27 +78,27 @@ class _LiveTVStreamingState extends State<LiveTVStreaming> {
                       orientation: orientation,
                       showMinimumHeight: isKeyboardVisible,
                     ),
-                    bottomView()
+                    addEpisodes()
                   ],
                 ),
-                Obx(() =>
-                    _liveTvStreamingController.showChatMessages.value == false
-                        ? Positioned(
-                            right: 25,
-                            bottom: 40,
-                            child: Container(
-                              height: 40,
-                              width: 40,
-                              color: Theme.of(context).primaryColor,
-                              child: const ThemeIconWidget(
-                                ThemeIcon.chat,
-                                size: 25,
-                              ),
-                            ).circular.ripple(() {
-                              _liveTvStreamingController.showMessagesView();
-                            }),
-                          )
-                        : Container())
+                // Obx(() =>
+                //     _liveTvStreamingController.showChatMessages.value == false
+                //         ? Positioned(
+                //             right: 25,
+                //             bottom: 40,
+                //             child: Container(
+                //               height: 40,
+                //               width: 40,
+                //               color: Theme.of(context).primaryColor,
+                //               child: const ThemeIconWidget(
+                //                 ThemeIcon.chat,
+                //                 size: 25,
+                //               ),
+                //             ).circular.ripple(() {
+                //               _liveTvStreamingController.showMessagesView();
+                //             }),
+                //           )
+                //         : Container())
               ],
             ));
       });
@@ -104,6 +111,42 @@ class _LiveTVStreamingState extends State<LiveTVStreaming> {
         : Expanded(child: liveChatView()));
   }
 
+  Widget addEpisodes() {
+    return Expanded(
+      child: ListView.builder(
+        padding: EdgeInsets.zero,
+        scrollDirection: Axis.vertical,
+        itemCount: _liveTvStreamingController.tvEpisodes.length + 1,
+        itemBuilder: (BuildContext context, int index) {
+          return index == 0 ? detailView() : Card(
+            child: ListTile(
+              contentPadding: const EdgeInsets.all(6),
+              leading: Stack(
+                children: [
+                  CachedNetworkImage(
+                    imageUrl:
+                        _liveTvStreamingController.tvEpisodes[index-1].imageUrl ??
+                            '',
+                    fit: BoxFit.cover,
+                    height: 50,
+                    width: MediaQuery.of(context).size.width / 4.5,
+                  ),
+                  const Positioned.fill(child: Icon(Icons.play_circle))
+                ],
+              ),
+              title:
+                  Text(_liveTvStreamingController.tvEpisodes[index-1].name ?? ''),
+// subtitle: Text(_podcastStreamingController
+//     .podcastShowEpisodes[index].ep ??
+// ''),
+              dense: true,
+            ),
+          ).setPadding(left: 16, right: 16, bottom: 5).round(10).ripple(() {});
+        },
+      ),
+    );
+  }
+
   Widget detailView() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -111,7 +154,7 @@ class _LiveTVStreamingState extends State<LiveTVStreaming> {
         Row(
           children: [
             CachedNetworkImage(
-              imageUrl: widget.tvModel.image,
+              imageUrl: widget.showModel?.imageUrl ?? '',
               width: 50,
               height: 50,
               fit: BoxFit.cover,
@@ -122,7 +165,7 @@ class _LiveTVStreamingState extends State<LiveTVStreaming> {
             Column(
               children: [
                 Text(
-                  widget.tvModel.name,
+                  widget.showModel?.name ?? '',
                   style: Theme.of(context)
                       .textTheme
                       .bodyLarge!
@@ -142,7 +185,7 @@ class _LiveTVStreamingState extends State<LiveTVStreaming> {
           height: 10,
         ),
         Text(
-          widget.tvModel.description,
+          widget.showModel?.description ?? '',
           style: Theme.of(context).textTheme.bodySmall,
           // maxLines: 3,
         ),

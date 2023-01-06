@@ -1,7 +1,4 @@
 import 'package:foap/helper/common_import.dart';
-import 'package:just_audio/just_audio.dart';
-import '../../model/podcast_model.dart';
-import 'package:foap/screens/podcast/seekbar_data.dart';
 import 'package:just_audio/just_audio.dart' as just_audio;
 import 'package:rxdart/rxdart.dart' as rxdart;
 
@@ -16,7 +13,7 @@ class AudioSongPlayer extends StatefulWidget {
 }
 
 class _AudioSongPlayerState extends State<AudioSongPlayer> {
-  AudioPlayer audioPlayer = AudioPlayer();
+  just_audio.AudioPlayer audioPlayer = just_audio.AudioPlayer();
   int currentSongIndex = 0;
   bool _favorite = false;
   bool _showList = false;
@@ -25,11 +22,11 @@ class _AudioSongPlayerState extends State<AudioSongPlayer> {
   void initState() {
     super.initState();
     currentSongIndex = 0;
-    List<AudioSource> audios = widget.songsArray
-            ?.map((e) => AudioSource.uri(Uri.parse(e.audioUrl)))
+    List<just_audio.AudioSource> audios = widget.songsArray
+            ?.map((e) => just_audio.AudioSource.uri(Uri.parse(e.audioUrl)))
             .toList() ??
         [];
-    audioPlayer.setAudioSource(ConcatenatingAudioSource(children: audios));
+    audioPlayer.setAudioSource(just_audio.ConcatenatingAudioSource(children: audios));
     audioPlayer.play();
   }
 
@@ -136,7 +133,7 @@ class _AudioSongPlayerState extends State<AudioSongPlayer> {
                                 : Colors.white,
                           )),
                     ),
-                    StreamBuilder<SequenceState?>(
+                    StreamBuilder<just_audio.SequenceState?>(
                         stream: audioPlayer.sequenceStateStream,
                         builder: (context, index) {
                           return IconButton(
@@ -164,8 +161,8 @@ class _AudioSongPlayerState extends State<AudioSongPlayer> {
                                 (playerState! as just_audio.PlayerState)
                                     .processingState;
 
-                            if (processingState == ProcessingState.loading ||
-                                processingState == ProcessingState.buffering) {
+                            if (processingState == just_audio.ProcessingState.loading ||
+                                processingState == just_audio.ProcessingState.buffering) {
                               return Container(
                                 width: 64.0,
                                 height: 64.0,
@@ -181,7 +178,7 @@ class _AudioSongPlayerState extends State<AudioSongPlayer> {
                                     color: Colors.white,
                                   ));
                             } else if (processingState !=
-                                ProcessingState.completed) {
+                                just_audio.ProcessingState.completed) {
                               return IconButton(
                                   onPressed: audioPlayer.pause,
                                   iconSize: 75,
@@ -211,7 +208,7 @@ class _AudioSongPlayerState extends State<AudioSongPlayer> {
                             return const CircularProgressIndicator();
                           }
                         }),
-                    StreamBuilder<SequenceState?>(
+                    StreamBuilder<just_audio.SequenceState?>(
                         stream: audioPlayer.sequenceStateStream,
                         builder: (context, index) {
                           return IconButton(
