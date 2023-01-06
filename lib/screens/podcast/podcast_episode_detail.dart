@@ -64,10 +64,27 @@ class _PodcastShowEpisodeDetailState extends State<PodcastShowEpisodeDetail> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
+                                      Row(
+                                        children: [
+                                          Container(
+                                              color: Theme.of(context).primaryColor,
+                                              child: Text(widget.podcastShowModel
+                                                          ?.ageGroup ??
+                                                      "")
+                                                  .setPadding(left: 10, right: 10, top: 5, bottom: 5)).round(10),
+                                          const SizedBox(width: 10),
+                                          Container(
+                                              color: Theme.of(context).primaryColor,
+                                              child: Text(widget.podcastShowModel
+                                                  ?.language ??
+                                                  "")
+                                                  .setPadding(left: 10, right: 10, top: 5, bottom: 5)).round(10),
+                                        ],
+                                      ),
                                       Text(widget.podcastShowModel?.name ?? "",
                                               style: const TextStyle(
                                                   fontWeight: FontWeight.bold))
-                                          .bP4,
+                                          .setPadding(top: 8, bottom: 4),
                                       read_more.ReadMoreText(
                                         widget.podcastShowModel?.description ??
                                             "",
@@ -118,8 +135,8 @@ class _PodcastShowEpisodeDetailState extends State<PodcastShowEpisodeDetail> {
             const Positioned.fill(child: Icon(Icons.play_circle))
           ],
         ),
-        title: Text(
-            _podcastStreamingController.podcastShowEpisodes[index].name),
+        title:
+            Text(_podcastStreamingController.podcastShowEpisodes[index].name),
 // subtitle: Text(_podcastStreamingController
 //     .podcastShowEpisodes[index].ep ??
 // ''),

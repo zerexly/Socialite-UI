@@ -153,6 +153,23 @@ class _LiveTVStreamingState extends State<LiveTVStreaming> {
       children: [
         Row(
           children: [
+            Container(
+                color: Theme.of(context).primaryColor,
+                child: Text(widget.showModel
+                    ?.ageGroup ??
+                    "")
+                    .setPadding(left: 10, right: 10, top: 5, bottom: 5)).round(10),
+            const SizedBox(width: 10),
+            Container(
+                color: Theme.of(context).primaryColor,
+                child: Text(widget.showModel
+                    ?.language ??
+                    "")
+                    .setPadding(left: 10, right: 10, top: 5, bottom: 5)).round(10),
+          ],
+        ).bP8,
+        Row(
+          children: [
             CachedNetworkImage(
               imageUrl: widget.showModel?.imageUrl ?? '',
               width: 50,

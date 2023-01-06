@@ -41,6 +41,7 @@ class _TvListDashboardState extends State<TvListDashboard> {
                     init: _tvStreamingController,
                     builder: (ctx) {
                       return ListView.builder(
+                          padding: EdgeInsets.zero,
                           shrinkWrap: true,
                           itemCount:
                               _tvStreamingController.categories.length + 1,
