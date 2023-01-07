@@ -17,6 +17,7 @@ class AgoraCallController extends GetxController {
   RxBool switchMainView = false.obs;
   RxBool remoteJoined = false.obs;
   SettingsController settingsController = Get.find();
+
   // int callId = 0;
   final player = AudioPlayer();
 
@@ -192,7 +193,7 @@ class AgoraCallController extends GetxController {
     }
   }
 
-  outgoingCallConfirmationReceived(Map<String, dynamic> updatedData) async{
+  outgoingCallConfirmationReceived(Map<String, dynamic> updatedData) async {
     String uuid = updatedData['uuid'];
     int id = updatedData['id'];
     String localCallId = updatedData['localCallId'];

@@ -5,9 +5,20 @@ class AddPostScreen extends StatefulWidget {
   final List<Media> items;
   final int? competitionId;
   final int? clubId;
+  final bool? isReel;
+  final int? audioId;
+  final double? audioStartTime;
+  final double? audioEndTime;
 
   const AddPostScreen(
-      {Key? key, required this.items, this.competitionId, this.clubId})
+      {Key? key,
+      required this.items,
+      this.competitionId,
+      this.clubId,
+      this.isReel,
+      this.audioId,
+      this.audioStartTime,
+      this.audioEndTime})
       : super(key: key);
 
   @override
@@ -74,6 +85,10 @@ class AddPostState extends State<AddPostScreen> {
                           ).ripple(() {
                             addPostController.uploadAllPostFiles(
                                 context: context,
+                                isReel: widget.isReel ?? false,
+                                audioId: widget.audioId,
+                                audioStartTime: widget.audioStartTime,
+                                audioEndTime: widget.audioEndTime,
                                 items: widget.items,
                                 title: descriptionText.text,
                                 competitionId: widget.competitionId,

@@ -21,6 +21,7 @@ export 'package:keyboard_attachable/keyboard_attachable.dart';
 export 'package:detectable_text_field/detector/sample_regular_expressions.dart';
 export 'package:detectable_text_field/widgets/detectable_text.dart';
 export 'package:chewie/chewie.dart';
+
 // export 'package:dropdown_button2/dropdown_button2.dart';
 export 'package:visibility_detector/visibility_detector.dart';
 export 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -32,6 +33,7 @@ export 'package:permission_handler/permission_handler.dart';
 export 'package:wakelock/wakelock.dart';
 export 'package:focused_menu/focused_menu.dart';
 export 'package:focused_menu/modals.dart';
+
 // export 'package:localstore/localstore.dart';
 export 'package:pip_view/pip_view.dart';
 export 'package:google_sign_in/google_sign_in.dart';
@@ -63,6 +65,7 @@ export 'package:flare_flutter/flare_controls.dart';
 export 'package:url_launcher/url_launcher.dart';
 export 'package:ripple_wave/ripple_wave.dart';
 export 'package:animated_text_kit/animated_text_kit.dart';
+
 // export 'package:zoom_pinch_overlay/zoom_pinch_overlay.dart';
 export 'package:file_picker/file_picker.dart';
 export 'package:flutter_downloader/flutter_downloader.dart';
@@ -83,6 +86,7 @@ export 'package:device_info_plus/device_info_plus.dart';
 export 'package:marquee/marquee.dart';
 export 'package:video_compress/video_compress.dart';
 export 'package:aescryptojs/aescryptojs.dart';
+export 'package:simple_downloader/simple_downloader.dart';
 
 // export 'package:pip_flutter/pipflutter_player.dart';
 // export 'package:pip_flutter/pipflutter_player_configuration.dart';
@@ -91,4 +95,3 @@ export 'package:aescryptojs/aescryptojs.dart';
 // export 'package:pip_flutter/pipflutter_player_data_source_type.dart';
 // export 'package:jitsi_meet/jitsi_meet.dart';
 // export 'package:jitsi_meet/feature_flag/feature_flag.dart';
-

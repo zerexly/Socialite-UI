@@ -13,11 +13,10 @@ class ChatRoomDetail extends StatefulWidget {
 class _ChatRoomDetailState extends State<ChatRoomDetail> {
   final ChatRoomDetailController chatRoomDetailController = Get.find();
   final ChatDetailController chatDetailController = Get.find();
+  final SettingsController _settingsController = Get.find();
 
   @override
   void initState() {
-    // TODO: implement initState
-
     chatRoomDetailController.getStarredMessages(widget.chatRoom);
     chatRoomDetailController.getUpdatedChatRoomDetail(widget.chatRoom);
     super.initState();
@@ -382,7 +381,7 @@ class _ChatRoomDetailState extends State<ChatRoomDetail> {
           ),
         ).ripple(() {
           chatRoomDetailController.deleteRoomChat(widget.chatRoom);
-          chatDetailController.deleteChat();
+          chatDetailController.deleteChat(widget.chatRoom.id);
           AppUtil.showToast(
               context: context,
               message: LocalizationString.chatDeleted,
@@ -428,53 +427,52 @@ class _ChatRoomDetailState extends State<ChatRoomDetail> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Container(
-          child: Column(
-            children: [
-              const ThemeIconWidget(
-                ThemeIcon.mobile,
-                size: 20,
-              ),
-              const SizedBox(
-                height: 5,
-              ),
-              Text(
-                LocalizationString.audio,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyMedium!
-                    .copyWith(fontWeight: FontWeight.w600),
-              ),
-            ],
-          ).setPadding(left: 16, right: 16, top: 8, bottom: 8),
-        ).round(10).shadow(context: context, shadowOpacity: 0.1).ripple(() {
-          audioCall();
-        }),
-        const SizedBox(
-          width: 20,
-        ),
-        Container(
-          child: Column(
-            children: [
-              const ThemeIconWidget(
-                ThemeIcon.videoCamera,
-                size: 20,
-              ),
-              const SizedBox(
-                height: 5,
-              ),
-              Text(
-                LocalizationString.video,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyMedium!
-                    .copyWith(fontWeight: FontWeight.w600),
-              ),
-            ],
-          ).setPadding(left: 16, right: 16, top: 8, bottom: 8),
-        ).round(10).shadow(context: context, shadowOpacity: 0.1).ripple(() {
-          videoCall();
-        }),
+        if (_settingsController.setting.value!.enableAudioCalling)
+          Container(
+            child: Column(
+              children: [
+                const ThemeIconWidget(
+                  ThemeIcon.mobile,
+                  size: 20,
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                Text(
+                  LocalizationString.audio,
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium!
+                      .copyWith(fontWeight: FontWeight.w600),
+                ),
+              ],
+            ).setPadding(left: 16, right: 16, top: 8, bottom: 8),
+          ).round(10).shadow(context: context, shadowOpacity: 0.1).ripple(() {
+            audioCall();
+          }).rp(20),
+        if (_settingsController.setting.value!.enableVideoCalling)
+          Container(
+            child: Column(
+              children: [
+                const ThemeIconWidget(
+                  ThemeIcon.videoCamera,
+                  size: 20,
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                Text(
+                  LocalizationString.video,
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium!
+                      .copyWith(fontWeight: FontWeight.w600),
+                ),
+              ],
+            ).setPadding(left: 16, right: 16, top: 8, bottom: 8),
+          ).round(10).shadow(context: context, shadowOpacity: 0.1).ripple(() {
+            videoCall();
+          }),
       ],
     );
   }

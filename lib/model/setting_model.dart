@@ -52,6 +52,7 @@ class SettingModel {
   bool enableChat;
   bool enableLocationSharingInChat;
   bool enablePhotoSharingInChat;
+  bool enableContactSharingInChat;
   bool enableVideoSharingInChat;
   bool enableAudioSharingInChat;
   bool enableFileSharingInChat;
@@ -73,6 +74,7 @@ class SettingModel {
   bool enableDarkLightModeSwitch;
   bool enableWatchTv;
   bool enablePodcasts;
+  bool enableGift;
 
   // nee to add
   bool enableReel;
@@ -127,6 +129,7 @@ class SettingModel {
     required this.enableChat,
     required this.enableLocationSharingInChat,
     required this.enablePhotoSharingInChat,
+    required this.enableContactSharingInChat,
     required this.enableVideoSharingInChat,
     required this.enableAudioSharingInChat,
     required this.enableFileSharingInChat,
@@ -149,6 +152,7 @@ class SettingModel {
     required this.enableWatchTv,
     required this.enablePodcasts,
     required this.enableReel,
+    required this.enableGift,
   });
 
   factory SettingModel.fromJson(Map<String, dynamic> json) => SettingModel(
@@ -217,10 +221,12 @@ class SettingModel {
         enableGifSharingInChat: json["is_gift_share"] == 1,
         enableHighlights: json["is_story_highlights"] == 1,
         enableImagePost: json["is_photo_post"] == 1,
-    enableVideoPost: json["is_video_post"] == 1,
-    enableLive: json["is_live"] == 1,
+        enableVideoPost: json["is_video_post"] == 1,
+        enableLive: json["is_live"] == 1,
         enableLocationSharingInChat: json["enableLocationSharingInChat"] == 1,
         enablePhotoSharingInChat: json["is_photo_share"] == 1,
+        enableContactSharingInChat: json["is_contact_share"] == 1,
+
         enablePodcasts: json["is_podcasts"] == 1,
         enableProfileSharingInChat: json["is_user_profile_share"] == 1,
         enableProfileVerification: json["is_profile_verification"] == 1,
@@ -230,7 +236,7 @@ class SettingModel {
         enableVideoCalling: json["is_video_calling"] == 1,
         enableVideoSharingInChat: json["is_video_share"] == 1,
         enableWatchTv: json["is_watch_tv"] == 1,
-
-        enableReel: json["enableReel"] == 1,
+        enableReel: json["is_reel"] == 1,
+        enableGift: json["is_gift_sending"] == 1,
       );
 }

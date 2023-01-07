@@ -1,6 +1,6 @@
 import 'package:foap/helper/common_import.dart';
-import 'package:just_audio/just_audio.dart';
 import 'package:get/get.dart';
+import 'package:just_audio/just_audio.dart';
 
 enum PlayStateState { paused, playing, loading, idle }
 
@@ -26,6 +26,7 @@ class PlayerManager extends GetxController {
   playAudio(Audio audio) async {
     currentlyPlayingAudio.value = audio;
     // await player.setUrl(message.mediaContent.audio!);
+    print('currentlyPlayingAudio.value = ${currentlyPlayingAudio.value!.id}');
     await player.setUrl(audio.url);
 
     player.play();
@@ -67,5 +68,22 @@ class PlayerManager extends GetxController {
   stopAudio() {
     player.stop();
     currentlyPlayingAudio.value = null;
+  }
+
+  playAudioFile(File file) async {
+    await player.setFilePath(file.path);
+
+    player.play();
+    listenToStates();
+  }
+
+  playAudioFileTimeIntervalBased(
+      ReelMusicModel audio, double startTime, double endTime) async {
+    await player.setUrl(audio.url);
+    await player.setClip(
+        start: Duration(seconds: startTime.toInt()),
+        end: Duration(seconds: endTime.toInt()));
+    player.play();
+    listenToStates();
   }
 }

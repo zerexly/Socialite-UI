@@ -92,6 +92,7 @@ class AudioTile extends StatelessWidget {
               size: 20,
             ).p4,
           ).borderWithRadius(context: context, value: 2, radius: 20).ripple(() {
+            print('isPlaying $isPlaying');
             if (isPlaying) {
               stopBack();
             } else {

@@ -20,9 +20,11 @@ class PostModel {
   List<String> tags = [];
   List<MentionedUsers> mentionedUsers = [];
 
+  ReelMusicModel? audio;
+  ClubModel? club;
+
   String postTime = '';
   DateTime? createDate;
-  ClubModel? club;
 
   PostModel();
 
@@ -32,6 +34,7 @@ class PostModel {
 
   factory PostModel.fromJson(dynamic json) {
     PostModel model = PostModel();
+    print('json $json');
     model.id = json['id'];
     model.title = json['title'] ?? 'No title';
 
@@ -62,15 +65,15 @@ class PostModel {
           json['mentionUsers'].map((x) => MentionedUsers.fromJson(x)));
     }
 
-    model.club = json['clubDetail'] == null
-        ? null
-        : ClubModel.fromJson(json['clubDetail']);
-
     model.createDate =
         DateTime.fromMillisecondsSinceEpoch(json['created_at'] * 1000).toUtc();
 
     model.postTime = timeago.format(model.createDate!);
-
+    model.audio =
+    json['audio'] == null ? null : ReelMusicModel.fromJson(json['audio']);
+    model.club = json['clubDetail'] == null
+        ? null
+        : ClubModel.fromJson(json['clubDetail']);
     // final days = model.createDate!.difference(DateTime.now()).inDays;
     // if (days == 0) {
     //   model.postTime = ApplicationLocalizations.of(

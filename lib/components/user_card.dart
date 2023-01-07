@@ -206,6 +206,7 @@ class UserTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final ProfileController profileController = Get.find();
     final AgoraLiveController agoraLiveController = Get.find();
+    final SettingsController _settingsController = Get.find();
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -297,24 +298,27 @@ class UserTile extends StatelessWidget {
         if (chatCallback != null)
           Row(
             children: [
-              const ThemeIconWidget(
-                ThemeIcon.chat,
-                size: 20,
-              ).ripple(() {
-                chatCallback!();
-              }),
-              const ThemeIconWidget(
-                ThemeIcon.mobile,
-                size: 20,
-              ).hP16.ripple(() {
-                audioCallCallback!();
-              }),
-              const ThemeIconWidget(
-                ThemeIcon.videoCamera,
-                size: 20,
-              ).ripple(() {
-                videoCallCallback!();
-              }),
+              if (_settingsController.setting.value!.enableChat)
+                const ThemeIconWidget(
+                  ThemeIcon.chat,
+                  size: 20,
+                ).rP16.ripple(() {
+                  chatCallback!();
+                }),
+              if (_settingsController.setting.value!.enableAudioCalling)
+                const ThemeIconWidget(
+                  ThemeIcon.mobile,
+                  size: 20,
+                ).rP16.ripple(() {
+                  audioCallCallback!();
+                }),
+              if (_settingsController.setting.value!.enableVideoCalling)
+                const ThemeIconWidget(
+                  ThemeIcon.videoCamera,
+                  size: 20,
+                ).ripple(() {
+                  videoCallCallback!();
+                }),
             ],
           ),
         if (sendCallback != null)

@@ -1,11 +1,10 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
-import 'package:foap/controllers/podcast_streaming_controller.dart';
 import 'package:foap/helper/common_import.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:get/get.dart';
 import 'package:giphy_get/l10n.dart';
 import 'controllers/faq_controller.dart';
-// import 'package:easy_localization/easy_localization.dart';
+import 'package:camera/camera.dart';
 
 class MyHttpOverrides extends HttpOverrides {
   @override
@@ -16,8 +15,12 @@ class MyHttpOverrides extends HttpOverrides {
   }
 }
 
+late List<CameraDescription> cameras;
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  cameras = await availableCameras();
+
   await Firebase.initializeApp();
   // await EasyLocalization.ensureInitialized();
   await FlutterDownloader.initialize(

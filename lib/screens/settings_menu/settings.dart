@@ -9,12 +9,12 @@ class Settings extends StatefulWidget {
 }
 
 class _SettingsState extends State<Settings> {
-  final SettingsController settingsController = Get.find();
+  final SettingsController _settingsController = Get.find();
 
   @override
   void initState() {
     super.initState();
-    settingsController.loadSettings();
+    _settingsController.loadSettings();
   }
 
   @override
@@ -63,7 +63,9 @@ class _SettingsState extends State<Settings> {
                         LocalizationString.faqMessage, () {
                       Get.to(() => const FaqList());
                     }, true),
-                    darkModeTile(),
+                    if (_settingsController
+                        .setting.value!.enableDarkLightModeSwitch)
+                      darkModeTile(),
                     addTileEvent('assets/share.png', LocalizationString.share,
                         LocalizationString.shareAppSubtitle, () {
                       Share.share('Install this cool app');
@@ -105,8 +107,8 @@ class _SettingsState extends State<Settings> {
     );
   }
 
-  addTileEvent(
-      String icon, String title, String subTitle, VoidCallback action, bool showNextArrow) {
+  addTileEvent(String icon, String title, String subTitle, VoidCallback action,
+      bool showNextArrow) {
     return InkWell(
         onTap: action,
         child: Column(
@@ -141,11 +143,12 @@ class _SettingsState extends State<Settings> {
                   ),
                 ),
                 // const Spacer(),
-                if(showNextArrow) ThemeIconWidget(
-                  ThemeIcon.nextArrow,
-                  color: Theme.of(context).iconTheme.color,
-                  size: 15,
-                )
+                if (showNextArrow)
+                  ThemeIconWidget(
+                    ThemeIcon.nextArrow,
+                    color: Theme.of(context).iconTheme.color,
+                    size: 15,
+                  )
               ]).hP16,
             ),
             divider(context: context)
@@ -192,12 +195,12 @@ class _SettingsState extends State<Settings> {
                   height: 30.0,
                   valueFontSize: 15.0,
                   toggleSize: 20.0,
-                  value: settingsController.isDarkMode.value,
+                  value: _settingsController.isDarkMode.value,
                   borderRadius: 30.0,
                   padding: 8.0,
                   // showOnOff: true,
                   onToggle: (val) {
-                    settingsController.setDarkMode(val);
+                    _settingsController.setDarkMode(val);
                   },
                 )),
           ]).hP16,

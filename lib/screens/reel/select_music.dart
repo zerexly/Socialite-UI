@@ -1,8 +1,9 @@
 import 'package:foap/helper/common_import.dart';
+import 'package:foap/screens/reel/crop_audio_screen.dart';
 import 'package:get/get.dart';
 
 class SelectMusic extends StatefulWidget {
-  final Function(ReelMusicModel) selectedAudioCallback;
+  final Function(File) selectedAudioCallback;
 
   const SelectMusic({Key? key, required this.selectedAudioCallback})
       : super(key: key);
@@ -30,7 +31,6 @@ class _SelectMusicState extends State<SelectMusic> {
   @override
   void dispose() {
     _createReelController.clear();
-
     super.dispose();
   }
 
@@ -128,13 +128,13 @@ class _SelectMusicState extends State<SelectMusic> {
     scrollController.addListener(() {
       if (scrollController.position.maxScrollExtent ==
           scrollController.position.pixels) {
-        if (!_createReelController.isLoadingReels.value) {
+        if (!_createReelController.isLoadingAudios.value) {
           _createReelController.getReelAudios();
         }
       }
     });
 
-    return _createReelController.isLoadingReels.value
+    return _createReelController.isLoadingAudios.value
         ? Expanded(child: const ShimmerUsers().hP16)
         : _createReelController.audios.isNotEmpty
             ? Expanded(
@@ -159,8 +159,17 @@ class _SelectMusicState extends State<SelectMusic> {
                             _createReelController.stopPlayingAudio();
                           },
                           useAudioBack: () {
-                            widget.selectedAudioCallback(audio);
-                            Get.back();
+                            print('useAudioBack');
+                            if (_createReelController.recordingLength.value >
+                                audio.duration) {
+                              AppUtil.showToast(
+                                  context: context,
+                                  message:
+                                      'Audio is shorter than ${_createReelController.recordingLength}seconds',
+                                  isSuccess: false);
+                              return;
+                            }
+                            openCropAudio(audio);
                           },
                         );
                       });
@@ -175,5 +184,13 @@ class _SelectMusicState extends State<SelectMusic> {
                 title: 'No audio found',
                 subTitle: 'Please search another audio',
                 context: context);
+  }
+
+  void openCropAudio(ReelMusicModel audio) async {
+    _createReelController.selectReelAudio(audio);
+    File audioFile = await Get.bottomSheet(FractionallySizedBox(
+        heightFactor: 0.7, child: CropAudioScreen(reelMusicModel: audio)));
+    widget.selectedAudioCallback(audioFile);
+    Get.back();
   }
 }

@@ -39,7 +39,7 @@ enum ThemeIcon {
   close,
   sticker,
   gif,
-
+  gift,
   checkMarkWithCircle,
   security,
   bike,

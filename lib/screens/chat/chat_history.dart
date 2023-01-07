@@ -11,6 +11,7 @@ class ChatHistory extends StatefulWidget {
 class _ChatHistoryState extends State<ChatHistory> {
   final ChatHistoryController _chatController = Get.find();
   final ChatDetailController _chatDetailController = Get.find();
+  final SettingsController _settingsController = Get.find();
 
   @override
   void initState() {
@@ -40,13 +41,19 @@ class _ChatHistoryState extends State<ChatHistory> {
           const SizedBox(
             height: 50,
           ),
-          titleNavigationBarWithIcon(
-              context: context,
-              title: LocalizationString.chats,
-              icon: ThemeIcon.mobile,
-              completion: () {
-                Get.to(() => const CallHistory());
-              }),
+          (_settingsController.setting.value!.enableAudioCalling ||
+                  _settingsController.setting.value!.enableVideoCalling)
+              ? titleNavigationBarWithIcon(
+                  context: context,
+                  title: LocalizationString.chats,
+                  icon: ThemeIcon.mobile,
+                  completion: () {
+                    Get.to(() => const CallHistory());
+                  })
+              : titleNavigationBar(
+                  context: context,
+                  title: LocalizationString.chats,
+                ),
           divider(context: context).tP8,
           SearchBar(
                   showSearchIcon: true,
@@ -132,18 +139,20 @@ class _ChatHistoryState extends State<ChatHistory> {
         builder: (context) => FractionallySizedBox(
               heightFactor: 0.9,
               child: SelectUserForChat(userSelected: (user) {
-                _chatDetailController.getChatRoomWithUser(userId:user.id, callback:(room) {
-                  EasyLoading.dismiss();
+                _chatDetailController.getChatRoomWithUser(
+                    userId: user.id,
+                    callback: (room) {
+                      EasyLoading.dismiss();
 
-                  Get.back();
-                  Get.to(() => ChatDetail(
-                            // opponent: usersList[index - 1].toChatRoomMember,
-                            chatRoom: room,
-                          ))!
-                      .then((value) {
-                    _chatController.getChatRooms();
-                  });
-                });
+                      Get.back();
+                      Get.to(() => ChatDetail(
+                                // opponent: usersList[index - 1].toChatRoomMember,
+                                chatRoom: room,
+                              ))!
+                          .then((value) {
+                        _chatController.getChatRooms();
+                      });
+                    });
               }),
             ));
   }

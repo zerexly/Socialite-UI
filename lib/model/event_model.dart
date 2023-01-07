@@ -1,3 +1,4 @@
+import 'package:foap/model/user_model.dart';
 import 'package:intl/intl.dart';
 import '../helper/enum.dart';
 
@@ -290,6 +291,7 @@ class EventTicketOrderRequest {
   String? itemName;
 
   List<Map<String, dynamic>> payments;
+  UserModel? gifToUser;
 
   EventTicketOrderRequest({
     this.eventId,
@@ -300,6 +302,7 @@ class EventTicketOrderRequest {
     this.ticketAmount,
     this.paidAmount,
     this.itemName,
+    this.gifToUser,
     required this.payments,
   });
 

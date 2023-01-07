@@ -30,7 +30,7 @@ class _EventBookingScreenState extends State<EventBookingScreen> {
             context: context,
             title: LocalizationString.bookings,
           ),
-          divider(context: context).vP8,
+          divider(context: context).vP16,
           segmentView(),
           Expanded(
               child: GetBuilder<EventBookingsController>(
@@ -66,9 +66,9 @@ class _EventBookingScreenState extends State<EventBookingScreen> {
                                           bookingModel: bookings[index])
                                       .ripple(() {
                                     Get.to(() => EventBookingDetail(
-                                        booking: bookings[index]))!.then((value) {
+                                            booking: bookings[index]))!
+                                        .then((value) {
                                       _eventBookingsController.reload();
-
                                     });
                                   });
                                 },

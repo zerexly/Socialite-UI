@@ -125,8 +125,8 @@ export 'package:foap/components/reply_chat_cells/video_reply_chat_cell.dart';
 export 'package:foap/components/reply_chat_cells/file_reply_chat_cell.dart';
 export 'package:foap/components/reel/reel_video_player.dart';
 export 'package:foap/components/reel/audio_tile.dart';
+export 'package:foap/components/reel/wave_slider.dart';
 export 'package:foap/components/media_card.dart';
-
 export 'package:foap/controllers/clubs/club_detail_controller.dart';
 export 'package:foap/controllers/clubs/clubs_controller.dart';
 export 'package:foap/controllers/clubs/search_club_controller.dart';
@@ -281,8 +281,11 @@ export 'package:foap/screens/profile/other_user_profile.dart';
 export 'package:foap/screens/profile/my_profile.dart';
 
 export 'package:foap/screens/reel/create_reel_video.dart';
+export 'package:foap/screens/reel/crop_audio_screen.dart';
+export 'package:foap/screens/reel/preview_reel_screen.dart';
+export 'package:foap/screens/reel/reel_audio_detail.dart';
 export 'package:foap/screens/reel/reels.dart';
-export 'package:foap/screens/reel/reel_list.dart';
+export 'package:foap/screens/reel/reels_list.dart';
 export 'package:foap/screens/reel/select_music.dart';
 
 export 'package:foap/screens/story/text_story.dart';
@@ -317,6 +320,7 @@ export 'package:foap/screens/event/event_booking_detail.dart';
 export 'package:foap/screens/event/e_ticket.dart';
 export 'package:foap/screens/event/stripe_card_payment.dart';
 export 'package:foap/screens/event/event_gallery.dart';
+export 'package:foap/screens/event/select_user_to_gift.dart';
 
 export 'package:foap/screens/post/add_post_screen.dart';
 export 'package:foap/screens/post/single_post_detail.dart';

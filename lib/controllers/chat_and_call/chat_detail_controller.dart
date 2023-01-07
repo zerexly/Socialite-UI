@@ -75,8 +75,9 @@ class ChatDetailController extends GetxController {
     }
   }
 
-  deleteChat() {
+  deleteChat(int roomId) {
     messages.clear();
+    ApiController().deleteChatRoomMessages(roomId);
     update();
   }
 
@@ -122,9 +123,6 @@ class ChatDetailController extends GetxController {
       required ChatRoomModel chatRoom,
       required int lastFetchedMessageId,
       required VoidCallback completion}) {
-    print('canLoadMoreMessages = $canLoadMoreMessages');
-    print('isLoading = $isLoading');
-
     if (canLoadMoreMessages && isLoading == false) {
       isLoading = true;
 
@@ -136,7 +134,7 @@ class ChatDetailController extends GetxController {
           if (response.messages.isNotEmpty) {
             // for (ChatMessageModel message in ) {
             //   print('saving ${message.id}');
-            await getIt<DBManager>().saveMessage(chatRoom, response.messages);
+            // await getIt<DBManager>().saveMessage(chatRoom, response.messages);
             // }
 
             if (chatRoom.id == this.chatRoom.value?.id) {
@@ -173,7 +171,6 @@ class ChatDetailController extends GetxController {
     wallpaper.value = await SharedPrefs().getWallpaper(roomId: roomId);
   }
 
-//1667195394
   createChatRoom(int userId, Function(int) callback) {
     ApiController().createChatRoom(userId).then((response) {
       getIt<SocketManager>().emit(SocketConstants.addUserInChatRoom, {

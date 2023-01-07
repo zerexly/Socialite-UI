@@ -46,7 +46,8 @@ class CheckoutController extends GetxController {
   }
 
   payAndBuy(
-      EventTicketOrderRequest ticketOrder, PaymentGateway paymentGateway) {
+      {required EventTicketOrderRequest ticketOrder,
+      required PaymentGateway paymentGateway}) {
     this.ticketOrder = ticketOrder;
 
     if (useWallet.value) {
@@ -119,7 +120,7 @@ class CheckoutController extends GetxController {
       Map<String, String> payment = {
         'payment_mode': '6',
         'amount': balanceToPay.value.toString(),
-        'transaction_id': 'response.paymentId!'
+        'transaction_id': randomId()
       };
 
       ticketOrder.payments
@@ -130,8 +131,10 @@ class CheckoutController extends GetxController {
     } catch (e) {
       AppUtil.showToast(
           context: context!, message: 'Error1: $e', isSuccess: false);
-
-      processingPayment.value = ProcessingPaymentStatus.failed;
+      PlatformException error = (e as PlatformException);
+      if (error.code != 'Canceled') {
+        processingPayment.value = ProcessingPaymentStatus.failed;
+      }
     }
   }
 
@@ -158,7 +161,7 @@ class CheckoutController extends GetxController {
         Map<String, String> payment = {
           'payment_mode': '7',
           'amount': balanceToPay.value.toString(),
-          'transaction_id': 'response.paymentId!'
+          'transaction_id': randomId()
         };
 
         ticketOrder.payments
@@ -167,9 +170,12 @@ class CheckoutController extends GetxController {
 
         placeOrder();
       } catch (e) {
-        AppUtil.showToast(
-            context: context!, message: 'Error: $e', isSuccess: false);
-        processingPayment.value = ProcessingPaymentStatus.failed;
+        PlatformException error = (e as PlatformException);
+        if (error.code != 'Canceled') {
+          processingPayment.value = ProcessingPaymentStatus.failed;
+          AppUtil.showToast(
+              context: context!, message: 'Error: $e', isSuccess: false);
+        }
       }
     } else {
       processingPayment.value = ProcessingPaymentStatus.failed;
@@ -228,7 +234,6 @@ class CheckoutController extends GetxController {
                 .removeWhere((element) => element['payment_mode'] == '2');
             ticketOrder.payments.add(payment);
             placeOrder();
-            // processingPayment.value = ProcessingPaymentStatus.completed;
           } else {
             processingPayment.value = ProcessingPaymentStatus.failed;
           }
@@ -297,7 +302,7 @@ class CheckoutController extends GetxController {
       Map<String, String> payment = {
         'payment_mode': '4',
         'amount': balanceToPay.value.toString(),
-        'transaction_id': 'response.paymentId!'
+        'transaction_id': randomId()
       };
 
       ticketOrder?.payments
@@ -307,18 +312,25 @@ class CheckoutController extends GetxController {
       placeOrder();
     } on Exception catch (e) {
       if (e is stripe.StripeException) {
-        processingPayment.value = ProcessingPaymentStatus.failed;
+        stripe.StripeException error = e;
 
-        AppUtil.showToast(
-            context: context!,
-            message: 'Error from Stripe: ${e.error.localizedMessage}',
-            isSuccess: true);
+        if (error.error.code != stripe.FailureCode.Canceled) {
+          processingPayment.value = ProcessingPaymentStatus.failed;
+          AppUtil.showToast(
+              context: context!, message: 'Error: $e', isSuccess: false);
+        }
+        // processingPayment.value = ProcessingPaymentStatus.failed;
+
+        // AppUtil.showToast(
+        //     context: context!,
+        //     message: 'Error from Stripe: ${e.error.localizedMessage}',
+        //     isSuccess: true);
       } else {
         processingPayment.value = ProcessingPaymentStatus.failed;
 
         AppUtil.showToast(
             context: context!,
-            message: 'Unforeseen error: ${e}',
+            message: 'Unforeseen error: $e',
             isSuccess: true);
       }
     }
@@ -369,13 +381,13 @@ class CheckoutController extends GetxController {
 
   void _handlePaymentError(PaymentFailureResponse response) {
     // Do something when payment fails
-    // print(response.message);
+    print(response.message);
   }
 
   void _handleExternalWallet(ExternalWalletResponse response) {
     // Do something when an external wallet is selected
     // Do something when payment fails
-    // print(response.walletName);
+    print(response.walletName);
   }
 
   placeOrder() {
@@ -383,17 +395,25 @@ class CheckoutController extends GetxController {
 
     ApiController().buyTicket(orderRequest: ticketOrder!).then((response) {
       if (response.success) {
-        // AppUtil.showToast(
-        //     context: context!,
-        //     message: LocalizationString.ticketBooked,
-        //     isSuccess: true);
+        if (ticketOrder!.gifToUser != null) {
+          ApiController()
+              .giftEventTicket(
+                  ticketId: 1, toUserId: ticketOrder!.gifToUser!.id)
+              .then((result) {
+            if (result.success) {
+              orderPlaced();
+            } else {
+              processingPayment.value = ProcessingPaymentStatus.failed;
 
-        Timer(const Duration(seconds: 1), () {
-          processingPayment.value = ProcessingPaymentStatus.completed;
-          // Timer(const Duration(seconds: 2), () {
-          //   Get.back();
-          // });
-        });
+              AppUtil.showToast(
+                  context: context!,
+                  message: LocalizationString.errorMessage,
+                  isSuccess: true);
+            }
+          });
+        } else {
+          orderPlaced();
+        }
       } else {
         processingPayment.value = ProcessingPaymentStatus.failed;
 
@@ -405,5 +425,9 @@ class CheckoutController extends GetxController {
     });
   }
 
-
+  orderPlaced() {
+    Timer(const Duration(seconds: 1), () {
+      processingPayment.value = ProcessingPaymentStatus.completed;
+    });
+  }
 }
