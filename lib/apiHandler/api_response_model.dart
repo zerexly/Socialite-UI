@@ -56,6 +56,7 @@ class ApiResponseModel {
   List<EventCategoryModel> eventCategories = [];
   List<EventCoupon> eventCoupons = [];
   List<EventBookingModel> eventBookings = [];
+  int? bookingId;
 
   List<TvCategoryModel> tvCategories = [];
   List<TvModel> liveTvs = [];
@@ -64,15 +65,12 @@ class ApiResponseModel {
   List<TVShowEpisodeModel> tvEpisodes = [];
   List<LiveModel> lives = [];
 
-
-
   List<PodcastBannerModel> podcastBanners = [];
   List<PodcastCategoryModel> podcastCategories = [];
   List<PodcastModel> podcasts = [];
   List<PodcastShowModel> podcastShows = [];
   List<PodcastShowSongModel> podcastShowSongs = [];
   List<ReelMusicModel> audios = [];
-
 
   List<VerificationRequest> verificationRequests = [];
 
@@ -104,7 +102,7 @@ class ApiResponseModel {
     model.isInvalidLogin = json['isInvalidLogin'] == null ? false : true;
 
     log(json.toString());
-    // log(url);
+    log(url);
 
     if (model.success) {
       model.message = json['message'];
@@ -118,14 +116,14 @@ class ApiResponseModel {
             var items = data['user']['items'];
 
             model.randomLives =
-            List<UserModel>.from(items.map((x) => UserModel.fromJson(x)));
+                List<UserModel>.from(items.map((x) => UserModel.fromJson(x)));
             model.metaData = APIMetaData.fromJson(data['user']['_meta']);
           }
           if (url == NetworkConstantsUtil.randomOnlineUser) {
             var items = data['user'];
 
             model.randomOnlineUsers =
-            List<UserModel>.from(items.map((x) => UserModel.fromJson(x)));
+                List<UserModel>.from(items.map((x) => UserModel.fromJson(x)));
             // model.metaData = APIMetaData.fromJson(data['user']['_meta']);
           }
           if (data['auth_key'] != null) {
@@ -146,18 +144,21 @@ class ApiResponseModel {
             model.competition = CompetitionModel.fromJson(data['competition']);
           }
         }
-        if (url == NetworkConstantsUtil.requestVerificationHistory) {
-          if (data['verification'] != null) {
-            var items = data['verification']['items'];
+        else if (data['verification'] != null) {
+          var items = data['verification']['items'];
 
-            model.verificationRequests = List<VerificationRequest>.from(
-                items.map((x) => VerificationRequest.fromJson(x)));
-          }
+          model.verificationRequests = List<VerificationRequest>.from(
+              items.map((x) => VerificationRequest.fromJson(x)));
         } else if (data['results'] != null) {
           var items = data['results'];
           if (items != null && items.length > 0) {
             model.hashtags =
-            List<Hashtag>.from(items.map((x) => Hashtag.fromJson(x)));
+                List<Hashtag>.from(items.map((x) => Hashtag.fromJson(x)));
+          }
+        }
+        else if (data['id'] != null) {
+          if(url == NetworkConstantsUtil.buyTicket){
+            model.bookingId = data['id'];
           }
         } else if (data['client_secret'] != null) {
           model.stripePaymentIntentClientSecret = data['client_secret'];
@@ -169,7 +170,7 @@ class ApiResponseModel {
           var items = data['club']['items'];
           if (items != null && items.length > 0) {
             model.clubs =
-            List<ClubModel>.from(items.map((x) => ClubModel.fromJson(x)));
+                List<ClubModel>.from(items.map((x) => ClubModel.fromJson(x)));
             model.metaData = APIMetaData.fromJson(data['club']['_meta']);
           }
         } else if (data['audio'] != null) {
@@ -190,13 +191,13 @@ class ApiResponseModel {
           var items = data['live_tv']['items'];
           if (items != null && items.length > 0) {
             model.liveTvs =
-            List<TvModel>.from(items.map((x) => TvModel.fromJson(x)));
+                List<TvModel>.from(items.map((x) => TvModel.fromJson(x)));
           }
         } else if (data['live_history'] != null) {
           var items = data['live_history']['items'];
           if (items != null && items.length > 0) {
             model.lives =
-            List<LiveModel>.from(items.map((x) => LiveModel.fromJson(x)));
+                List<LiveModel>.from(items.map((x) => LiveModel.fromJson(x)));
           }
         } else if (data['notification'] != null) {
           var items = data['notification']['items'];
@@ -236,11 +237,9 @@ class ApiResponseModel {
             if (url == NetworkConstantsUtil.getTVCategories) {
               model.tvCategories = List<TvCategoryModel>.from(
                   items.map((x) => TvCategoryModel.fromJson(x)));
-            }
-            else if (url == NetworkConstantsUtil.getPodcastCategories) {
+            } else if (url == NetworkConstantsUtil.getPodcastCategories) {
               model.podcastCategories = List<PodcastCategoryModel>.from(
                   items.map((x) => PodcastCategoryModel.fromJson(x)));
-
             } else if (url == NetworkConstantsUtil.giftsCategories) {
               model.giftCategories = List<GiftCategoryModel>.from(
                   items.map((x) => GiftCategoryModel.fromJson(x)));
@@ -253,10 +252,7 @@ class ApiResponseModel {
                   items.map((x) => CategoryModel.fromJson(x)));
             }
           }
-
-        }
-
-        else if (data['tv_show'] != null) {
+        } else if (data['tv_show'] != null) {
           var tvShows = data['tv_show'];
           var items = tvShows['items'];
           if (items != null && items.length > 0) {
@@ -265,18 +261,16 @@ class ApiResponseModel {
                   items.map((x) => TVShowModel.fromJson(x)));
             }
           }
-        }
-        else if (data['tv_banner'] != null) {
+        } else if (data['tv_banner'] != null) {
           var tvBanners = data['tv_banner'];
-          var items=tvBanners['items'];
+          var items = tvBanners['items'];
           if (items != null && items.length > 0) {
             if (url == NetworkConstantsUtil.tvBanners) {
               model.tvBanners = List<TVBannersModel>.from(
                   items.map((x) => TVBannersModel.fromJson(x)));
             }
           }
-        }
-        else if (data['tvShowEpisode'] != null) {
+        } else if (data['tvShowEpisode'] != null) {
           var tvShowEpisode = data['tvShowEpisode'];
           var items = tvShowEpisode['items'];
           if (items != null && items.length > 0) {
@@ -285,57 +279,50 @@ class ApiResponseModel {
                   items.map((x) => TVShowEpisodeModel.fromJson(x)));
             }
           }
-        }
-        else if (data['podcast_banner'] != null) {
+        } else if (data['podcast_banner'] != null) {
           var podcastBanners = data['podcast_banner'];
-          var items= podcastBanners['items'];
+          var items = podcastBanners['items'];
           if (items != null && items.length > 0) {
             if (url == NetworkConstantsUtil.podcastBanners) {
               model.podcastBanners = List<PodcastBannerModel>.from(
                   items.map((x) => PodcastBannerModel.fromJson(x)));
             }
           }
-        }
-        else if (data['podcast'] != null) {
+        } else if (data['podcast'] != null) {
           var podcasts = data['podcast'];
-          var items= podcasts['items'];
+          var items = podcasts['items'];
           if (items != null && items.length > 0) {
             if (url == NetworkConstantsUtil.getHosts) {
               model.podcasts = List<PodcastModel>.from(
                   items.map((x) => PodcastModel.fromJson(x)));
             }
           }
-        }
-        else if (data['podcast_show'] != null) {
+        } else if (data['podcast_show'] != null) {
           var podcasts = data['podcast_show'];
-          var items= podcasts['items'];
+          var items = podcasts['items'];
           if (items != null && items.length > 0) {
             if (url == NetworkConstantsUtil.getPodcastShows) {
               model.podcastShows = List<PodcastShowModel>.from(
                   items.map((x) => PodcastShowModel.fromJson(x)));
             }
           }
-        }
-        else if (data['podcastShowEpisode'] != null) {
+        } else if (data['podcastShowEpisode'] != null) {
           var showEpisodes = data['podcastShowEpisode'];
-          var items= showEpisodes['items'];
+          var items = showEpisodes['items'];
           if (items != null && items.length > 0) {
             if (url == NetworkConstantsUtil.getPodcastShowsEpisode) {
               model.podcastShowSongs = List<PodcastShowSongModel>.from(
                   items.map((x) => PodcastShowSongModel.fromJson(x)));
             }
           }
-        }
-        else if (data['coupon'] != null) {
+        } else if (data['coupon'] != null) {
           var items = data['coupon'];
 
           if (items != null && items.length > 0) {
             model.eventCoupons = List<EventCoupon>.from(
                 items.map((x) => EventCoupon.fromJson(x)));
           }
-        }
-        else if (data['gift'] != null) {
-
+        } else if (data['gift'] != null) {
           var items = data['gift']['items'];
 
           if (url == NetworkConstantsUtil.giftsReceived) {
@@ -346,7 +333,7 @@ class ApiResponseModel {
           } else {
             if (items != null && items.length > 0) {
               model.gifts =
-              List<GiftModel>.from(items.map((x) => GiftModel.fromJson(x)));
+                  List<GiftModel>.from(items.map((x) => GiftModel.fromJson(x)));
             }
           }
         } else if (data['supportRequest'] != null) {
@@ -362,7 +349,7 @@ class ApiResponseModel {
                 .toList();
             if (items.isNotEmpty) {
               model.users =
-              List<UserModel>.from(items.map((x) => UserModel.fromJson(x)));
+                  List<UserModel>.from(items.map((x) => UserModel.fromJson(x)));
             }
           }
         } else if (data['following'] != null) {
@@ -373,7 +360,7 @@ class ApiResponseModel {
                 .toList();
             if (items.isNotEmpty) {
               model.users =
-              List<UserModel>.from(items.map((x) => UserModel.fromJson(x)));
+                  List<UserModel>.from(items.map((x) => UserModel.fromJson(x)));
             }
             if (data['following']['_meta'] != null) {
               model.metaData = APIMetaData.fromJson(data['following']['_meta']);
@@ -384,7 +371,7 @@ class ApiResponseModel {
                 .toList();
             if (items.isNotEmpty) {
               model.liveUsers =
-              List<UserModel>.from(items.map((x) => UserModel.fromJson(x)));
+                  List<UserModel>.from(items.map((x) => UserModel.fromJson(x)));
             }
           }
         } else if (data['topUser'] != null || data['topWinner'] != null) {
@@ -409,7 +396,7 @@ class ApiResponseModel {
                 .toList();
 
             model.blockedUsers =
-            List<UserModel>.from(items.map((x) => UserModel.fromJson(x)));
+                List<UserModel>.from(items.map((x) => UserModel.fromJson(x)));
             // model.metaData = APIMetaData.fromJson(data['blockedUser']['_meta']);
           }
         } else if (data['token'] != null) {
@@ -507,7 +494,7 @@ class ApiResponseModel {
             if (room != null && room.isNotEmpty) {
               room = room
                   .where((element) =>
-              (element['chatRoomUser'] as List<dynamic>).length > 1)
+                      (element['chatRoomUser'] as List<dynamic>).length > 1)
                   .toList();
               model.chatRooms = List<ChatRoomModel>.from(
                   room.map((x) => ChatRoomModel.fromJson(x)));
@@ -531,7 +518,7 @@ class ApiResponseModel {
           if (url == NetworkConstantsUtil.getFAQs) {
             if (items != null && items.length > 0) {
               model.faqs =
-              List<FAQModel>.from(items.map((x) => FAQModel.fromJson(x)));
+                  List<FAQModel>.from(items.map((x) => FAQModel.fromJson(x)));
             }
           }
         }

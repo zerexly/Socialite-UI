@@ -398,7 +398,7 @@ class CheckoutController extends GetxController {
         if (ticketOrder!.gifToUser != null) {
           ApiController()
               .giftEventTicket(
-                  ticketId: 1, toUserId: ticketOrder!.gifToUser!.id)
+                  ticketId: response.bookingId!, toUserId: ticketOrder!.gifToUser!.id)
               .then((result) {
             if (result.success) {
               orderPlaced();

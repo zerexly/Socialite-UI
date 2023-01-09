@@ -1114,7 +1114,7 @@ class ApiController {
       "Authorization": "Bearer ${authKey!}"
     }).then((http.Response response) async {
       final ApiResponseModel parsedResponse = await getResponse(
-          response.body, NetworkConstantsUtil.getNotifications);
+          response.body, NetworkConstantsUtil.getSettings);
       return parsedResponse;
     });
   }

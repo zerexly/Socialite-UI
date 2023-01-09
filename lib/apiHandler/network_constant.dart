@@ -9,15 +9,15 @@ class NetworkConstantsUtil {
   static String forgotPassword = 'users/forgot-password-request';
   static String resetPassword = 'users/set-new-password';
   static String resendOTP = 'users/resend-otp';
+  static String verifyRegistrationOTP = 'users/verify-registration-otp';
+  static String verifyFwdPWDOTP = 'users/forgot-password-verify-otp';
+  static String verifyChangePhoneOTP = 'users/verify-otp';
 
   static String updatedDeviceToken = 'users/update-token';
 
   static String getSuggestedUsers =
       'users/sugested-user?expand=isFollowing,isFollower,userLiveDetail';
 
-  static String verifyRegistrationOTP = 'users/verify-registration-otp';
-  static String verifyFwdPWDOTP = 'users/forgot-password-verify-otp';
-  static String verifyChangePhoneOTP = 'users/verify-otp';
 
   static String register = 'users/register';
   static String checkUserName = 'users/check-username';
