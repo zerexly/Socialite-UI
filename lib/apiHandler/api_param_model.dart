@@ -212,6 +212,14 @@ class ApiParamModel {
     };
   }
 
+  dynamic getPollAnswerParam(int? pollId, int? pollQuestionId, int? questionOptionId) async {
+    return {
+      "poll_id": pollId.toString(),
+      "poll_question_id": pollQuestionId.toString(),
+      "question_option_id": questionOptionId.toString(),
+    };
+  }
+
   dynamic sendVerificationRequestParam({
     required String userMessage,
     required String documentType,

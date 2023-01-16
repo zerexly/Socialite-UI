@@ -1,6 +1,7 @@
 import 'package:foap/helper/common_import.dart';
 import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:flutter_polls/flutter_polls.dart';
 
 class HomeFeedScreen extends StatefulWidget {
   const HomeFeedScreen({Key? key}) : super(key: key);
@@ -19,6 +20,7 @@ class HomeFeedState extends State<HomeFeedScreen> {
   final _controller = ScrollController();
 
   String? selectedValue;
+  int pollFrequencyIndex = 10;
 
   @override
   void initState() {
@@ -26,6 +28,7 @@ class HomeFeedState extends State<HomeFeedScreen> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       loadData(isRecent: true);
+      _homeController.getPolls();
       _homeController.loadQuickLinksAccordingToSettings();
     });
 
@@ -263,6 +266,7 @@ class HomeFeedState extends State<HomeFeedScreen> {
   }
 
   postsView() {
+    ThemeData themeData = Theme.of(context);
     return Obx(() {
       return ListView.separated(
               controller: _controller,
@@ -340,25 +344,96 @@ class HomeFeedState extends State<HomeFeedScreen> {
                 }
               },
               separatorBuilder: (context, index) {
-                // if ((index + 1) % 5 == 0) {
-                //   return FutureBuilder<Widget>(
-                //     future: BannerAdsWidget.getBannerWidget(
-                //         context: context, index: (index + 1) % 5),
-                //     builder: (_, snapshot) {
-                //       if (!snapshot.hasData) {
-                //         return Container();
-                //       } else {
-                //         return SizedBox(
-                //           height: 50,
-                //           width: MediaQuery.of(context).size.width,
-                //           child: snapshot.data,
-                //         );
-                //       }
-                //     },
-                //   );
-                // }
-                if (index == 1) {
-                  return Container();
+                int postIndex = index > 2 ? index - 3 : 0;
+                if (postIndex % pollFrequencyIndex == 0 && postIndex != 0) {
+                  int pollIndex = (postIndex ~/ pollFrequencyIndex) - 1;
+                  print("'pollIndex is'$pollIndex");
+                  if (_homeController.polls.length > pollIndex) {
+                    return Container(
+                      margin: const EdgeInsets.all(12),
+                      child: FlutterPolls(
+                        pollId:
+                        _homeController.polls[pollIndex].pollId.toString(),
+                        hasVoted: _homeController.polls[pollIndex].isVote! > 0,
+                        userVotedOptionId: _homeController.polls[pollIndex].isVote! > 0
+                            ?_homeController.polls[pollIndex].isVote:null,
+                        onVoted:
+                            (PollOption pollOption, int newTotalVotes) async {
+                          await Future.delayed(const Duration(seconds: 1));
+                          _homeController.postPollAnswer(
+                              _homeController.polls[pollIndex].pollId,
+                              _homeController.polls[pollIndex].id,
+                              pollOption.id);
+
+                          /// If HTTP status is success, return true else false
+                          return true;
+                        },
+                        pollEnded: false,
+                        pollOptionsSplashColor: Colors.white,
+                        votedProgressColor: Colors.grey.withOpacity(0.3),
+                        votedBackgroundColor: Colors.grey.withOpacity(0.2),
+                        votesTextStyle: themeData.textTheme.labelLarge,
+                        votedPercentageTextStyle:
+                        themeData.textTheme.labelLarge?.copyWith(
+                          color: Colors.black,
+                        ),
+                        votedCheckmark: const Icon(
+                          Icons.check_circle,
+                          color: Colors.black,
+                        ),
+                        pollTitle: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            _homeController.polls[pollIndex].title ?? "",
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        pollOptions: List<PollOption>.from(
+                          (_homeController
+                              .polls[pollIndex].pollQuestionOption ??
+                              [])
+                              .map(
+                                (option) {
+                              var a = PollOption(
+                                id: option.id,
+                                title: Text(
+                                  option.title ?? '',
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                votes: option.totalOptionVoteCount ?? 0,
+                              );
+                              return a;
+                            },
+                          ),
+                        ),
+
+                        // metaWidget: Row(
+                        //   children: const [
+                        //     SizedBox(width: 6),
+                        //     Text(
+                        //       '•',
+                        //     ),
+                        //     SizedBox(
+                        //       width: 6,
+                        //     ),
+                        //     // Text(
+                        //     //   days < 0 ? "ended" : "ends $days days",
+                        //     // ),
+                        //   ],
+                        // ),
+                      ),
+                    );
+                  } else {
+                    return const SizedBox(
+                      height: 20,
+                    );
+                  }
                 } else {
                   return const SizedBox(
                     height: 20,

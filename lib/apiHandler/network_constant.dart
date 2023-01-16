@@ -149,6 +149,10 @@ class NetworkConstantsUtil {
   static String getPodcastShows = 'podcast-shows?expand=podcastShow';
   static String getPodcastShowsEpisode = 'podcast-shows/podcast-show-episodes?';
 
+  /////Polls
+  static String getPolls ='poll-questions?expand=pollQuestionOption&poll_id=&title=';
+  static String postPoll ='poll-question-answers/add-answer';
+
   ///////////// Clubs
   static String getClubCategories = 'clubs/category';
   static String createClub = 'clubs';
