@@ -350,13 +350,15 @@ class HomeFeedState extends State<HomeFeedScreen> {
                   print("'pollIndex is'$pollIndex");
                   if (_homeController.polls.length > pollIndex) {
                     return Container(
-                      margin: const EdgeInsets.all(12),
+                      color: Theme.of(context).cardColor,
                       child: FlutterPolls(
                         pollId:
-                        _homeController.polls[pollIndex].pollId.toString(),
+                            _homeController.polls[pollIndex].pollId.toString(),
                         hasVoted: _homeController.polls[pollIndex].isVote! > 0,
-                        userVotedOptionId: _homeController.polls[pollIndex].isVote! > 0
-                            ?_homeController.polls[pollIndex].isVote:null,
+                        userVotedOptionId:
+                            _homeController.polls[pollIndex].isVote! > 0
+                                ? _homeController.polls[pollIndex].isVote
+                                : null,
                         onVoted:
                             (PollOption pollOption, int newTotalVotes) async {
                           await Future.delayed(const Duration(seconds: 1));
@@ -374,7 +376,7 @@ class HomeFeedState extends State<HomeFeedScreen> {
                         votedBackgroundColor: Colors.grey.withOpacity(0.2),
                         votesTextStyle: themeData.textTheme.labelLarge,
                         votedPercentageTextStyle:
-                        themeData.textTheme.labelLarge?.copyWith(
+                            themeData.textTheme.labelLarge?.copyWith(
                           color: Colors.black,
                         ),
                         votedCheckmark: const Icon(
@@ -393,10 +395,10 @@ class HomeFeedState extends State<HomeFeedScreen> {
                         ),
                         pollOptions: List<PollOption>.from(
                           (_homeController
-                              .polls[pollIndex].pollQuestionOption ??
-                              [])
+                                      .polls[pollIndex].pollQuestionOption ??
+                                  [])
                               .map(
-                                (option) {
+                            (option) {
                               var a = PollOption(
                                 id: option.id,
                                 title: Text(
@@ -427,8 +429,8 @@ class HomeFeedState extends State<HomeFeedScreen> {
                         //     // ),
                         //   ],
                         // ),
-                      ),
-                    );
+                      ).p16,
+                    ).round(15).p16;
                   } else {
                     return const SizedBox(
                       height: 20,
