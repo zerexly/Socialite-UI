@@ -163,6 +163,7 @@ dependencies:
   aescryptojs: ^1.0.0
   ffmpeg_kit_flutter: ^5.1.0
   simple_downloader: ^0.0.3+1
+  flutter_polls: ^0.1.1
 
   open_file:
     git:

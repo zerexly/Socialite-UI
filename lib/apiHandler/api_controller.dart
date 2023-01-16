@@ -164,6 +164,31 @@ class ApiController {
     });
   }
 
+  Future<ApiResponseModel> getPolls() async{
+    String? authKey = await SharedPrefs().getAuthorizationKey();
+    var url = NetworkConstantsUtil.baseUrl + NetworkConstantsUtil.getPolls;
+
+    return await http.get(Uri.parse(url), headers: {
+      "Authorization": "Bearer ${authKey!}"
+    }).then((http.Response response) async {
+      final ApiResponseModel parsedResponse = await getResponse(response.body, NetworkConstantsUtil.getPolls);
+      return parsedResponse;
+    });
+  }
+
+  Future<ApiResponseModel> postPollAnswer(int? pollId, int? pollQuestionId, int? questionOptionId) async{
+    String? authKey = await SharedPrefs().getAuthorizationKey();
+    var url = NetworkConstantsUtil.baseUrl + NetworkConstantsUtil.postPoll;
+    dynamic param = await ApiParamModel().getPollAnswerParam(pollId, pollQuestionId, questionOptionId);
+
+    return await http.post(Uri.parse(url), headers: {
+      "Authorization": "Bearer ${authKey!}"
+    }, body: param).then((http.Response response) async {
+      final ApiResponseModel parsedResponse = await getResponse(response.body, NetworkConstantsUtil.postPoll);
+      return parsedResponse;
+    });
+  }
+
   Future<ApiResponseModel> getPosts(
       {int? userId,
       int? isPopular,
