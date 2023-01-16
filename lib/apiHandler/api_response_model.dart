@@ -2,6 +2,8 @@ import 'dart:developer';
 import 'package:foap/helper/common_import.dart';
 import 'package:foap/model/podcast_banner_model.dart';
 import 'package:get/get.dart';
+import '../model/club_invitation.dart';
+import '../model/club_join_request.dart';
 import '../model/faq_model.dart';
 import '../model/podcast_model.dart';
 import '../model/tv_banner_model.dart';
@@ -48,8 +50,12 @@ class ApiResponseModel {
   List<HighlightsModel> highlights = [];
 
   List<ClubModel> clubs = [];
+  List<ClubInvitation> clubInvitations = [];
+  List<ClubJoinRequest> clubJoinRequests = [];
+
   List<CategoryModel> categories = [];
   List<ClubMemberModel> clubMembers = [];
+  int? clubId;
 
   List<EventModel> events = [];
   List<EventMemberModel> eventMembers = [];
@@ -102,7 +108,7 @@ class ApiResponseModel {
     model.isInvalidLogin = json['isInvalidLogin'] == null ? false : true;
 
     log(json.toString());
-    log(url);
+    // log(url);
 
     if (model.success) {
       model.message = json['message'];
@@ -143,8 +149,7 @@ class ApiResponseModel {
           } else if (data['competition'] != null) {
             model.competition = CompetitionModel.fromJson(data['competition']);
           }
-        }
-        else if (data['verification'] != null) {
+        } else if (data['verification'] != null) {
           var items = data['verification']['items'];
 
           model.verificationRequests = List<VerificationRequest>.from(
@@ -155,9 +160,8 @@ class ApiResponseModel {
             model.hashtags =
                 List<Hashtag>.from(items.map((x) => Hashtag.fromJson(x)));
           }
-        }
-        else if (data['id'] != null) {
-          if(url == NetworkConstantsUtil.buyTicket){
+        } else if (data['id'] != null) {
+          if (url == NetworkConstantsUtil.buyTicket) {
             model.bookingId = data['id'];
           }
         } else if (data['client_secret'] != null) {
@@ -173,6 +177,23 @@ class ApiResponseModel {
                 List<ClubModel>.from(items.map((x) => ClubModel.fromJson(x)));
             model.metaData = APIMetaData.fromJson(data['club']['_meta']);
           }
+        } else if (data['invitation'] != null) {
+          var items = data['invitation']['items'];
+          if (items != null && items.length > 0) {
+            model.clubInvitations = List<ClubInvitation>.from(
+                items.map((x) => ClubInvitation.fromJson(x)));
+            model.metaData = APIMetaData.fromJson(data['invitation']['_meta']);
+          }
+        } else if (data['join_request'] != null) {
+          var items = data['join_request']['items'];
+          if (items != null && items.length > 0) {
+            model.clubJoinRequests = List<ClubJoinRequest>.from(
+                items.map((x) => ClubJoinRequest.fromJson(x)));
+            model.metaData =
+                APIMetaData.fromJson(data['join_request']['_meta']);
+          }
+        } else if (data['club_id'] != null) {
+          model.clubId = data['club_id'];
         } else if (data['audio'] != null) {
           var items = data['audio']['items'];
           if (items != null && items.length > 0) {

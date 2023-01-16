@@ -6,9 +6,9 @@ import 'package:flutter_stripe/flutter_stripe.dart' as stripe;
 // PAYMENT_MODE_PAYPAL =2;
 // PAYMENT_MODE_WALLET =3;
 // PAYMENT_MODE_STRIPE =4;
-// PAYMENT_MODE_RAZORPAY =5;
-// PAYMENT_MODE_APPLE_PAY =6;
-// PAYMENT_MODE_GOOGLE_PAY =7
+// PAYMENT_MODE_RAZORPAY = 5;
+// PAYMENT_MODE_APPLE_PAY = 6;
+// PAYMENT_MODE_GOOGLE_PAY = 7
 
 enum ProcessingPaymentStatus { inProcess, completed, failed }
 

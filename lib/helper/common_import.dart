@@ -305,7 +305,6 @@ export 'package:foap/screens/club/search_club.dart';
 export 'package:foap/screens/club/category_club_listing.dart';
 export 'package:foap/screens/club/invite_users_to_club.dart';
 export 'package:foap/screens/club/club_join_requests.dart';
-export 'package:foap/screens/club/club_join_invitations.dart';
 
 export 'package:foap/screens/event/category_event_listing.dart';
 export 'package:foap/screens/event/event_detail.dart';

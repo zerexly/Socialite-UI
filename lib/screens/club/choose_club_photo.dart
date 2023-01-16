@@ -3,10 +3,10 @@ import 'package:get/get.dart';
 
 class ChooseClubCoverPhoto extends StatefulWidget {
   final ClubModel club;
-  final Function(ClubModel?) submittedCallback;
+  // final Function(ClubModel?) submittedCallback;
 
   const ChooseClubCoverPhoto(
-      {Key? key, required this.club, required this.submittedCallback})
+      {Key? key, required this.club})
       : super(key: key);
 
   @override
@@ -15,6 +15,7 @@ class ChooseClubCoverPhoto extends StatefulWidget {
 
 class ChooseClubCoverPhotoState extends State<ChooseClubCoverPhoto> {
   final CreateClubController _createClubsController = Get.find();
+  final ClubDetailController _clubDetailController = Get.find();
 
   final picker = ImagePicker();
 
@@ -144,13 +145,15 @@ class ChooseClubCoverPhotoState extends State<ChooseClubCoverPhoto> {
       return;
     }
     _createClubsController.createClub(widget.club, context, () {
-      widget.submittedCallback(null);
+      // widget.submittedCallback(null);
     });
   }
 
   updateBtnClicked() {
     _createClubsController.updateClubImage(widget.club, context, (club) {
-      widget.submittedCallback(widget.club);
+      // widget.submittedCallback(widget.club);
+      _clubDetailController.setEvent(widget.club);
+
     });
   }
 }

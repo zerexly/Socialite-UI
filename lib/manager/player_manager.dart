@@ -25,8 +25,6 @@ class PlayerManager extends GetxController {
 
   playAudio(Audio audio) async {
     currentlyPlayingAudio.value = audio;
-    // await player.setUrl(message.mediaContent.audio!);
-    print('currentlyPlayingAudio.value = ${currentlyPlayingAudio.value!.id}');
     await player.setUrl(audio.url);
 
     player.play();

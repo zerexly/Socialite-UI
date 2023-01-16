@@ -354,6 +354,7 @@ class SelectFollowingUserForMessageSendingState
                                         : ButtonState.idle,
                             profile: usersList[index],
                             sendCallback: () {
+                              Get.back();
                               widget.sendToUserCallback(usersList[index]);
                             },
                           );

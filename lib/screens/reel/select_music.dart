@@ -159,7 +159,6 @@ class _SelectMusicState extends State<SelectMusic> {
                             _createReelController.stopPlayingAudio();
                           },
                           useAudioBack: () {
-                            print('useAudioBack');
                             if (_createReelController.recordingLength.value >
                                 audio.duration) {
                               AppUtil.showToast(

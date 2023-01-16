@@ -46,7 +46,7 @@ class WaveSliderState extends State<WaveSlider> {
   void initState() {
     super.initState();
 
-    var shortSize = MediaQueryData.fromWindow(WidgetsBinding.instance!.window).size.shortestSide;
+    var shortSize = MediaQueryData.fromWindow(WidgetsBinding.instance.window).size.shortestSide;
 
     widthSlider = (widget.widthWaveSlider < 50) ? (shortSize - 2 - 40) : widget.widthWaveSlider;
     heightSlider = (widget.heightWaveSlider < 50) ? 100 : widget.heightWaveSlider;

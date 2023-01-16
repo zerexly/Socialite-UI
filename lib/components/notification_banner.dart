@@ -38,7 +38,7 @@ showNotification(ChatMessageModel message, ChatRoomModel room) {
                 fontWeight: FontWeight.w900,
                 color: Theme.of(context).primaryColor),
           ),
-          subtitle: Text(message.shortInfo,
+          subtitle: Text(message.shortInfoForNotification,
               style: Theme.of(context).textTheme.titleSmall),
         ).setPadding(top: 60, left: 16, right: 16).ripple(() {
           OverlaySupportEntry.of(context)!.dismiss();

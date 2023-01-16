@@ -157,6 +157,7 @@ class ApiParamModel {
   dynamic createClubParam(
       {required int categoryId,
       required int privacyMode,
+      required int isOnRequestType,
       required int enableChatRoom,
       required String name,
       required String image,
@@ -164,6 +165,7 @@ class ApiParamModel {
     return {
       "category_id": categoryId.toString(),
       'privacy_type': privacyMode.toString(),
+      'is_request_based': isOnRequestType.toString(),
       'is_chat_room': enableChatRoom.toString(),
       'name': name,
       'image': image,
@@ -185,6 +187,29 @@ class ApiParamModel {
       'description': description
     };
   }
+
+  dynamic sendClubInvite({
+    required int clubId,
+    required String userIds,
+    required String message,
+  }) {
+    return {
+      "club_id": clubId.toString(),
+      'user_ids': userIds,
+      'message': message,
+    };
+  }
+
+  dynamic sendClubJoinRequest({
+    required int clubId,
+    required String message,
+  }) {
+    return {
+      "club_id": clubId.toString(),
+      'message': message,
+    };
+  }
+
 
   dynamic removeFromClub({
     required int userId,

@@ -118,7 +118,7 @@ class SocketManager {
         SocketConstants.sendMessageInLiveTv, onReceiveMessageInLiveTv);
   }
 
-//To Emit Event Into Socket
+  //  To Emit Event Into Socket
   bool emit(String event, Map<String, dynamic> data) {
     log('emiting ${_socketInstance!.connected}');
     if (_socketInstance!.connected == true) {
@@ -148,7 +148,7 @@ class SocketManager {
 
 //Get This Event After Connection Lost To Socket Due To Network Or Any Other Reason
   dynamic onDisconnect(_) {
-    // print("===> Disconnected socket....................");
+    print("===> Socket Disconnected....................");
   }
 
 //Get This Event After Connection Error To Socket With Error
@@ -238,6 +238,7 @@ class SocketManager {
   }
 
   void updateMessageStatus(dynamic response) {
+    print('updateMessageStatus $response');
     _chatDetailController.messageUpdateReceived(response);
   }
 

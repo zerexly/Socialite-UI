@@ -104,13 +104,13 @@ class HomeController extends GetxController {
     //       subHeading: LocalizationString.joinCompetitionsToEarn,
     //       linkType: QuickLinkType.competition));
     // }
-    if (_settingsController.setting.value!.enableReel) {
+    // if (_settingsController.setting.value!.enableReel) {
       quickLinks.add(QuickLink(
           icon: 'assets/reel.png',
           heading: LocalizationString.reel,
           subHeading: LocalizationString.reel,
           linkType: QuickLinkType.reel));
-    }
+    // }
     if (_settingsController.setting.value!.enableWatchTv) {
       quickLinks.add(QuickLink(
           icon: 'assets/television.png',

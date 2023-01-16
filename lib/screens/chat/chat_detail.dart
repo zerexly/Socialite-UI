@@ -374,7 +374,7 @@ class _ChatDetailState extends State<ChatDetail> {
                 Text(
                   message.isMineMessage
                       ? LocalizationString.you
-                      : message.userName,
+                      : message.sender!.userName,
                   style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                       color: Theme.of(context).primaryColor,
                       fontWeight: FontWeight.w600),
@@ -409,9 +409,9 @@ class _ChatDetailState extends State<ChatDetail> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  _chatDetailController.selectedMessage.value!.isMineMessage
+                  message.isMineMessage
                       ? LocalizationString.you
-                      : _chatDetailController.selectedMessage.value!.userName,
+                      : message.sender!.userName,
                   style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                       color: Theme.of(context).primaryColor,
                       fontWeight: FontWeight.w600),

@@ -101,7 +101,7 @@ class EnterGroupInfoController extends GetxController {
           Get.to(() => ChatDetail(chatRoom: response.room!));
 
           // save group in local storage
-          getIt<DBManager>().saveRoom(response.room!);
+          getIt<DBManager>().saveRooms([response.room!]);
         } else {
           Get.back();
         }

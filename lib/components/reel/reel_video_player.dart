@@ -94,7 +94,7 @@ class _ReelVideoPlayerState extends State<ReelVideoPlayer> {
               children: [
                 Row(
                   children: [
-                    UserAvatarView(size: 25, user: widget.reel.user),
+                    UserAvatarView(size: 25, user: widget.reel.user,hideOnlineIndicator: true,),
                     const SizedBox(
                       width: 10,
                     ),

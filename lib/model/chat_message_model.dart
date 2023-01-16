@@ -21,11 +21,10 @@ class FileModel {
   String name;
   int size;
 
-  FileModel(
-      {required this.path,
-      required this.type,
-      required this.name,
-      required this.size});
+  FileModel({required this.path,
+    required this.type,
+    required this.name,
+    required this.size});
 }
 
 class ChatMedia {
@@ -53,10 +52,10 @@ class ChatMedia {
 
     model.file = (data["file"] as Map<String, dynamic>?) != null
         ? FileModel(
-            path: data["file"]["path"],
-            type: data["file"]["type"],
-            name: data["file"]["name"],
-            size: data["file"]["size"] ?? 0)
+        path: data["file"]["path"],
+        type: data["file"]["type"],
+        name: data["file"]["name"],
+        size: data["file"]["size"] ?? 0)
         : null;
     model.contact = (data["contactCard"] as String?) != null
         ? Contact.fromVCard(data["contactCard"] as String)
@@ -65,7 +64,8 @@ class ChatMedia {
     return model;
   }
 
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() =>
+      {
         'image': image,
         'video': video,
         'audio': audio,
@@ -89,11 +89,11 @@ class ChatPost {
     model.title = "Title";
     model.postOwnerName = "Adam";
     model.postOwnerImage =
-        "https://images.unsplash.com/photo-1656528049647-c82eb8174d04?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw3fHx8ZW58MHx8fHw%3D&auto=format&fit=crop&w=800&q=60";
+    "https://images.unsplash.com/photo-1656528049647-c82eb8174d04?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw3fHx8ZW58MHx8fHw%3D&auto=format&fit=crop&w=800&q=60";
     model.image =
-        "https://images.unsplash.com/photo-1656533819629-2e386fafb6d5?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwzfHx8ZW58MHx8fHw%3D&auto=format&fit=crop&w=800&q=60";
+    "https://images.unsplash.com/photo-1656533819629-2e386fafb6d5?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwzfHx8ZW58MHx8fHw%3D&auto=format&fit=crop&w=800&q=60";
     model.video =
-        "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
+    "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
     return model;
   }
 }
@@ -191,7 +191,7 @@ class ChatMessageModel {
   int messageType = 0;
   int status = 0;
 
-  int isDeleted = 0;
+  bool isDeleted = false;
   int isStar = 0;
 
   Media? media;
@@ -215,7 +215,7 @@ class ChatMessageModel {
     ChatMessageModel model = ChatMessageModel();
     model.id = jsonMap['id'] ?? 0;
     model.sender =
-        jsonMap['user'] == null ? null : UserModel.fromJson(jsonMap['user']);
+    jsonMap['user'] == null ? null : UserModel.fromJson(jsonMap['user']);
     model.localMessageId =
         jsonMap['local_message_id'] ?? jsonMap['localMessageId'];
     model.roomId =
@@ -231,7 +231,7 @@ class ChatMessageModel {
     model.viewedAt = jsonMap['viewed_at'];
     model.deleteAfter = jsonMap['deleteAfter'] ??
         getIt<UserProfileManager>().user!.chatDeleteTime;
-    model.isDeleted = jsonMap['isDeleted'] ?? 0;
+    model.isDeleted = jsonMap['isDeleted'] == 1;
     model.isStar = jsonMap['isStar'] ?? 0;
     model.opponentId = jsonMap['opponent_id'] ?? 0;
     model.userName = jsonMap['username'] ?? '';
@@ -241,12 +241,13 @@ class ChatMessageModel {
     model.chatMessageUser = jsonMap['chatMessageUser'] == null
         ? []
         : List<ChatMessageUser>.from(
-            jsonMap['chatMessageUser'].map((x) => ChatMessageUser.fromJson(x)));
+        jsonMap['chatMessageUser'].map((x) => ChatMessageUser.fromJson(x)));
 
     return model;
   }
 
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() =>
+      {
         'id': id,
         'local_message_id': localMessageId,
         'room_id': roomId,
@@ -261,12 +262,25 @@ class ChatMessageModel {
       };
 
   int get originalMessageId {
-    return ChatContentJson.fromJson(decrypt).originalMessageId;
+    return ChatContentJson
+        .fromJson(decrypt)
+        .originalMessageId;
   }
 
   ChatMedia get mediaContent {
     return ChatMedia.fromJson(json.decode(messageContent.decrypted()));
   }
+
+  // UserModel? get messageSender {
+  //   List<ChatMessageUser> users = chatMessageUser.where((
+  //       element) => element.userId == senderId).toList();
+  //   if (users.isNotEmpty){
+  //     ChatMessageUser user = users.first;
+  //
+  //   }
+  //
+  //   return null;
+  // }
 
   TextContent get textContent {
     if (chatVersion == 0) {
@@ -283,7 +297,7 @@ class ChatMessageModel {
 
   ChatPost get postContent {
     ChatMessageModel message =
-        ChatMessageModel.fromJson(json.decode(messageContent.decrypted()));
+    ChatMessageModel.fromJson(json.decode(messageContent.decrypted()));
     return ChatPost.fromJson(json.decode(message.decrypt));
   }
 
@@ -436,7 +450,7 @@ class ChatMessageModel {
     } else if (messageType == 8) {
       return false;
     } else if (messageType == 9) {
-      return isMediaMessage;
+      // return isMediaMessage;
     } else if (messageType == 10) {
       return originalMessage.isMediaMessage;
     } else if (messageType == 11) {
@@ -476,7 +490,10 @@ class ChatMessageModel {
   String get messageTime {
     DateTime createDate = DateTime.fromMillisecondsSinceEpoch(createdAt * 1000);
 
-    final difference = DateTime.now().difference(createDate).inDays;
+    final difference = DateTime
+        .now()
+        .difference(createDate)
+        .inDays;
 
     if (createDate.isToday()) {
       return DateFormat('hh:mm a').format(createDate);
@@ -488,9 +505,9 @@ class ChatMessageModel {
     return DateFormat('dd-MMM-yyyy').format(createDate);
   }
 
-  String get shortInfo {
+  String get shortInfoForNotification {
     if (messageType == 1) {
-      return decrypt;
+      return textMessage;
     } else if (messageType == 2) {
       return LocalizationString.sentAPhoto;
     } else if (messageType == 3) {
@@ -506,9 +523,9 @@ class ChatMessageModel {
     } else if (messageType == 8) {
       return LocalizationString.sentALocation;
     } else if (messageType == 9) {
-      return shortInfo;
+      return shortInfoForNotification;
     } else if (messageType == 10) {
-      return originalMessage.shortInfo;
+      return originalMessage.shortInfoForNotification;
     } else if (messageType == 11) {
       return LocalizationString.sentAPost;
     } else if (messageType == 12) {

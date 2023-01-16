@@ -20,13 +20,13 @@ class ProfileController extends GetxController {
   int postsCurrentPage = 1;
   bool canLoadMorePosts = true;
 
-  bool isLoadingMoments = false;
-  int momentsCurrentPage = 1;
+  bool isLoadingReels = false;
+  int reelsCurrentPage = 1;
   bool canLoadMoreMoments = true;
 
   RxList<PostModel> posts = <PostModel>[].obs;
   RxList<PostModel> mentions = <PostModel>[].obs;
-  RxList<PostModel> moments = <PostModel>[].obs;
+  RxList<PostModel> reels = <PostModel>[].obs;
 
   int mentionsPostPage = 1;
   bool canLoadMoreMentionsPosts = true;
@@ -41,8 +41,8 @@ class ProfileController extends GetxController {
     postsCurrentPage = 1;
     canLoadMorePosts = true;
 
-    isLoadingMoments = false;
-    momentsCurrentPage = 1;
+    isLoadingReels = false;
+    reelsCurrentPage = 1;
     canLoadMoreMoments = true;
 
     mentionsPostPage = 1;
@@ -53,7 +53,7 @@ class ProfileController extends GetxController {
 
     posts.clear();
     mentions.clear();
-    moments.clear();
+    reels.clear();
   }
 
   getMyProfile() async {
@@ -533,23 +533,23 @@ class ProfileController extends GetxController {
     }
   }
 
-  void getMoments(int userId) async {
+  void getReels(int userId) async {
     if (canLoadMoreMoments == true) {
       AppUtil.checkInternet().then((value) async {
         if (value) {
-          isLoadingMoments = true;
+          isLoadingReels = true;
           ApiController()
-              .getPosts(userId: userId, isReel: 1, page: momentsCurrentPage)
+              .getPosts(userId: userId, isReel: 1, page: reelsCurrentPage)
               .then((response) async {
-            moments.addAll(response.success
+            reels.addAll(response.success
                 ? response.posts
                 .where((element) => element.gallery.isNotEmpty)
                 .toList()
                 : []);
-            moments.sort((a, b) => b.createDate!.compareTo(a.createDate!));
-            isLoadingMoments = false;
+            reels.sort((a, b) => b.createDate!.compareTo(a.createDate!));
+            isLoadingReels = false;
 
-            momentsCurrentPage += 1;
+            reelsCurrentPage += 1;
 
             if (response.posts.length == response.metaData?.perPage) {
               canLoadMoreMoments = true;

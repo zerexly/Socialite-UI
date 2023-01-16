@@ -30,6 +30,7 @@ class ClubDetailState extends State<ClubDetail> {
   void initState() {
     _clubDetailController.setEvent(widget.club);
     refreshPosts();
+    _clubDetailController.getClubJoinRequests(clubId: widget.club.id!);
     super.initState();
   }
 
@@ -51,6 +52,27 @@ class ClubDetailState extends State<ClubDetail> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
+      floatingActionButton:
+          _clubDetailController.club.value!.createdByUser!.isMe
+              ? Container(
+                  height: 50,
+                  width: 50,
+                  color: Theme.of(context).primaryColor,
+                  child: const ThemeIconWidget(
+                    ThemeIcon.edit,
+                    size: 25,
+                  ),
+                ).circular.ripple(() {
+                  Future.delayed(
+                    Duration.zero,
+                    () => showGeneralDialog(
+                        context: context,
+                        pageBuilder: (context, animation, secondaryAnimation) =>
+                            SelectMedia(
+                                clubId: _clubDetailController.club.value!.id!)),
+                  );
+                })
+              : null,
       body: Stack(
         children: [
           CustomScrollView(
@@ -84,18 +106,28 @@ class ClubDetailState extends State<ClubDetail> {
                       ),
                       Row(
                         children: [
-                          // const ThemeIconWidget(ThemeIcon.userGroup),
-                          // Text(
-                          //   LocalizationString.publicGroup,
-                          //   style: Theme.of(context).textTheme.bodyLarge,
-                          // ).hP8,
+                          const ThemeIconWidget(ThemeIcon.userGroup),
+                          const SizedBox(
+                            width: 5,
+                          ),
+                          Text(
+                            _clubDetailController.club.value!.groupType,
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium!
+                                .copyWith(fontWeight: FontWeight.w600),
+                          ),
+                          const ThemeIconWidget(
+                            ThemeIcon.circle,
+                            size: 8,
+                          ).hP8,
                           Text(
                             '${_clubDetailController.club.value!.totalMembers!.formatNumber} ${LocalizationString.clubMembers}',
                             style: Theme.of(context)
                                 .textTheme
-                                .bodyLarge!
-                                .copyWith(fontWeight: FontWeight.w600),
-                          ).hP8.ripple(() {
+                                .bodyMedium!
+                                .copyWith(fontWeight: FontWeight.w300),
+                          ).ripple(() {
                             Get.to(() => ClubMembers(
                                 club: _clubDetailController.club.value!));
                           })
@@ -104,13 +136,7 @@ class ClubDetailState extends State<ClubDetail> {
                       const SizedBox(
                         height: 12,
                       ),
-                      buttonsWidget().p16,
-                      // Text(_clubDetailController.club.value!.desc!,
-                      //         style: Theme.of(context)
-                      //             .textTheme
-                      //             .titleMedium!
-                      //             .copyWith(fontWeight: FontWeight.w200))
-                      //     .hP16,
+                      buttonsWidget().hP16,
                     ],
                   );
                 }),
@@ -149,100 +175,98 @@ class ClubDetailState extends State<ClubDetail> {
 
   Widget buttonsWidget() {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        _clubDetailController.club.value!.createdByUser!.isMe
-            ? Expanded(
-                // height: 50,
-                // width: _clubDetailController
-                //     .club.value!.enableChat ==
-                //     1
-                //     ? (MediaQuery.of(context).size.width -
-                //     32) *
-                //     0.7
-                //     : (MediaQuery.of(context).size.width -
-                //     32),
-                child: FilledButtonType1(
-                    text: LocalizationString.post,
-                    onPress: () {
-                      Get.to(() => SelectMedia(
-                            clubId: _clubDetailController.club.value!.id!,
-                          ));
-                    }))
-            : Expanded(
-                // height: 50,
-                // width: _clubDetailController
-                //     .club.value!.enableChat ==
-                //     1 &&
-                //     _clubDetailController
-                //         .club.value!.isJoined ==
-                //         true
-                //     ? (MediaQuery.of(context).size.width -
-                //     32) *
-                //     0.7
-                //     : (MediaQuery.of(context).size.width -
-                //     32),
-                child: FilledButtonType1(
-                    text: _clubDetailController.club.value!.isJoined == true
-                        ? LocalizationString.leaveClub
-                        : LocalizationString.join,
-                    onPress: () {
-                      if (_clubDetailController.club.value!.isJoined == true) {
-                        _clubDetailController.leaveClub();
-                      } else {
-                        _clubDetailController.joinClub();
-                      }
-                    })),
+        if (_clubDetailController.club.value!.createdByUser!.isMe == false)
+          Container(
+                  // width: 40,
+                  height: 30,
+                  color: Theme.of(context).primaryColor.withOpacity(0.2),
+                  child: Row(
+                    children: [
+                      Icon(
+                        _clubDetailController.club.value!.isJoined == true
+                            ? Icons.exit_to_app
+                            : Icons.add,
+                        size: 15,
+                      ),
+                      const SizedBox(
+                        width: 5,
+                      ),
+                      Text(_clubDetailController.club.value!.isJoined == true
+                          ? LocalizationString.joined
+                          : _clubDetailController.club.value!.isRequestBased ==
+                                  true
+                              ? _clubDetailController.club.value!.isRequested ==
+                                      true
+                                  ? LocalizationString.requested
+                                  : LocalizationString.requestJoin
+                              : LocalizationString.join)
+                    ],
+                  ).hP8)
+              .round(5)
+              .ripple(() {
+            if (_clubDetailController.club.value!.isRequested == false) {
+              if (_clubDetailController.club.value!.isJoined == true) {
+                _clubDetailController.leaveClub();
+              } else {
+                _clubDetailController.joinClub();
+              }
+            }
+          }).rP8,
         if (_clubDetailController.club.value!.enableChat == 1 &&
             _clubDetailController.club.value!.isJoined == true)
-          Row(
-            children: [
-              const SizedBox(
-                width: 10,
-              ),
-              SizedBox(
-                  height: 50,
-                  width: (MediaQuery.of(context).size.width - 32) * 0.25,
-                  child: FilledButtonType1(
-                      enabledBackgroundColor:
-                          Theme.of(context).cardColor.lighten(),
-                      text: LocalizationString.chat,
-                      onPress: () {
-                        EasyLoading.show(status: LocalizationString.loading);
-                        _chatDetailController.getRoomDetail(
-                            _clubDetailController.club.value!.chatRoomId!,
-                            (room) {
-                          EasyLoading.dismiss();
-                          Get.to(() => ChatDetail(chatRoom: room));
-                        });
-                      })),
-            ],
-          ),
-        // if (_clubDetailController.club.value!.createdByUser!.isMe &&
-        //     _clubDetailController.club.value!.accessLevel ==
-        //         AccessLevel.private)
-        //   Row(
-        //     children: [
-        //       const SizedBox(
-        //         width: 10,
-        //       ),
-        //       Container(
-        //               color: Theme.of(context).primaryColor,
-        //               height: 50,
-        //               width: 50,
-        //               child: Image.asset(
-        //                 'assets/request.png',
-        //                 fit: BoxFit.contain,
-        //                 color: Theme.of(context).iconTheme.color,
-        //               ).p(12))
-        //           .circular
-        //           .ripple(() {
-        //         Get.to(() => ClubJoinInvitations(
-        //               club: widget.club,
-        //             ));
-        //       }),
-        //     ],
-        //   )
+          Container(
+                  // width: 40,
+                  height: 30,
+                  color: Theme.of(context).primaryColor.withOpacity(0.2),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.chat,
+                        size: 15,
+                      ),
+                      const SizedBox(
+                        width: 5,
+                      ),
+                      Text(LocalizationString.chat)
+                    ],
+                  ).hP8)
+              .round(5)
+              .ripple(() {
+            EasyLoading.show(status: LocalizationString.loading);
+            _chatDetailController.getRoomDetail(
+                _clubDetailController.club.value!.chatRoomId!, (room) {
+              EasyLoading.dismiss();
+              Get.to(() => ChatDetail(chatRoom: room));
+            });
+          }).rP8,
+        if (_clubDetailController.club.value!.createdByUser!.isMe)
+          Container(
+                  // width: 40,
+                  height: 30,
+                  color: Theme.of(context).primaryColor.withOpacity(0.2),
+                  child: Row(
+                    children: [
+                      Image.asset(
+                        'assets/request.png',
+                        fit: BoxFit.contain,
+                        color: Theme.of(context).iconTheme.color,
+                        height: 15,
+                        width: 15,
+                      ),
+                      const SizedBox(
+                        width: 5,
+                      ),
+                      Text(LocalizationString.invite)
+                    ],
+                  ).hP8)
+              .round(5)
+              .ripple(() {
+            Get.to(() => InviteUsersToClub(
+                  clubId: widget.club.id!,
+                ));
+          }),
       ],
     );
   }
@@ -277,28 +301,57 @@ class ClubDetailState extends State<ClubDetail> {
             ).ripple(() {
               Get.back();
             }),
-            Obx(() => Text(
-                  _clubDetailController.club.value!.name!,
-                  style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                      fontWeight: FontWeight.w600, color: Colors.white),
-                )),
+            // Obx(() => Text(
+            //       _clubDetailController.club.value!.name!,
+            //       style: Theme.of(context).textTheme.titleMedium!.copyWith(
+            //           fontWeight: FontWeight.w600, color: Colors.white),
+            //     )),
             widget.club.amIAdmin
-                ? const ThemeIconWidget(
-                    ThemeIcon.setting,
-                    size: 20,
-                    color: Colors.white,
-                  ).ripple(() {
-                    Get.to(() => ClubSettings(
-                          club: widget.club,
-                          updateClubCallback: (club) {
-                            _clubDetailController.setEvent(club);
-                          },
-                          deleteClubCallback: (club) {
-                            Get.back();
-                            widget.deleteCallback(club);
-                          },
-                        ));
-                  })
+                ? Row(
+                    children: [
+                      Obx(() => _clubDetailController.joinRequests.isEmpty
+                          ? Container()
+                          : Stack(
+                              children: [
+                                Container(
+                                  color: Theme.of(context)
+                                      .primaryColor
+                                      .withOpacity(0.2),
+                                  child: const ThemeIconWidget(
+                                    ThemeIcon.request,
+                                    size: 20,
+                                    color: Colors.white,
+                                  ).p8.ripple(() {
+                                    Get.to(() => ClubJoinRequests(
+                                          club: widget.club,
+                                        ));
+                                  }),
+                                ).circular,
+                                Positioned(
+                                    right: 0,
+                                    child: Container(
+                                      height: 10,
+                                      width: 10,
+                                      color: Theme.of(context).errorColor,
+                                    ).circular)
+                              ],
+                            )),
+                      const SizedBox(width: 10),
+                      const ThemeIconWidget(
+                        ThemeIcon.setting,
+                        size: 20,
+                        color: Colors.white,
+                      ).ripple(() {
+                        Get.to(() => ClubSettings(
+                              club: widget.club,
+                              deleteClubCallback: (club) {
+                                Get.back();
+                                widget.deleteCallback(club);
+                              },
+                            ));
+                      }),
+                    ],
+                  )
                 : const SizedBox(
                     width: 20,
                   )

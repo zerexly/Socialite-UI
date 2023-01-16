@@ -36,7 +36,7 @@ class FilledButtonType1 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      // width: double.infinity,
+      width: width,
       height: height ?? 50,
       color: isEnabled == false
           ? disabledBackgroundColor ??
@@ -60,7 +60,7 @@ class FilledButtonType1 extends StatelessWidget {
                           .textTheme
                           .bodyLarge!
                           .copyWith(fontWeight: FontWeight.w600),
-            ),
+            ).hP8,
           ),
           trailing != null ? trailing!.hP4 : Container()
         ],
@@ -96,7 +96,7 @@ class BorderButtonType1 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: width ?? double.infinity,
+      width: width ,
       height: height ?? 50,
       color: backgroundColor,
       child: Center(

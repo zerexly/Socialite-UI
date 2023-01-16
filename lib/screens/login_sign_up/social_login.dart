@@ -19,6 +19,7 @@ class SocialLogin extends StatefulWidget {
 
 class _SocialLoginState extends State<SocialLogin> {
   // final FirebaseAuth _auth = FirebaseAuth.instance;
+  final SettingsController _settingsController = Get.find();
 
   final GoogleSignIn _googleSignIn = GoogleSignIn(
     scopes: <String>[
@@ -176,6 +177,7 @@ class _SocialLoginState extends State<SocialLogin> {
             SharedPrefs().setUserLoggedIn(true);
             await SharedPrefs().setAuthorizationKey(response.authKey!);
             await getIt<UserProfileManager>().refreshProfile();
+            await _settingsController.getSettings();
 
             if (getIt<UserProfileManager>().user != null) {
               // ask for location

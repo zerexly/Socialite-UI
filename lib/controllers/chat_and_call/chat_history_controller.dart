@@ -24,15 +24,18 @@ class ChatHistoryController extends GetxController {
       ApiController().getChatRooms().then((response) async {
         isLoading = false;
         List<ChatRoomModel> groupChatRooms = response.chatRooms
-            .where((element) => element.isGroupChat == true)
+            // .where((element) => element.isGroupChat == true)
             .toList();
         await getIt<DBManager>().saveRooms(groupChatRooms);
-        allRooms = await getIt<DBManager>().getAllRooms();
 
+        allRooms = await getIt<DBManager>().getAllRooms();
         // allRooms = await getIt<DBManager>().mapUnReadCount(groupChatRooms);
         searchedRooms.value = allRooms;
         update();
       });
+    }
+    else{
+      isLoading = false;
     }
   }
 

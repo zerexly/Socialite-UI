@@ -1,10 +1,13 @@
 import 'package:get/get.dart';
 import 'package:foap/helper/common_import.dart';
 
+import '../../model/club_invitation.dart';
+
 class ClubsController extends GetxController {
   RxList<ClubModel> clubs = <ClubModel>[].obs;
   RxList<CategoryModel> categories = <CategoryModel>[].obs;
   RxList<ClubMemberModel> members = <ClubMemberModel>[].obs;
+  RxList<ClubInvitation> invitations = <ClubInvitation>[].obs;
 
   RxBool isLoadingCategories = false.obs;
 
@@ -24,9 +27,16 @@ class ClubsController extends GetxController {
 
   clear() {
     isLoadingClubs.value = false;
-    clubs.value = [];
+    clubs.clear();
     clubsPage = 1;
     canLoadMoreClubs = true;
+
+    invitationsPage = 1;
+    canLoadMoreInvitations = true;
+    isLoadingInvitations.value = false;
+    invitations.clear();
+
+    segmentIndex.value = 0;
   }
 
   clearMembers() {
@@ -84,17 +94,19 @@ class ClubsController extends GetxController {
   }
 
   getClubInvitations() {
-    if (canLoadMoreClubs) {
-      isLoadingClubs.value = true;
-      ApiController().getClubInvitations(page: clubsPage).then((response) {
-        clubs.addAll(response.clubs);
-        isLoadingClubs.value = false;
+    if (canLoadMoreInvitations) {
+      isLoadingInvitations.value = true;
+      ApiController()
+          .getClubInvitations(page: invitationsPage)
+          .then((response) {
+        invitations.addAll(response.clubInvitations);
+        isLoadingInvitations.value = false;
 
-        clubsPage += 1;
-        if (response.clubs.length == response.metaData?.perPage) {
-          canLoadMoreClubs = true;
+        invitationsPage += 1;
+        if (response.clubInvitations.length == response.metaData?.perPage) {
+          canLoadMoreInvitations = true;
         } else {
-          canLoadMoreClubs = false;
+          canLoadMoreInvitations = false;
         }
         update();
       });
@@ -137,15 +149,29 @@ class ClubsController extends GetxController {
   }
 
   joinClub(ClubModel club) {
-    clubs.value = clubs.map((element) {
-      if (element.id == club.id) {
-        element.isJoined = true;
-      }
-      return element;
-    }).toList();
+    if (club.isRequestBased == true) {
+      clubs.value = clubs.map((element) {
+        if (element.id == club.id) {
+          element.isRequested = true;
+        }
+        return element;
+      }).toList();
 
-    clubs.refresh();
-    ApiController().joinClub(clubId: club.id!).then((response) {});
+      clubs.refresh();
+
+      ApiController().sendClubJoinRequest(clubId: club.id!).then((response) {});
+    } else {
+      clubs.value = clubs.map((element) {
+        if (element.id == club.id) {
+          element.isJoined = true;
+        }
+        return element;
+      }).toList();
+
+      clubs.refresh();
+
+      ApiController().joinClub(clubId: club.id!).then((response) {});
+    }
   }
 
   leaveClub(ClubModel club) {
@@ -158,6 +184,24 @@ class ClubsController extends GetxController {
 
     clubs.refresh();
     ApiController().leaveClub(clubId: club.id!).then((response) {});
+  }
+
+  acceptClubInvitation(ClubInvitation invitation) {
+    invitations.remove(invitation);
+    invitations.refresh();
+    ApiController()
+        .acceptDeclineClubInvitation(
+            invitationId: invitation.id!, replyStatus: 10)
+        .then((response) {});
+  }
+
+  declineClubInvitation(ClubInvitation invitation) {
+    invitations.remove(invitation);
+    invitations.refresh();
+    ApiController()
+        .acceptDeclineClubInvitation(
+            invitationId: invitation.id!, replyStatus: 3)
+        .then((response) {});
   }
 
   removeMemberFromClub(ClubModel club, ClubMemberModel member) {

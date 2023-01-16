@@ -66,41 +66,49 @@ class DBManager {
 
   //******************** Chat ************************//
 
+  // Future saveRooms(List<ChatRoomModel> chatRooms) async {
+  //   for (ChatRoomModel room in chatRooms) {
+  //     saveRoom(room);
+  //   }
+  // }
+
   Future saveRooms(List<ChatRoomModel> chatRooms) async {
-    for (ChatRoomModel room in chatRooms) {
-      saveRoom(room);
-    }
-  }
+    var batch = database.batch();
 
-  Future saveRoom(ChatRoomModel chatRoom) async {
-    ChatRoomModel? room = await getRoomById(chatRoom.id);
-    if (room == null) {
-      var batch = database.batch();
-
-      batch.rawInsert(
-          'INSERT INTO ChatRooms(id, title, status,type,is_chat_user_online,created_by,created_at,updated_at,imageUrl,description,chat_access_group) VALUES(${chatRoom.id},"${chatRoom.name}", ${chatRoom.status},${chatRoom.type}, ${chatRoom.isOnline},${chatRoom.createdBy},${chatRoom.createdAt},${chatRoom.createdAt},"${chatRoom.image}","${chatRoom.description}",${chatRoom.groupAccess})');
-
-      for (ChatRoomMember member in chatRoom.roomMembers) {
-        batch.rawDelete(
-          'DELETE  FROM ChatRoomMembers WHERE id = ${member.id}',
-        );
-
+    for (ChatRoomModel chatRoom in chatRooms) {
+      ChatRoomModel? room = await getRoomById(chatRoom.id);
+      if (room == null) {
         batch.rawInsert(
-          'INSERT INTO ChatRoomMembers(id, room_id, user_id,is_admin) VALUES(${member.id}, ${member.roomId}, ${member.userId},${member.isAdmin})',
-        );
+            'INSERT INTO ChatRooms(id, title, status,type,is_chat_user_online,created_by,created_at,updated_at,imageUrl,description,chat_access_group) VALUES(${chatRoom.id},"${chatRoom.name}", ${chatRoom.status},${chatRoom.type}, ${chatRoom.isOnline},${chatRoom.createdBy},${chatRoom.createdAt},${chatRoom.createdAt},"${chatRoom.image}","${chatRoom.description}",${chatRoom.groupAccess})');
 
-        batch.rawDelete(
-          'DELETE  FROM UsersCache WHERE id = ${member.userDetail.id}',
-        );
+        for (ChatRoomMember member in chatRoom.roomMembers) {
+          batch.rawDelete(
+            'DELETE  FROM ChatRoomMembers WHERE id = ${member.id}',
+          );
 
-        batch.rawInsert(
-          'INSERT INTO UsersCache(id, username,email,picture) VALUES(${member.userDetail.id}, "${member.userDetail.userName}", "${member.userDetail.email}","${member.userDetail.picture}")',
-        );
+          batch.rawInsert(
+            'INSERT INTO ChatRoomMembers(id, room_id, user_id,is_admin) VALUES(${member.id}, ${member.roomId}, ${member.userId},${member.isAdmin})',
+          );
+
+          batch.rawDelete(
+            'DELETE  FROM UsersCache WHERE id = ${member.userDetail.id}',
+          );
+
+          batch.rawInsert(
+            'INSERT INTO UsersCache(id, username,email,picture) VALUES(${member.userDetail.id}, "${member.userDetail.userName}", "${member.userDetail.email}","${member.userDetail.picture}")',
+          );
+        }
+        if (chatRoom.lastMessage != null) {
+          saveMessage(
+              chatRoom: chatRoom,
+              chatMessages: [chatRoom.lastMessage!],
+              currentBatch: batch);
+        }
+      } else {
+        updateRoom(chatRoom);
       }
-      await batch.commit(noResult: true);
-    } else {
-      updateRoom(chatRoom);
     }
+    await batch.commit(noResult: true);
   }
 
   Future updateRoom(ChatRoomModel chatRoom) async {
@@ -140,6 +148,16 @@ class DBManager {
     await batch.commit(noResult: true);
   }
 
+  Future updateRoomUpdateAtTime(ChatRoomModel chatRoom) async {
+    int? updateAt = DateTime.now().millisecondsSinceEpoch;
+
+    print('updateRoomUpdateAtTime');
+    await database.transaction((txn) async {
+      txn.rawUpdate(
+          'UPDATE ChatRooms SET updated_at = $updateAt WHERE id = ${chatRoom.id}');
+    });
+  }
+
   Future<List<ChatRoomMember>> getAllMembersInRoom(int roomId) async {
     List<ChatRoomMember> membersArr = [];
 
@@ -176,7 +194,6 @@ class DBManager {
   }
 
   insertChatMessageUsers({required List<ChatMessageUser> users}) async {
-    print('insertChatMessageUsers = ${users.length}');
     var batch = database.batch();
     for (ChatMessageUser user in users) {
       batch.rawInsert(
@@ -248,20 +265,12 @@ class DBManager {
   // }
 
   Future<List<ChatRoomModel>> getAllRooms() async {
-    Directory dir = await getApplicationDocumentsDirectory();
-    print(dir);
+    // Directory dir = await getApplicationDocumentsDirectory();
     List<ChatRoomModel> rooms = [];
 
     await database.transaction((txn) async {
       List<Map> dbRooms = await txn.rawQuery('SELECT * FROM ChatRooms');
       List<Map> updateAbleRoomJson = List<Map>.from(dbRooms);
-
-      updateAbleRoomJson.sort((a, b) {
-        if (b['updated_at'] == null || a['updated_at'] == null) {
-          return 0;
-        }
-        return b['updated_at'].compareTo(a['updated_at']);
-      });
 
       for (Map roomJson in updateAbleRoomJson) {
         List<Map> userData = await txn.rawQuery(
@@ -275,13 +284,11 @@ class DBManager {
         List<ChatRoomMember> usersInRoom =
             await fetchAllMembersInRoom(room.id, txn);
 
-        // if (room.lastMessageId != null) {
         List<ChatMessageModel> lastMessages =
             await getLastMessageFromRoom(roomId: room.id, txn: txn);
         if (lastMessages.isNotEmpty) {
           room.lastMessage = lastMessages.first;
         }
-        // }
 
         room.roomMembers = usersInRoom;
 
@@ -289,6 +296,13 @@ class DBManager {
           rooms.add(room);
         }
       }
+    });
+
+    rooms.sort((a, b) {
+      if (b.updatedAt == null || a.updatedAt == null) {
+        return 0;
+      }
+      return b.updatedAt!.compareTo(a.updatedAt!);
     });
 
     return rooms;
@@ -325,8 +339,10 @@ class DBManager {
   }
 
   saveMessage(
-      ChatRoomModel chatRoom, List<ChatMessageModel> chatMessages) async {
-    var batch = database.batch();
+      {required ChatRoomModel chatRoom,
+      required List<ChatMessageModel> chatMessages,
+      Batch? currentBatch}) async {
+    var batch = currentBatch ?? database.batch();
 
     for (ChatMessageModel chatMessage in chatMessages) {
       if (chatMessage.isMineMessage) {
@@ -365,11 +381,10 @@ class DBManager {
           '"${chatMessage.isStar}",'
           '${chatMessage.deleteAfter})');
 
-      // if (chatMessage.isDateSeparator == false &&
-      //     chatMessage.messageContentType != MessageContentType.groupAction) {
-      //   saveAsLastMessageInRoom(
-      //       roomId: chatRoom.id, chatMessage: chatMessage, batch: batch);
-      // }
+      if (chatMessage.isDateSeparator == false &&
+          chatMessage.messageContentType != MessageContentType.groupAction) {
+        updateRoomUpdateAtTime(chatRoom);
+      }
 
       saveUserInCache(
           user: chatMessage.sender ?? getIt<UserProfileManager>().user!,
@@ -380,7 +395,9 @@ class DBManager {
       // insertChatMessageUsers(users: chatMessage.chatMessageUser, batch: batch);
       // }
     }
-    await batch.commit(noResult: true);
+    if (currentBatch == null) {
+      await batch.commit(noResult: true);
+    }
   }
 
   Future saveUserInCache(
@@ -567,13 +584,11 @@ class DBManager {
 
   Future<List<ChatMessageModel>> getLastMessageFromRoom(
       {required int roomId, required Transaction txn}) async {
-    print('getLastMessageFromRoom = $roomId');
     List<ChatMessageModel> messages = [];
     // await database.transaction((txn) async {
     List<Map> dbMessages = await txn.rawQuery(
         'SELECT * FROM Messages WHERE room_id = "$roomId" ORDER BY id DESC LIMIT 1');
 
-    print(dbMessages);
     if (dbMessages.isNotEmpty) {
       ChatMessageModel message =
           ChatMessageModel.fromJson((dbMessages.first as Map<String, dynamic>));

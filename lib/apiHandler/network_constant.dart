@@ -18,7 +18,6 @@ class NetworkConstantsUtil {
   static String getSuggestedUsers =
       'users/sugested-user?expand=isFollowing,isFollower,userLiveDetail';
 
-
   static String register = 'users/register';
   static String checkUserName = 'users/check-username';
 
@@ -110,11 +109,10 @@ class NetworkConstantsUtil {
   static String deleteAccount = 'users/delete-account';
 
   //******************** reel ******************//
-
   static String reelAudioCategories = 'categories/reel-audio';
   static String audios = 'audios?';
 
-  ///////////// chat
+  //***********chat***********//
   static String createChatRoom = 'chats/create-room';
   static String updateGroupChatRoom = 'chats/update-room?id=';
   static String getChatRoomDetail =
@@ -129,7 +127,7 @@ class NetworkConstantsUtil {
   static String chatHistory =
       'chats/chat-message?expand=chatMessageUser,user&room_id={{room_id}}&last_message_id={{last_message_id}}';
 
-  ///////////// live TVs
+  //***********live TVs***********//
   static String getTVCategories =
       'categories/live-tv?expand=liveTv,liveTv.currentViewer';
   static String getTVShows = 'live-tvs/tv-shows?expand=tvShowEpisode';
@@ -141,7 +139,7 @@ class NetworkConstantsUtil {
   static String stopWatchingTv = 'live-tvs/stop-viewing';
   static String liveHistory = 'user-live-histories?expand=giftSummary';
 
-  ///////////// Podcast
+  //***********Podcast***********//
   static String getPodcastCategories =
       'categories/podcast?expand=podcastList,podcastList.currentViewer';
   static String podcastBanners = 'podcast-banners';
@@ -149,7 +147,7 @@ class NetworkConstantsUtil {
   static String getPodcastShows = 'podcast-shows?expand=podcastShow';
   static String getPodcastShowsEpisode = 'podcast-shows/podcast-show-episodes?';
 
-  ///////////// Clubs
+  //***********Clubs***********//
   static String getClubCategories = 'clubs/category';
   static String createClub = 'clubs';
   static String updateClub = 'clubs/';
@@ -159,9 +157,17 @@ class NetworkConstantsUtil {
   static String leaveClub = 'clubs/left';
   static String removeUserFromClub = 'clubs/remove';
   static String clubMembers = 'clubs/club-joined-user?expand=user&id=';
-  static String clubJoinInvites = 'clubs/join-invitations';
+  static String clubJoinInvites =
+      'clubs/my-invitation?expand=club.totalJoinedUser';
+  static String replyOnInvitation = 'clubs/invitation-reply';
+  static String sendClubInvite = 'clubs/invite';
 
-  // Events
+  static String sendClubJoinRequest = 'clubs/join-request';
+  static String clubJoinRequestList =
+      'clubs/join-request-list?club_id={{club_id}}&expand=user';
+  static String clubJoinRequestReply = 'clubs/join-request-reply';
+
+  //***********Events***********//
   static String joinEvent = 'clubs/join';
   static String leaveEvent = 'clubs/left';
   static String eventMembers = 'clubs/club-joined-user?expand=user&id=';
@@ -177,11 +183,11 @@ class NetworkConstantsUtil {
 
   static String giftTicket = 'events/gift-ticket';
 
-  // random live and chat
+  //***********random live and chat***********//
   static String randomLives = 'chats/live-user?expand=userLiveDetail';
   static String randomOnlineUser = 'chats/online-user';
 
-  // gifts
+  //***********gifts***********//
   static String giftsCategories = 'categories/gift?expand=gift';
   static String giftsByCategory = 'gifts?category_id=';
   static String mostUsedGifts = 'gifts/popular';
@@ -189,16 +195,15 @@ class NetworkConstantsUtil {
   static String giftsReceived =
       'gifts/recieved-gift?expand=giftDetail,senderDetail&send_on_type={{send_on_type}}&live_call_id={{live_call_id}}&post_id={{post_id}}';
 
-  // verification
-
+  //***********verification***********//
   static String requestVerification = 'user-verifications';
   static String requestVerificationHistory = 'user-verifications';
   static String cancelVerification = 'user-verifications/cancel';
 
-  // FAQ
+  //***********FAQ***********//
   static String getFAQs = 'faqs';
 
-  // Payment
+  //***********Payment***********//
   static String createPaymentIntent = 'payments/payment-intent';
   static String getPaypalClientToken = 'payments/paypal-client-token';
   static String submitPaypalPayment = 'payments/paypal-payment';

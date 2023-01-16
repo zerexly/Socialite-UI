@@ -326,7 +326,7 @@ class _ExploreState extends State<Explore> {
                           itemCount: postController.posts.length,
                           itemBuilder: (BuildContext context, int index) =>
                               postController.posts[index].gallery.first
-                                          .isVideoPost() ==
+                                          .isVideoPost ==
                                       true
                                   ? Stack(children: [
                                       AspectRatio(

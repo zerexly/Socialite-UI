@@ -36,17 +36,17 @@ class PodcastBannerModel {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['name'] = this.name;
-    data['cover_image'] = this.coverImage;
-    data['banner_type'] = this.bannerType;
-    data['start_time'] = this.startTime;
-    data['end_time'] = this.endTime;
-    data['reference_id'] = this.referenceId;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
-    data['coverImageUrl'] = this.coverImageUrl;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['name'] = name;
+    data['cover_image'] = coverImage;
+    data['banner_type'] = bannerType;
+    data['start_time'] = startTime;
+    data['end_time'] = endTime;
+    data['reference_id'] = referenceId;
+    data['created_at'] = createdAt;
+    data['updated_at'] = updatedAt;
+    data['coverImageUrl'] = coverImageUrl;
     return data;
   }
 }

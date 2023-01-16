@@ -27,16 +27,20 @@ class CreateClubController extends GetxController {
         ApiController()
             .createClub(
                 categoryId: club.categoryId!,
-                // privacyMode: privacyType.value,
-                privacyMode: 1,
+                isOnRequestType: privacyType.value == 3 ? 1 : 0,
+                privacyMode: privacyType.value == 2 ? 2 : 1,
                 enableChatRoom: club.enableChat!,
                 name: club.name!,
                 image: response.postedMediaFileName!,
                 description: club.desc!)
             .then((response) {
           EasyLoading.dismiss();
-          Get.back();
-          callback();
+          Get.close(2);
+          // callback();
+
+          // if(privacyType.value == 2){
+          Get.to(() => InviteUsersToClub(clubId: response.clubId!));
+          // }
         });
       } else {
         EasyLoading.dismiss();

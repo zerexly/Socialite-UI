@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:foap/helper/common_import.dart';
 
 class LoginController extends GetxController {
+  final SettingsController _settingsController = Get.find();
   bool passwordReset = false;
   int userNameCheckStatus = -1;
   RxBool canResendOTP = true.obs;
@@ -31,6 +32,7 @@ class LoginController extends GetxController {
               SharedPrefs().setUserLoggedIn(true);
               await SharedPrefs().setAuthorizationKey(response.authKey!);
               await getIt<UserProfileManager>().refreshProfile();
+              await _settingsController.getSettings();
 
               // ask for location
               getIt<LocationManager>().postLocation();
@@ -74,7 +76,8 @@ class LoginController extends GetxController {
         // Password length >= 8
         // But doesn't contain both letter and digit characters
         passwordStrength.value = 3 / 4;
-        passwordStrengthText.value = 'Your password must contain letter and number';
+        passwordStrengthText.value =
+            'Your password must contain letter and number';
       } else {
         // Password length >= 8
         // Password contains both letter and digit characters

@@ -235,7 +235,13 @@ class _HorizontalSegmentBarState extends State<HorizontalSegmentBar> {
                                     : width / widget.segments.length,
                                 color: Theme.of(context).primaryColor,
                               ).round(10).tP16
-                            : Container().tP16
+                            : Container(
+                          height: 0.5,
+                          width: widget.adjustInMinimumWidth == true
+                              ? widget.segments[index].length * 10
+                              : width / widget.segments.length,
+                          color: Theme.of(context).dividerColor,
+                        ).tP16
                     ],
                   ),
                 ),

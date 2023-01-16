@@ -41,7 +41,7 @@ class _PostMediaFullScreenState extends State<PostMediaFullScreen> {
 
   List<Widget> mediaList() {
     return widget.post.gallery.map((item) {
-      if (item.isVideoPost() == true) {
+      if (item.isVideoPost == true) {
         return videoPostTile(item);
       } else {
         return photoPostTile(item);

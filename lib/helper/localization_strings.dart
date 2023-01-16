@@ -930,6 +930,8 @@ class LocalizationString {
   static String joinRequests = "Join requests".tr;
   static String joinInvitations = "Join invitations".tr;
   static String invites = "Invites".tr;
+  static String requestJoin = 'Request Join'.tr;
+  static String requested = 'Requested'.tr;
 
   static String accept = 'Accept'.tr;
   static String decline = 'Decline'.tr;

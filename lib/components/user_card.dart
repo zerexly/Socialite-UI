@@ -1,6 +1,8 @@
 import 'package:foap/helper/common_import.dart';
 import 'package:get/get.dart';
 
+import '../model/club_join_request.dart';
+
 class UserInfo extends StatelessWidget {
   final UserModel model;
 
@@ -206,7 +208,7 @@ class UserTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final ProfileController profileController = Get.find();
     final AgoraLiveController agoraLiveController = Get.find();
-    final SettingsController _settingsController = Get.find();
+    final SettingsController settingsController = Get.find();
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -298,21 +300,21 @@ class UserTile extends StatelessWidget {
         if (chatCallback != null)
           Row(
             children: [
-              if (_settingsController.setting.value!.enableChat)
+              if (settingsController.setting.value!.enableChat)
                 const ThemeIconWidget(
                   ThemeIcon.chat,
                   size: 20,
                 ).rP16.ripple(() {
                   chatCallback!();
                 }),
-              if (_settingsController.setting.value!.enableAudioCalling)
+              if (settingsController.setting.value!.enableAudioCalling)
                 const ThemeIconWidget(
                   ThemeIcon.mobile,
                   size: 20,
                 ).rP16.ripple(() {
                   audioCallCallback!();
                 }),
-              if (_settingsController.setting.value!.enableVideoCalling)
+              if (settingsController.setting.value!.enableVideoCalling)
                 const ThemeIconWidget(
                   ThemeIcon.videoCamera,
                   size: 20,
@@ -660,14 +662,14 @@ class GifterUserTile extends StatelessWidget {
 }
 
 class ClubJoinRequestTile extends StatelessWidget {
-  final UserModel profile;
+  final ClubJoinRequest request;
   final VoidCallback acceptBtnClicked;
   final VoidCallback declineBtnClicked;
   final VoidCallback viewCallback;
 
   const ClubJoinRequestTile({
     Key? key,
-    required this.profile,
+    required this.request,
     required this.viewCallback,
     required this.acceptBtnClicked,
     required this.declineBtnClicked,
@@ -684,19 +686,9 @@ class ClubJoinRequestTile extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             UserAvatarView(
-              user: profile,
+              user: request.user!,
+              hideLiveIndicator: true,
               size: 40,
-              onTapHandler: () {
-                Live live = Live(
-                    channelName: profile.liveCallDetail!.channelName,
-                    isHosting: false,
-                    host: profile,
-                    token: profile.liveCallDetail!.token,
-                    liveId: profile.liveCallDetail!.id);
-                agoraLiveController.joinAsAudience(
-                  live: live,
-                );
-              },
             ),
             SizedBox(
               width: MediaQuery.of(context).size.width - 200,
@@ -704,15 +696,15 @@ class ClubJoinRequestTile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    profile.userName,
+                    request.user!.userName,
                     style: Theme.of(context)
                         .textTheme
                         .bodyLarge!
                         .copyWith(fontWeight: FontWeight.w900),
                   ).bP4,
-                  profile.country != null
+                  request.user!.country != null
                       ? Text(
-                          '${profile.city!}, ${profile.country!}',
+                          '${request.user!.city!}, ${request.user!.country!}',
                           style: Theme.of(context).textTheme.bodyMedium,
                         )
                       : Container()
@@ -732,14 +724,13 @@ class ClubJoinRequestTile extends StatelessWidget {
             SizedBox(
                 height: 35,
                 width: 120,
-                child: BorderButtonType1(
+                child: FilledButtonType1(
                     // icon: ThemeIcon.message,
-                    text: LocalizationString.account,
-                    textStyle: Theme.of(context)
+                    text: LocalizationString.accept,
+                    enabledTextStyle: Theme.of(context)
                         .textTheme
                         .bodyLarge!
-                        .copyWith(fontWeight: FontWeight.w600)
-                        .copyWith(color: Theme.of(context).primaryColor),
+                        .copyWith(fontWeight: FontWeight.w600),
                     onPress: () {
                       acceptBtnClicked();
                     })),
