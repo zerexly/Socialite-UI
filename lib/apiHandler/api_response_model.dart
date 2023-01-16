@@ -6,6 +6,7 @@ import '../model/faq_model.dart';
 import '../model/podcast_model.dart';
 import '../model/tv_banner_model.dart';
 import '../model/tv_show_model.dart';
+import '../model/polls_model.dart';
 
 class ApiResponseModel {
   bool success = true;
@@ -23,6 +24,7 @@ class ApiResponseModel {
 
   List<CompetitionModel> competitions = [];
   List<PostModel> posts = [];
+  List<PollsQuestionModel> polls = [];
   List<StoryModel> stories = [];
   List<StoryMediaModel> myActiveStories = [];
   List<StoryMediaModel> myStories = [];
@@ -453,6 +455,13 @@ class ApiResponseModel {
             }
 
             model.metaData = APIMetaData.fromJson(data['post']['_meta']);
+          }
+        } else if (url == NetworkConstantsUtil.getPolls) {
+          model.polls = [];
+          var items = data['pollQuestion']['items'];
+          if (items != null && items.length > 0) {
+            model.polls = List<PollsQuestionModel>.from(
+                items.map((x) => PollsQuestionModel.fromJson(x)));
           }
         } else if (data['comment'] != null) {
           model.comments = [];

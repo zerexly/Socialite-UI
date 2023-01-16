@@ -1,11 +1,13 @@
 import 'package:foap/helper/common_import.dart';
 import 'package:foap/screens/podcast/podcast_list_dashboard.dart';
 import 'package:get/get.dart';
+import '../model/polls_model.dart';
 
 class HomeController extends GetxController {
   final SettingsController _settingsController = Get.find();
 
   RxList<PostModel> posts = <PostModel>[].obs;
+  RxList<PollsQuestionModel> polls = <PollsQuestionModel>[].obs;
   RxList<StoryModel> stories = <StoryModel>[].obs;
   RxList<UserModel> liveUsers = <UserModel>[].obs;
 
@@ -161,6 +163,38 @@ class HomeController extends GetxController {
   void addNewPost(PostModel post) {
     posts.insert(0, post);
     posts.refresh();
+  }
+
+  void getPolls() async {
+
+    AppUtil.checkInternet().then((value) async {
+      if (value) {
+        ApiController()
+            .getPolls()
+            .then((response) async {
+          polls.addAll(response.success
+              ? response.polls
+              .toList()
+              : []);
+        });
+      }
+    });
+  }
+
+  void postPollAnswer(int? pollId, int? pollQuestionId, int? questionOptionId) async {
+
+    AppUtil.checkInternet().then((value) async {
+      if (value) {
+        ApiController()
+            .postPollAnswer(pollId, pollQuestionId, questionOptionId)
+            .then((response) async {
+          polls.addAll(response.success
+              ? response.polls
+              .toList()
+              : []);
+        });
+      }
+    });
   }
 
   void getPosts(
