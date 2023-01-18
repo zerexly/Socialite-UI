@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 
 class SocialifiedLiveTvVideoPlayer extends StatefulWidget {
   final TvModel tvModel;
+  final String videoUrl;
+
   final bool play;
   final Orientation orientation;
   final bool showMinimumHeight;
@@ -12,6 +14,7 @@ class SocialifiedLiveTvVideoPlayer extends StatefulWidget {
     required this.play,
     required this.orientation,
     required this.tvModel,
+    required this.videoUrl,
     required this.showMinimumHeight,
   }) : super(key: key);
 
@@ -35,11 +38,13 @@ class _SocialifiedLiveTvVideoPlayerState
   void initState() {
     super.initState();
     playVideo = widget.play;
-    prepareVideo(url: widget.tvModel.tvUrl);
+    prepareVideo(url: widget.videoUrl);
   }
 
   @override
   void didUpdateWidget(covariant SocialifiedLiveTvVideoPlayer oldWidget) {
+    prepareVideo(url: widget.videoUrl);
+
     playVideo = widget.play;
 
     if (playVideo == true) {
@@ -78,8 +83,7 @@ class _SocialifiedLiveTvVideoPlayerState
                           // fullScreenByDefault: true,
                           // isLive: true,
                           videoPlayerController: videoPlayerController!,
-                          aspectRatio:
-                          videoPlayerController!.value.aspectRatio,
+                          aspectRatio: videoPlayerController!.value.aspectRatio,
                           // showControls: !isFreeTimePlayed,
                           showOptions: true,
                           // Prepare the video to be played and display the first frame
@@ -134,7 +138,7 @@ class _SocialifiedLiveTvVideoPlayerState
                         width: 250,
                         child: FilledButtonType1(
                           text:
-                          '${LocalizationString.subscribeUsing} (${widget.tvModel.coinsNeededToUnlock} ${LocalizationString.coins})',
+                              '${LocalizationString.subscribeUsing} (${widget.tvModel.coinsNeededToUnlock} ${LocalizationString.coins})',
                           onPress: () {
                             _liveTvStreamingController
                                 .subscribeTv(widget.tvModel, (status) {
@@ -164,20 +168,27 @@ class _SocialifiedLiveTvVideoPlayerState
     );
   }
 
-
   prepareVideo({required String url}) {
+    print('1');
     if (videoPlayerController != null) {
       videoPlayerController!.pause();
     }
 
     videoPlayerController = VideoPlayerController.network(url);
 
+    print(url);
     initializeVideoPlayerFuture = videoPlayerController!.initialize().then((_) {
       setState(() {});
 
+      print('2');
+
       if (playVideo == true) {
+        print('3');
+
         play();
       } else {
+        print('4');
+
         pause();
       }
     });
@@ -220,6 +231,7 @@ class _SocialifiedLiveTvVideoPlayerState
         playVideo = true;
       });
     });
+    print('playing');
     videoPlayerController!.play().then((value) => {
           // videoPlayerController!.addListener(checkVideoProgress)
         });

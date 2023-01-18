@@ -72,13 +72,19 @@ class _LiveTVStreamingState extends State<LiveTVStreaming> {
                       title: LocalizationString.tvs,
                     ),
                     divider(context: context).tP8,
-                    SocialifiedLiveTvVideoPlayer(
-                      tvModel: widget.tvModel,
-                      play: false,
-                      orientation: orientation,
-                      showMinimumHeight: isKeyboardVisible,
-                    ),
-                    addEpisodes()
+                    Obx(() {
+                      print('updated');
+                        return _liveTvStreamingController.selectedEpisode.value != null
+                            ? SocialifiedLiveTvVideoPlayer(
+                                tvModel: widget.tvModel,
+                                videoUrl: _liveTvStreamingController
+                                    .selectedEpisode.value!.videoUrl!,
+                                play: false,
+                                orientation: orientation,
+                                showMinimumHeight: isKeyboardVisible,
+                              )
+                            : Container();}),
+                    Obx(() => addEpisodes())
                   ],
                 ),
                 // Obx(() =>
@@ -118,30 +124,36 @@ class _LiveTVStreamingState extends State<LiveTVStreaming> {
         scrollDirection: Axis.vertical,
         itemCount: _liveTvStreamingController.tvEpisodes.length + 1,
         itemBuilder: (BuildContext context, int index) {
-          return index == 0 ? detailView() : Card(
-            child: ListTile(
-              contentPadding: const EdgeInsets.all(6),
-              leading: Stack(
-                children: [
-                  CachedNetworkImage(
-                    imageUrl:
-                        _liveTvStreamingController.tvEpisodes[index-1].imageUrl ??
-                            '',
-                    fit: BoxFit.cover,
-                    height: 50,
-                    width: MediaQuery.of(context).size.width / 4.5,
-                  ),
-                  const Positioned.fill(child: Icon(Icons.play_circle))
-                ],
-              ),
-              title:
-                  Text(_liveTvStreamingController.tvEpisodes[index-1].name ?? ''),
-// subtitle: Text(_podcastStreamingController
-//     .podcastShowEpisodes[index].ep ??
-// ''),
-              dense: true,
-            ),
-          ).setPadding(left: 16, right: 16, bottom: 5).round(10).ripple(() {});
+          return index == 0
+              ? detailView()
+              : Card(
+                  child: ListTile(
+                    contentPadding: const EdgeInsets.all(6),
+                    leading: Stack(
+                      children: [
+                        CachedNetworkImage(
+                          imageUrl: _liveTvStreamingController
+                                  .tvEpisodes[index - 1].imageUrl ??
+                              '',
+                          fit: BoxFit.cover,
+                          height: 50,
+                          width: MediaQuery.of(context).size.width / 4.5,
+                        ),
+                        const Positioned.fill(child: Icon(Icons.play_circle))
+                      ],
+                    ),
+                    title: Text(
+                        _liveTvStreamingController.tvEpisodes[index - 1].name ??
+                            ''),
+                    dense: true,
+                  ).ripple(() {
+                    _liveTvStreamingController.playEpisode(
+                        _liveTvStreamingController.tvEpisodes[index - 1]);
+                  }),
+                )
+                  .setPadding(left: 16, right: 16, bottom: 5)
+                  .round(10)
+                  .ripple(() {});
         },
       ),
     );
@@ -154,18 +166,16 @@ class _LiveTVStreamingState extends State<LiveTVStreaming> {
         Row(
           children: [
             Container(
-                color: Theme.of(context).primaryColor,
-                child: Text(widget.showModel
-                    ?.ageGroup ??
-                    "")
-                    .setPadding(left: 10, right: 10, top: 5, bottom: 5)).round(10),
+                    color: Theme.of(context).primaryColor,
+                    child: Text(widget.showModel?.ageGroup ?? "")
+                        .setPadding(left: 10, right: 10, top: 5, bottom: 5))
+                .round(10),
             const SizedBox(width: 10),
             Container(
-                color: Theme.of(context).primaryColor,
-                child: Text(widget.showModel
-                    ?.language ??
-                    "")
-                    .setPadding(left: 10, right: 10, top: 5, bottom: 5)).round(10),
+                    color: Theme.of(context).primaryColor,
+                    child: Text(widget.showModel?.language ?? "")
+                        .setPadding(left: 10, right: 10, top: 5, bottom: 5))
+                .round(10),
           ],
         ).bP8,
         Row(

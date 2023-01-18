@@ -296,9 +296,9 @@ class ChatMessageModel {
   }
 
   ChatPost get postContent {
-    ChatMessageModel message =
-    ChatMessageModel.fromJson(json.decode(messageContent.decrypted()));
-    return ChatPost.fromJson(json.decode(message.decrypt));
+    // ChatMessageModel message =
+    // ChatMessageModel.fromJson(json.decode(messageContent.decrypted()));
+    return ChatPost.fromJson(json.decode(messageContent.decrypted()));
   }
 
   GiftContent get giftContent {

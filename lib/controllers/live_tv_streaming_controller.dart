@@ -17,6 +17,7 @@ class TvStreamingController extends GetxController {
   RxList<TVShowEpisodeModel> tvEpisodes = <TVShowEpisodeModel>[].obs;
 
   RxInt currentBannerIndex = 0.obs;
+  Rx<TVShowEpisodeModel?> selectedEpisode = Rx<TVShowEpisodeModel?>(null);
 
   clearCategories() {
     categories.clear();
@@ -43,9 +44,7 @@ class TvStreamingController extends GetxController {
   }
 
   getTvBanners() {
-    ApiController()
-        .getTvBanners()
-        .then((response) {
+    ApiController().getTvBanners().then((response) {
       banners.value = response.tvBanners;
       update();
     });
@@ -69,11 +68,20 @@ class TvStreamingController extends GetxController {
   }
 
   getTvShowEpisodes({int? showId, String? name}) {
-    ApiController().getTVShowEpisodes(showId: showId, name: name).then((response) {
+    ApiController()
+        .getTVShowEpisodes(showId: showId, name: name)
+        .then((response) {
       tvEpisodes.value = response.tvEpisodes;
       tvEpisodes.refresh();
+      playEpisode(tvEpisodes.first);
       update();
     });
+  }
+
+  playEpisode(TVShowEpisodeModel episode) {
+    print(episode.videoUrl);
+    selectedEpisode.value = episode;
+    selectedEpisode.refresh();
   }
 
   subscribeTv(TvModel tvModel, Function(bool) completionCallBack) {

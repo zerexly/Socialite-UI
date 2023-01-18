@@ -88,10 +88,10 @@ class SettingsController extends GetxController {
           forceUpdate.value = true;
         }
 
-        Stripe.publishableKey = setting.value!.stripePublishableKey!;
-        Stripe.merchantIdentifier = 'merchant.com.socialified';
-        Stripe.urlScheme = 'socialifiedstripe';
-        await Stripe.instance.applySettings();
+        // Stripe.publishableKey = setting.value!.stripePublishableKey!;
+        // Stripe.merchantIdentifier = 'merchant.com.socialified';
+        // Stripe.urlScheme = 'socialifiedstripe';
+        // await Stripe.instance.applySettings();
 
         update();
       });

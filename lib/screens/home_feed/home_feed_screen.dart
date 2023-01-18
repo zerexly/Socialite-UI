@@ -28,7 +28,7 @@ class HomeFeedState extends State<HomeFeedScreen> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       loadData(isRecent: true);
-      _homeController.getPolls();
+      // _homeController.getPolls();
       _homeController.loadQuickLinksAccordingToSettings();
     });
 
@@ -120,13 +120,13 @@ class HomeFeedState extends State<HomeFeedScreen> {
                   ],
                 ),
                 const Spacer(),
-                // const ThemeIconWidget(
-                //   ThemeIcon.map,
-                //   // color: Theme.of(context).primaryColor,
-                //   size: 25,
-                // ).ripple(() {
-                //   Get.to(() => MapsUsersScreen());
-                // }),
+                const ThemeIconWidget(
+                  ThemeIcon.map,
+                  // color: Theme.of(context).primaryColor,
+                  size: 25,
+                ).ripple(() {
+                  Get.to(() => MapsUsersScreen());
+                }),
                 const SizedBox(
                   width: 20,
                 ),

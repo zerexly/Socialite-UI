@@ -46,28 +46,31 @@ class _MapsUsersScreenState extends State<MapsUsersScreen> {
   }
 
   Widget mapView() {
-    return Obx(() {
-      final google_map.CameraPosition kGooglePlex =
-      google_map.CameraPosition(
-        target: google_map.LatLng(
-            _mapScreenController.currentLocation.value!.latitude!,
-            _mapScreenController.currentLocation.value!.longitude!),
-        zoom: 0,
-      );
-      return google_map.GoogleMap(
-        mapType: google_map.MapType.terrain,
-        markers: _mapScreenController.markers,
-        initialCameraPosition: kGooglePlex,
-        mapToolbarEnabled: false,
-        zoomControlsEnabled: true,
-        myLocationButtonEnabled: false,
-        myLocationEnabled: false,
-        onMapCreated: (google_map.GoogleMapController controller) {
-          mapController = controller;
-          _goToCurrentLocation();
-        },
-      );
-    });
+    return GetBuilder<MapScreenController>(
+        init: _mapScreenController,
+        builder: (ctx) {
+          final google_map.CameraPosition kGooglePlex =
+              google_map.CameraPosition(
+            target: google_map.LatLng(
+                _mapScreenController.currentLocation.value!.latitude!,
+                _mapScreenController.currentLocation.value!.longitude!),
+            zoom: 0,
+          );
+
+          return google_map.GoogleMap(
+            mapType: google_map.MapType.terrain,
+            markers: _mapScreenController.markers,
+            initialCameraPosition: kGooglePlex,
+            mapToolbarEnabled: false,
+            zoomControlsEnabled: true,
+            myLocationButtonEnabled: false,
+            myLocationEnabled: false,
+            onMapCreated: (google_map.GoogleMapController controller) {
+              mapController = controller;
+              _goToCurrentLocation();
+            },
+          );
+        });
   }
 
   Widget appBar() {
@@ -130,13 +133,11 @@ class _MapsUsersScreenState extends State<MapsUsersScreen> {
 
   Future<void> _goToCurrentLocation() async {
     final google_map.CameraPosition kLake = google_map.CameraPosition(
-        bearing: 192,
         target: google_map.LatLng(
             _mapScreenController.currentLocation.value!.latitude!,
             _mapScreenController.currentLocation.value!.longitude!),
         tilt: 59,
-        zoom: 12);
-
+        zoom: 5);
     final google_map.GoogleMapController controller = mapController;
     controller.animateCamera(google_map.CameraUpdate.newCameraPosition(kLake));
   }
