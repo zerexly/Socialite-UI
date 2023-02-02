@@ -2,6 +2,8 @@ import 'package:foap/helper/common_import.dart';
 import 'package:foap/screens/profile/blocked_users.dart';
 import 'package:get/get.dart';
 
+import 'add_relationship/add_relationship.dart';
+
 class AppAccount extends StatefulWidget {
   const AppAccount({Key? key}) : super(key: key);
 
@@ -63,6 +65,12 @@ class _AppAccountState extends State<AppAccount> {
                           Get.to(() => const RequestVerification());
                         }
                       }),
+                    addTileEvent(
+                        'assets/findFriends.png',
+                        LocalizationString.addRelationship,
+                        '', () {
+                      Get.to(() => const AddRelationship());
+                    }),
                   ],
                 ),
                 const SizedBox(

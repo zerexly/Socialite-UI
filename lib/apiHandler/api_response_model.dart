@@ -5,6 +5,9 @@ import 'package:get/get.dart';
 import '../model/club_invitation.dart';
 import '../model/club_join_request.dart';
 import '../model/faq_model.dart';
+import '../model/get_relationship_model.dart';
+import '../model/myRelations/my_invitation_model.dart';
+import '../model/myRelations/my_relations_model.dart';
 import '../model/podcast_model.dart';
 import '../model/tv_banner_model.dart';
 import '../model/tv_show_model.dart';
@@ -79,6 +82,11 @@ class ApiResponseModel {
   List<PodcastShowModel> podcastShows = [];
   List<PodcastShowSongModel> podcastShowSongs = [];
   List<ReelMusicModel> audios = [];
+
+  List<GetRelationshipModel> relationships = [];
+  List<MyRelationsModel> myRelationships = [];
+  List<MyInvitationsModel> myInvitations = [];
+
 
   List<VerificationRequest> verificationRequests = [];
 
@@ -179,7 +187,7 @@ class ApiResponseModel {
                 List<ClubModel>.from(items.map((x) => ClubModel.fromJson(x)));
             model.metaData = APIMetaData.fromJson(data['club']['_meta']);
           }
-        } else if (data['invitation'] != null) {
+        } else if (data['invitation'] != null && url == NetworkConstantsUtil.clubJoinInvites) {
           var items = data['invitation']['items'];
           if (items != null && items.length > 0) {
             model.clubInvitations = List<ClubInvitation>.from(
@@ -551,6 +559,30 @@ class ApiResponseModel {
                   List<FAQModel>.from(items.map((x) => FAQModel.fromJson(x)));
             }
           }
+        }
+        else if (data['relations'] != null) {
+          var items = data['relations'];
+
+          if (items != null && items.length > 0) {
+            if (url == NetworkConstantsUtil.getRelationship) {
+              model.relationships = List<GetRelationshipModel>.from(
+                  items.map((x) => GetRelationshipModel.fromJson(x)));
+            }
+          }
+        }
+        else if (data['invitation'] != null && url == NetworkConstantsUtil.myRelations) {
+          var items = data['invitation']['items'];
+          if (items != null && items.length > 0) {
+            model.myRelationships = List<MyRelationsModel>.from(
+                items.map((x) => MyRelationsModel.fromJson(x)));
+          }
+        }
+        else if (data['invitation'] != null && url == NetworkConstantsUtil.myInvitations) {
+           var items = data['invitation']['items'];
+           if (items != null && items.length > 0) {
+             model.myInvitations = List<MyInvitationsModel>.from(
+            items.map((x) => MyInvitationsModel.fromJson(x)));
+           }
         }
       }
     } else {

@@ -6,6 +6,9 @@ import 'package:giphy_get/l10n.dart';
 import 'controllers/faq_controller.dart';
 import 'package:camera/camera.dart';
 
+import 'controllers/relationship_controller.dart';
+import 'controllers/relationship_search_controller.dart';
+
 class MyHttpOverrides extends HttpOverrides {
   @override
   HttpClient createHttpClient(SecurityContext? context) {
@@ -94,7 +97,8 @@ Future<void> main() async {
   Get.put(PodcastStreamingController());
   Get.put(ReelsController());
   Get.put(CreateReelController());
-
+  Get.put(RelationshipController());
+  Get.put(RelationshipSearchController());
   setupServiceLocator();
   await getIt<UserProfileManager>().refreshProfile();
 

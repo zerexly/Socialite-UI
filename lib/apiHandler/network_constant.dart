@@ -147,6 +147,18 @@ class NetworkConstantsUtil {
   static String getPodcastShows = 'podcast-shows?expand=podcastShow';
   static String getPodcastShowsEpisode = 'podcast-shows/podcast-show-episodes?';
 
+  //***********Podcast***********//
+  static String getRelationship = 'relations';
+  static String myRelations = 'relations/my-relation?expand=user,realationShip';
+  static String myInvitations = 'relations/my-invitation?expand=relationShip, createdBy';
+  static String postInviteUnInvite = 'relations/invite';
+  static String putAcceptRejectInvite = 'relations/update-invitation';
+
+
+  //static String getHosts = 'podcasts?expand=currentViewer';
+  //static String getPodcastShows = 'podcast-shows?expand=podcastShow';
+  //static String getPodcastShowsEpisode = 'podcast-shows/podcast-show-episodes?';
+
   //***********Polls***********//
   
   static String getPolls ='poll-questions?expand=pollQuestionOption&poll_id=&title=';

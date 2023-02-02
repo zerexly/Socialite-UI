@@ -392,6 +392,10 @@ class LocalizationString {
   static String blockedUser = 'Blocked User'.tr;
   static String manageBlockedUser = 'Manage Blocked User list'.tr;
 
+  static String addRelationship = 'Add Relationship'.tr;
+  static String myFamily = 'Family'.tr;
+
+
   static String replied = 'Replied'.tr;
 
   static String postToStory = 'Post to story'.tr;
@@ -402,6 +406,8 @@ class LocalizationString {
   static String follow = 'Follow'.tr;
   static String followBack = 'Follow back'.tr;
 
+  static String unInvite = 'Cancel'.tr;
+  static String pendingApproval= 'Pending'.tr;
   static String unFollow = 'UnFollow'.tr;
 
   static String newFollower = 'New Follower'.tr;
@@ -491,6 +497,8 @@ class LocalizationString {
   static String followFriendsToSeeUpdates =
       "Follow your friends to see their post updates".tr;
   static String noUserFound = "No user found".tr;
+  static String noInvitationRequest = "No invitation request".tr;
+
   static String noHashtagFound = "No hashtag found".tr;
   static String noPhotosFound = "No photos found".tr;
   static String openIn = "Open in".tr;
@@ -932,6 +940,9 @@ class LocalizationString {
   static String invites = "Invites".tr;
   static String requestJoin = 'Request Join'.tr;
   static String requested = 'Requested'.tr;
+  static String claimsToBe = 'Claims to be your'.tr;
+  static String approve = 'Approve'.tr;
+  static String reject = 'Reject'.tr;
 
   static String accept = 'Accept'.tr;
   static String decline = 'Decline'.tr;

@@ -353,6 +353,104 @@ class UserTile extends StatelessWidget {
   }
 }
 
+class RelationUserTile extends StatelessWidget {
+  final UserModel profile;
+
+  final Function(int)? inviteCallback;
+  final Function(int)? unInviteCallback;
+  final VoidCallback? viewCallback;
+
+  const RelationUserTile({
+    Key? key,
+    required this.profile,
+    this.inviteCallback,
+    this.unInviteCallback,
+    this.viewCallback,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final ProfileController profileController = Get.find();
+    final AgoraLiveController agoraLiveController = Get.find();
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            UserAvatarView(
+              user: profile,
+              size: 40,
+              onTapHandler: () {
+                Live live = Live(
+                    channelName: profile.liveCallDetail!.channelName,
+                    isHosting: false,
+                    host: profile,
+                    token: profile.liveCallDetail!.token,
+                    liveId: profile.liveCallDetail!.id);
+                agoraLiveController.joinAsAudience(
+                  live: live,
+                );
+              },
+            ),
+            SizedBox(
+              width: MediaQuery.of(context).size.width - 200,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    profile.userName,
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyLarge!
+                        .copyWith(fontWeight: FontWeight.w900),
+                  ).bP4,
+                  profile.country != null
+                      ? Text(
+                    '${profile.city!}, ${profile.country!}',
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  )
+                      : Container()
+                ],
+              ).hP16,
+            ),
+            // const Spacer(),
+          ],
+        ).ripple(() {
+          if (viewCallback == null) {
+            profileController.setUser(profile);
+            Get.to(() => OtherUserProfile(userId: profile.id));
+          } else {
+            viewCallback!();
+          }
+        }),
+        const Spacer(),
+        if (inviteCallback != null && profile.isMe == false)
+          SizedBox(
+            height: 35,
+            width: 120,
+            child:  BorderButtonType1(
+              // icon: ThemeIcon.message,
+                text: LocalizationString.invite,
+                textStyle: Theme.of(context)
+                    .textTheme
+                    .bodyLarge!
+                    .copyWith(fontWeight: FontWeight.w600)
+                    .copyWith(color: Theme.of(context).primaryColor),
+                onPress: () {
+                  if (inviteCallback != null) {
+                    inviteCallback!(profile.id);
+                  }
+                })
+            ,
+          ),
+      ],
+    );
+  }
+}
+
+
 class ClubMemberTile extends StatelessWidget {
   final ClubMemberModel member;
   final VoidCallback? removeBtnCallback;
