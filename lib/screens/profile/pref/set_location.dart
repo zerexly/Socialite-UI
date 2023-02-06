@@ -53,8 +53,8 @@ class _SetLocationState extends State<SetLocation> {
                             location.longitude ?? 0.0,
                           );
                           if (placemarks.length > 0) {
-                            Placemark marker = placemarks[0];
-marker.country
+                            // Placemark marker = placemarks[0];
+                            // marker.country
 
                           }
                         }catch(err){}
