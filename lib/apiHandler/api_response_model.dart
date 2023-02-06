@@ -74,6 +74,8 @@ class ApiResponseModel {
   List<PodcastShowSongModel> podcastShowSongs = [];
   List<ReelMusicModel> audios = [];
 
+  List<InterestModel> interests = [];
+
   List<VerificationRequest> verificationRequests = [];
 
   //FAQ
@@ -316,6 +318,12 @@ class ApiResponseModel {
               model.podcastShowSongs = List<PodcastShowSongModel>.from(
                   items.map((x) => PodcastShowSongModel.fromJson(x)));
             }
+          }
+        } else if (data['interest'] != null && url == NetworkConstantsUtil.interests) {
+          var items = data['interest'];
+          if (items != null && items.length > 0) {
+            model.interests = List<InterestModel>.from(
+                items.map((x) => InterestModel.fromJson(x)));
           }
         } else if (data['coupon'] != null) {
           var items = data['coupon'];

@@ -1,6 +1,8 @@
 import 'package:foap/helper/common_import.dart';
 import 'package:get/get.dart';
 
+import '../dating/DatingDashboard.dart';
+
 enum QuickLinkType {
   live,
   randomChat,
@@ -14,7 +16,8 @@ enum QuickLinkType {
   highlights,
   goLive,
   reel,
-  podcast
+  podcast,
+  dating
 }
 
 class QuickLink {
@@ -95,6 +98,8 @@ class _QuickLinkWidgetState extends State<QuickLinkWidget> {
                     Get.to(() => const TvListDashboard());
                   } else if (link.linkType == QuickLinkType.podcast) {
                     Get.to(() => const PodcastListDashboard());
+                  } else if (link.linkType == QuickLinkType.dating) {
+                    Get.to(() => const DatingDashboard());
                   }
                 })
             ]).setPadding(left: 16, right: 16, top: 70));

@@ -3,6 +3,7 @@ import 'package:foap/helper/common_import.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:get/get.dart';
 import 'package:giphy_get/l10n.dart';
+import 'controllers/dating_controller.dart';
 import 'controllers/faq_controller.dart';
 import 'package:camera/camera.dart';
 
@@ -97,6 +98,9 @@ Future<void> main() async {
   Get.put(ReelsController());
 
   Get.put(CreateReelController());
+
+  Get.put(DatingController());
+
 
 
   setupServiceLocator();

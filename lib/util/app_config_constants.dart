@@ -9,6 +9,8 @@ class AppConfigConstants {
 
   static const razorpayKey = 'rzp_test_jDl2SjSKYlghAD';
 
+// static const restApiBaseUrl =
+  //     'https://fwdtechnology.co/socialified/api/web/v1/';
   static const restApiBaseUrl =
       'https://fwdtechnology.co/media_selling/api/web/v1/';
 

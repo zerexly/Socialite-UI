@@ -1362,7 +1362,6 @@ class ApiController {
         .replaceAll('{{room_id}}', roomId.toString())
         .replaceAll('{{last_message_id}}', lastMessageId.toString());
 
-    print(url);
     return await http.get(Uri.parse(url), headers: {
       "Authorization": "Bearer ${authKey!}"
     }).then((http.Response response) async {
@@ -1631,6 +1630,20 @@ class ApiController {
     }).then((http.Response response) async {
       final ApiResponseModel parsedResponse = await getResponse(
           response.body, NetworkConstantsUtil.getPodcastShowsEpisode);
+      return parsedResponse;
+    });
+  }
+
+  Future<ApiResponseModel> getInterests() async {
+    String? authKey = await SharedPrefs().getAuthorizationKey();
+    var url =
+        NetworkConstantsUtil.baseUrl + NetworkConstantsUtil.interests;
+
+    return await http.get(Uri.parse(url), headers: {
+      "Authorization": "Bearer ${authKey!}"
+    }).then((http.Response response) async {
+      final ApiResponseModel parsedResponse = await getResponse(
+          response.body, NetworkConstantsUtil.interests);
       return parsedResponse;
     });
   }

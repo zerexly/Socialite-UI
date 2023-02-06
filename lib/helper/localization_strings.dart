@@ -766,6 +766,7 @@ class LocalizationString {
   static String albums = 'Albums'.tr;
   static String songs = 'Songs'.tr;
 
+
   static String liveChat = 'Live chat'.tr;
   static String subscribeChannelToView = 'Subscribe channel to view'.tr;
   static String subscribeUsing = 'Subscribe using'.tr;
@@ -934,4 +935,40 @@ class LocalizationString {
   static String accept = 'Accept'.tr;
   static String decline = 'Decline'.tr;
   static String addComment = 'Add comment'.tr;
+
+  static String dating = 'Dating'.tr;
+  static String matched = 'Matched'.tr;
+  static String preferences = 'Set Preferences'.tr;
+  static String datingProfile = 'Dating Profile'.tr;
+
+  static String locationHeader = 'Set your location services'.tr;
+  static String locationSubHeader = 'We use your location to show you potential matches in your area'.tr;
+  static String locationService = 'Set location services'.tr;
+
+  static String notificationHeader = 'Allow notifications'.tr;
+  static String notificationSubHeader = 'We\'ll let you know when you get new matches and messages'.tr;
+  static String allowNotification = 'Allow notifications'.tr;
+  static String notNow = 'Not now'.tr;
+
+  static String nameHeader = 'What\'s your first name?'.tr;
+  static String nameSubHeader = 'You won\'t be able to change this later'.tr;
+
+  static String addPhotoHeader = 'Add photos'.tr;
+  static String addPhotoSubHeader = 'Profile with more good photos are getting more matches, so add your best photos'.tr;
+
+  static String birthdayHeader = 'When\'s your birthday?'.tr;
+  static String birthdaySubHeader = 'Be accurate to specify this to get genuine matches'.tr;
+
+  static String genderHeader = 'Mention your gender'.tr;
+
+  static String likeToDateHeader = 'Who would you like to date?'.tr;
+  static String likeToDateSubHeader = 'You can choose more than one answer and change any time'.tr;
+
+  static String personalInfoHeader = 'We need to know more about you.'.tr;
+  static String personalInfoSubHeader = 'Be accurate to specify this to get genuine matches'.tr;
+
+  static String addInterestsHeader = 'Add Interests.'.tr;
+  static String addInterestsSubHeader = 'Add your interests and habits'.tr;
+
+  static String addProfessionalHeader = 'Add Professional Details.'.tr;
 }

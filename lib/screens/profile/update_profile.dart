@@ -188,6 +188,27 @@ class UpdateProfileState extends State<UpdateProfile> {
                 ],
               ),
               divider(context: context).vP16,
+              Row(
+                children: [
+                  Text(
+                    LocalizationString.datingProfile,
+                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const Spacer(),
+                  ThemeIconWidget(
+                    ThemeIcon.edit,
+                    color: Theme.of(context).iconTheme.color,
+                    size: 15,
+                  ).ripple(() {
+                    Get.to(() => const SetLocation())!.then((value) {
+                      reloadData();
+                    });
+                  })
+                ],
+              ),
+              divider(context: context).vP16,
             ],
           ).hP16,
           // Row(

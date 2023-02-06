@@ -14,130 +14,67 @@ class _SetDateOfBirthState extends State<SetDateOfBirth> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).primaryColor,
+      backgroundColor: Theme.of(context).backgroundColor,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          const SizedBox(
-            height: 100,
-          ),
           Text(
-            'When\'s your birthday?',
+            LocalizationString.birthdayHeader,
             style: Theme.of(context)
                 .textTheme
-                .displayMedium!
+                .displaySmall!
                 .copyWith(fontWeight: FontWeight.w600),
-          ),
-          const SizedBox(
-            height: 20,
-          ),
+          ).paddingOnly(top: 100),
           Text(
-            'Be accurate to specify this to get genuine matchs',
-            style: Theme.of(context).textTheme.titleLarge,
-          ),
-          const SizedBox(
-            height: 50,
-          ),
+            LocalizationString.birthdaySubHeader,
+            style: Theme.of(context).textTheme.titleSmall,
+          ).paddingOnly(top: 10),
           Row(
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Day',
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyMedium!
-                          .copyWith(fontWeight: FontWeight.w600)),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  SizedBox(
-                    width: 60,
-                    child: InputField(
-                      hintText: '10',
-                      controller: nameController,
-                      backgroundColor: Colors.white,
-                      cornerRadius: 5,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(
-                width: 10,
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Month',
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyMedium!
-                          .copyWith(fontWeight: FontWeight.w600)),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  SizedBox(
-                    width: 60,
-                    child: InputField(
-                      hintText: '07',
-                      controller: nameController,
-                      backgroundColor: Colors.white,
-                      cornerRadius: 5,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(
-                width: 10,
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Year',
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyMedium!
-                          .copyWith(fontWeight: FontWeight.w600)),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  SizedBox(
-                    width: 60,
-                    child: InputField(
-                      hintText: '2000',
-                      controller: nameController,
-                      backgroundColor: Colors.white,
-                      cornerRadius: 5,
-                    ),
-                  ),
-                ],
-              ),
+              addTextField('Day', 'dd'),
+              const SizedBox(width: 10),
+              addTextField('Month', 'MM'),
+              const SizedBox(width: 10),
+              addTextField('Year', 'YYYY'),
             ],
-          ),
-          const SizedBox(
-            height: 150,
-          ),
+          ).paddingOnly(top: 50),
           Center(
             child: SizedBox(
                 height: 50,
                 width: MediaQuery.of(context).size.width - 50,
                 child: FilledButtonType1(
-                    enabledTextStyle: Theme.of(context)
-                        .textTheme
-                        .titleLarge!
-                        .copyWith(
-                            fontWeight: FontWeight.w600,
-                            color: Theme.of(context).primaryColor),
-                    enabledBackgroundColor: Colors.white,
                     cornerRadius: 25,
-                    text: 'Next',
+                    text: LocalizationString.next,
                     onPress: () {
                       Get.to(() => const SetYourGender());
                     })),
-          ),
+          ).paddingOnly(top: 150),
         ],
-      ).hP25.addGradientBackground(),
+      ).hP25,
+    );
+  }
+
+  Widget addTextField(String header, String hint) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(header,
+            style: Theme.of(context)
+                .textTheme
+                .bodyMedium!
+                .copyWith(fontWeight: FontWeight.w600)),
+        SizedBox(
+          width: 60,
+          child: InputField(
+            hintText: hint,
+            controller: nameController,
+            showBorder: true,
+            borderColor: Theme.of(context).disabledColor,
+            cornerRadius: 10,
+          ),
+        ).tP8,
+      ],
     );
   }
 }
