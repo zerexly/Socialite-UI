@@ -79,6 +79,7 @@ class SettingModel {
 
   // nee to add
   bool enableReel;
+  bool enableDating;
 
   SettingModel({
     required this.email,
@@ -157,6 +158,7 @@ class SettingModel {
     required this.enablePolls,
 
   });
+
 
   factory SettingModel.fromJson(Map<String, dynamic> json) => SettingModel(
     email: json["email"],
@@ -244,4 +246,5 @@ class SettingModel {
     enablePolls: json["is_polls"] == 1,
 
   );
+
 }

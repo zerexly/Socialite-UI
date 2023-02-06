@@ -1,8 +1,8 @@
 import 'package:foap/helper/common_import.dart';
-import 'package:foap/screens/podcast/podcast_list_dashboard.dart';
 import 'package:get/get.dart';
 import '../model/polls_model.dart';
 import '../screens/tvs/tv_dashboard.dart';
+import '../screens/dating/DatingDashboard.dart';
 
 class HomeController extends GetxController {
   final SettingsController _settingsController = Get.find();
@@ -127,6 +127,13 @@ class HomeController extends GetxController {
           heading: LocalizationString.podcast,
           subHeading: LocalizationString.podcast,
           linkType: QuickLinkType.podcast));
+    }
+    if (_settingsController.setting.value!.enableDating) {
+      quickLinks.add(QuickLink(
+          icon: 'assets/podcast.png',
+          heading: LocalizationString.dating,
+          subHeading: LocalizationString.dating,
+          linkType: QuickLinkType.dating));
     }
   }
 
@@ -278,6 +285,9 @@ class HomeController extends GetxController {
     } else if (option == LocalizationString.reel) {
       Get.to(() => const CreateReelScreen());
       // Get.to(() => const LiveTVStreaming());
+    }
+    else if (option == LocalizationString.dating) {
+      Get.to(() => const DatingDashboard());
     }
   }
 

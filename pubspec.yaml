@@ -164,6 +164,8 @@ dependencies:
   ffmpeg_kit_flutter: ^5.1.0
   simple_downloader: ^0.0.3+1
   flutter_polls: ^0.1.1
+  syncfusion_flutter_sliders: ^20.4.48
+  geocoding: ^2.0.5
 
   open_filex: ^4.3.2
 
@@ -195,6 +197,8 @@ flutter:
     - assets/
     - assets/chatbg/
     - assets/lottie/
+    - assets/images/
+
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

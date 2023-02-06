@@ -14,60 +14,42 @@ class _AddNameState extends State<AddName> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).primaryColor,
+      backgroundColor: Theme.of(context).backgroundColor,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          const SizedBox(
-            height: 100,
-          ),
           Text(
-            'What\'s you first name?',
+            LocalizationString.nameHeader,
             style: Theme.of(context)
                 .textTheme
-                .displayMedium!
+                .displaySmall!
                 .copyWith(fontWeight: FontWeight.w600),
-          ),
-          const SizedBox(
-            height: 20,
-          ),
+          ).paddingOnly(top: 100),
           Text(
-            'You won\'t be able to change this later',
-            style: Theme.of(context).textTheme.titleLarge,
-          ),
-          const SizedBox(
-            height: 50,
-          ),
+            LocalizationString.nameSubHeader,
+            style: Theme.of(context).textTheme.titleSmall,
+          ).paddingOnly(top: 20),
           InputField(
-            hintText: 'Alex',
+            hintText: 'Enter',
             controller: nameController,
-            backgroundColor: Colors.white,
-            cornerRadius: 20,
-          ),
-          const SizedBox(
-            height: 150,
-          ),
+            showBorder: true,
+            borderColor: Theme.of(context).disabledColor,
+            cornerRadius: 10,
+          ).paddingOnly(top: 20),
           Center(
             child: SizedBox(
                 height: 50,
                 width: MediaQuery.of(context).size.width - 50,
                 child: FilledButtonType1(
-                    enabledTextStyle: Theme.of(context)
-                        .textTheme
-                        .titleLarge!
-                        .copyWith(
-                            fontWeight: FontWeight.w600,
-                            color: Theme.of(context).primaryColor),
-                    enabledBackgroundColor: Colors.white,
                     cornerRadius: 25,
-                    text: 'Next',
+                    text: LocalizationString.next,
                     onPress: () {
                       Get.to(() => const AddPhotos());
                     })),
-          ),
+          ).paddingOnly(top: 150),
         ],
-      ).hP25.addGradientBackground(),
+      ).hP25,
     );
   }
 }

@@ -216,3 +216,20 @@ class UserModel {
         id: id, isAdmin: 0, roomId: 0, userDetail: this, userId: id);
   }
 }
+
+class InterestModel {
+  int id = 0;
+  String name = "";
+  int status = 0;
+
+  InterestModel();
+
+  factory InterestModel.fromJson(dynamic json) {
+    InterestModel model = InterestModel();
+    model.id = json['id'];
+    model.name = json['name'];
+    model.status = json['status'];
+
+    return model;
+  }
+}

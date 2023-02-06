@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:foap/helper/common_import.dart';
+import 'package:geocoding/geocoding.dart';
 
 class SetLocation extends StatefulWidget {
   const SetLocation({Key? key}) : super(key: key);
@@ -12,7 +13,7 @@ class _SetLocationState extends State<SetLocation> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).primaryColor,
+      backgroundColor: Theme.of(context).backgroundColor,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.center,
@@ -20,52 +21,50 @@ class _SetLocationState extends State<SetLocation> {
           Container(
             height: 60,
             width: 60,
-            color: Colors.white,
+            color: Theme.of(context).cardColor,
             child: Icon(
               Icons.location_on_rounded,
               color: Theme.of(context).primaryColor,
             ),
           ).round(30),
-          const SizedBox(
-            height: 40,
-          ),
           Text(
-            'Set your location services',
+            LocalizationString.locationHeader,
             style: Theme.of(context)
                 .textTheme
                 .displaySmall!
                 .copyWith(fontWeight: FontWeight.w600),
-          ),
-          const SizedBox(
-            height: 20,
-          ),
+          ).paddingOnly(top: 40),
           Text(
-            'We use your location to show you potential matches in your area',
-            style: Theme.of(context).textTheme.titleLarge,
-          ),
-          const SizedBox(
-            height: 150,
-          ),
+            LocalizationString.locationSubHeader,
+            style: Theme.of(context).textTheme.titleSmall,
+          ).paddingOnly(top: 20),
           Center(
             child: SizedBox(
                 height: 50,
                 width: MediaQuery.of(context).size.width - 50,
                 child: FilledButtonType1(
-                    enabledTextStyle: Theme.of(context)
-                        .textTheme
-                        .titleLarge!
-                        .copyWith(
-                            fontWeight: FontWeight.w600,
-                            color: Theme.of(context).primaryColor),
-                    enabledBackgroundColor: Colors.white,
                     cornerRadius: 25,
-                    text: 'Set location services',
+                    text: LocalizationString.locationService,
                     onPress: () {
-                      Get.to(() => const AllowNotification());
+                      LocationManager().getLocation((location) async {
+                        try {
+                          List<Placemark> placemarks = await placemarkFromCoordinates(
+                            location.latitude ?? 0.0,
+                            location.longitude ?? 0.0,
+                          );
+                          if (placemarks.length > 0) {
+                            // Placemark marker = placemarks[0];
+                            // marker.country
+
+                          }
+                        }catch(err){}
+                      });
+                      // Get.to(() => const AllowNotification());
                     })),
-          )
+          ).paddingOnly(top: 150),
         ],
-      ).hP25.addGradientBackground(),
+      ).hP25,
     );
   }
 }
+

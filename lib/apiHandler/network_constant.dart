@@ -165,6 +165,10 @@ class NetworkConstantsUtil {
   static String postPoll ='poll-question-answers/add-answer';
 
   //***********Clubs***********//
+  /////Dating
+  static String interests ='interests';
+
+  ///////////// Clubs
   static String getClubCategories = 'clubs/category';
   static String createClub = 'clubs';
   static String updateClub = 'clubs/';

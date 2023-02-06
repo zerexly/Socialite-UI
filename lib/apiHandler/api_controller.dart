@@ -1707,6 +1707,7 @@ class ApiController {
     });
   }
 
+
   Future<ApiResponseModel> getPodcastShowById({int? showId}) async {
     String? authKey = await SharedPrefs().getAuthorizationKey();
     var url =
@@ -1716,11 +1717,17 @@ class ApiController {
       url = '$url&id=$showId';
     }
 
+  Future<ApiResponseModel> getInterests() async {
+    String? authKey = await SharedPrefs().getAuthorizationKey();
+    var url =
+        NetworkConstantsUtil.baseUrl + NetworkConstantsUtil.interests;
+
     return await http.get(Uri.parse(url), headers: {
       "Authorization": "Bearer ${authKey!}"
     }).then((http.Response response) async {
       final ApiResponseModel parsedResponse = await getResponse(
           response.body, NetworkConstantsUtil.getHostShowById);
+          response.body, NetworkConstantsUtil.interests);
       return parsedResponse;
     });
   }
