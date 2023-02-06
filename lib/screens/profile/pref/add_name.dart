@@ -1,6 +1,8 @@
 import 'package:get/get.dart';
 import 'package:foap/helper/common_import.dart';
 
+import '../../../model/preference_model.dart';
+
 class AddName extends StatefulWidget {
   const AddName({Key? key}) : super(key: key);
 
@@ -45,6 +47,8 @@ class _AddNameState extends State<AddName> {
                     cornerRadius: 25,
                     text: LocalizationString.next,
                     onPress: () {
+                      getIt<AddPreferenceManager>().preferenceModel?.name =
+                          nameController.text;
                       Get.to(() => const AddPhotos());
                     })),
           ).paddingOnly(top: 150),

@@ -2,6 +2,8 @@ import 'package:get/get.dart';
 import 'package:foap/helper/common_import.dart';
 import 'package:geocoding/geocoding.dart';
 
+import '../../../model/preference_model.dart';
+
 class SetLocation extends StatefulWidget {
   const SetLocation({Key? key}) : super(key: key);
 
@@ -52,14 +54,16 @@ class _SetLocationState extends State<SetLocation> {
                             location.latitude ?? 0.0,
                             location.longitude ?? 0.0,
                           );
-                          if (placemarks.length > 0) {
-                            // Placemark marker = placemarks[0];
-                            // marker.country
-
+                          if (placemarks.isNotEmpty) {
+                            Placemark marker = placemarks[0];
+                            getIt<AddPreferenceManager>().preferenceModel?.country = marker.country;
+                            getIt<AddPreferenceManager>().preferenceModel?.city = marker.locality;
                           }
-                        }catch(err){}
+                        } catch(err) {
+
+                        }
                       });
-                      // Get.to(() => const AllowNotification());
+                      Get.to(() => const AllowNotification());
                     })),
           ).paddingOnly(top: 150),
         ],
@@ -67,4 +71,3 @@ class _SetLocationState extends State<SetLocation> {
     );
   }
 }
-

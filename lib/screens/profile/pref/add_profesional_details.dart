@@ -89,16 +89,20 @@ class AddProfessionalDetailsState extends State<AddProfessionalDetails> {
 }
 
 // {
+// "country":"india",
+// "city":"mohali",
+// "city_id":"2"
+// "state":"Punjab",
+// "state_id":"23",
 // "username":"username2",
+
+
 // "email":"user42@gmail.com",
 // "bio":"dio info",
 // "description":"hello msyfsjf",
-// "country":"india",
-// "city":"mohali",
 // "sex":"1",
 // "dob":"1988-05-20",
 // "is_biometric_login":"1",
-// "state":"Punjab",
 // "interest_id":"1,2",
 // "height":"173",
 // "color":"fair",
@@ -112,7 +116,4 @@ class AddProfessionalDetailsState extends State<AddProfessionalDetails> {
 // "profile_category_type":"2",
 // "work_experience_month":"9",
 // "work_experience_year":"6",
-// "state_id":"23",
-// "city_id":"2"
-//
 // }
