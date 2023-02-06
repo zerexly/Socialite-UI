@@ -170,7 +170,7 @@ class HomeFeedState extends State<HomeFeedScreen> {
 
   Widget menuView() {
     return Obx(() => AnimatedContainer(
-          height: _homeController.openQuickLinks.value == true ? 380 : 0,
+          height: _homeController.openQuickLinks.value == true ? 450 : 0,
           width: Get.width,
           color: Theme.of(context).primaryColor,
           duration: const Duration(milliseconds: 500),

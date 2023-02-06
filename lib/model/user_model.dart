@@ -45,6 +45,7 @@ class UserModel {
 
   // String? name;
   String userName = '';
+  String category = '';
 
   String? email = '';
   String? picture;
@@ -93,6 +94,8 @@ class UserModel {
     UserModel model = UserModel();
     model.id = json['id'];
     model.userName = json['username'].toString().toLowerCase();
+    model.category = json['category'] ?? 'Other';
+
     model.email = json['email'];
     model.picture = json['picture'];
     model.bio = json['bio'];
@@ -119,7 +122,8 @@ class UserModel {
     model.chatLastTimeOnline = json['chat_last_time_online'];
     model.accountCreatedWith = json['account_created_with'] ?? 1;
     model.isVerified = json['is_verified'] == 1;
-    model.chatDeleteTime = json['chat_delete_period'] ?? AppConfigConstants.secondsInADay;
+    model.chatDeleteTime =
+        json['chat_delete_period'] ?? AppConfigConstants.secondsInADay;
 
     model.paypalId = json['paypal_id'];
     model.balance = (json['available_balance'] ?? '').toString();

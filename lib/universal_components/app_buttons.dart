@@ -65,7 +65,7 @@ class FilledButtonType1 extends StatelessWidget {
           trailing != null ? trailing!.hP4 : Container()
         ],
       ),
-    ).round(cornerRadius ?? 5).ripple(() {
+    ).round(cornerRadius ?? 15).ripple(() {
       isEnabled == false ? null : onPress!();
     });
   }
@@ -113,7 +113,7 @@ class BorderButtonType1 extends StatelessWidget {
         .borderWithRadius(
             context: context,
             value: 1,
-            radius: cornerRadius ?? 5,
+            radius: cornerRadius ?? 15,
             color: borderColor ?? Theme.of(context).dividerColor)
         .ripple(onPress!);
   }
