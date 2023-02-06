@@ -3,8 +3,7 @@ import 'package:flutter_callkit_incoming/entities/call_event.dart' as callEvent;
 import 'package:flutter_callkit_incoming/entities/ios_params.dart';
 import 'package:get/get.dart';
 import 'package:foap/helper/common_import.dart';
-import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart'
-    as callkit;
+import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart' as callkit;
 
 class CallData {
   String uuid;
