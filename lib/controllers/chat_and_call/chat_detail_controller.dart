@@ -87,7 +87,7 @@ class ChatDetailController extends GetxController {
       ApiController().getChatRoomDetail(roomId).then((response) {
         if (response.room != null) {
           callback(response.room!);
-          getIt<DBManager>().saveRoom(response.room!);
+          getIt<DBManager>().saveRooms([response.room!]);
         }
       });
     });
@@ -132,9 +132,9 @@ class ChatDetailController extends GetxController {
         completion();
         if (response.success) {
           if (response.messages.isNotEmpty) {
-            // for (ChatMessageModel message in ) {
+            // for (ChatMessageModel message in response.messages) {
             //   print('saving ${message.id}');
-            // await getIt<DBManager>().saveMessage(chatRoom, response.messages);
+              await getIt<DBManager>().saveMessage(chatRoom:chatRoom, chatMessages:response.messages);
             // }
 
             if (chatRoom.id == this.chatRoom.value?.id) {
@@ -281,7 +281,7 @@ class ChatDetailController extends GetxController {
     var content = {
       'messageType': messageTypeId(MessageContentType.post),
       'postId': post.id,
-      'postThumbnail': post.gallery.first.thumbnail()
+      'postThumbnail': post.gallery.first.thumbnail
     };
 
     // var currentMessage = {
@@ -327,7 +327,7 @@ class ChatDetailController extends GetxController {
 
     addNewMessage(message: currentMessageModel, roomId: room.id);
     // save message to database
-    getIt<DBManager>().saveMessage(room, [currentMessageModel]);
+    getIt<DBManager>().saveMessage(chatRoom:room, chatMessages:[currentMessageModel]);
     // send message to socket server
 
     status = getIt<SocketManager>().emit(SocketConstants.sendMessage, message);
@@ -431,7 +431,7 @@ class ChatDetailController extends GetxController {
 
       addNewMessage(message: currentMessageModel, roomId: room.id);
       // save message to database
-      getIt<DBManager>().saveMessage(room, [currentMessageModel]);
+      getIt<DBManager>().saveMessage(chatRoom:room, chatMessages:[currentMessageModel]);
 
       setReplyMessage(message: null);
       messageTf.value.text = '';
@@ -513,7 +513,7 @@ class ChatDetailController extends GetxController {
 
     addNewMessage(message: currentMessageModel, roomId: room.id);
     // save message to database
-    getIt<DBManager>().saveMessage(room, [currentMessageModel]);
+    getIt<DBManager>().saveMessage(chatRoom:room, chatMessages:[currentMessageModel]);
 
     setReplyMessage(message: null);
     update();
@@ -591,7 +591,7 @@ class ChatDetailController extends GetxController {
 
     addNewMessage(message: currentMessageModel, roomId: room.id);
     // save message to database
-    getIt<DBManager>().saveMessage(room, [currentMessageModel]);
+    getIt<DBManager>().saveMessage(chatRoom:room, chatMessages:[currentMessageModel]);
     // send message to socket server
 
     status = getIt<SocketManager>().emit(SocketConstants.sendMessage, message);
@@ -687,7 +687,7 @@ class ChatDetailController extends GetxController {
 
     addNewMessage(message: currentMessageModel, roomId: room.id);
     // save message to database
-    getIt<DBManager>().saveMessage(room, [currentMessageModel]);
+    getIt<DBManager>().saveMessage(chatRoom:room, chatMessages:[currentMessageModel]);
 
     setReplyMessage(message: null);
     update();
@@ -796,7 +796,7 @@ class ChatDetailController extends GetxController {
     };
 
     status = getIt<SocketManager>().emit(SocketConstants.sendMessage, message);
-    getIt<DBManager>().saveMessage(room, [currentMessageModel]);
+    getIt<DBManager>().saveMessage(chatRoom:room, chatMessages:[currentMessageModel]);
     // setReplyMessage(message: null);
     return status;
   }
@@ -880,7 +880,7 @@ class ChatDetailController extends GetxController {
     currentMessageModel.repliedOnMessageContent = repliedOnMessage;
 
     addNewMessage(message: currentMessageModel, roomId: room.id);
-    getIt<DBManager>().saveMessage(room, [currentMessageModel]);
+    getIt<DBManager>().saveMessage(chatRoom:room, chatMessages:[currentMessageModel]);
     // }
 
     update();
@@ -1036,7 +1036,7 @@ class ChatDetailController extends GetxController {
     currentMessageModel.repliedOnMessageContent = repliedOnMessage;
 
     addNewMessage(message: currentMessageModel, roomId: room.id);
-    getIt<DBManager>().saveMessage(room, [currentMessageModel]);
+    getIt<DBManager>().saveMessage(chatRoom:room, chatMessages:[currentMessageModel]);
     // }
 
     update();
@@ -1190,7 +1190,7 @@ class ChatDetailController extends GetxController {
     currentMessageModel.repliedOnMessageContent = repliedOnMessage;
 
     addNewMessage(message: currentMessageModel, roomId: room.id);
-    getIt<DBManager>().saveMessage(room, [currentMessageModel]);
+    getIt<DBManager>().saveMessage(chatRoom:room,chatMessages: [currentMessageModel]);
     // }
 
     update();
@@ -1392,7 +1392,7 @@ class ChatDetailController extends GetxController {
     status = getIt<SocketManager>().emit(SocketConstants.sendMessage, message);
 
     // save message to database
-    getIt<DBManager>().saveMessage(room, [currentMessageModel]);
+    getIt<DBManager>().saveMessage(chatRoom:room, chatMessages:[currentMessageModel]);
     setReplyMessage(message: null);
     return status;
   }
@@ -1473,7 +1473,7 @@ class ChatDetailController extends GetxController {
     currentMessageModel.repliedOnMessageContent = repliedOnMessage;
 
     addNewMessage(message: currentMessageModel, roomId: room.id);
-    getIt<DBManager>().saveMessage(room, [currentMessageModel]);
+    getIt<DBManager>().saveMessage(chatRoom:room, chatMessages:[currentMessageModel]);
     // }
 
     update();
@@ -1742,7 +1742,7 @@ class ChatDetailController extends GetxController {
           .map((element) => element.localMessageId)
           .toList()
           .contains(element.localMessageId)) {
-        element.isDeleted = 1;
+        element.isDeleted = true;
 
         // print('element.chatMessageUser ${element.chatMessageUser.length}');
         // ChatMessageUser user = element.chatMessageUser
@@ -1784,7 +1784,7 @@ class ChatDetailController extends GetxController {
             .map((element) => element.localMessageId)
             .toList()
             .contains(element.localMessageId)) {
-          element.isDeleted = 1;
+          element.isDeleted = true;
         } else {}
         return element;
       }).toList();
@@ -1827,11 +1827,11 @@ class ChatDetailController extends GetxController {
       // save room in database
 
       await getRoomDetail(message.roomId, (chatroom) async {
-        await getIt<DBManager>().saveRoom(chatroom);
-        await getIt<DBManager>().saveMessage(chatroom, [message]);
+        await getIt<DBManager>().saveRooms([chatroom]);
+        await getIt<DBManager>().saveMessage(chatRoom:chatroom, chatMessages:[message]);
       });
     } else {
-      await getIt<DBManager>().saveMessage(existingRoom, [message]);
+      await getIt<DBManager>().saveMessage(chatRoom:existingRoom, chatMessages:[message]);
     }
 
     update();

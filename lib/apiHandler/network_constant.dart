@@ -18,7 +18,6 @@ class NetworkConstantsUtil {
   static String getSuggestedUsers =
       'users/sugested-user?expand=isFollowing,isFollower,userLiveDetail';
 
-
   static String register = 'users/register';
   static String checkUserName = 'users/check-username';
 
@@ -110,11 +109,10 @@ class NetworkConstantsUtil {
   static String deleteAccount = 'users/delete-account';
 
   //******************** reel ******************//
-
   static String reelAudioCategories = 'categories/reel-audio';
   static String audios = 'audios?';
 
-  ///////////// chat
+  //***********chat***********//
   static String createChatRoom = 'chats/create-room';
   static String updateGroupChatRoom = 'chats/update-room?id=';
   static String getChatRoomDetail =
@@ -129,30 +127,44 @@ class NetworkConstantsUtil {
   static String chatHistory =
       'chats/chat-message?expand=chatMessageUser,user&room_id={{room_id}}&last_message_id={{last_message_id}}';
 
-  ///////////// live TVs
+  //***********live TVs***********//
   static String getTVCategories =
       'categories/live-tv?expand=liveTv,liveTv.currentViewer';
   static String getTVShows = 'live-tvs/tv-shows?expand=tvShowEpisode';
-
+  static String getTVShowById = 'tv-shows/tv-show-details?expand=tvShowEpisode';
   static String getTVShowEpisodes = 'tv-shows/tv-show-episodes?';
-  static String liveTvs = 'live-tvs?expand=currentViewer';
   static String tvBanners = 'tv-banners';
+  static String liveTvs = 'live-tvs?expand=currentViewer';
+  static String getTVChannel = 'live-tvs/tv-channel-details?id={{channel_id}}';
+
+  static String favTv = 'live-tvs/add-favorite';
+  static String unfavTv = 'live-tvs/remove-favorite';
+  static String favTvList = 'live-tvs/my-favorite-list';
+  static String subscribedTvList = 'live-tvs/my-subscribed-list';
   static String subscribeLiveTv = 'live-tvs/subscribe';
   static String stopWatchingTv = 'live-tvs/stop-viewing';
+
+  //******** Live *********//
   static String liveHistory = 'user-live-histories?expand=giftSummary';
 
-  ///////////// Podcast
+  //***********Podcast***********//
   static String getPodcastCategories =
       'categories/podcast?expand=podcastList,podcastList.currentViewer';
+  static String getHostShowById =
+      'podcast-shows/podcast-show-details?expand=podcastShowEpisode';
+
   static String podcastBanners = 'podcast-banners';
   static String getHosts = 'podcasts?expand=currentViewer';
+  static String getPodcastHostDetail = 'podcasts/podcast-host-details?id={{host_id}}';
+
   static String getPodcastShows = 'podcast-shows?expand=podcastShow';
   static String getPodcastShowsEpisode = 'podcast-shows/podcast-show-episodes?';
-
-  /////Polls
+  //***********Polls***********//
+  
   static String getPolls ='poll-questions?expand=pollQuestionOption&poll_id=&title=';
   static String postPoll ='poll-question-answers/add-answer';
 
+  //***********Clubs***********//
   /////Dating
   static String interests ='interests';
 
@@ -166,9 +178,17 @@ class NetworkConstantsUtil {
   static String leaveClub = 'clubs/left';
   static String removeUserFromClub = 'clubs/remove';
   static String clubMembers = 'clubs/club-joined-user?expand=user&id=';
-  static String clubJoinInvites = 'clubs/join-invitations';
+  static String clubJoinInvites =
+      'clubs/my-invitation?expand=club.totalJoinedUser';
+  static String replyOnInvitation = 'clubs/invitation-reply';
+  static String sendClubInvite = 'clubs/invite';
 
-  // Events
+  static String sendClubJoinRequest = 'clubs/join-request';
+  static String clubJoinRequestList =
+      'clubs/join-request-list?club_id={{club_id}}&expand=user';
+  static String clubJoinRequestReply = 'clubs/join-request-reply';
+
+  //***********Events***********//
   static String joinEvent = 'clubs/join';
   static String leaveEvent = 'clubs/left';
   static String eventMembers = 'clubs/club-joined-user?expand=user&id=';
@@ -184,11 +204,11 @@ class NetworkConstantsUtil {
 
   static String giftTicket = 'events/gift-ticket';
 
-  // random live and chat
+  //***********random live and chat***********//
   static String randomLives = 'chats/live-user?expand=userLiveDetail';
   static String randomOnlineUser = 'chats/online-user';
 
-  // gifts
+  //***********gifts***********//
   static String giftsCategories = 'categories/gift?expand=gift';
   static String giftsByCategory = 'gifts?category_id=';
   static String mostUsedGifts = 'gifts/popular';
@@ -196,16 +216,15 @@ class NetworkConstantsUtil {
   static String giftsReceived =
       'gifts/recieved-gift?expand=giftDetail,senderDetail&send_on_type={{send_on_type}}&live_call_id={{live_call_id}}&post_id={{post_id}}';
 
-  // verification
-
+  //***********verification***********//
   static String requestVerification = 'user-verifications';
   static String requestVerificationHistory = 'user-verifications';
   static String cancelVerification = 'user-verifications/cancel';
 
-  // FAQ
+  //***********FAQ***********//
   static String getFAQs = 'faqs';
 
-  // Payment
+  //***********Payment***********//
   static String createPaymentIntent = 'payments/payment-intent';
   static String getPaypalClientToken = 'payments/paypal-client-token';
   static String submitPaypalPayment = 'payments/paypal-payment';

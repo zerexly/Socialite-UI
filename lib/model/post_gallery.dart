@@ -30,11 +30,11 @@ class PostGallery {
     return galleryPost;
   }
 
-  String thumbnail() {
-    return isVideoPost() == true ? videoThumbnail! : filePath;
+  String get thumbnail {
+    return isVideoPost == true ? videoThumbnail! : filePath;
   }
 
-  bool isVideoPost() {
+  bool get isVideoPost {
     return mediaType == 2 || videoThumbnail != null;
   }
 }

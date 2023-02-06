@@ -4,14 +4,14 @@ import 'package:get/get.dart';
 class ClubSettings extends StatefulWidget {
   final ClubModel club;
   final Function(ClubModel) deleteClubCallback;
-  final Function(ClubModel) updateClubCallback;
 
-  const ClubSettings(
-      {Key? key,
-      required this.club,
-      required this.deleteClubCallback,
-      required this.updateClubCallback})
-      : super(key: key);
+  // final Function(ClubModel) updateClubCallback;
+  const ClubSettings({
+    Key? key,
+    required this.club,
+    required this.deleteClubCallback,
+    // required this.updateClubCallback
+  }) : super(key: key);
 
   @override
   State<ClubSettings> createState() => _ClubSettingsState();
@@ -50,10 +50,10 @@ class _ClubSettingsState extends State<ClubSettings> {
                 ).ripple(() {
                   Get.to(() => CreateClub(
                         club: widget.club,
-                        submittedCallback: (club) {
-                          widget.updateClubCallback(club!);
-                          Get.back();
-                        },
+                        // submittedCallback: (club) {
+                        //   widget.updateClubCallback(club!);
+                        //   Get.back();
+                        // },
                       ));
                 }),
                 divider(context: context).vP16,
@@ -72,10 +72,10 @@ class _ClubSettingsState extends State<ClubSettings> {
                 ).ripple(() {
                   Get.to(() => ChooseClubCoverPhoto(
                         club: widget.club,
-                        submittedCallback: (club) {
-                          widget.updateClubCallback(club!);
-                          Get.back();
-                        },
+                        // submittedCallback: (club) {
+                        //   widget.updateClubCallback(club!);
+                        //   Get.back();
+                        // },
                       ));
                 }),
                 divider(context: context).vP16,

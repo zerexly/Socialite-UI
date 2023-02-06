@@ -59,7 +59,7 @@ class ClubDescriptionState extends State<ClubDescription> {
           FilledButtonType1(
               text: LocalizationString.done,
               onPress: () {
-                Get.to(() => const InviteUsersToClub());
+                // Get.to(() => const InviteUsersToClub());
                 // NavigationService.instance.navigateToRoute(
                 //     MaterialPageRoute(builder: (ctx) => InviteUser()));
               }).hP16,

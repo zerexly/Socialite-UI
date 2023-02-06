@@ -1,20 +1,23 @@
 import 'package:foap/helper/common_import.dart';
 import 'package:get/get.dart';
+import '../../controllers/clubs/invite_friends_to_club_controller.dart';
 
 class InviteUsersToClub extends StatefulWidget {
-  const InviteUsersToClub({Key? key}) : super(key: key);
+  final int clubId;
+
+  const InviteUsersToClub({Key? key, required this.clubId}) : super(key: key);
 
   @override
   InviteUsersToClubState createState() => InviteUsersToClubState();
 }
 
 class InviteUsersToClubState extends State<InviteUsersToClub> {
-  final SelectUserForGroupChatController selectUserForGroupChatController =
-  Get.find();
+  final InviteFriendsToClubController _inviteFriendsToClubController =
+      InviteFriendsToClubController();
 
   @override
   void initState() {
-    selectUserForGroupChatController.getFriends();
+    _inviteFriendsToClubController.getFollowingUsers();
     super.initState();
   }
 
@@ -25,10 +28,10 @@ class InviteUsersToClubState extends State<InviteUsersToClub> {
       body: Column(
         children: [
           const SizedBox(
-            height: 50,
+            height: 55,
           ),
           SizedBox(
-            height: 40,
+            height: 50,
             child: Stack(
               children: [
                 Row(
@@ -42,13 +45,14 @@ class InviteUsersToClubState extends State<InviteUsersToClub> {
                       Navigator.of(context).pop();
                     }),
                     Text(
-                      LocalizationString.create,
+                      LocalizationString.invite,
                       style: Theme.of(context)
                           .textTheme
-                          .titleMedium!
+                          .titleSmall!
                           .copyWith(fontWeight: FontWeight.w600),
                     ).ripple(() {
-
+                      _inviteFriendsToClubController
+                          .sendClubJoinInvite(widget.clubId);
                     }),
                   ],
                 ),
@@ -62,18 +66,18 @@ class InviteUsersToClubState extends State<InviteUsersToClub> {
                         LocalizationString.invite,
                         style: Theme.of(context)
                             .textTheme
-                            .titleMedium!
+                            .titleSmall!
                             .copyWith(fontWeight: FontWeight.w600),
                       ),
-                      Obx(() => selectUserForGroupChatController
-                          .selectedFriends.isNotEmpty
+                      Obx(() => _inviteFriendsToClubController
+                              .selectedFriends.isNotEmpty
                           ? Text(
-                        '${selectUserForGroupChatController.selectedFriends.length} ${LocalizationString.friendsSelected}',
-                        style: Theme.of(context)
-                            .textTheme
-                            .titleMedium!
-                            .copyWith(fontWeight: FontWeight.w900),
-                      )
+                              '${_inviteFriendsToClubController.selectedFriends.length} ${LocalizationString.friendsSelected}',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleSmall!
+                                  .copyWith(fontWeight: FontWeight.w500),
+                            )
                           : Container())
                     ],
                   ),
@@ -82,110 +86,115 @@ class InviteUsersToClubState extends State<InviteUsersToClub> {
             ),
           ).hP16,
           divider(context: context).tP8,
-          GetBuilder<SelectUserForGroupChatController>(
-            init: selectUserForGroupChatController,
+          GetBuilder<InviteFriendsToClubController>(
+            init: _inviteFriendsToClubController,
             builder: (ctx) {
               List<UserModel> usersList =
-                  selectUserForGroupChatController.selectedFriends;
+                  _inviteFriendsToClubController.selectedFriends;
               return usersList.isNotEmpty
                   ? SizedBox(
-                  height: 100,
-                  child: ListView.separated(
-                    scrollDirection: Axis.horizontal,
-                    padding: const EdgeInsets.only(
-                        top: 20, left: 16, right: 16, bottom: 10),
-                    itemCount: usersList.length,
-                    itemBuilder: (context, index) {
-                      return Stack(
-                        children: [
-                          Column(
+                      height: 110,
+                      child: ListView.separated(
+                        scrollDirection: Axis.horizontal,
+                        padding: const EdgeInsets.only(
+                            top: 20, left: 16, right: 16, bottom: 10),
+                        itemCount: usersList.length,
+                        itemBuilder: (context, index) {
+                          return Stack(
                             children: [
-                              UserAvatarView(
-                                user: usersList[index],
-                                size: 50,
-                              ).circular,
-                              const SizedBox(
-                                height: 5,
+                              SizedBox(
+                                width: 60,
+                                child: Column(
+                                  children: [
+                                    UserAvatarView(
+                                      user: usersList[index],
+                                      size: 50,
+                                    ).circular,
+                                    const SizedBox(
+                                      height: 5,
+                                    ),
+                                    Text(
+                                      usersList[index].userName,
+                                      maxLines: 1,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleSmall,
+                                    )
+                                  ],
+                                ),
                               ),
-                              Text(
-                                usersList[index].userName,
-                                style:
-                                Theme.of(context).textTheme.titleSmall,
-                              )
+                              Positioned(
+                                top: 0,
+                                right: 0,
+                                child: Container(
+                                    height: 25,
+                                    width: 25,
+                                    color: Theme.of(context).cardColor,
+                                    child: const ThemeIconWidget(
+                                      ThemeIcon.close,
+                                      size: 20,
+                                    )).circular.ripple(() {
+                                  _inviteFriendsToClubController
+                                      .selectFriend(usersList[index]);
+                                }),
+                              ),
                             ],
-                          ),
-                          Positioned(
-                            top: 0,
-                            right: 0,
-                            child: Container(
-                                height: 25,
-                                width: 25,
-                                color: Theme.of(context).cardColor,
-                                child: const ThemeIconWidget(
-                                  ThemeIcon.close,
-                                  size: 20,
-                                )).circular.ripple(() {
-                              selectUserForGroupChatController
-                                  .selectFriend(usersList[index]);
-                            }),
-                          ),
-                        ],
-                      );
-                    },
-                    separatorBuilder: (context, index) {
-                      return const SizedBox(
-                        width: 15,
-                      );
-                    },
-                  ))
+                          );
+                        },
+                        separatorBuilder: (context, index) {
+                          return const SizedBox(
+                            width: 15,
+                          );
+                        },
+                      ))
                   : Container();
             },
           ),
           SearchBar(
-              showSearchIcon: true,
-              iconColor: Theme.of(context).primaryColor,
-              onSearchChanged: (value) {
-                selectUserForGroupChatController.searchTextChanged(value);
-              },
-              onSearchStarted: () {
-                //controller.startSearch();
-              },
-              onSearchCompleted: (searchTerm) {})
+                  showSearchIcon: true,
+                  iconColor: Theme.of(context).primaryColor,
+                  onSearchChanged: (value) {
+                    _inviteFriendsToClubController.searchTextChanged(value);
+                  },
+                  onSearchStarted: () {
+                    //controller.startSearch();
+                  },
+                  onSearchCompleted: (searchTerm) {})
               .p16,
           divider(context: context).tP16,
           Expanded(
-            child: GetBuilder<SelectUserForGroupChatController>(
-                init: selectUserForGroupChatController,
+            child: GetBuilder<InviteFriendsToClubController>(
+                init: _inviteFriendsToClubController,
                 builder: (ctx) {
                   ScrollController scrollController = ScrollController();
                   scrollController.addListener(() {
                     if (scrollController.position.maxScrollExtent ==
                         scrollController.position.pixels) {
-                      if (!selectUserForGroupChatController.isLoading) {
-                        selectUserForGroupChatController.getFriends();
+                      if (!_inviteFriendsToClubController.isLoading.value) {
+                        _inviteFriendsToClubController.getFollowingUsers();
                       }
                     }
                   });
 
                   List<UserModel> usersList =
-                      selectUserForGroupChatController.friends;
+                      _inviteFriendsToClubController.following;
                   return GridView.builder(
                     gridDelegate:
-                    const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 5,
-                        crossAxisSpacing: 5.0,
-                        mainAxisSpacing: 5.0,
-                        childAspectRatio: 0.8),
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 5,
+                            crossAxisSpacing: 5.0,
+                            mainAxisSpacing: 5.0,
+                            childAspectRatio: 0.8),
                     padding: const EdgeInsets.only(top: 25, left: 8, right: 8),
                     itemCount: usersList.length,
                     itemBuilder: (context, index) {
                       return SelectableUserCard(
                         model: usersList[index],
-                        isSelected: selectUserForGroupChatController
+                        isSelected: _inviteFriendsToClubController
                             .selectedFriends
                             .contains(usersList[index]),
                         selectionHandler: () {
-                          selectUserForGroupChatController
+                          _inviteFriendsToClubController
                               .selectFriend(usersList[index]);
                         },
                       );

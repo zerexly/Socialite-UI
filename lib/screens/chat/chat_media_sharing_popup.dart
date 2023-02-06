@@ -122,7 +122,7 @@ class _ChatMediaSharingOptionPopupState
                       ),
                       Text(
                         mediaTypes[index].text,
-                        style: Theme.of(context).textTheme.titleSmall,
+                        style: Theme.of(context).textTheme.bodyMedium,
                       )
                     ],
                   ).ripple(() {
@@ -216,14 +216,14 @@ class _ChatMediaSharingOptionPopupState
         backgroundColor: Colors.transparent,
         context: context,
         builder: (context) => VoiceRecord(
-              recordingCallback: (media) {
-                _chatDetailController.sendAudioMessage(
-                    media: media,
-                    mode: _chatDetailController.actionMode.value,
-                    context: context,
-                    room: _chatDetailController.chatRoom.value!);
-              },
-            ));
+          recordingCallback: (media) {
+            _chatDetailController.sendAudioMessage(
+                media: media,
+                mode: _chatDetailController.actionMode.value,
+                context: context,
+                room: _chatDetailController.chatRoom.value!);
+          },
+        ));
   }
 
   void openContactList() {
@@ -232,19 +232,19 @@ class _ChatMediaSharingOptionPopupState
         backgroundColor: Colors.transparent,
         context: context,
         builder: (context) => FractionallySizedBox(
-              heightFactor: 1,
-              child: ContactList(
-                selectedContactsHandler: (contacts) {
-                  for (Contact contact in contacts) {
-                    _chatDetailController.sendContactMessage(
-                        contact: contact,
-                        mode: _chatDetailController.actionMode.value,
-                        context: context,
-                        room: _chatDetailController.chatRoom.value!);
-                  }
-                },
-              ),
-            ));
+          heightFactor: 1,
+          child: ContactList(
+            selectedContactsHandler: (contacts) {
+              for (Contact contact in contacts) {
+                _chatDetailController.sendContactMessage(
+                    contact: contact,
+                    mode: _chatDetailController.actionMode.value,
+                    context: context,
+                    room: _chatDetailController.chatRoom.value!);
+              }
+            },
+          ),
+        ));
   }
 
   void openLocationPicker() {
@@ -290,26 +290,26 @@ class _ChatMediaSharingOptionPopupState
         backgroundColor: Colors.transparent,
         context: context,
         builder: (context) => ChooseMediaForChat(
-              selectedMediaCompletetion: (medias) {
-                for (Media media in medias) {
-                  if (media.mediaType == GalleryMediaType.photo) {
-                    _chatDetailController.sendImageMessage(
-                        media: media,
-                        mode: _chatDetailController.actionMode.value,
-                        context: context,
-                        room: _chatDetailController.chatRoom.value!);
-                    Navigator.of(context).pop();
-                  } else {
-                    Get.back();
-                    _chatDetailController.sendVideoMessage(
-                        media: media,
-                        mode: _chatDetailController.actionMode.value,
-                        context: context,
-                        room: _chatDetailController.chatRoom.value!);
-                  }
-                }
-              },
-            ));
+          selectedMediaCompletetion: (medias) {
+            for (Media media in medias) {
+              if (media.mediaType == GalleryMediaType.photo) {
+                _chatDetailController.sendImageMessage(
+                    media: media,
+                    mode: _chatDetailController.actionMode.value,
+                    context: context,
+                    room: _chatDetailController.chatRoom.value!);
+                Navigator.of(context).pop();
+              } else {
+                Get.back();
+                _chatDetailController.sendVideoMessage(
+                    media: media,
+                    mode: _chatDetailController.actionMode.value,
+                    context: context,
+                    room: _chatDetailController.chatRoom.value!);
+              }
+            }
+          },
+        ));
   }
 
   void openUsersList() {
@@ -330,14 +330,14 @@ class _ChatMediaSharingOptionPopupState
         backgroundColor: Colors.transparent,
         context: context,
         builder: (context) => VoiceRecord(
-              recordingCallback: (media) {
-                _chatDetailController.sendAudioMessage(
-                    media: media,
-                    mode: _chatDetailController.actionMode.value,
-                    context: context,
-                    room: _chatDetailController.chatRoom.value!);
-              },
-            ));
+          recordingCallback: (media) {
+            _chatDetailController.sendAudioMessage(
+                media: media,
+                mode: _chatDetailController.actionMode.value,
+                context: context,
+                room: _chatDetailController.chatRoom.value!);
+          },
+        ));
   }
 
   void openFilePicker() async {

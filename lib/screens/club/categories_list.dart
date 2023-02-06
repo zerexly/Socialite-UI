@@ -48,9 +48,7 @@ class _CategoriesListState extends State<CategoriesList> {
                             club.categoryId = category.id;
                             Get.to(() => CreateClub(
                                   club: club,
-                                  submittedCallback: (club) {
-                                    Get.back();
-                                  },
+
                                 ));
                           });
                         });

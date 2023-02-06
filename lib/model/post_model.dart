@@ -34,7 +34,6 @@ class PostModel {
 
   factory PostModel.fromJson(dynamic json) {
     PostModel model = PostModel();
-    print('json $json');
     model.id = json['id'];
     model.title = json['title'] ?? 'No title';
 
@@ -93,7 +92,7 @@ class PostModel {
   }
 
   bool get containVideoPost {
-    return gallery.where((element) => element.isVideoPost()).isNotEmpty;
+    return gallery.where((element) => element.isVideoPost).isNotEmpty;
   }
 
   bool get isMyPost {

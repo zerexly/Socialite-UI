@@ -156,7 +156,7 @@ class PostCardState extends State<PostCard> {
         ).vP16,
       );
     } else {
-      return widget.model.gallery.first.isVideoPost() == true
+      return widget.model.gallery.first.isVideoPost == true
           ? videoPostTile(widget.model.gallery.first).vP16
           : SizedBox(
               height: 350,
@@ -166,7 +166,7 @@ class PostCardState extends State<PostCard> {
 
   List<Widget> mediaList() {
     return widget.model.gallery.map((item) {
-      if (item.isVideoPost() == true) {
+      if (item.isVideoPost == true) {
         return videoPostTile(item);
       } else {
         return photoPostTile(item);
@@ -450,9 +450,13 @@ class PostCardState extends State<PostCard> {
   }
 
   void openComments() {
-    Get.to(() => CommentsScreen(
-          model: widget.model,
-        ));
+    Get.bottomSheet(CommentsScreen(
+      isPopup: true,
+      model: widget.model,
+    ));
+    // Get.to(() => CommentsScreen(
+    //       model: widget.model,
+    //     ));
   }
 
   void openProfile() async {

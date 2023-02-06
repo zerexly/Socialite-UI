@@ -8,7 +8,7 @@ class ProfileController extends GetxController {
 
   int totalPages = 100;
 
-  RxBool userNameCheckStatus = false.obs;
+  RxInt userNameCheckStatus = (-1).obs;
   RxBool isLoading = true.obs;
 
   RxList<PaymentModel> payments = <PaymentModel>[].obs;
@@ -20,13 +20,13 @@ class ProfileController extends GetxController {
   int postsCurrentPage = 1;
   bool canLoadMorePosts = true;
 
-  bool isLoadingMoments = false;
-  int momentsCurrentPage = 1;
+  bool isLoadingReels = false;
+  int reelsCurrentPage = 1;
   bool canLoadMoreMoments = true;
 
   RxList<PostModel> posts = <PostModel>[].obs;
   RxList<PostModel> mentions = <PostModel>[].obs;
-  RxList<PostModel> moments = <PostModel>[].obs;
+  RxList<PostModel> reels = <PostModel>[].obs;
 
   int mentionsPostPage = 1;
   bool canLoadMoreMentionsPosts = true;
@@ -41,8 +41,8 @@ class ProfileController extends GetxController {
     postsCurrentPage = 1;
     canLoadMorePosts = true;
 
-    isLoadingMoments = false;
-    momentsCurrentPage = 1;
+    isLoadingReels = false;
+    reelsCurrentPage = 1;
     canLoadMoreMoments = true;
 
     mentionsPostPage = 1;
@@ -53,7 +53,7 @@ class ProfileController extends GetxController {
 
     posts.clear();
     mentions.clear();
-    moments.clear();
+    reels.clear();
   }
 
   getMyProfile() async {
@@ -247,13 +247,16 @@ class ProfileController extends GetxController {
     }
   }
 
-  updateUserName({required String userName, required BuildContext context}) {
+  updateUserName(
+      {required String userName,
+        required isSigningUp,
+        required BuildContext context}) {
     if (FormValidator().isTextEmpty(userName)) {
       AppUtil.showToast(
           context: context,
           message: LocalizationString.pleaseEnterUserName,
           isSuccess: false);
-    } else if (userNameCheckStatus.value == false) {
+    } else if (userNameCheckStatus.value != 1) {
       AppUtil.showToast(
           context: context,
           message: LocalizationString.pleaseEnterValidUserName,
@@ -270,9 +273,14 @@ class ProfileController extends GetxController {
                   message: LocalizationString.userNameIsUpdated,
                   isSuccess: true);
               getMyProfile();
-              Future.delayed(const Duration(milliseconds: 1200), () {
-                Get.back();
-              });
+              if (isSigningUp == true) {
+                getIt<LocationManager>().postLocation();
+                Get.offAll(() => const DashboardScreen());
+              } else {
+                Future.delayed(const Duration(milliseconds: 1200), () {
+                  Get.back();
+                });
+              }
             } else {
               EasyLoading.dismiss();
               AppUtil.showToast(
@@ -291,14 +299,14 @@ class ProfileController extends GetxController {
       if (value) {
         ApiController().checkUsername(userName).then((response) async {
           if (response.success) {
-            userNameCheckStatus.value = true;
+            userNameCheckStatus.value = 1;
           } else {
-            userNameCheckStatus.value = false;
+            userNameCheckStatus.value = 0;
           }
           update();
         });
       } else {
-        userNameCheckStatus.value = false;
+        userNameCheckStatus.value = 0;
       }
     });
   }
@@ -533,23 +541,23 @@ class ProfileController extends GetxController {
     }
   }
 
-  void getMoments(int userId) async {
+  void getReels(int userId) async {
     if (canLoadMoreMoments == true) {
       AppUtil.checkInternet().then((value) async {
         if (value) {
-          isLoadingMoments = true;
+          isLoadingReels = true;
           ApiController()
-              .getPosts(userId: userId, isReel: 1, page: momentsCurrentPage)
+              .getPosts(userId: userId, isReel: 1, page: reelsCurrentPage)
               .then((response) async {
-            moments.addAll(response.success
+            reels.addAll(response.success
                 ? response.posts
                 .where((element) => element.gallery.isNotEmpty)
                 .toList()
                 : []);
-            moments.sort((a, b) => b.createDate!.compareTo(a.createDate!));
-            isLoadingMoments = false;
+            reels.sort((a, b) => b.createDate!.compareTo(a.createDate!));
+            isLoadingReels = false;
 
-            momentsCurrentPage += 1;
+            reelsCurrentPage += 1;
 
             if (response.posts.length == response.metaData?.perPage) {
               canLoadMoreMoments = true;

@@ -65,7 +65,7 @@ class PostChatTile extends StatelessWidget {
                                     height: double.infinity,
                                     child: CachedNetworkImage(
                                       imageUrl: snapshot.data!.gallery.first
-                                          .thumbnail(),
+                                          .thumbnail,
                                       httpHeaders: const {'accept': 'image/*'},
                                       fit: BoxFit.cover,
                                       placeholder: (context, url) =>
@@ -74,7 +74,7 @@ class PostChatTile extends StatelessWidget {
                                           const Icon(Icons.error),
                                     ),
                                   ),
-                                  snapshot.data!.gallery.first.isVideoPost()
+                                  snapshot.data!.gallery.first.isVideoPost
                                       ? Container(
                                           color: Colors.black26,
                                           height: 280,
@@ -144,7 +144,7 @@ class MinimalInfoPostChatTile extends StatelessWidget {
                         width: double.infinity,
                         height: double.infinity,
                         child: CachedNetworkImage(
-                          imageUrl: snapshot.data!.gallery.first.thumbnail(),
+                          imageUrl: snapshot.data!.gallery.first.thumbnail,
                           httpHeaders: const {'accept': 'image/*'},
                           fit: BoxFit.cover,
                           placeholder: (context, url) =>
@@ -153,7 +153,7 @@ class MinimalInfoPostChatTile extends StatelessWidget {
                               const Icon(Icons.error),
                         ),
                       ),
-                      snapshot.data!.gallery.first.isVideoPost()
+                      snapshot.data!.gallery.first.isVideoPost
                           ? Container(
                               color: Colors.black26,
                               height: 280,

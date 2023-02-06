@@ -4,24 +4,28 @@ import 'package:get/get.dart';
 import 'package:foap/model/live_tv_model.dart';
 
 
-class TvListByCategory extends StatefulWidget {
-  final TvCategoryModel category;
-
-  const TvListByCategory({Key? key, required this.category}) : super(key: key);
+class SubscribedTvList extends StatefulWidget {
+  const SubscribedTvList({Key? key}) : super(key: key);
 
   @override
-  State<TvListByCategory> createState() => _TvListByCategoryState();
+  State<SubscribedTvList> createState() => _SubscribedTvListState();
 }
 
-class _TvListByCategoryState extends State<TvListByCategory> {
+class _SubscribedTvListState extends State<SubscribedTvList> {
   final TvStreamingController _tvStreamingController = Get.find();
 
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _tvStreamingController.getTvs(categoryId: widget.category.id);
+      _tvStreamingController.getSubscribedTvs();
     });
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _tvStreamingController.clearTvs();
+    super.dispose();
   }
 
   @override
@@ -38,7 +42,7 @@ class _TvListByCategoryState extends State<TvListByCategory> {
                     padding: const EdgeInsets.only(bottom: 8.0),
                     sliver: SliverAppBar(
                       backgroundColor: Theme.of(context).backgroundColor,
-                      expandedHeight: 200.0,
+                      expandedHeight: 100.0,
                       floating: true,
                       pinned: true,
                       forceElevated: true,
@@ -51,16 +55,25 @@ class _TvListByCategoryState extends State<TvListByCategory> {
                       }),
                       flexibleSpace: FlexibleSpaceBar(
                           centerTitle: true,
-                          title: Text(
-                            widget.category.name,
-                            textScaleFactor: 1,
-                            style: const TextStyle(color: Colors.white),
+                          title: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Image.asset(
+                                'assets/tv/subscribed.png',
+                                height: 20,
+                                color: Colors.white,
+                              ),
+                              const SizedBox(width: 10),
+                              Text(
+                                LocalizationString.subscribed,
+                                textScaleFactor: 1,
+                                style: Theme.of(context).textTheme.titleLarge,
+                              ),
+                            ],
                           ),
-                          background: CachedNetworkImage(
-                            imageUrl: widget.category.coverImage,
-                            fit: BoxFit.cover,
+                          background: Container(
                             height: 170,
-                            width: 180,
+                            color: Theme.of(context).primaryColor,
                           ).overlay(Colors.black26)),
                     ),
                   )),

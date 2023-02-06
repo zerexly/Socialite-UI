@@ -414,7 +414,7 @@ class _LiveBroadcastScreenState extends State<LiveBroadcastScreen> {
           user: widget.live.isHosting
               ? getIt<UserProfileManager>().user!
               : _agoraLiveController.host!,
-          hideIfLive: _agoraLiveController.liveEnd.value == true,
+          hideLiveIndicator: _agoraLiveController.liveEnd.value == true,
           size: 100,
         ),
         const SizedBox(

@@ -1,6 +1,7 @@
 import 'package:foap/helper/common_import.dart';
 import 'package:get/get.dart';
 import '../model/polls_model.dart';
+import '../screens/tvs/tv_dashboard.dart';
 import '../screens/dating/DatingDashboard.dart';
 
 class HomeController extends GetxController {
@@ -106,13 +107,13 @@ class HomeController extends GetxController {
     //       subHeading: LocalizationString.joinCompetitionsToEarn,
     //       linkType: QuickLinkType.competition));
     // }
-    if (_settingsController.setting.value!.enableReel) {
+    // if (_settingsController.setting.value!.enableReel) {
       quickLinks.add(QuickLink(
           icon: 'assets/reel.png',
           heading: LocalizationString.reel,
           subHeading: LocalizationString.reel,
           linkType: QuickLinkType.reel));
-    }
+    // }
     if (_settingsController.setting.value!.enableWatchTv) {
       quickLinks.add(QuickLink(
           icon: 'assets/television.png',
@@ -275,7 +276,7 @@ class HomeController extends GetxController {
     } else if (option == LocalizationString.liveNow) {
       Get.to(() => const RandomLiveListing());
     } else if (option == LocalizationString.liveTv) {
-      Get.to(() => const TvListDashboard());
+      Get.to(() => const TvDashboardScreen());
       // Get.to(() => const LiveTVStreaming());
 
     } else if (option == LocalizationString.podcast) {

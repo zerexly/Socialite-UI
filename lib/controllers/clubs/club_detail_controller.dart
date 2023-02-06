@@ -1,10 +1,14 @@
 import 'package:get/get.dart';
 import 'package:foap/helper/common_import.dart';
 
+import '../../model/club_join_request.dart';
+
 class ClubDetailController extends GetxController {
   final ChatDetailController _chatDetailController = Get.find();
 
   RxList<PostModel> posts = <PostModel>[].obs;
+  RxList<ClubJoinRequest> joinRequests = <ClubJoinRequest>[].obs;
+
   Rx<ClubModel?> club = Rx<ClubModel?>(null);
   PostSearchQuery postSearchQuery = PostSearchQuery();
 
@@ -12,11 +16,18 @@ class ClubDetailController extends GetxController {
   bool canLoadMorePosts = true;
   RxBool isLoading = false.obs;
 
+  int jonRequestsPage = 1;
+  bool canLoadMoreJoinRequests = true;
+
   clear() {
     isLoading.value = false;
-    posts.value = [];
+    posts.clear();
+    joinRequests.clear();
     postsPage = 1;
     canLoadMorePosts = true;
+
+    jonRequestsPage = 1;
+    canLoadMoreJoinRequests = true;
   }
 
   setEvent(ClubModel clubObj) {
@@ -28,13 +39,6 @@ class ClubDetailController extends GetxController {
 
   void getPosts({required int clubId, required VoidCallback callback}) async {
     if (canLoadMorePosts == true) {
-      // for (int i = 0; i < 5; i++) {
-      //   BannerAdsHelper().loadBannerAds((ad) {
-      //     bannerAds.add(ad);
-      //     bannerAds.refresh();
-      //   });
-      // }
-
       postSearchQuery.isRecent = 1;
       postSearchQuery.clubId = clubId;
       isLoading.value = true;
@@ -76,6 +80,31 @@ class ClubDetailController extends GetxController {
     }
   }
 
+  getClubJoinRequests({required int clubId}) {
+    if (canLoadMoreJoinRequests == true) {
+      isLoading.value = true;
+
+      AppUtil.checkInternet().then((value) async {
+        if (value) {
+          ApiController()
+              .getClubJoinRequests(clubId: clubId, page: jonRequestsPage)
+              .then((response) async {
+            joinRequests.addAll(
+                response.success ? response.clubJoinRequests.toList() : []);
+            isLoading.value = false;
+
+            if (jonRequestsPage >= response.metaData!.pageCount) {
+              canLoadMoreJoinRequests = false;
+            } else {
+              canLoadMoreJoinRequests = true;
+            }
+            jonRequestsPage += 1;
+          });
+        }
+      });
+    }
+  }
+
   postTextTapHandler({required PostModel post, required String text}) {
     if (text.startsWith('#')) {
       Get.to(() => Posts(
@@ -107,26 +136,50 @@ class ClubDetailController extends GetxController {
   }
 
   joinClub() {
-    club.value!.isJoined = true;
-    club.refresh();
-    ApiController().joinClub(clubId: club.value!.id!).then((response) {
-      if (response.success) {
-        if (club.value!.enableChat == 1) {
-          // save chat group in local db
-
-          _chatDetailController.getRoomDetail(club.value!.chatRoomId!,
-              (chatRoom) {
-
-                getIt<DBManager>().saveRoom(chatRoom);
-          });
+    if (club.value!.isRequestBased == true) {
+      club.value!.isRequested = true;
+      club.refresh();
+      ApiController()
+          .sendClubJoinRequest(clubId: club.value!.id!)
+          .then((response) {});
+    } else {
+      club.value!.isJoined = true;
+      club.refresh();
+      ApiController().joinClub(clubId: club.value!.id!).then((response) {
+        if (response.success) {
+          if (club.value!.enableChat == 1) {
+            _chatDetailController.getRoomDetail(club.value!.chatRoomId!,
+                (chatRoom) {
+              getIt<DBManager>().saveRooms([chatRoom]);
+            });
+          }
         }
-      }
-    });
+      });
+    }
   }
 
   leaveClub() {
     club.value!.isJoined = false;
     club.refresh();
     ApiController().leaveClub(clubId: club.value!.id!).then((response) {});
+  }
+
+  acceptClubJoinRequest(ClubJoinRequest request) {
+    joinRequests.remove(request);
+    joinRequests.refresh();
+    update();
+    ApiController()
+        .acceptDeclineClubJoinRequest(requestId: request.id!, replyStatus: 10)
+        .then((response) {});
+  }
+
+  declineClubJoinRequest(ClubJoinRequest request) {
+    joinRequests.remove(request);
+    joinRequests.refresh();
+    update();
+
+    ApiController()
+        .acceptDeclineClubJoinRequest(requestId: request.id!, replyStatus: 3)
+        .then((response) {});
   }
 }

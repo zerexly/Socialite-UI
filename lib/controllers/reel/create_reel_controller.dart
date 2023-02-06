@@ -238,7 +238,7 @@ class CreateReelController extends GetxController {
 
   downloadAudio(Function(bool) callback) async {
     // **** Download the audio file *******//
-    DownloaderTask _task = DownloaderTask(
+    DownloaderTask task = DownloaderTask(
       url: selectedAudio!.url,
       fileName: "${selectedAudio!.id}.mp3",
       bufferSize:
@@ -248,17 +248,13 @@ class CreateReelController extends GetxController {
     final pathFile = (await path.getTemporaryDirectory()).path;
     // if (!mounted) return;
 
-    _task = _task.copyWith(
+    task = task.copyWith(
       downloadPath: pathFile,
     );
 
-    print(pathFile);
-    print(selectedAudio!.url);
-
-    _downloader = SimpleDownloader.init(task: _task);
+    _downloader = SimpleDownloader.init(task: task);
     _downloader.download();
     _downloader.callback.addListener(() {
-      print(_downloader.callback.progress);
       if (_downloader.callback.status == DownloadStatus.completed) {
         croppedAudioFile = File("$pathFile/${selectedAudio!.id}.mp3");
 

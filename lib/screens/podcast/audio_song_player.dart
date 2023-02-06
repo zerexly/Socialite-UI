@@ -1,9 +1,12 @@
 import 'package:foap/helper/common_import.dart';
+import 'package:foap/screens/podcast/seekbar_data.dart';
 import 'package:just_audio/just_audio.dart' as just_audio;
 import 'package:rxdart/rxdart.dart' as rxdart;
 
+import '../../model/podcast_model.dart';
+
 class AudioSongPlayer extends StatefulWidget {
-  final List<PodcastShowSongModel>? songsArray;
+  final List<PodcastShowEpisodeModel>? songsArray;
   final PodcastShowModel? show;
   const AudioSongPlayer({Key? key, this.songsArray, this.show})
       : super(key: key);
@@ -23,8 +26,8 @@ class _AudioSongPlayerState extends State<AudioSongPlayer> {
     super.initState();
     currentSongIndex = 0;
     List<just_audio.AudioSource> audios = widget.songsArray
-            ?.map((e) => just_audio.AudioSource.uri(Uri.parse(e.audioUrl)))
-            .toList() ??
+        ?.map((e) => just_audio.AudioSource.uri(Uri.parse(e.audioUrl)))
+        .toList() ??
         [];
     audioPlayer.setAudioSource(just_audio.ConcatenatingAudioSource(children: audios));
     audioPlayer.play();
@@ -39,9 +42,9 @@ class _AudioSongPlayerState extends State<AudioSongPlayer> {
   Stream<SeekbarData> get _seekbarDataStream =>
       rxdart.Rx.combineLatest2<Duration, Duration?, SeekbarData>(
           audioPlayer.positionStream, audioPlayer.durationStream, (
-        Duration position,
-        Duration? duration,
-      ) {
+          Duration position,
+          Duration? duration,
+          ) {
         return SeekbarData(position, duration ?? Duration.zero);
       });
 
@@ -85,9 +88,9 @@ class _AudioSongPlayerState extends State<AudioSongPlayer> {
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
                         colors: [
-                      Colors.black,
-                      Colors.grey.withOpacity(0.8),
-                    ])),
+                          Colors.black,
+                          Colors.grey.withOpacity(0.8),
+                        ])),
               ))),
           Padding(
             padding: const EdgeInsets.all(10.0),
@@ -102,8 +105,8 @@ class _AudioSongPlayerState extends State<AudioSongPlayer> {
                 Text(widget.show?.name ?? '',
                     maxLines: 2,
                     style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                          color: Colors.white,
-                        )),
+                      color: Colors.white,
+                    )),
                 const SizedBox(height: 10),
                 StreamBuilder<SeekbarData>(
                     stream: _seekbarDataStream,
@@ -121,8 +124,8 @@ class _AudioSongPlayerState extends State<AudioSongPlayer> {
                       padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
                       child: IconButton(
                           onPressed: () => setState(() {
-                                _favorite = !_favorite;
-                              }),
+                            _favorite = !_favorite;
+                          }),
                           iconSize: 30,
                           icon: Icon(
                             _favorite
@@ -231,8 +234,8 @@ class _AudioSongPlayerState extends State<AudioSongPlayer> {
                       padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
                       child: IconButton(
                           onPressed: () => setState(() {
-                                _showList = !_showList;
-                              }),
+                            _showList = !_showList;
+                          }),
                           iconSize: 30,
                           icon: const Icon(
                             Icons.list,
@@ -255,49 +258,49 @@ class _AudioSongPlayerState extends State<AudioSongPlayer> {
         duration: const Duration(milliseconds: 500),
         child: _showList
             ? MediaQuery.removePadding(
-                context: context,
-                removeTop: true,
-                child: SizedBox(
-                  height: MediaQuery.of(context).size.height / 2 - 100,
-                  child: ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: widget.songsArray?.length,
-                      itemBuilder: (context, index) {
-                        return ListTile(
-                          leading: Transform.translate(
-                              offset: const Offset(0, 3),
-                              child: Text(
-                                (index + 1).toString(),
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .labelLarge!
-                                    .copyWith(color: Colors.white),
-                              )),
-                          title: Transform.translate(
-                              offset: const Offset(-30, 0),
-                              child: Text(
-                                widget.songsArray?[index].name ?? '',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .labelLarge!
-                                    .copyWith(color: Colors.white),
-                              )),
-                          trailing: const Icon(Icons.favorite),
-                          // subtitle: Transform.translate(
-                          //     offset: const Offset(-30, 0),
-                          //     child: Text( fetched_data[index]['singer'],
-                          //       style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Colors.white),
-                          //     )),
-                          selected: true,
-                          onTap: () {
-                            currentSongIndex = index;
-                            setState(() {});
-                            audioPlayer.seek(Duration.zero,
-                                index: currentSongIndex);
-                          },
-                        );
-                      }),
-                ))
+            context: context,
+            removeTop: true,
+            child: SizedBox(
+              height: MediaQuery.of(context).size.height / 2 - 100,
+              child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: widget.songsArray?.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      leading: Transform.translate(
+                          offset: const Offset(0, 3),
+                          child: Text(
+                            (index + 1).toString(),
+                            style: Theme.of(context)
+                                .textTheme
+                                .labelLarge!
+                                .copyWith(color: Colors.white),
+                          )),
+                      title: Transform.translate(
+                          offset: const Offset(-30, 0),
+                          child: Text(
+                            widget.songsArray?[index].name ?? '',
+                            style: Theme.of(context)
+                                .textTheme
+                                .labelLarge!
+                                .copyWith(color: Colors.white),
+                          )),
+                      trailing: const Icon(Icons.favorite),
+                      // subtitle: Transform.translate(
+                      //     offset: const Offset(-30, 0),
+                      //     child: Text( fetched_data[index]['singer'],
+                      //       style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Colors.white),
+                      //     )),
+                      selected: true,
+                      onTap: () {
+                        currentSongIndex = index;
+                        setState(() {});
+                        audioPlayer.seek(Duration.zero,
+                            index: currentSongIndex);
+                      },
+                    );
+                  }),
+            ))
             : null);
   }
 }

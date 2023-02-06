@@ -3,11 +3,8 @@ import 'package:get/get.dart';
 
 class CreateClub extends StatefulWidget {
   final ClubModel club;
-  final Function(ClubModel?) submittedCallback;
 
-  const CreateClub(
-      {Key? key, required this.club, required this.submittedCallback})
-      : super(key: key);
+  const CreateClub({Key? key, required this.club}) : super(key: key);
 
   @override
   CreateClubState createState() => CreateClubState();
@@ -15,6 +12,8 @@ class CreateClub extends StatefulWidget {
 
 class CreateClubState extends State<CreateClub> {
   final CreateClubController _createClubController = Get.find();
+  final ClubDetailController _clubDetailController = Get.find();
+
   final TextEditingController nameText = TextEditingController();
   final TextEditingController descText = TextEditingController();
 
@@ -84,38 +83,9 @@ class CreateClubState extends State<CreateClub> {
                         hintText: LocalizationString.clubDescription,
                       ),
 
-                      selectGroupPrivacyWidget(),
+                      if (widget.club.id == null) selectGroupPrivacyWidget(),
 
-                      if (widget.club.id == null)
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const SizedBox(
-                              height: 50,
-                            ),
-                            Text(
-                              LocalizationString.communication,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleMedium!
-                                  .copyWith(fontWeight: FontWeight.w800),
-                            ),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            Obx(() => privacyTypeWidget(
-                                id: 4,
-                                title: LocalizationString.chatGroup,
-                                subTitle: LocalizationString
-                                    .createChatGroupForDiscussion,
-                                isSelected:
-                                    _createClubController.enableChat.value,
-                                icon: ThemeIcon.chat,
-                                callback: () {
-                                  _createClubController.toggleChatGroup();
-                                })),
-                          ],
-                        ),
+                      if (widget.club.id == null) chatGroupWidget(),
 
                       // const Spacer(),
                     ],
@@ -140,6 +110,36 @@ class CreateClubState extends State<CreateClub> {
     );
   }
 
+  Widget chatGroupWidget() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(
+          height: 50,
+        ),
+        Text(
+          LocalizationString.communication,
+          style: Theme.of(context)
+              .textTheme
+              .titleMedium!
+              .copyWith(fontWeight: FontWeight.w800),
+        ),
+        const SizedBox(
+          height: 20,
+        ),
+        Obx(() => privacyTypeWidget(
+            id: 4,
+            title: LocalizationString.chatGroup,
+            subTitle: LocalizationString.createChatGroupForDiscussion,
+            isSelected: _createClubController.enableChat.value,
+            icon: ThemeIcon.chat,
+            callback: () {
+              _createClubController.toggleChatGroup();
+            })),
+      ],
+    );
+  }
+
   Widget selectGroupPrivacyWidget() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -158,11 +158,11 @@ class CreateClubState extends State<CreateClub> {
           height: 20,
         ),
         Obx(() => privacyTypeWidget(
-            id: 1,
-            title: LocalizationString.private,
-            subTitle: LocalizationString.onlyMembersCanSeeClub,
+            id: 2,
+            title: LocalizationString.public,
+            subTitle: LocalizationString.anyoneCanSeeClub,
             isSelected: _createClubController.privacyType.value == 1,
-            icon: ThemeIcon.lock,
+            icon: ThemeIcon.public,
             callback: () {
               _createClubController.privacyTypeChange(1);
             })),
@@ -170,11 +170,11 @@ class CreateClubState extends State<CreateClub> {
           height: 20,
         ),
         Obx(() => privacyTypeWidget(
-            id: 2,
-            title: LocalizationString.public,
-            subTitle: LocalizationString.anyoneCanSeeClub,
+            id: 1,
+            title: LocalizationString.private,
+            subTitle: LocalizationString.onlyMembersCanSeeClub,
             isSelected: _createClubController.privacyType.value == 2,
-            icon: ThemeIcon.public,
+            icon: ThemeIcon.lock,
             callback: () {
               _createClubController.privacyTypeChange(2);
             })),
@@ -297,15 +297,12 @@ class CreateClubState extends State<CreateClub> {
       widget.club.enableChat = _createClubController.enableChat.value ? 1 : 0;
       Get.to(() => ChooseClubCoverPhoto(
             club: widget.club,
-            submittedCallback: (club) {
-              widget.submittedCallback(null);
-            },
           ));
     } else {
       _createClubController.updateClubInfo(
           club: widget.club,
           callback: () {
-            widget.submittedCallback(widget.club);
+            _clubDetailController.setEvent(widget.club);
           });
     }
   }

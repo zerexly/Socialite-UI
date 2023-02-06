@@ -11,8 +11,9 @@ class MyProfile extends StatefulWidget {
 }
 
 class MyProfileState extends State<MyProfile> {
-  final ProfileController profileController = Get.find();
-  final HighlightsController highlightsController = Get.find();
+  final ProfileController _profileController = Get.find();
+  final HighlightsController _highlightsController = Get.find();
+  final SettingsController _settingsController = Get.find();
 
   @override
   void initState() {
@@ -22,7 +23,7 @@ class MyProfileState extends State<MyProfile> {
 
   initialLoad() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      profileController.clear();
+      _profileController.clear();
       loadData();
     });
   }
@@ -35,17 +36,17 @@ class MyProfileState extends State<MyProfile> {
 
   @override
   void dispose() {
-    profileController.clear();
+    _profileController.clear();
     super.dispose();
   }
 
   loadData() {
-    profileController.getMyProfile();
-    profileController.getMyMentions(getIt<UserProfileManager>().user!.id);
-    profileController.getPosts(getIt<UserProfileManager>().user!.id);
-    profileController.getMoments(getIt<UserProfileManager>().user!.id);
+    _profileController.getMyProfile();
+    _profileController.getMyMentions(getIt<UserProfileManager>().user!.id);
+    _profileController.getPosts(getIt<UserProfileManager>().user!.id);
+    _profileController.getReels(getIt<UserProfileManager>().user!.id);
 
-    highlightsController.getHighlights(
+    _highlightsController.getHighlights(
         userId: getIt<UserProfileManager>().user!.id);
   }
 
@@ -61,7 +62,7 @@ class MyProfileState extends State<MyProfile> {
             widget.showBack == true
                 ? backNavigationBarWithIcon(
                 context: context,
-                title: profileController.user.value?.userName ??
+                title: _profileController.user.value?.userName ??
                     LocalizationString.loading,
                 icon: ThemeIcon.notification,
                 iconBtnClicked: () {
@@ -69,7 +70,7 @@ class MyProfileState extends State<MyProfile> {
                 })
                 : titleNavigationBarWithIcon(
                 context: context,
-                title: profileController.user.value?.userName ??
+                title: _profileController.user.value?.userName ??
                     LocalizationString.loading,
                 icon: ThemeIcon.notification,
                 completion: () {
@@ -81,12 +82,14 @@ class MyProfileState extends State<MyProfile> {
                 padding: const EdgeInsets.only(top: 10),
                 children: [
                   addProfileView(),
-                  const SizedBox(height: 20),
-                  addHighlightsView(),
+                  if (_settingsController.setting.value!.enableHighlights)
+                    const SizedBox(height: 20),
+                  if (_settingsController.setting.value!.enableHighlights)
+                    addHighlightsView(),
                   const SizedBox(height: 40),
                   segmentView(),
-                  Obx(() => profileController.selectedSegment.value == 1
-                      ? addMomentsGrid()
+                  Obx(() => _profileController.selectedSegment.value == 1
+                      ? addReelsGrid()
                       : addPhotoGrid()),
                   const SizedBox(height: 50),
                 ],
@@ -98,15 +101,15 @@ class MyProfileState extends State<MyProfile> {
 
   addProfileView() {
     return GetBuilder<ProfileController>(
-        init: profileController,
+        init: _profileController,
         builder: (ctx) {
-          return profileController.user.value != null
+          return _profileController.user.value != null
               ? Column(
             // mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 UserAvatarView(
-                    user: profileController.user.value!,
+                    user: _profileController.user.value!,
                     size: 65,
                     onTapHandler: () {}),
                 const SizedBox(
@@ -116,13 +119,13 @@ class MyProfileState extends State<MyProfile> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      profileController.user.value!.userName,
+                      _profileController.user.value!.userName,
                       style: Theme.of(context)
                           .textTheme
                           .titleSmall!
                           .copyWith(fontWeight: FontWeight.w600),
                     ),
-                    if (profileController.user.value!.isVerified)
+                    if (_profileController.user.value!.isVerified)
                       Row(
                         children: [
                           const SizedBox(
@@ -137,9 +140,9 @@ class MyProfileState extends State<MyProfile> {
                       ),
                   ],
                 ).bP4,
-                profileController.user.value!.country != null
+                _profileController.user.value!.country != null
                     ? Text(
-                  '${profileController.user.value!.country}, ${profileController.user.value!.city}',
+                  '${_profileController.user.value!.country}, ${_profileController.user.value!.city}',
                   style: Theme.of(context)
                       .textTheme
                       .bodyMedium!
@@ -157,7 +160,7 @@ class MyProfileState extends State<MyProfile> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
-                          profileController.user.value!.totalPost
+                          _profileController.user.value!.totalPost
                               .toString(),
                           style: Theme.of(context)
                               .textTheme
@@ -175,7 +178,7 @@ class MyProfileState extends State<MyProfile> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
-                          '${profileController.user.value!.totalFollower}',
+                          '${_profileController.user.value!.totalFollower}',
                           style: Theme.of(context)
                               .textTheme
                               .titleLarge!
@@ -187,7 +190,7 @@ class MyProfileState extends State<MyProfile> {
                         ),
                       ],
                     ).ripple(() {
-                      if (profileController.user.value!.totalFollower >
+                      if (_profileController.user.value!.totalFollower >
                           0) {
                         Get.to(() => FollowerFollowingList(
                           isFollowersList: true,
@@ -206,7 +209,7 @@ class MyProfileState extends State<MyProfile> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
-                          '${profileController.user.value!.totalFollowing}',
+                          '${_profileController.user.value!.totalFollowing}',
                           style: Theme.of(context)
                               .textTheme
                               .titleLarge!
@@ -218,7 +221,7 @@ class MyProfileState extends State<MyProfile> {
                         ),
                       ],
                     ).ripple(() {
-                      if (profileController.user.value!.totalFollowing >
+                      if (_profileController.user.value!.totalFollowing >
                           0) {
                         Get.to(() => FollowerFollowingList(
                             isFollowersList: false,
@@ -235,7 +238,7 @@ class MyProfileState extends State<MyProfile> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
-                          profileController.user.value!.giftSummary!
+                          _profileController.user.value!.giftSummary!
                               .totalCoin.formatNumber
                               .toString(),
                           style: Theme.of(context).textTheme.titleLarge,
@@ -279,7 +282,7 @@ class MyProfileState extends State<MyProfile> {
             .copyWith(fontWeight: FontWeight.w900),
         width: MediaQuery.of(context).size.width,
         onSegmentChange: (segment) {
-          profileController.segmentChanged(segment);
+          _profileController.segmentChanged(segment);
         },
         segments: [
           LocalizationString.posts,
@@ -290,12 +293,12 @@ class MyProfileState extends State<MyProfile> {
 
   addHighlightsView() {
     return GetBuilder<HighlightsController>(
-        init: highlightsController,
+        init: _highlightsController,
         builder: (ctx) {
-          return highlightsController.isLoading == true
+          return _highlightsController.isLoading == true
               ? const StoryAndHighlightsShimmer()
               : HighlightsBar(
-            highlights: highlightsController.highlights,
+            highlights: _highlightsController.highlights,
             addHighlightCallback: () {
               Get.to(() => const ChooseStoryForHighlights());
             },
@@ -311,31 +314,31 @@ class MyProfileState extends State<MyProfile> {
 
   addPhotoGrid() {
     return GetBuilder<ProfileController>(
-        init: profileController,
+        init: _profileController,
         builder: (ctx) {
           ScrollController scrollController = ScrollController();
           scrollController.addListener(() {
             if (scrollController.position.maxScrollExtent ==
                 scrollController.position.pixels) {
-              if (profileController.selectedSegment.value == 0) {
-                if (!profileController.isLoadingPosts) {
-                  profileController
+              if (_profileController.selectedSegment.value == 0) {
+                if (!_profileController.isLoadingPosts) {
+                  _profileController
                       .getPosts(getIt<UserProfileManager>().user!.id);
                 }
               } else {
-                if (!profileController.mentionsPostsIsLoading) {
-                  profileController
+                if (!_profileController.mentionsPostsIsLoading) {
+                  _profileController
                       .getMyMentions(getIt<UserProfileManager>().user!.id);
                 }
               }
             }
           });
 
-          List<PostModel> posts = profileController.selectedSegment.value == 0
-              ? profileController.posts
-              : profileController.mentions;
+          List<PostModel> posts = _profileController.selectedSegment.value == 0
+              ? _profileController.posts
+              : _profileController.mentions;
 
-          return profileController.isLoadingPosts
+          return _profileController.isLoadingPosts
               ? const PostBoxShimmer()
               : MasonryGridView.count(
             controller: scrollController,
@@ -349,7 +352,7 @@ class MyProfileState extends State<MyProfile> {
                   AspectRatio(
                     aspectRatio: 1,
                     child: CachedNetworkImage(
-                      imageUrl: posts[index].gallery.first.thumbnail(),
+                      imageUrl: posts[index].gallery.first.thumbnail,
                       fit: BoxFit.cover,
                       placeholder: (context, url) =>
                           AppUtil.addProgressIndicator(context, 100),
@@ -362,13 +365,13 @@ class MyProfileState extends State<MyProfile> {
                         posts: List.from(posts),
                         index: index,
                         userId: getIt<UserProfileManager>().user!.id,
-                        source: profileController.selectedSegment.value == 0
+                        source: _profileController.selectedSegment.value == 0
                             ? PostSource.posts
                             : PostSource.mentions,
-                        page: profileController.selectedSegment.value == 0
-                            ? profileController.postsCurrentPage
-                            : profileController.mentionsPostPage,
-                        totalPages: profileController.totalPages));
+                        page: _profileController.selectedSegment.value == 0
+                            ? _profileController.postsCurrentPage
+                            : _profileController.mentionsPostPage,
+                        totalPages: _profileController.totalPages));
                   }),
                   posts[index].gallery.length == 1
                       ? posts[index].gallery.first.isVideoPost == true
@@ -397,24 +400,24 @@ class MyProfileState extends State<MyProfile> {
         });
   }
 
-  addMomentsGrid() {
+  addReelsGrid() {
     return GetBuilder<ProfileController>(
-        init: profileController,
+        init: _profileController,
         builder: (ctx) {
           ScrollController scrollController = ScrollController();
           scrollController.addListener(() {
             if (scrollController.position.maxScrollExtent ==
                 scrollController.position.pixels) {
-              if (!profileController.isLoadingMoments) {
-                profileController
-                    .getMoments(getIt<UserProfileManager>().user!.id);
+              if (!_profileController.isLoadingReels) {
+                _profileController
+                    .getReels(getIt<UserProfileManager>().user!.id);
               }
             }
           });
 
-          List<PostModel> posts = profileController.moments;
+          List<PostModel> posts = _profileController.reels;
 
-          return profileController.isLoadingMoments
+          return _profileController.isLoadingReels
               ? const PostBoxShimmer()
               : MasonryGridView.count(
             controller: scrollController,
@@ -428,7 +431,7 @@ class MyProfileState extends State<MyProfile> {
                   AspectRatio(
                     aspectRatio: 0.7,
                     child: CachedNetworkImage(
-                      imageUrl: posts[index].gallery.first.thumbnail(),
+                      imageUrl: posts[index].gallery.first.thumbnail,
                       fit: BoxFit.cover,
                       placeholder: (context, url) =>
                           AppUtil.addProgressIndicator(context, 100),
@@ -441,12 +444,10 @@ class MyProfileState extends State<MyProfile> {
                       reels: List.from(posts),
                       index: index,
                       userId: getIt<UserProfileManager>().user!.id,
-                      page: profileController.momentsCurrentPage,
+                      page: _profileController.reelsCurrentPage,
                     ));
                   }),
-                  posts[index].gallery.length == 1
-                      ? posts[index].gallery.first.isVideoPost == true
-                      ? const Positioned(
+                  const Positioned(
                     right: 5,
                     top: 5,
                     child: ThemeIconWidget(
@@ -455,15 +456,6 @@ class MyProfileState extends State<MyProfile> {
                       color: Colors.white,
                     ),
                   )
-                      : Container()
-                      : const Positioned(
-                      right: 5,
-                      top: 5,
-                      child: ThemeIconWidget(
-                        ThemeIcon.multiplePosts,
-                        color: Colors.white,
-                        size: 30,
-                      ))
                 ]),
             mainAxisSpacing: 8.0,
             crossAxisSpacing: 8.0,

@@ -16,7 +16,7 @@ class AgoraCallController extends GetxController {
   RxBool mutedVideo = false.obs;
   RxBool switchMainView = false.obs;
   RxBool remoteJoined = false.obs;
-  SettingsController settingsController = Get.find();
+  SettingsController _settingsController = Get.find();
 
   // int callId = 0;
   final player = AudioPlayer();
@@ -59,7 +59,7 @@ class AgoraCallController extends GetxController {
   Future<void> initializeCalling({
     required Call call,
   }) async {
-    if (AppConfigConstants.agoraApiKey.isEmpty) {
+    if (_settingsController.setting.value!.agoraApiKey!.isEmpty) {
       update();
       return;
     }
@@ -89,7 +89,7 @@ class AgoraCallController extends GetxController {
 
   //Initialize Agora RTC Engine
   Future<void> _initAgoraRtcEngine({required AgoraCallType callType}) async {
-    _engine = await RtcEngine.create(AppConfigConstants.agoraApiKey);
+    _engine = await RtcEngine.create(_settingsController.setting.value!.agoraApiKey!);
     if (callType == AgoraCallType.video) {
       await _engine!.enableVideo();
     }

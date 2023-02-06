@@ -95,7 +95,7 @@ class _ReelAudioDetailState extends State<ReelAudioDetail> {
                               _reelsController.filteredMoments[index];
                           return CachedNetworkImage(
                                   fit: BoxFit.cover,
-                                  imageUrl: reel.gallery.first.thumbnail())
+                                  imageUrl: reel.gallery.first.thumbnail)
                               .ripple(() {
                             Get.to(() => ReelsList(
                                 audioId: widget.audio.id, index: index));

@@ -75,20 +75,27 @@ class SettingsController extends GetxController {
     }
   }
 
-  getSettings() async{
-    ApiController().getSettings().then((response) async{
-      setting.value = response.settings;
-      if (setting.value?.latestVersion! != AppConfigConstants.currentVersion) {
-        forceUpdate.value = true;
-      }
+  getSettings() async {
+    String? authKey = await SharedPrefs().getAuthorizationKey();
 
-      Stripe.publishableKey = setting.value!.stripePublishableKey!;
-      Stripe.merchantIdentifier = 'merchant.com.socialified';
-      Stripe.urlScheme = 'socialifiedstripe';
-      await Stripe.instance.applySettings();
+    if (authKey != null) {
+      await ApiController().getSettings().then((response) async {
+        setting.value = response.settings;
+        print('getSettings = ${setting.value!.pid}');
 
-      update();
-    });
+        if (setting.value?.latestVersion! !=
+            AppConfigConstants.currentVersion) {
+          forceUpdate.value = true;
+        }
+
+        // Stripe.publishableKey = setting.value!.stripePublishableKey!;
+        // Stripe.merchantIdentifier = 'merchant.com.socialified';
+        // Stripe.urlScheme = 'socialifiedstripe';
+        // await Stripe.instance.applySettings();
+
+        update();
+      });
+    }
   }
 
   Future checkBiometric() async {

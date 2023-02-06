@@ -2,7 +2,10 @@ import 'dart:developer';
 import 'package:foap/helper/common_import.dart';
 import 'package:foap/model/podcast_banner_model.dart';
 import 'package:get/get.dart';
+import '../model/club_invitation.dart';
+import '../model/club_join_request.dart';
 import '../model/faq_model.dart';
+import '../model/live_tv_model.dart';
 import '../model/podcast_model.dart';
 import '../model/tv_banner_model.dart';
 import '../model/tv_show_model.dart';
@@ -50,8 +53,12 @@ class ApiResponseModel {
   List<HighlightsModel> highlights = [];
 
   List<ClubModel> clubs = [];
+  List<ClubInvitation> clubInvitations = [];
+  List<ClubJoinRequest> clubJoinRequests = [];
+
   List<CategoryModel> categories = [];
   List<ClubMemberModel> clubMembers = [];
+  int? clubId;
 
   List<EventModel> events = [];
   List<EventMemberModel> eventMembers = [];
@@ -61,17 +68,22 @@ class ApiResponseModel {
   int? bookingId;
 
   List<TvCategoryModel> tvCategories = [];
-  List<TvModel> liveTvs = [];
+  List<TvModel> tvs = [];
   List<TVShowModel> tvShows = [];
   List<TVBannersModel> tvBanners = [];
   List<TVShowEpisodeModel> tvEpisodes = [];
   List<LiveModel> lives = [];
+  TVShowModel? tvShowDetail;
+  TvModel? tvChannelDetail;
 
   List<PodcastBannerModel> podcastBanners = [];
   List<PodcastCategoryModel> podcastCategories = [];
   List<PodcastModel> podcasts = [];
   List<PodcastShowModel> podcastShows = [];
-  List<PodcastShowSongModel> podcastShowSongs = [];
+  List<PodcastShowEpisodeModel> podcastShowEpisodes = [];
+  PodcastShowModel? podcastShowDetail;
+  PodcastModel? podcastHostDetail;
+
   List<ReelMusicModel> audios = [];
 
   List<InterestModel> interests = [];
@@ -96,6 +108,7 @@ class ApiResponseModel {
   String? stripePaymentIntentClientSecret;
   String? paypalClientToken;
   String? transactionId;
+  bool isLoginFirstTime = false;
 
   ApiResponseModel();
 
@@ -106,7 +119,7 @@ class ApiResponseModel {
     model.isInvalidLogin = json['isInvalidLogin'] == null ? false : true;
 
     log(json.toString());
-    log(url);
+    // log(url);
 
     if (model.success) {
       model.message = json['message'];
@@ -132,7 +145,11 @@ class ApiResponseModel {
           }
           if (data['auth_key'] != null) {
             model.authKey = data['auth_key'];
-            //AppConfigConstants.userId = model.user!.id;
+            if (data['user']['username'] == null) {
+              model.isLoginFirstTime = true;
+            } else {
+              model.isLoginFirstTime = data['is_login_first_time'] == 1;
+            }
           }
         } else if (data['competition'] != null) {
           if (url == NetworkConstantsUtil.getCompetitions) {
@@ -147,8 +164,7 @@ class ApiResponseModel {
           } else if (data['competition'] != null) {
             model.competition = CompetitionModel.fromJson(data['competition']);
           }
-        }
-        else if (data['verification'] != null) {
+        } else if (data['verification'] != null) {
           var items = data['verification']['items'];
 
           model.verificationRequests = List<VerificationRequest>.from(
@@ -159,9 +175,8 @@ class ApiResponseModel {
             model.hashtags =
                 List<Hashtag>.from(items.map((x) => Hashtag.fromJson(x)));
           }
-        }
-        else if (data['id'] != null) {
-          if(url == NetworkConstantsUtil.buyTicket){
+        } else if (data['id'] != null) {
+          if (url == NetworkConstantsUtil.buyTicket) {
             model.bookingId = data['id'];
           }
         } else if (data['client_secret'] != null) {
@@ -177,6 +192,23 @@ class ApiResponseModel {
                 List<ClubModel>.from(items.map((x) => ClubModel.fromJson(x)));
             model.metaData = APIMetaData.fromJson(data['club']['_meta']);
           }
+        } else if (data['invitation'] != null) {
+          var items = data['invitation']['items'];
+          if (items != null && items.length > 0) {
+            model.clubInvitations = List<ClubInvitation>.from(
+                items.map((x) => ClubInvitation.fromJson(x)));
+            model.metaData = APIMetaData.fromJson(data['invitation']['_meta']);
+          }
+        } else if (data['join_request'] != null) {
+          var items = data['join_request']['items'];
+          if (items != null && items.length > 0) {
+            model.clubJoinRequests = List<ClubJoinRequest>.from(
+                items.map((x) => ClubJoinRequest.fromJson(x)));
+            model.metaData =
+                APIMetaData.fromJson(data['join_request']['_meta']);
+          }
+        } else if (data['club_id'] != null) {
+          model.clubId = data['club_id'];
         } else if (data['audio'] != null) {
           var items = data['audio']['items'];
           if (items != null && items.length > 0) {
@@ -194,8 +226,45 @@ class ApiResponseModel {
         } else if (data['live_tv'] != null) {
           var items = data['live_tv']['items'];
           if (items != null && items.length > 0) {
-            model.liveTvs =
+            model.tvs =
                 List<TvModel>.from(items.map((x) => TvModel.fromJson(x)));
+          }
+        } else if (data['tvChannelDetails'] != null) {
+          var tvChannelDetail = data['tvChannelDetails'];
+          if (url == NetworkConstantsUtil.getTVChannel) {
+            model.tvChannelDetail = TvModel.fromJson(tvChannelDetail);
+          }
+        } else if (data['tv_show'] != null) {
+          var tvShows = data['tv_show'];
+          var items = tvShows['items'];
+          if (items != null && items.length > 0) {
+            if (url == NetworkConstantsUtil.getTVShows) {
+              model.tvShows = List<TVShowModel>.from(
+                  items.map((x) => TVShowModel.fromJson(x)));
+            }
+          }
+        } else if (data['tvShowDetails'] != null) {
+          var tvShowDetails = data['tvShowDetails'];
+          if (url == NetworkConstantsUtil.getTVShowById) {
+            model.tvShowDetail = TVShowModel.fromJson(tvShowDetails);
+          }
+        } else if (data['tv_banner'] != null) {
+          var tvBanners = data['tv_banner'];
+          var items = tvBanners['items'];
+          if (items != null && items.length > 0) {
+            if (url == NetworkConstantsUtil.tvBanners) {
+              model.tvBanners = List<TVBannersModel>.from(
+                  items.map((x) => TVBannersModel.fromJson(x)));
+            }
+          }
+        } else if (data['tvShowEpisode'] != null) {
+          var tvShowEpisode = data['tvShowEpisode'];
+          var items = tvShowEpisode['items'];
+          if (items != null && items.length > 0) {
+            if (url == NetworkConstantsUtil.getTVShowEpisodes) {
+              model.tvEpisodes = List<TVShowEpisodeModel>.from(
+                  items.map((x) => TVShowEpisodeModel.fromJson(x)));
+            }
           }
         } else if (data['live_history'] != null) {
           var items = data['live_history']['items'];
@@ -256,33 +325,6 @@ class ApiResponseModel {
                   items.map((x) => CategoryModel.fromJson(x)));
             }
           }
-        } else if (data['tv_show'] != null) {
-          var tvShows = data['tv_show'];
-          var items = tvShows['items'];
-          if (items != null && items.length > 0) {
-            if (url == NetworkConstantsUtil.getTVShows) {
-              model.tvShows = List<TVShowModel>.from(
-                  items.map((x) => TVShowModel.fromJson(x)));
-            }
-          }
-        } else if (data['tv_banner'] != null) {
-          var tvBanners = data['tv_banner'];
-          var items = tvBanners['items'];
-          if (items != null && items.length > 0) {
-            if (url == NetworkConstantsUtil.tvBanners) {
-              model.tvBanners = List<TVBannersModel>.from(
-                  items.map((x) => TVBannersModel.fromJson(x)));
-            }
-          }
-        } else if (data['tvShowEpisode'] != null) {
-          var tvShowEpisode = data['tvShowEpisode'];
-          var items = tvShowEpisode['items'];
-          if (items != null && items.length > 0) {
-            if (url == NetworkConstantsUtil.getTVShowEpisodes) {
-              model.tvEpisodes = List<TVShowEpisodeModel>.from(
-                  items.map((x) => TVShowEpisodeModel.fromJson(x)));
-            }
-          }
         } else if (data['podcast_banner'] != null) {
           var podcastBanners = data['podcast_banner'];
           var items = podcastBanners['items'];
@@ -301,6 +343,9 @@ class ApiResponseModel {
                   items.map((x) => PodcastModel.fromJson(x)));
             }
           }
+        } else if (data['podcastHostDetails'] != null) {
+          var showDetails = data['podcastHostDetails'];
+          model.podcastHostDetail = PodcastModel.fromJson(showDetails);
         } else if (data['podcast_show'] != null) {
           var podcasts = data['podcast_show'];
           var items = podcasts['items'];
@@ -310,13 +355,16 @@ class ApiResponseModel {
                   items.map((x) => PodcastShowModel.fromJson(x)));
             }
           }
+        } else if (data['podcastShowDetails'] != null) {
+          var showDetails = data['podcastShowDetails'];
+          model.podcastShowDetail = PodcastShowModel.fromJson(showDetails);
         } else if (data['podcastShowEpisode'] != null) {
           var showEpisodes = data['podcastShowEpisode'];
           var items = showEpisodes['items'];
           if (items != null && items.length > 0) {
             if (url == NetworkConstantsUtil.getPodcastShowsEpisode) {
-              model.podcastShowSongs = List<PodcastShowSongModel>.from(
-                  items.map((x) => PodcastShowSongModel.fromJson(x)));
+              model.podcastShowEpisodes = List<PodcastShowEpisodeModel>.from(
+                  items.map((x) => PodcastShowEpisodeModel.fromJson(x)));
             }
           }
         } else if (data['interest'] != null && url == NetworkConstantsUtil.interests) {
@@ -540,25 +588,26 @@ class ApiResponseModel {
           }
         }
       }
-    } else {
+    }
+    else {
       if (data == null) {
-        Timer(const Duration(seconds: 1), () {
-          Get.to(() => const LoginScreen());
-        });
-      } else if (data['token'] != null) {
-        model.token = data['token'] as String;
+        // Timer(const Duration(seconds: 1), () {
+        //   Get.to(() => const LoginScreen());
+        // });
+        model.message = LocalizationString.errorMessage;
+        // model.message = error;
       } else if (data['errors'] != null) {
         Map errors = data['errors'];
         var errorsArr = errors[errors.keys.first] ?? [];
         String error = errorsArr.first ?? LocalizationString.errorMessage;
         model.message = error;
       } else {
-        Timer.periodic(const Duration(seconds: 1), (timer) {
-          Get.to(() => const LoginScreen());
-        });
+        // Timer.periodic(const Duration(seconds: 1), (timer) {
+        //   Get.to(() => const LoginScreen());
+        // });
+        model.message = LocalizationString.errorMessage;
       }
-    }
-    return model;
+    }    return model;
   }
 
   factory ApiResponseModel.fromUsersJson(dynamic json) {

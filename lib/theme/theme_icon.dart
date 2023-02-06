@@ -479,7 +479,7 @@ class ThemeIconWidget extends StatelessWidget {
         );
       case ThemeIcon.camera:
         return Icon(
-          Icons.camera_alt,
+          Icons.camera_alt_outlined,
           size: size ?? 20,
           color: color ?? Theme.of(context).iconTheme.color,
         );

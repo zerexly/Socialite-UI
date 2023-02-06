@@ -58,13 +58,14 @@ class DashboardState extends State<DashboardScreen> {
 
     super.initState();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _settingsController.getSettings();
-    });
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   _settingsController.getSettings();
+    // });
   }
 
   @override
   Widget build(BuildContext context) {
+    print('_settingsController.setting.value?.pid = ${_settingsController.setting.value?.pid}');
     return Obx(() => _dashboardController.isLoading.value == true
         ? SizedBox(
       height: Get.height,

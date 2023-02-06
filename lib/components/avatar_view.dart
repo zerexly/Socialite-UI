@@ -63,14 +63,16 @@ class UserAvatarView extends StatelessWidget {
   final UserModel user;
   final double? size;
   final VoidCallback? onTapHandler;
-  final bool hideIfLive;
+  final bool hideLiveIndicator;
+  final bool hideOnlineIndicator;
 
   const UserAvatarView(
       {Key? key,
       required this.user,
       this.size = 60,
       this.onTapHandler,
-      this.hideIfLive = false})
+      this.hideLiveIndicator = false,
+      this.hideOnlineIndicator = false})
       : super(key: key);
 
   @override
@@ -80,14 +82,15 @@ class UserAvatarView extends StatelessWidget {
       width: size ?? 60,
       child: Stack(
         children: [
-          user.liveCallDetail != null && hideIfLive == false
+          user.liveCallDetail != null && hideLiveIndicator == false
               ? liveUserWidget(size: size ?? 60, context: context).ripple(() {
                   if (onTapHandler != null) {
                     onTapHandler!();
                   }
                 })
               : userPictureView(size: size ?? 60, context: context),
-          user.liveCallDetail == null || hideIfLive == true
+          (user.liveCallDetail == null || hideLiveIndicator == true) &&
+                  hideOnlineIndicator == false
               ? Positioned(
                   right: 0,
                   bottom: 0,
@@ -117,7 +120,12 @@ class UserAvatarView extends StatelessWidget {
                 width: 20,
                 child: const CircularProgressIndicator().p16),
             errorWidget: (context, url, error) => SizedBox(
-                height: size, width: size, child: const Icon(Icons.error)),
+                height: size,
+                width: size,
+                child: Icon(
+                  Icons.error,
+                  size: size / 2,
+                )),
           ).borderWithRadius(
             context: context,
             value: 1,

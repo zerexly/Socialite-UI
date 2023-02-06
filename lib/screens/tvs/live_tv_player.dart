@@ -1,20 +1,17 @@
 import 'package:foap/helper/common_import.dart';
 import 'package:get/get.dart';
+import 'package:foap/model/live_tv_model.dart';
 
-import '../../model/tv_show_model.dart';
-
-class LiveTVStreaming extends StatefulWidget {
+class LiveTvPlayer extends StatefulWidget {
   final TvModel tvModel;
-  final TVShowModel? showModel;
 
-  const LiveTVStreaming({Key? key, required this.tvModel, this.showModel})
-      : super(key: key);
+  const LiveTvPlayer({Key? key, required this.tvModel}) : super(key: key);
 
   @override
-  State<LiveTVStreaming> createState() => _LiveTVStreamingState();
+  State<LiveTvPlayer> createState() => _LiveTvPlayerState();
 }
 
-class _LiveTVStreamingState extends State<LiveTVStreaming> {
+class _LiveTvPlayerState extends State<LiveTvPlayer> {
   final TvStreamingController _liveTvStreamingController = Get.find();
   TextEditingController messageTextField = TextEditingController();
 
@@ -34,9 +31,7 @@ class _LiveTVStreamingState extends State<LiveTVStreaming> {
       } else {
         AutoOrientation.landscapeAutoMode();
       }
-
-      _liveTvStreamingController.getTvShowEpisodes(
-          showId: widget.showModel?.id);
+      _liveTvStreamingController.setCurrentViewingTv(widget.tvModel);
     });
   }
 
@@ -59,160 +54,78 @@ class _LiveTVStreamingState extends State<LiveTVStreaming> {
       }
       return KeyboardVisibilityBuilder(builder: (context, isKeyboardVisible) {
         return Scaffold(
-            backgroundColor: Theme.of(context).backgroundColor,
-            body: Stack(
-              children: [
+          backgroundColor: Theme.of(context).backgroundColor,
+          body: Column(
+            children: [
+              if (orientation == Orientation.portrait)
                 Column(
                   children: [
                     const SizedBox(
                       height: 50,
                     ),
-                    backNavigationBar(
-                      context: context,
-                      title: LocalizationString.tvs,
-                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        ThemeIconWidget(
+                          ThemeIcon.backArrow,
+                          size: 18,
+                          color: Theme.of(context).iconTheme.color,
+                        ).ripple(() {
+                          Get.back();
+                        }),
+                        Text(
+                          widget.tvModel.name,
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyLarge!
+                              .copyWith(fontWeight: FontWeight.w600),
+                        ),
+                        Obx(() => ThemeIconWidget(
+                              _liveTvStreamingController
+
+                                          .currentViewingTv.value?.isFav ==
+                                      1
+                                  ? ThemeIcon.favFilled
+                                  : ThemeIcon.fav,
+                              size: 18,
+                              color: _liveTvStreamingController
+                                          .currentViewingTv.value?.isFav ==
+                                      1
+                                  ? Colors.red
+                                  : Theme.of(context).iconTheme.color,
+                            ).ripple(() {
+                              _liveTvStreamingController
+                                  .favUnfavTv(_liveTvStreamingController
+                                  .currentViewingTv.value!);
+                            })),
+                      ],
+                    ).setPadding(left: 16, right: 16, top: 8, bottom: 16),
                     divider(context: context).tP8,
-                    SocialifiedLiveTvVideoPlayer(
-                      tvModel: widget.tvModel,
-                      play: false,
-                      orientation: orientation,
-                      showMinimumHeight: isKeyboardVisible,
-                    ),
-                    addEpisodes()
                   ],
                 ),
-                // Obx(() =>
-                //     _liveTvStreamingController.showChatMessages.value == false
-                //         ? Positioned(
-                //             right: 25,
-                //             bottom: 40,
-                //             child: Container(
-                //               height: 40,
-                //               width: 40,
-                //               color: Theme.of(context).primaryColor,
-                //               child: const ThemeIconWidget(
-                //                 ThemeIcon.chat,
-                //                 size: 25,
-                //               ),
-                //             ).circular.ripple(() {
-                //               _liveTvStreamingController.showMessagesView();
-                //             }),
-                //           )
-                //         : Container())
-              ],
-            ));
+              SocialifiedVideoPlayer(
+                tvModel: widget.tvModel,
+                url: widget.tvModel.tvUrl,
+                play: false,
+                orientation: orientation,
+                isPlayingTv: true,
+                // showMinimumHeight: isKeyboardVisible,
+              ),
+              if (orientation == Orientation.portrait)
+                Expanded(child: liveChatView()),
+            ],
+          ),
+        );
       });
     });
   }
 
-  Widget bottomView() {
-    return Obx(() => _liveTvStreamingController.showChatMessages.value == false
-        ? Expanded(child: detailView())
-        : Expanded(child: liveChatView()));
-  }
-
-  Widget addEpisodes() {
-    return Expanded(
-      child: ListView.builder(
-        padding: EdgeInsets.zero,
-        scrollDirection: Axis.vertical,
-        itemCount: _liveTvStreamingController.tvEpisodes.length + 1,
-        itemBuilder: (BuildContext context, int index) {
-          return index == 0 ? detailView() : Card(
-            child: ListTile(
-              contentPadding: const EdgeInsets.all(6),
-              leading: Stack(
-                children: [
-                  CachedNetworkImage(
-                    imageUrl:
-                        _liveTvStreamingController.tvEpisodes[index-1].imageUrl ??
-                            '',
-                    fit: BoxFit.cover,
-                    height: 50,
-                    width: MediaQuery.of(context).size.width / 4.5,
-                  ),
-                  const Positioned.fill(child: Icon(Icons.play_circle))
-                ],
-              ),
-              title:
-                  Text(_liveTvStreamingController.tvEpisodes[index-1].name ?? ''),
-// subtitle: Text(_podcastStreamingController
-//     .podcastShowEpisodes[index].ep ??
-// ''),
-              dense: true,
-            ),
-          ).setPadding(left: 16, right: 16, bottom: 5).round(10).ripple(() {});
-        },
-      ),
-    );
-  }
-
-  Widget detailView() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Container(
-                color: Theme.of(context).primaryColor,
-                child: Text(widget.showModel
-                    ?.ageGroup ??
-                    "")
-                    .setPadding(left: 10, right: 10, top: 5, bottom: 5)).round(10),
-            const SizedBox(width: 10),
-            Container(
-                color: Theme.of(context).primaryColor,
-                child: Text(widget.showModel
-                    ?.language ??
-                    "")
-                    .setPadding(left: 10, right: 10, top: 5, bottom: 5)).round(10),
-          ],
-        ).bP8,
-        Row(
-          children: [
-            CachedNetworkImage(
-              imageUrl: widget.showModel?.imageUrl ?? '',
-              width: 50,
-              height: 50,
-              fit: BoxFit.cover,
-            ),
-            const SizedBox(
-              width: 10,
-            ),
-            Column(
-              children: [
-                Text(
-                  widget.showModel?.name ?? '',
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyLarge!
-                      .copyWith(fontWeight: FontWeight.w700),
-                  // maxLines: 3,
-                ),
-                // Text(
-                //   widget.tvModel.description,
-                //   style: Theme.of(context).textTheme.bodySmall,
-                //   // maxLines: 3,
-                // )
-              ],
-            )
-          ],
-        ),
-        const SizedBox(
-          height: 10,
-        ),
-        Text(
-          widget.showModel?.description ?? '',
-          style: Theme.of(context).textTheme.bodySmall,
-          // maxLines: 3,
-        ),
-      ],
-    ).p16;
-  }
-
   Widget liveChatView() {
-    return Column(
-      children: [Expanded(child: messagesListView()), messageComposerView()],
+    return SizedBox(
+      height: Get.height * 0.5,
+      child: Column(
+        children: [Expanded(child: messagesListView()), messageComposerView()],
+      ),
     );
   }
 
@@ -239,13 +152,13 @@ class _LiveTVStreamingState extends State<LiveTVStreaming> {
                       style: Theme.of(context).textTheme.bodySmall)
                 ],
               ),
-              const Spacer(),
-              const ThemeIconWidget(
-                ThemeIcon.close,
-                size: 25,
-              ).ripple(() {
-                _liveTvStreamingController.hideMessagesView();
-              }),
+              // const Spacer(),
+              // const ThemeIconWidget(
+              //   ThemeIcon.close,
+              //   size: 25,
+              // ).ripple(() {
+              //   _liveTvStreamingController.hideMessagesView();
+              // }),
             ],
           ).p16,
         ).topRounded(20),
@@ -312,8 +225,8 @@ class _LiveTVStreamingState extends State<LiveTVStreaming> {
   }
 
   Widget messageComposerView() {
-    return Container(
-      color: Colors.black,
+    return SizedBox(
+      // color: Colors.black12,
       height: 70,
       child: Column(
         children: [
@@ -331,7 +244,7 @@ class _LiveTVStreamingState extends State<LiveTVStreaming> {
                     textAlign: TextAlign.start,
                     style: Theme.of(context)
                         .textTheme
-                        .titleMedium!
+                        .bodyLarge!
                         .copyWith(color: Colors.white),
                     maxLines: 50,
                     decoration: InputDecoration(
@@ -345,7 +258,7 @@ class _LiveTVStreamingState extends State<LiveTVStreaming> {
                             .copyWith(color: Theme.of(context).primaryColor),
                         hintStyle: Theme.of(context)
                             .textTheme
-                            .titleMedium!
+                            .bodyLarge!
                             .copyWith(color: Theme.of(context).primaryColor),
                         hintText: LocalizationString.pleaseEnterMessage),
                   ),
@@ -358,9 +271,9 @@ class _LiveTVStreamingState extends State<LiveTVStreaming> {
                 LocalizationString.send,
                 style: Theme.of(context)
                     .textTheme
-                    .titleMedium!
+                    .bodyLarge!
                     .copyWith(color: Theme.of(context).primaryColor)
-                    .copyWith(fontWeight: FontWeight.w900),
+                    .copyWith(fontWeight: FontWeight.w700),
               ).ripple(() {
                 sendMessage(widget.tvModel.id);
               }),

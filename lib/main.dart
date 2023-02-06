@@ -92,19 +92,17 @@ Future<void> main() async {
   Get.put(RequestVerificationController());
   Get.put(FAQController());
   Get.put(EventsController());
-
   Get.put(PodcastStreamingController());
-
   Get.put(ReelsController());
-
   Get.put(CreateReelController());
-
   Get.put(DatingController());
-
-
 
   setupServiceLocator();
   await getIt<UserProfileManager>().refreshProfile();
+
+  final SettingsController settingsController = Get.find();
+  await settingsController.getSettings();
+
   getIt<NotificationManager>().initialize();
 
   // AppConfigConstants.selectedLanguage = await SharedPrefs().getLanguageCode();
@@ -152,12 +150,10 @@ class SocialifiedApp extends StatefulWidget {
 }
 
 class _SocialifiedAppState extends State<SocialifiedApp> {
-  final SettingsController _settingsController = Get.find();
 
   @override
   void initState() {
     super.initState();
-    _settingsController.getSettings();
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
     ]);

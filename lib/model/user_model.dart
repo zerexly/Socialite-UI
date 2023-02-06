@@ -190,6 +190,9 @@ class UserModel {
       return nameParts[0].substring(0, 1).toUpperCase() +
           nameParts[1].substring(0, 1).toUpperCase();
     } else {
+      if (nameParts[0].isEmpty) {
+        return '*';
+      }
       return nameParts[0].substring(0, 1).toUpperCase();
     }
   }

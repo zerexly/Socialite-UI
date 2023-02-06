@@ -17,7 +17,9 @@ class _ChatRoomDetailState extends State<ChatRoomDetail> {
 
   @override
   void initState() {
-    chatRoomDetailController.getStarredMessages(widget.chatRoom);
+    if (_settingsController.setting.value!.enableStarMessage) {
+      chatRoomDetailController.getStarredMessages(widget.chatRoom);
+    }
     chatRoomDetailController.getUpdatedChatRoomDetail(widget.chatRoom);
     super.initState();
   }
@@ -287,7 +289,8 @@ class _ChatRoomDetailState extends State<ChatRoomDetail> {
               ));
         }),
         divider(context: context),
-        chatRoomDetailController.starredMessages.isNotEmpty
+        chatRoomDetailController.starredMessages.isNotEmpty &&
+                _settingsController.setting.value!.enableStarMessage
             ? Obx(() => Container(
                   height: 50,
                   color: Theme.of(context).cardColor,

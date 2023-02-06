@@ -41,7 +41,9 @@ class _ReelsState extends State<Reels> {
                               index, _reelsController.publicMoments[index]);
                         },
                         children: [
-                          for (int i = 0; i < _reelsController.publicMoments.length; i++)
+                          for (int i = 0;
+                              i < _reelsController.publicMoments.length;
+                              i++)
                             SizedBox(
                               height: Get.height,
                               width: Get.width,
@@ -53,6 +55,12 @@ class _ReelsState extends State<Reels> {
                             )
                         ]);
                   }),
+              Positioned(
+                  right: 16,
+                  top: 50,
+                  child: const ThemeIconWidget(ThemeIcon.camera).ripple(() {
+                    Get.to(() => const CreateReelScreen());
+                  }))
             ],
           )),
     );
