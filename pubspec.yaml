@@ -97,7 +97,7 @@ dependencies:
   gallery_saver: ^2.3.2
   pip_view: ^0.9.7
   google_sign_in: ^5.4.0
-  flutter_callkit_incoming: ^1.0.2+1
+  flutter_callkit_incoming: ^1.0.3+3
   link_preview_generator: ^1.2.0
 #  video_thumbnail_imageview: ^0.0.5
   uuid: ^3.0.6

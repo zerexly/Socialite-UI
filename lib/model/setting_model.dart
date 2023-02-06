@@ -156,6 +156,7 @@ class SettingModel {
     required this.enableReel,
     required this.enableGift,
     required this.enablePolls,
+    required this.enableDating,
 
   });
 
@@ -244,6 +245,7 @@ class SettingModel {
     enableReel: json["is_reel"] == 1,
     enableGift: json["is_gift_sending"] == 1,
     enablePolls: json["is_polls"] == 1,
+    enableDating: json["is_dating"] == 1,
 
   );
 

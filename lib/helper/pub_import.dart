@@ -40,7 +40,6 @@ export 'package:google_sign_in/google_sign_in.dart';
 export 'package:flutter_linkify/flutter_linkify.dart';
 
 // export 'package:video_thumbnail_imageview/video_thumbnail_imageview.dart';
-export 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
 export 'package:uuid/uuid.dart';
 export 'package:mime_type/mime_type.dart';
 export 'package:photo_manager/photo_manager.dart';

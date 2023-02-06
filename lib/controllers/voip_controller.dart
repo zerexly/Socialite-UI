@@ -1,5 +1,10 @@
+import 'package:flutter_callkit_incoming/entities/call_kit_params.dart';
+import 'package:flutter_callkit_incoming/entities/call_event.dart' as callEvent;
+import 'package:flutter_callkit_incoming/entities/ios_params.dart';
 import 'package:get/get.dart';
 import 'package:foap/helper/common_import.dart';
+import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart'
+    as callkit;
 
 class CallData {
   String uuid;
@@ -38,20 +43,20 @@ class VoipController {
   final AgoraCallController agoraCallController = Get.find();
 
   endCall(Call call) {
-    var params = <String, dynamic>{'id': call.uuid};
-    FlutterCallkitIncoming.endCall(params);
+    // var params = <String, dynamic>{'id': call.uuid};
+
+    callkit.FlutterCallkitIncoming.endCall(call.uuid);
   }
 
   listenerSetup() {
-    FlutterCallkitIncoming.onEvent.listen((event) {
-      switch (event!.name) {
-        case CallEvent.ACTION_CALL_INCOMING:
+    callkit.FlutterCallkitIncoming.onEvent.listen((event) {
+      switch (event!.event) {
+        case callEvent.Event.ACTION_CALL_INCOMING:
           //getIt<SocketManager>().connect();
           break;
-        case CallEvent.ACTION_CALL_START:
+        case callEvent.Event.ACTION_CALL_START:
           break;
-        case CallEvent.ACTION_CALL_ACCEPT:
-
+        case callEvent.Event.ACTION_CALL_ACCEPT:
           CallData callData = CallData.fromJson(event.body);
 
           UserModel opponent = UserModel();
@@ -69,7 +74,7 @@ class VoipController {
               opponent: opponent);
           agoraCallController.acceptCall(call: call);
           break;
-        case CallEvent.ACTION_CALL_DECLINE:
+        case callEvent.Event.ACTION_CALL_DECLINE:
           Call call = Call(
               uuid: event.body['id'],
               channelName: '',
@@ -81,7 +86,7 @@ class VoipController {
           //endCall(call);
           agoraCallController.declineCall(call: call);
           break;
-        case CallEvent.ACTION_CALL_ENDED:
+        case callEvent.Event.ACTION_CALL_ENDED:
           // print('call ended == ${event.body}');
           // CallData callData = CallData.fromJson(event.body);
           Call call = Call(
@@ -92,11 +97,11 @@ class VoipController {
               token: '',
               callType: 0,
               callId: 0);
-          var params = <String, dynamic>{'id': event.body['id']};
-          FlutterCallkitIncoming.endCall(params);
+          // var params = <String, dynamic>{'id': event.body['id']};
+          callkit.FlutterCallkitIncoming.endCall(event.body['id']);
           agoraCallController.endCall(call);
           break;
-        case CallEvent.ACTION_CALL_TIMEOUT:
+        case callEvent.Event.ACTION_CALL_TIMEOUT:
           CallData callData = CallData.fromJson(event.body);
           if (callData.callerId != getIt<UserProfileManager>().user?.id &&
               getIt<UserProfileManager>().user?.id != null) {
@@ -108,74 +113,103 @@ class VoipController {
                 token: callData.token,
                 callType: callData.type == 0 ? 1 : 2,
                 callId: callData.id);
-            var params = <String, dynamic>{'id': event.body['id']};
-            FlutterCallkitIncoming.endCall(params);
+            // var params = <String, dynamic>{'id': event.body['id']};
+            callkit.FlutterCallkitIncoming.endCall(event.body['id']);
             agoraCallController.declineCall(call: call);
           }
 
           break;
-        case CallEvent.ACTION_CALL_CALLBACK:
-
+        case callEvent.Event.ACTION_CALL_CALLBACK:
           break;
-        case CallEvent.ACTION_CALL_TOGGLE_HOLD:
+        case callEvent.Event.ACTION_CALL_TOGGLE_HOLD:
           // TODO: only iOS
           break;
-        case CallEvent.ACTION_CALL_TOGGLE_MUTE:
+        case callEvent.Event.ACTION_CALL_TOGGLE_MUTE:
           // TODO: only iOS
           break;
-        case CallEvent.ACTION_CALL_TOGGLE_DMTF:
+        case callEvent.Event.ACTION_CALL_TOGGLE_DMTF:
           // TODO: only iOS
           break;
-        case CallEvent.ACTION_CALL_TOGGLE_GROUP:
+        case callEvent.Event.ACTION_CALL_TOGGLE_GROUP:
           // TODO: only iOS
           break;
-        case CallEvent.ACTION_CALL_TOGGLE_AUDIO_SESSION:
+        case callEvent.Event.ACTION_CALL_TOGGLE_AUDIO_SESSION:
           // TODO: only iOS
           break;
-        case CallEvent.ACTION_DID_UPDATE_DEVICE_PUSH_TOKEN_VOIP:
+        case callEvent.Event.ACTION_DID_UPDATE_DEVICE_PUSH_TOKEN_VOIP:
           // TODO: only iOS
+          break;
+        default:
           break;
       }
     });
   }
 
   outGoingCall(Call call) async {
-    var params = <String, dynamic>{
-      'id': call.uuid,
-      'nameCaller': call.opponent.userName,
-      'handle': call.channelName,
-      'type': call.callType == 1 ? 0 : 1,
-      'extra': <String, dynamic>{
-        'id': call.callId,
-        'callerId': getIt<UserProfileManager>().user!.id,
-        'callerImage': getIt<UserProfileManager>().user!.picture,
-        'channelName': call.channelName,
-        'token': call.token
-      },
-      'ios': <String, dynamic>{'handleType': 'generic'}
-    };
-    await FlutterCallkitIncoming.startCall(params);
+    // var params = <String, dynamic>{
+    //   'id': call.uuid,
+    //   'nameCaller': call.opponent.userName,
+    //   'handle': call.channelName,
+    //   'type': call.callType == 1 ? 0 : 1,
+    //   'extra': <String, dynamic>{
+    //     'id': call.callId,
+    //     'callerId': getIt<UserProfileManager>().user!.id,
+    //     'callerImage': getIt<UserProfileManager>().user!.picture,
+    //     'channelName': call.channelName,
+    //     'token': call.token
+    //   },
+    //   'ios': <String, dynamic>{'handleType': 'generic'}
+    // };
+    CallKitParams params = CallKitParams(
+        id: call.uuid,
+        nameCaller: call.opponent.userName,
+        handle: call.channelName,
+        type: call.callType == 1 ? 0 : 1,
+        extra: <String, dynamic>{
+          'id': call.callId,
+          'callerId': getIt<UserProfileManager>().user!.id,
+          'callerImage': getIt<UserProfileManager>().user!.picture,
+          'channelName': call.channelName,
+          'token': call.token
+        },
+        ios: IOSParams(handleType: 'generic'));
+
+    await callkit.FlutterCallkitIncoming.startCall(params);
   }
 
   missCall(Call call) async {
-    var params = <String, dynamic>{
-      'id': call.uuid,
-      'nameCaller': call.opponent.userName,
-      'handle': call.channelName,
-      'type': call.callType == 1 ? 0 : 1,
-      'extra': <String, dynamic>{
-        'id': call.callId,
-        'callerId': getIt<UserProfileManager>().user!.id,
-        'callerImage': getIt<UserProfileManager>().user!.picture,
-        'channelName': call.channelName,
-        'token': call.token
-      },
-      'ios': <String, dynamic>{'handleType': 'generic'}
-    };
-    await FlutterCallkitIncoming.showMissCallNotification(params);
+    // var params = <String, dynamic>{
+    //   'id': call.uuid,
+    //   'nameCaller': call.opponent.userName,
+    //   'handle': call.channelName,
+    //   'type': call.callType == 1 ? 0 : 1,
+    //   'extra': <String, dynamic>{
+    //     'id': call.callId,
+    //     'callerId': getIt<UserProfileManager>().user!.id,
+    //     'callerImage': getIt<UserProfileManager>().user!.picture,
+    //     'channelName': call.channelName,
+    //     'token': call.token
+    //   },
+    //   'ios': <String, dynamic>{'handleType': 'generic'}
+    // };
+    CallKitParams params = CallKitParams(
+        id: call.uuid,
+        nameCaller: call.opponent.userName,
+        handle: call.channelName,
+        type: call.callType == 1 ? 0 : 1,
+        extra: <String, dynamic>{
+          'id': call.callId,
+          'callerId': getIt<UserProfileManager>().user!.id,
+          'callerImage': getIt<UserProfileManager>().user!.picture,
+          'channelName': call.channelName,
+          'token': call.token
+        },
+        ios: IOSParams(handleType: 'generic'));
+
+    await callkit.FlutterCallkitIncoming.showMissCallNotification(params);
   }
 
   endAllCalls() async {
-    await FlutterCallkitIncoming.endAllCalls();
+    await callkit.FlutterCallkitIncoming.endAllCalls();
   }
 }
