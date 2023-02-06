@@ -32,7 +32,7 @@ class _ChangeUserNameState extends State<ChangeUserName> {
               title: LocalizationString.changeUserName,
               completion: () {
                 profileController.updateUserName(
-                    userName: userName.text, context: context);
+                    userName: userName.text,isSigningUp: false, context: context);
               }),
           divider(context: context).vP8,
           const SizedBox(
@@ -66,15 +66,15 @@ class _ChangeUserNameState extends State<ChangeUserName> {
                     top: 0,
                     child: Center(
                       child: Obx(() =>
-                          profileController.userNameCheckStatus.value == true
-                              ? ThemeIconWidget(
-                                  ThemeIcon.checkMark,
-                                  color: Theme.of(context).primaryColor,
-                                )
-                              : ThemeIconWidget(
-                                  ThemeIcon.close,
-                                  color: Theme.of(context).errorColor,
-                                )),
+                      profileController.userNameCheckStatus.value == true
+                          ? ThemeIconWidget(
+                        ThemeIcon.checkMark,
+                        color: Theme.of(context).primaryColor,
+                      )
+                          : ThemeIconWidget(
+                        ThemeIcon.close,
+                        color: Theme.of(context).errorColor,
+                      )),
                     ),
                   ),
                 ],

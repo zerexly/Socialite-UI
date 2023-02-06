@@ -1,7 +1,7 @@
 import 'package:foap/helper/common_import.dart';
 import 'package:get/get.dart';
 
-import '../model/tv_banner_model.dart';
+import 'package:foap/model/live_tv_model.dart';
 import '../model/tv_show_model.dart';
 
 class TvStreamingController extends GetxController {
@@ -11,13 +11,28 @@ class TvStreamingController extends GetxController {
 
   RxBool showChatMessages = false.obs;
   RxList<TVBannersModel> banners = <TVBannersModel>[].obs;
-  RxList<TvModel> liveTvs = <TvModel>[].obs;
+  RxList<TvModel> tvs = <TvModel>[].obs;
   RxList<TvCategoryModel> categories = <TvCategoryModel>[].obs;
   RxList<TVShowModel> tvShows = <TVShowModel>[].obs;
   RxList<TVShowEpisodeModel> tvEpisodes = <TVShowEpisodeModel>[].obs;
+  Rx<TvModel?> currentViewingTv = Rx<TvModel?>(null);
 
   RxInt currentBannerIndex = 0.obs;
   Rx<TVShowEpisodeModel?> selectedEpisode = Rx<TVShowEpisodeModel?>(null);
+
+  RxInt currentSegment = (0).obs;
+  Rx<TVShowModel?> showDetail = Rx<TVShowModel?>(null);
+  Rx<TvModel?> tvChannelDetail = Rx<TvModel?>(null);
+
+  RxBool showTopBar = true.obs;
+
+  bool isLoadingFavTvs = false;
+  int favTvsCurrentPage = 1;
+  bool canLoadMoreFavTvs = true;
+
+  bool isLoadingSubscribedTvs = false;
+  int subscribedTvsCurrentPage = 1;
+  bool canLoadMoreSubscribedTvs = true;
 
   clearCategories() {
     categories.clear();
@@ -25,12 +40,43 @@ class TvStreamingController extends GetxController {
   }
 
   clearTvs() {
-    liveTvs.clear();
+    tvs.clear();
+    currentViewingTv.value = null;
+
+    // isLoadingLiveTvs = false;
+    // liveTvsCurrentPage = 1;
+    // canLoadMoreLiveTvs = true;
+
+    isLoadingFavTvs = false;
+    favTvsCurrentPage = 1;
+    canLoadMoreFavTvs = true;
+
+    isLoadingSubscribedTvs = false;
+    subscribedTvsCurrentPage = 1;
+    canLoadMoreSubscribedTvs = true;
+
+    // isLoadingSearchedLiveTvs = false;
+    // searchedLiveTvsCurrentPage = 1;
+    // canLoadMoreSearchedLiveTvs = true;
+
+    // update();
+  }
+
+  setCurrentViewingTv(TvModel tvModel) {
+    currentViewingTv.value = tvModel;
     update();
+  }
+
+  segmentChanged(int segment) {
+    currentSegment.value = segment;
   }
 
   updateBannerSlider(int index) {
     currentBannerIndex.value = index;
+  }
+
+  toggleTopBar() {
+    showTopBar.value = !showTopBar.value;
   }
 
   getTvCategories() {
@@ -50,13 +96,59 @@ class TvStreamingController extends GetxController {
     });
   }
 
-  getLiveTvs({int? categoryId, String? name}) {
-    ApiController()
-        .getLiveTvs(categoryId: categoryId, name: name)
-        .then((response) {
-      liveTvs.value = response.liveTvs;
+  getLiveTv() {
+    ApiController().getTvs(isLive: true).then((response) {
+      tvs.value = response.tvs;
       update();
     });
+  }
+
+  getTvs({int? categoryId, String? name}) {
+    ApiController().getTvs(categoryId: categoryId, name: name).then((response) {
+      tvs.value = response.tvs;
+      update();
+    });
+  }
+
+  getFavTvs() {
+    if (canLoadMoreFavTvs == true) {
+      isLoadingFavTvs = true;
+
+      ApiController().getFavLiveTvs().then((response) {
+        tvs.addAll(response.tvs);
+
+        isLoadingFavTvs = false;
+        favTvsCurrentPage += 1;
+
+        if (response.tvs.length == response.metaData?.pageCount) {
+          canLoadMoreFavTvs = true;
+        } else {
+          canLoadMoreFavTvs = false;
+        }
+        update();
+      });
+    }
+  }
+
+  getSubscribedTvs() {
+    if (canLoadMoreSubscribedTvs == true) {
+      isLoadingSubscribedTvs = true;
+
+      ApiController().getSubscribedLiveTvs().then((response) {
+        tvs.addAll(response.tvs);
+
+        isLoadingSubscribedTvs = false;
+        subscribedTvsCurrentPage += 1;
+
+        if (response.tvs.length == response.metaData?.pageCount) {
+          canLoadMoreSubscribedTvs = true;
+          // totalPages = response.metaData!.pageCount;
+        } else {
+          canLoadMoreSubscribedTvs = false;
+        }
+        update();
+      });
+    }
   }
 
   getTvShows({int? liveTvId, String? name}) {
@@ -64,6 +156,22 @@ class TvStreamingController extends GetxController {
       tvShows.value = response.tvShows;
       tvShows.refresh();
       update();
+    });
+  }
+
+  getTvShowById(int showId, Function() completionCallBack) {
+    ApiController().getTVShowById(showId: showId).then((response) {
+      showDetail.value = response.tvShowDetail;
+      update();
+      completionCallBack();
+    });
+  }
+
+  getTvChannelById(int tvId, Function() completionCallBack) {
+    ApiController().getTVChannelById(tvId: tvId).then((response) {
+      tvChannelDetail.value = response.tvChannelDetail;
+      update();
+      completionCallBack();
     });
   }
 
@@ -79,20 +187,21 @@ class TvStreamingController extends GetxController {
   }
 
   playEpisode(TVShowEpisodeModel episode) {
-    print(episode.videoUrl);
     selectedEpisode.value = episode;
     selectedEpisode.refresh();
   }
 
   subscribeTv(TvModel tvModel, Function(bool) completionCallBack) {
-    if (getIt<UserProfileManager>().user!.coins >=
-        tvModel.coinsNeededToUnlock) {
-      ApiController().subscribeTv(tvModel: tvModel).then((response) {
-        completionCallBack(response.success);
-      });
-    } else {
-      Get.to(() => const PackagesScreen());
-    }
+    getTvChannelById(tvModel.id, () {
+      if (getIt<UserProfileManager>().user!.coins >=
+          tvChannelDetail.value!.coinsNeededToUnlock) {
+        ApiController().subscribeTv(tvModel: tvModel).then((response) {
+          completionCallBack(response.success);
+        });
+      } else {
+        Get.to(() => const PackagesScreen());
+      }
+    });
   }
 
   stopWatchingTv(TvModel tvModel, Function(bool) completionCallBack) {
@@ -112,6 +221,39 @@ class TvStreamingController extends GetxController {
     getIt<SocketManager>().emit(SocketConstants.joinLiveTv, message);
   }
 
+  favUnfavTv(TvModel tv) {
+    currentViewingTv.value?.isFav = tv.isFav == 1 ? 0 : 1;
+    tv.isFav = currentViewingTv.value!.isFav;
+
+    currentViewingTv.refresh();
+
+    categories.value = categories.map((category) {
+      var tvs = category.tvs.map((currentTvInIteration) {
+        if (tv.id == currentTvInIteration.id) {
+          currentTvInIteration.isFav = tv.isFav;
+        }
+        return currentTvInIteration;
+      }).toList();
+      category.tvs = tvs;
+      return category;
+    }).toList();
+    print(categories.map((element) => element.id));
+
+    tvs.value = tvs.map((currentTvInIteration) {
+      if (tv.id == currentTvInIteration.id) {
+        currentTvInIteration.isFav = tv.isFav;
+      }
+      return currentTvInIteration;
+    }).toList();
+
+    // update();
+
+    ApiController()
+        .likeUnlikeTv(currentViewingTv.value?.isFav == 1 ? true : false,
+        currentViewingTv.value!.id)
+        .then((response) {});
+  }
+
   hideMessagesView() {
     showChatMessages.value = false;
     showChatMessages.refresh();
@@ -122,10 +264,10 @@ class TvStreamingController extends GetxController {
     showChatMessages.refresh();
   }
 
-  currentPageChanged(int index) {
-    currentPage.value = index;
-    currentPage.refresh();
-  }
+  // currentPageChanged(int index) {
+  //   currentPage.value = index;
+  //   currentPage.refresh();
+  // }
 
   newMessageReceived(ChatMessageModel message) {
     addNewMessage(message, int.parse(message.liveTvId.split('_').last));
@@ -134,7 +276,7 @@ class TvStreamingController extends GetxController {
   sendTextMessage(String messageText, int id) {
     String localMessageId = randomId();
     var liveTvId = 'tv_$id';
-    String encrtyptedMessage = messageText.encrypted();
+    String encrtyptedMessage = messageText; //.encrypted();
 
     var message = {
       'userId': getIt<UserProfileManager>().user!.id,

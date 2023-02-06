@@ -1,4 +1,5 @@
 import 'package:foap/helper/common_import.dart';
+import 'package:foap/screens/login_sign_up/set_user_name.dart';
 import 'package:get/get.dart';
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
@@ -180,10 +181,14 @@ class _SocialLoginState extends State<SocialLogin> {
             await _settingsController.getSettings();
 
             if (getIt<UserProfileManager>().user != null) {
-              // ask for location
-              getIt<LocationManager>().postLocation();
+              if (response.isLoginFirstTime) {
+                Get.offAll(() => const SetUserName());
+              } else {
+                // ask for location
 
-              Get.offAll(() => const DashboardScreen());
+                getIt<LocationManager>().postLocation();
+                Get.offAll(() => const DashboardScreen());
+              }
               getIt<SocketManager>().connect();
             }
           } else {

@@ -5,6 +5,8 @@ import 'package:http/http.dart' as http;
 import 'package:foap/apiHandler/api_param_model.dart';
 import 'package:http_parser/http_parser.dart';
 
+import '../model/live_tv_model.dart';
+
 class ApiController {
   final JsonDecoder _decoder = const JsonDecoder();
 
@@ -1414,7 +1416,6 @@ class ApiController {
       return parsedResponse;
     });
   }
-
   Future<ApiResponseModel> getTVShows({int? liveTvId, String? name}) async {
     String? authKey = await SharedPrefs().getAuthorizationKey();
     var url = NetworkConstantsUtil.baseUrl + NetworkConstantsUtil.getTVShows;
@@ -1434,7 +1435,22 @@ class ApiController {
       return parsedResponse;
     });
   }
+  Future<ApiResponseModel> getTVShowById({int? showId}) async {
+    String? authKey = await SharedPrefs().getAuthorizationKey();
+    var url = NetworkConstantsUtil.baseUrl + NetworkConstantsUtil.getTVShowById;
 
+    if (showId != null) {
+      url = '$url&id=$showId';
+    }
+
+    return await http.get(Uri.parse(url), headers: {
+      "Authorization": "Bearer ${authKey!}"
+    }).then((http.Response response) async {
+      final ApiResponseModel parsedResponse =
+      await getResponse(response.body, NetworkConstantsUtil.getTVShowById);
+      return parsedResponse;
+    });
+  }
   Future<ApiResponseModel> getTVShowEpisodes(
       {int? showId, String? name}) async {
     String? authKey = await SharedPrefs().getAuthorizationKey();
@@ -1456,7 +1472,6 @@ class ApiController {
       return parsedResponse;
     });
   }
-
   Future<ApiResponseModel> getTvCategories(int id) async {
     String? authKey = await SharedPrefs().getAuthorizationKey();
     var url = NetworkConstantsUtil.baseUrl + NetworkConstantsUtil.postDetail;
@@ -1469,8 +1484,8 @@ class ApiController {
       return parsedResponse;
     });
   }
-
-  Future<ApiResponseModel> getLiveTvs({int? categoryId, String? name}) async {
+  Future<ApiResponseModel> getTvs(
+      {int? categoryId, String? name, bool? isLive}) async {
     String? authKey = await SharedPrefs().getAuthorizationKey();
     var url = NetworkConstantsUtil.baseUrl + NetworkConstantsUtil.liveTvs;
 
@@ -1480,16 +1495,75 @@ class ApiController {
     if (name != null) {
       url = '$url&name=$name';
     }
+    if (isLive != null) {
+      url = '$url&is_live=${isLive == true ? 1 : 0}';
+    }
 
     return await http.get(Uri.parse(url), headers: {
       "Authorization": "Bearer ${authKey!}"
     }).then((http.Response response) async {
       final ApiResponseModel parsedResponse =
-          await getResponse(response.body, NetworkConstantsUtil.liveTvs);
+      await getResponse(response.body, NetworkConstantsUtil.liveTvs);
+      return parsedResponse;
+    });
+  }
+  Future<ApiResponseModel> getTVChannelById({required int tvId}) async {
+    String? authKey = await SharedPrefs().getAuthorizationKey();
+    var url = NetworkConstantsUtil.baseUrl +
+        NetworkConstantsUtil.getTVChannel
+            .replaceAll('{{channel_id}}', tvId.toString());
+
+    return await http.get(Uri.parse(url), headers: {
+      "Authorization": "Bearer ${authKey!}"
+    }).then((http.Response response) async {
+      final ApiResponseModel parsedResponse =
+      await getResponse(response.body, NetworkConstantsUtil.getTVChannel);
+      return parsedResponse;
+    });
+  }
+  Future<ApiResponseModel> likeUnlikeTv(bool like, int tvId) async {
+    var url = NetworkConstantsUtil.baseUrl +
+        (like ? NetworkConstantsUtil.favTv : NetworkConstantsUtil.unfavTv);
+    String? authKey = await SharedPrefs().getAuthorizationKey();
+
+    print(url);
+    return http.post(Uri.parse(url),
+        headers: {"Authorization": "Bearer ${authKey!}"},
+        body: {"id": tvId.toString()}).then((http.Response response) async {
+      final ApiResponseModel parsedResponse = await getResponse(
+          response.body,
+          like
+              ? NetworkConstantsUtil.likePost
+              : NetworkConstantsUtil.unlikePost);
       return parsedResponse;
     });
   }
 
+  Future<ApiResponseModel> getFavLiveTvs() async {
+    String? authKey = await SharedPrefs().getAuthorizationKey();
+    var url = NetworkConstantsUtil.baseUrl + NetworkConstantsUtil.favTvList;
+
+    return await http.get(Uri.parse(url), headers: {
+      "Authorization": "Bearer ${authKey!}"
+    }).then((http.Response response) async {
+      final ApiResponseModel parsedResponse =
+      await getResponse(response.body, NetworkConstantsUtil.favTvList);
+      return parsedResponse;
+    });
+  }
+  Future<ApiResponseModel> getSubscribedLiveTvs() async {
+    String? authKey = await SharedPrefs().getAuthorizationKey();
+    var url =
+        NetworkConstantsUtil.baseUrl + NetworkConstantsUtil.subscribedTvList;
+
+    return await http.get(Uri.parse(url), headers: {
+      "Authorization": "Bearer ${authKey!}"
+    }).then((http.Response response) async {
+      final ApiResponseModel parsedResponse = await getResponse(
+          response.body, NetworkConstantsUtil.subscribedTvList);
+      return parsedResponse;
+    });
+  }
   Future<ApiResponseModel> getTvBanners() async {
     String? authKey = await SharedPrefs().getAuthorizationKey();
     var url = NetworkConstantsUtil.baseUrl + NetworkConstantsUtil.tvBanners;
@@ -1502,7 +1576,6 @@ class ApiController {
       return parsedResponse;
     });
   }
-
   Future<ApiResponseModel> subscribeTv({
     required TvModel tvModel,
   }) async {
@@ -1521,7 +1594,6 @@ class ApiController {
       return parsedResponse;
     });
   }
-
   Future<ApiResponseModel> stopWatchingTv({
     required TvModel tvModel,
   }) async {
@@ -1634,6 +1706,40 @@ class ApiController {
       return parsedResponse;
     });
   }
+
+  Future<ApiResponseModel> getPodcastShowById({int? showId}) async {
+    String? authKey = await SharedPrefs().getAuthorizationKey();
+    var url =
+        NetworkConstantsUtil.baseUrl + NetworkConstantsUtil.getHostShowById;
+
+    if (showId != null) {
+      url = '$url&id=$showId';
+    }
+
+    return await http.get(Uri.parse(url), headers: {
+      "Authorization": "Bearer ${authKey!}"
+    }).then((http.Response response) async {
+      final ApiResponseModel parsedResponse = await getResponse(
+          response.body, NetworkConstantsUtil.getHostShowById);
+      return parsedResponse;
+    });
+  }
+
+  Future<ApiResponseModel> getPodcastHostById({required int hostId}) async {
+    String? authKey = await SharedPrefs().getAuthorizationKey();
+    var url = NetworkConstantsUtil.baseUrl +
+        NetworkConstantsUtil.getPodcastHostDetail
+            .replaceAll('{{host_id}}', hostId.toString());
+
+    return await http.get(Uri.parse(url), headers: {
+      "Authorization": "Bearer ${authKey!}"
+    }).then((http.Response response) async {
+      final ApiResponseModel parsedResponse = await getResponse(
+          response.body, NetworkConstantsUtil.getPodcastHostDetail);
+      return parsedResponse;
+    });
+  }
+
 
   //****************************** Clubs **************************//
 

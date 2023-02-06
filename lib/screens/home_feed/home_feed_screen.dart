@@ -16,6 +16,7 @@ class HomeFeedState extends State<HomeFeedScreen> {
   final AgoraLiveController _agoraLiveController = Get.find();
   final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
+  final SettingsController _settingsController = Get.find();
 
   final _controller = ScrollController();
 
@@ -28,7 +29,9 @@ class HomeFeedState extends State<HomeFeedScreen> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       loadData(isRecent: true);
-      // _homeController.getPolls();
+      // if (_settingsController.setting.value!.enablePolls) {
+      //   _homeController.getPolls();
+      // }
       _homeController.loadQuickLinksAccordingToSettings();
     });
 
@@ -344,98 +347,8 @@ class HomeFeedState extends State<HomeFeedScreen> {
                 }
               },
               separatorBuilder: (context, index) {
-                int postIndex = index > 2 ? index - 3 : 0;
-                if (postIndex % pollFrequencyIndex == 0 && postIndex != 0) {
-                  int pollIndex = (postIndex ~/ pollFrequencyIndex) - 1;
-                  print("'pollIndex is'$pollIndex");
-                  if (_homeController.polls.length > pollIndex) {
-                    return Container(
-                      color: Theme.of(context).cardColor,
-                      child: FlutterPolls(
-                        pollId:
-                            _homeController.polls[pollIndex].pollId.toString(),
-                        hasVoted: _homeController.polls[pollIndex].isVote! > 0,
-                        userVotedOptionId:
-                            _homeController.polls[pollIndex].isVote! > 0
-                                ? _homeController.polls[pollIndex].isVote
-                                : null,
-                        onVoted:
-                            (PollOption pollOption, int newTotalVotes) async {
-                          await Future.delayed(const Duration(seconds: 1));
-                          _homeController.postPollAnswer(
-                              _homeController.polls[pollIndex].pollId,
-                              _homeController.polls[pollIndex].id,
-                              pollOption.id);
-
-                          /// If HTTP status is success, return true else false
-                          return true;
-                        },
-                        pollEnded: false,
-                        pollOptionsSplashColor: Colors.white,
-                        votedProgressColor: Colors.grey.withOpacity(0.3),
-                        votedBackgroundColor: Colors.grey.withOpacity(0.2),
-                        votesTextStyle: themeData.textTheme.labelLarge,
-                        votedPercentageTextStyle:
-                            themeData.textTheme.labelLarge?.copyWith(
-                          color: Colors.black,
-                        ),
-                        votedCheckmark: const Icon(
-                          Icons.check_circle,
-                          color: Colors.black,
-                        ),
-                        pollTitle: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            _homeController.polls[pollIndex].title ?? "",
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                        pollOptions: List<PollOption>.from(
-                          (_homeController
-                                      .polls[pollIndex].pollQuestionOption ??
-                                  [])
-                              .map(
-                            (option) {
-                              var a = PollOption(
-                                id: option.id,
-                                title: Text(
-                                  option.title ?? '',
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                votes: option.totalOptionVoteCount ?? 0,
-                              );
-                              return a;
-                            },
-                          ),
-                        ),
-
-                        // metaWidget: Row(
-                        //   children: const [
-                        //     SizedBox(width: 6),
-                        //     Text(
-                        //       '•',
-                        //     ),
-                        //     SizedBox(
-                        //       width: 6,
-                        //     ),
-                        //     // Text(
-                        //     //   days < 0 ? "ended" : "ends $days days",
-                        //     // ),
-                        //   ],
-                        // ),
-                      ).p16,
-                    ).round(15).p16;
-                  } else {
-                    return const SizedBox(
-                      height: 20,
-                    );
-                  }
+                if (_settingsController.setting.value!.enablePolls) {
+                  return polls(index);
                 } else {
                   return const SizedBox(
                     height: 20,
@@ -448,5 +361,99 @@ class HomeFeedState extends State<HomeFeedScreen> {
               onRefresh: refreshData,
               onLoading: () {});
     });
+  }
+
+  polls(int index) {
+    ThemeData themeData = Theme.of(context);
+
+    int postIndex = index > 2 ? index - 3 : 0;
+    if (postIndex % pollFrequencyIndex == 0 && postIndex != 0) {
+      int pollIndex = (postIndex ~/ pollFrequencyIndex) - 1;
+      if (_homeController.polls.length > pollIndex) {
+        return Container(
+          color: Theme.of(context).cardColor,
+          child: FlutterPolls(
+            pollId: _homeController.polls[pollIndex].pollId.toString(),
+            hasVoted: _homeController.polls[pollIndex].isVote! > 0,
+            userVotedOptionId: _homeController.polls[pollIndex].isVote! > 0
+                ? _homeController.polls[pollIndex].isVote
+                : null,
+            onVoted: (PollOption pollOption, int newTotalVotes) async {
+              await Future.delayed(const Duration(seconds: 1));
+              _homeController.postPollAnswer(
+                  _homeController.polls[pollIndex].pollId,
+                  _homeController.polls[pollIndex].id,
+                  pollOption.id);
+
+              /// If HTTP status is success, return true else false
+              return true;
+            },
+            pollEnded: false,
+            pollOptionsSplashColor: Colors.white,
+            votedProgressColor: Colors.grey.withOpacity(0.3),
+            votedBackgroundColor: Colors.grey.withOpacity(0.2),
+            votesTextStyle: themeData.textTheme.labelLarge,
+            votedPercentageTextStyle: themeData.textTheme.labelLarge?.copyWith(
+              color: Colors.black,
+            ),
+            votedCheckmark: const Icon(
+              Icons.check_circle,
+              color: Colors.black,
+            ),
+            pollTitle: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                _homeController.polls[pollIndex].title ?? "",
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+            pollOptions: List<PollOption>.from(
+              (_homeController.polls[pollIndex].pollQuestionOption ?? []).map(
+                (option) {
+                  var a = PollOption(
+                    id: option.id,
+                    title: Text(
+                      option.title ?? '',
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    votes: option.totalOptionVoteCount ?? 0,
+                  );
+                  return a;
+                },
+              ),
+            ),
+
+            // metaWidget: Row(
+            //   children: const [
+            //     SizedBox(width: 6),
+            //     Text(
+            //       '•',
+            //     ),
+            //     SizedBox(
+            //       width: 6,
+            //     ),
+            //     // Text(
+            //     //   days < 0 ? "ended" : "ends $days days",
+            //     // ),
+            //   ],
+            // ),
+          ).p16,
+        ).round(15).p16;
+      } else {
+        return const SizedBox(
+          height: 20,
+        );
+      }
+    } else {
+      return const SizedBox(
+        height: 20,
+      );
+    }
   }
 }

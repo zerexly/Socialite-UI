@@ -71,7 +71,7 @@ export 'package:file_picker/file_picker.dart';
 export 'package:flutter_downloader/flutter_downloader.dart';
 export 'package:android_path_provider/android_path_provider.dart';
 export 'package:percent_indicator/percent_indicator.dart';
-export 'package:open_file/open_file.dart';
+export 'package:open_filex/open_filex.dart';
 export 'package:auto_orientation/auto_orientation.dart';
 export 'package:pinch_zoom/pinch_zoom.dart';
 export 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';

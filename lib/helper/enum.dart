@@ -100,3 +100,6 @@ enum PaymentGateway {
 enum BookingStatus { confirmed, cancelled }
 
 enum EventStatus { upcoming, active, completed }
+
+enum TvBannerType { tv, show }
+enum PodcastBannerType { host, show }

@@ -1,15 +1,16 @@
 import 'package:foap/helper/common_import.dart';
 import 'package:get/get.dart';
-import '../model/podcast_banner_model.dart';
-import '../model/podcast_model.dart';
 
 class PodcastStreamingController extends GetxController {
   RxList<PodcastBannerModel> banners = <PodcastBannerModel>[].obs;
   RxList<PodcastCategoryModel> categories = <PodcastCategoryModel>[].obs;
   RxList<PodcastModel> podcasts = <PodcastModel>[].obs;
   RxList<PodcastShowModel> podcastShows = <PodcastShowModel>[].obs;
-  RxList<PodcastShowSongModel> podcastShowEpisodes =
-      <PodcastShowSongModel>[].obs;
+  RxList<PodcastShowEpisodeModel> podcastShowEpisodes =
+      <PodcastShowEpisodeModel>[].obs;
+
+  Rx<PodcastShowModel?> showDetail = Rx<PodcastShowModel?>(null);
+  Rx<PodcastModel?> hostDetail = Rx<PodcastModel?>(null);
 
   clearCategories() {
     categories.clear();
@@ -62,42 +63,29 @@ class PodcastStreamingController extends GetxController {
     });
   }
 
-  getPodcastShowsEpisode(
-      {int? podcastShowId, String? name}) async {
+  getPodcastShowsEpisode({int? podcastShowId, String? name}) async {
     return ApiController()
         .getPodcastShowsEpisode(podcastShowId: podcastShowId, name: name)
         .then((response) {
-      podcastShowEpisodes.value = response.podcastShowSongs;
+      podcastShowEpisodes.value = response.podcastShowEpisodes;
       podcastShowEpisodes.refresh();
       update();
     });
   }
 
-  // subscribeTv(TvModel tvModel, Function(bool) completionCallBack) {
-  //   if (getIt<UserProfileManager>().user!.coins >=
-  //       tvModel.coinsNeededToUnlock) {
-  //     ApiController().subscribeTv(tvModel: tvModel).then((response) {
-  //       completionCallBack(response.success);
-  //     });
-  //   } else {
-  //     Get.to(() => const PackagesScreen());
-  //   }
-  // }
+  getPodcastShowById(int showId, Function() completionCallBack) {
+    ApiController().getPodcastShowById(showId: showId).then((response) {
+      showDetail.value = response.podcastShowDetail;
+      update();
+      completionCallBack();
+    });
+  }
 
-  // stopWatchingTv(TvModel tvModel, Function(bool) completionCallBack) {
-  //   ApiController().stopWatchingTv(tvModel: tvModel).then((response) {
-  //     completionCallBack(response.success);
-  //   });
-  // }
-
-  // joinTv(int id) {
-  //   var liveTvId = 'tv_$id';
-  //
-  //   var message = {
-  //     'userId': getIt<UserProfileManager>().user!.id,
-  //     'liveTvId': liveTvId,
-  //   };
-  //
-  //   getIt<SocketManager>().emit(SocketConstants.joinLiveTv, message);
-  // }
+  getHostById(int hostId, Function() completionCallBack) {
+    ApiController().getPodcastHostById(hostId: hostId).then((response) {
+      hostDetail.value = response.podcastHostDetail;
+      update();
+      completionCallBack();
+    });
+  }
 }

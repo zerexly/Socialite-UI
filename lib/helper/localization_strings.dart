@@ -936,4 +936,15 @@ class LocalizationString {
   static String accept = 'Accept'.tr;
   static String decline = 'Decline'.tr;
   static String addComment = 'Add comment'.tr;
+
+  static String favourite = 'Favourite'.tr;
+  static String subscribed = 'Subscribed'.tr;
+  static String audios = 'Audios'.tr;
+
+  static String setUserName = 'Set username'.tr;
+  static String setUserNameSubHeading =
+      'This username will be shown to all user. Choose a wise user name like it_mike_here'
+          .tr;
+  static String followFriendsToSendPost = "Follow your friends to send post".tr;
+
 }

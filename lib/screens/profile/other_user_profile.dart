@@ -104,7 +104,11 @@ class OtherUserProfileState extends State<OtherUserProfile> {
                     const SizedBox(height: 20),
                     addProfileView(),
                     const SizedBox(height: 10),
-                    addHighlightsView(),
+                    if (_settingsController.setting.value!.enableHighlights)
+                      const SizedBox(height: 20),
+                    if (_settingsController.setting.value!.enableHighlights)
+                      addHighlightsView(),
+                    const SizedBox(height: 50),
                     const SizedBox(height: 50),
                     segmentView(),
                     Obx(() => _profileController.selectedSegment.value == 1

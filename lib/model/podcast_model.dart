@@ -69,7 +69,7 @@ class PodcastShowModel {
   }
 }
 
-class PodcastShowSongModel {
+class PodcastShowEpisodeModel {
   int id = 0;
   String name = '';
   int podcastShowId = 0;
@@ -77,10 +77,10 @@ class PodcastShowSongModel {
   String imageUrl = '';
   String audioUrl = '';
 
-  PodcastShowSongModel();
+  PodcastShowEpisodeModel();
 
-  factory PodcastShowSongModel.fromJson(dynamic json) {
-    PodcastShowSongModel model = PodcastShowSongModel();
+  factory PodcastShowEpisodeModel.fromJson(dynamic json) {
+    PodcastShowEpisodeModel model = PodcastShowEpisodeModel();
     model.id = json['id'];
     model.name = json['name'];
     model.podcastShowId = json['podcast_show_id'];

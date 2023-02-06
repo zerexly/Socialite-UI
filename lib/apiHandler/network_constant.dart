@@ -131,22 +131,34 @@ class NetworkConstantsUtil {
   static String getTVCategories =
       'categories/live-tv?expand=liveTv,liveTv.currentViewer';
   static String getTVShows = 'live-tvs/tv-shows?expand=tvShowEpisode';
-
+  static String getTVShowById = 'tv-shows/tv-show-details?expand=tvShowEpisode';
   static String getTVShowEpisodes = 'tv-shows/tv-show-episodes?';
-  static String liveTvs = 'live-tvs?expand=currentViewer';
   static String tvBanners = 'tv-banners';
+  static String liveTvs = 'live-tvs?expand=currentViewer';
+  static String getTVChannel = 'live-tvs/tv-channel-details?id={{channel_id}}';
+
+  static String favTv = 'live-tvs/add-favorite';
+  static String unfavTv = 'live-tvs/remove-favorite';
+  static String favTvList = 'live-tvs/my-favorite-list';
+  static String subscribedTvList = 'live-tvs/my-subscribed-list';
   static String subscribeLiveTv = 'live-tvs/subscribe';
   static String stopWatchingTv = 'live-tvs/stop-viewing';
+
+  //******** Live *********//
   static String liveHistory = 'user-live-histories?expand=giftSummary';
 
   //***********Podcast***********//
   static String getPodcastCategories =
       'categories/podcast?expand=podcastList,podcastList.currentViewer';
+  static String getHostShowById =
+      'podcast-shows/podcast-show-details?expand=podcastShowEpisode';
+
   static String podcastBanners = 'podcast-banners';
   static String getHosts = 'podcasts?expand=currentViewer';
+  static String getPodcastHostDetail = 'podcasts/podcast-host-details?id={{host_id}}';
+
   static String getPodcastShows = 'podcast-shows?expand=podcastShow';
   static String getPodcastShowsEpisode = 'podcast-shows/podcast-show-episodes?';
-
   //***********Polls***********//
   
   static String getPolls ='poll-questions?expand=pollQuestionOption&poll_id=&title=';

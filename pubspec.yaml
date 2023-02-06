@@ -165,9 +165,7 @@ dependencies:
   simple_downloader: ^0.0.3+1
   flutter_polls: ^0.1.1
 
-  open_file:
-    git:
-      url: https://github.com/crazecoder/open_file
+  open_filex: ^4.3.2
 
 dev_dependencies:
   flutter_test:

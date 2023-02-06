@@ -8,7 +8,7 @@ class ProfileController extends GetxController {
 
   int totalPages = 100;
 
-  RxBool userNameCheckStatus = false.obs;
+  RxInt userNameCheckStatus = (-1).obs;
   RxBool isLoading = true.obs;
 
   RxList<PaymentModel> payments = <PaymentModel>[].obs;
@@ -247,13 +247,16 @@ class ProfileController extends GetxController {
     }
   }
 
-  updateUserName({required String userName, required BuildContext context}) {
+  updateUserName(
+      {required String userName,
+        required isSigningUp,
+        required BuildContext context}) {
     if (FormValidator().isTextEmpty(userName)) {
       AppUtil.showToast(
           context: context,
           message: LocalizationString.pleaseEnterUserName,
           isSuccess: false);
-    } else if (userNameCheckStatus.value == false) {
+    } else if (userNameCheckStatus.value != 1) {
       AppUtil.showToast(
           context: context,
           message: LocalizationString.pleaseEnterValidUserName,
@@ -270,9 +273,14 @@ class ProfileController extends GetxController {
                   message: LocalizationString.userNameIsUpdated,
                   isSuccess: true);
               getMyProfile();
-              Future.delayed(const Duration(milliseconds: 1200), () {
-                Get.back();
-              });
+              if (isSigningUp == true) {
+                getIt<LocationManager>().postLocation();
+                Get.offAll(() => const DashboardScreen());
+              } else {
+                Future.delayed(const Duration(milliseconds: 1200), () {
+                  Get.back();
+                });
+              }
             } else {
               EasyLoading.dismiss();
               AppUtil.showToast(
@@ -291,14 +299,14 @@ class ProfileController extends GetxController {
       if (value) {
         ApiController().checkUsername(userName).then((response) async {
           if (response.success) {
-            userNameCheckStatus.value = true;
+            userNameCheckStatus.value = 1;
           } else {
-            userNameCheckStatus.value = false;
+            userNameCheckStatus.value = 0;
           }
           update();
         });
       } else {
-        userNameCheckStatus.value = false;
+        userNameCheckStatus.value = 0;
       }
     });
   }

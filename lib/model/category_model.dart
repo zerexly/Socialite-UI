@@ -1,6 +1,8 @@
 import 'package:foap/helper/common_import.dart';
 import 'package:foap/model/podcast_model.dart';
 
+import 'live_tv_model.dart';
+
 class CategoryModel {
   int id;
   String name;

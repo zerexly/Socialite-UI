@@ -11,23 +11,40 @@ class DBManager {
     var databasesPath = await getDatabasesPath();
     var path = p.join(databasesPath, 'socialified.db');
 
+    print(databasesPath);
     try {
       await Directory(databasesPath).create(recursive: true);
-      database = await openDatabase(path, version: 1,
+      print('createDatabase');
+      database = await openDatabase(path,
+          version: 2,
           onCreate: (Database db, int version) async {
-        await db.execute(
-            'CREATE TABLE StoryViewHistory (storyId INTEGER PRIMARY KEY, time INTEGER)');
-        await db.execute(
-            'CREATE TABLE ChatRooms (id INTEGER PRIMARY KEY, title TEXT ,status INTEGER,type INTEGER,is_chat_user_online INTEGER, created_by INTEGER,created_at INTEGER,updated_at INTEGER,imageUrl TEXT,description TEXT,chat_access_group INTEGER,last_message_id TEXT,unread_messages_count INTEGER)');
-        await db.execute(
-            'CREATE TABLE Messages (local_message_id TEXT PRIMARY KEY, id INTEGER,is_encrypted INTEGER,chat_version INTEGER, room_id INTEGER,messageType INTEGER, message TEXT,replied_on_message TEXT,username TEXT, created_by INTEGER,created_at INTEGER,viewed_at INTEGER,isDeleted INTEGER,isStar INTEGER,deleteAfter INTEGER,current_status INTEGER,encryption_key TEXT)');
-        await db.execute(
-            'CREATE TABLE ChatRoomMembers (id INTEGER PRIMARY KEY, room_id INTEGER, user_id INTEGER,is_admin INTEGER,user TEXT)');
-        await db.execute(
-            'CREATE TABLE UsersCache (id INTEGER PRIMARY KEY, username TEXT,email TEXT,picture TEXT)');
-        await db.execute(
-            'CREATE TABLE ChatMessageUser (chat_message_id INTEGER,user_id INTEGER,status INTEGER)');
-      }, onOpen: (db) {});
+            await db.execute(
+                'CREATE TABLE StoryViewHistory (storyId INTEGER PRIMARY KEY, time INTEGER)');
+            await db.execute(
+                'CREATE TABLE ChatRooms (id INTEGER PRIMARY KEY, title TEXT ,status INTEGER,type INTEGER,is_chat_user_online INTEGER, created_by INTEGER,created_at INTEGER,updated_at INTEGER,imageUrl TEXT,description TEXT,chat_access_group INTEGER,last_message_id TEXT,unread_messages_count INTEGER)');
+            await db.execute(
+                'CREATE TABLE Messages (local_message_id TEXT PRIMARY KEY, id INTEGER, room_id INTEGER,messageType INTEGER, message TEXT,username TEXT, created_by INTEGER,created_at INTEGER,viewed_at INTEGER,isDeleted INTEGER,isStar INTEGER,deleteAfter INTEGER)');
+            await db.execute(
+                'CREATE TABLE ChatRoomMembers (id INTEGER PRIMARY KEY, room_id INTEGER, user_id INTEGER,is_admin INTEGER,user TEXT)');
+            await db.execute(
+                'CREATE TABLE UsersCache (id INTEGER PRIMARY KEY, username TEXT,email TEXT,picture TEXT)');
+          },
+          onOpen: (db) {},
+          onUpgrade: (db, oldVersion, currentVersion) async {
+            print('onUpgrade');
+            await db.execute(
+                'CREATE TABLE ChatMessageUser (chat_message_id INTEGER,user_id INTEGER,status INTEGER)');
+            await db.execute(
+                'ALTER TABLE Messages ADD COLUMN is_encrypted INTEGER ');
+            await db.execute(
+                'ALTER TABLE Messages ADD COLUMN chat_version INTEGER ');
+            await db.execute(
+                'ALTER TABLE Messages ADD COLUMN current_status INTEGER');
+            await db.execute(
+                'ALTER TABLE Messages ADD COLUMN encryption_key TEXT');
+            await db.execute(
+                'ALTER TABLE Messages ADD COLUMN replied_on_message TEXT');
+          });
     } catch (error) {}
   }
 
@@ -239,7 +256,7 @@ class DBManager {
     // Map user = list.first;
     // for (var user in list) {
     List<Map> userData =
-        await txn.rawQuery('SELECT * FROM UsersCache WHERE id = $userId');
+    await txn.rawQuery('SELECT * FROM UsersCache WHERE id = $userId');
 
     // Map<String, dynamic> userDetail = Map<String, dynamic>.from(user);
 
@@ -277,15 +294,15 @@ class DBManager {
             'SELECT * FROM UsersCache WHERE id = ${roomJson["created_by"]}');
 
         Map<String, dynamic> updateAbleRoomJson =
-            Map<String, dynamic>.from(roomJson);
+        Map<String, dynamic>.from(roomJson);
 
         updateAbleRoomJson['createdByUser'] = userData.first;
         ChatRoomModel room = ChatRoomModel.fromJson(updateAbleRoomJson);
         List<ChatRoomMember> usersInRoom =
-            await fetchAllMembersInRoom(room.id, txn);
+        await fetchAllMembersInRoom(room.id, txn);
 
         List<ChatMessageModel> lastMessages =
-            await getLastMessageFromRoom(roomId: room.id, txn: txn);
+        await getLastMessageFromRoom(roomId: room.id, txn: txn);
         if (lastMessages.isNotEmpty) {
           room.lastMessage = lastMessages.first;
         }
@@ -311,7 +328,7 @@ class DBManager {
   Future<ChatRoomModel?> fetchRoom(int roomId, Transaction txn) async {
     ChatRoomModel? chatRoom;
     List<Map> dbRooms =
-        await txn.rawQuery('SELECT * FROM ChatRooms WHERE id = $roomId');
+    await txn.rawQuery('SELECT * FROM ChatRooms WHERE id = $roomId');
 
     if (dbRooms.isNotEmpty) {
       Map<String, dynamic> roomJson = dbRooms.first as Map<String, dynamic>;
@@ -320,7 +337,7 @@ class DBManager {
           'SELECT * FROM UsersCache WHERE id = ${roomJson["created_by"]}');
 
       Map<String, dynamic> updatedRoomJson =
-          Map<String, dynamic>.from(roomJson);
+      Map<String, dynamic>.from(roomJson);
 
       updatedRoomJson['createdByUser'] = userData.first;
       chatRoom = ChatRoomModel.fromJson(updatedRoomJson);
@@ -340,8 +357,8 @@ class DBManager {
 
   saveMessage(
       {required ChatRoomModel chatRoom,
-      required List<ChatMessageModel> chatMessages,
-      Batch? currentBatch}) async {
+        required List<ChatMessageModel> chatMessages,
+        Batch? currentBatch}) async {
     var batch = currentBatch ?? database.batch();
 
     for (ChatMessageModel chatMessage in chatMessages) {
@@ -436,14 +453,14 @@ class DBManager {
 
         for (var doc in updateAbleDbMessages) {
           ChatMessageModel message =
-              ChatMessageModel.fromJson((doc as Map<String, dynamic>));
+          ChatMessageModel.fromJson((doc as Map<String, dynamic>));
           int timeDifference = 0;
 
           message.sender = await fetchUser(message.senderId, txn);
           if (message.viewedAt != null) {
             final date2 = DateTime.now();
             DateTime viewAtDateTime =
-                DateTime.fromMillisecondsSinceEpoch(message.viewedAt!);
+            DateTime.fromMillisecondsSinceEpoch(message.viewedAt!);
             timeDifference = date2.difference(viewAtDateTime).inSeconds;
           } else {
             messagesToUpdate.add(message);
@@ -456,7 +473,7 @@ class DBManager {
             messagesToDelete.add(message);
           }
           List<ChatMessageUser> usersInMessage =
-              await getAllMembersInMessage(message.id, txn);
+          await getAllMembersInMessage(message.id, txn);
 
           message.chatMessageUser = usersInMessage;
         }
@@ -476,8 +493,8 @@ class DBManager {
 
   updateMessageContent(
       {required int roomId,
-      required String localMessageId,
-      required String content}) async {
+        required String localMessageId,
+        required String content}) async {
     await database.transaction((txn) async {
       await txn.rawUpdate('UPDATE Messages '
           'SET '
@@ -499,9 +516,9 @@ class DBManager {
 
   updateMessageStatus(
       {required int roomId,
-      required String localMessageId,
-      required int id,
-      required int status}) async {
+        required String localMessageId,
+        required int id,
+        required int status}) async {
     await database.transaction((txn) async {
       await txn.rawUpdate('UPDATE Messages '
           'SET '
@@ -513,8 +530,8 @@ class DBManager {
 
   starUnStarMessage(
       {required int roomId,
-      required String localMessageId,
-      required int isStar}) async {
+        required String localMessageId,
+        required int isStar}) async {
     await database.transaction((txn) async {
       await txn.rawUpdate('UPDATE Messages '
           'SET '
@@ -529,15 +546,15 @@ class DBManager {
 
     await database.transaction((txn) async {
       List<Map> dbMessages =
-          await txn.rawQuery('SELECT * FROM Messages WHERE room_id = $roomId');
+      await txn.rawQuery('SELECT * FROM Messages WHERE room_id = $roomId');
 
       for (var doc in dbMessages) {
         messages.add(ChatMessageModel.fromJson((doc as Map<String, dynamic>)));
       }
       messages = messages
           .where((element) =>
-              element.messageContentType == contentType &&
-              element.messageContent.isNotEmpty)
+      element.messageContentType == contentType &&
+          element.messageContent.isNotEmpty)
           .toList();
       messages.sort((a, b) => a.createdAt.compareTo(b.createdAt));
     });
@@ -550,7 +567,7 @@ class DBManager {
     List<ChatMessageModel> messages = [];
     await database.transaction((txn) async {
       List<Map> dbMessages =
-          await txn.rawQuery('SELECT * FROM Messages WHERE room_id = $roomId');
+      await txn.rawQuery('SELECT * FROM Messages WHERE room_id = $roomId');
 
       for (var doc in dbMessages) {
         messages.add(ChatMessageModel.fromJson((doc as Map<String, dynamic>)));
@@ -572,7 +589,7 @@ class DBManager {
 
       for (var doc in dbMessages) {
         ChatMessageModel message =
-            ChatMessageModel.fromJson((doc as Map<String, dynamic>));
+        ChatMessageModel.fromJson((doc as Map<String, dynamic>));
         if (message.id == messageId) {
           messages.add(message);
         }
@@ -591,7 +608,7 @@ class DBManager {
 
     if (dbMessages.isNotEmpty) {
       ChatMessageModel message =
-          ChatMessageModel.fromJson((dbMessages.first as Map<String, dynamic>));
+      ChatMessageModel.fromJson((dbMessages.first as Map<String, dynamic>));
       messages.add(message);
     }
     // });

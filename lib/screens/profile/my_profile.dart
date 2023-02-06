@@ -13,6 +13,7 @@ class MyProfile extends StatefulWidget {
 class MyProfileState extends State<MyProfile> {
   final ProfileController _profileController = Get.find();
   final HighlightsController _highlightsController = Get.find();
+  final SettingsController _settingsController = Get.find();
 
   @override
   void initState() {
@@ -81,8 +82,10 @@ class MyProfileState extends State<MyProfile> {
                 padding: const EdgeInsets.only(top: 10),
                 children: [
                   addProfileView(),
-                  const SizedBox(height: 20),
-                  addHighlightsView(),
+                  if (_settingsController.setting.value!.enableHighlights)
+                    const SizedBox(height: 20),
+                  if (_settingsController.setting.value!.enableHighlights)
+                    addHighlightsView(),
                   const SizedBox(height: 40),
                   segmentView(),
                   Obx(() => _profileController.selectedSegment.value == 1

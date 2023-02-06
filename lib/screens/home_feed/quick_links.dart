@@ -1,6 +1,9 @@
 import 'package:foap/helper/common_import.dart';
 import 'package:get/get.dart';
 
+import '../podcast/podcast_list_dashboard.dart';
+import '../tvs/tv_dashboard.dart';
+
 enum QuickLinkType {
   live,
   randomChat,
@@ -92,7 +95,7 @@ class _QuickLinkWidgetState extends State<QuickLinkWidget> {
                   } else if (link.linkType == QuickLinkType.highlights) {
                     Get.to(() => const ChooseStoryForHighlights());
                   } else if (link.linkType == QuickLinkType.tv) {
-                    Get.to(() => const TvListDashboard());
+                    Get.to(() => const TvDashboardScreen());
                   } else if (link.linkType == QuickLinkType.podcast) {
                     Get.to(() => const PodcastListDashboard());
                   }

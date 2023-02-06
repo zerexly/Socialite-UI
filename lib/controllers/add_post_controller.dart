@@ -199,14 +199,14 @@ class AddPostController extends GetxController {
 
   void uploadAllPostFiles(
       {required List<Media> items,
-      required String title,
-      required BuildContext context,
-      int? competitionId,
-      int? clubId,
-      bool isReel = false,
-      int? audioId,
-      double? audioStartTime,
-      double? audioEndTime}) async {
+        required String title,
+        required BuildContext context,
+        int? competitionId,
+        int? clubId,
+        bool isReel = false,
+        int? audioId,
+        double? audioStartTime,
+        double? audioEndTime}) async {
     postingMedia = items;
     postingTitle = title;
     isPosting.value = true;
@@ -250,20 +250,28 @@ class AddPostController extends GetxController {
 
           //image media
           file =
-              await File('${tempDir.path}/${media.id!.replaceAll('/', '')}.png')
-                  .create();
+          await File('${tempDir.path}/${media.id!.replaceAll('/', '')}.png')
+              .create();
           file.writeAsBytesSync(mainFileData);
         } else {
-          Uint8List mainFileData = media.file!.readAsBytesSync();
+          MediaInfo? mediaInfo = await VideoCompress.compressVideo(
+            media.file!.path,
+            quality: VideoQuality.DefaultQuality,
+            deleteOrigin: false, // It's false by default
+          );
 
+          // code before compressing
           // video
-          file =
-              await File('${tempDir.path}/${media.id!.replaceAll('/', '')}.mp4')
-                  .create();
-          file.writeAsBytesSync(mainFileData);
+          // file =
+          //     await File('${tempDir.path}/${media.id!.replaceAll('/', '')}.mp4')
+          //         .create();
+          // file.writeAsBytesSync(mainFileData);
+
+          // code after compressing
+          file = mediaInfo!.file!;
 
           File videoThumbnail = await File(
-                  '${tempDir.path}/${media.id!.replaceAll('/', '')}_thumbnail.png')
+              '${tempDir.path}/${media.id!.replaceAll('/', '')}_thumbnail.png')
               .create();
 
           videoThumbnail.writeAsBytesSync(media.thumbnail!);
@@ -319,22 +327,22 @@ class AddPostController extends GetxController {
       if (value) {
         ApiController()
             .addPost(
-                postType: isReel == true
-                    ? 4
-                    : competitionId != null
-                        ? 2
-                        : clubId != null
-                            ? 3
-                            : 1,
-                title: title,
-                gallery: galleryItems,
-                hashTag: tags.join(','),
-                mentions: mentions.join(','),
-                competitionId: competitionId,
-                clubId: clubId,
-                audioId: audioId,
-                audioStartTime: audioStartTime,
-                audioEndTime: audioEndTime)
+            postType: isReel == true
+                ? 4
+                : competitionId != null
+                ? 2
+                : clubId != null
+                ? 3
+                : 1,
+            title: title,
+            gallery: galleryItems,
+            hashTag: tags.join(','),
+            mentions: mentions.join(','),
+            competitionId: competitionId,
+            clubId: clubId,
+            audioId: audioId,
+            audioStartTime: audioStartTime,
+            audioEndTime: audioEndTime)
             .then((response) async {
           // Get.offAll(() => const DashboardScreen());
 

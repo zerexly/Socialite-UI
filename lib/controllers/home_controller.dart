@@ -2,6 +2,7 @@ import 'package:foap/helper/common_import.dart';
 import 'package:foap/screens/podcast/podcast_list_dashboard.dart';
 import 'package:get/get.dart';
 import '../model/polls_model.dart';
+import '../screens/tvs/tv_dashboard.dart';
 
 class HomeController extends GetxController {
   final SettingsController _settingsController = Get.find();
@@ -268,7 +269,7 @@ class HomeController extends GetxController {
     } else if (option == LocalizationString.liveNow) {
       Get.to(() => const RandomLiveListing());
     } else if (option == LocalizationString.liveTv) {
-      Get.to(() => const TvListDashboard());
+      Get.to(() => const TvDashboardScreen());
       // Get.to(() => const LiveTVStreaming());
 
     } else if (option == LocalizationString.podcast) {
