@@ -1,4 +1,5 @@
 import 'package:foap/helper/common_import.dart';
+import 'package:foap/screens/chat/random_chat/choose_profile_ctageory.dart';
 import 'package:get/get.dart';
 
 class SelectUserForChat extends StatefulWidget {
@@ -140,7 +141,7 @@ class SelectUserForChatState extends State<SelectUserForChat> {
                                   ],
                                 ),
                               ).ripple(() {
-                                Get.to(() => const FindRandomUser(
+                                Get.to(() => const ChooseProfileCategory(
                                   isCalling: false,
                                 ));
                               }).hP16;

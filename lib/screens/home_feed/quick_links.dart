@@ -1,5 +1,6 @@
 import 'package:foap/helper/common_import.dart';
 import 'package:get/get.dart';
+import '../chat/random_chat/choose_profile_ctageory.dart';
 import '../podcast/podcast_list_dashboard.dart';
 import '../tvs/tv_dashboard.dart';
 import '../dating/DatingDashboard.dart';
@@ -68,18 +69,18 @@ class _QuickLinkWidgetState extends State<QuickLinkWidget> {
                               'This is demo app so might not find online user to test it',
                           cxt: context,
                           okHandler: () {
-                            Get.to(() => const FindRandomUser(
+                            Get.to(() => const ChooseProfileCategory(
                                   isCalling: false,
                                 ));
                           });
                       return;
                     } else {
-                      Get.to(() => const FindRandomUser(
+                      Get.to(() => const ChooseProfileCategory(
                             isCalling: false,
                           ));
                     }
                   } else if (link.linkType == QuickLinkType.randomCall) {
-                    Get.to(() => const FindRandomUser(
+                    Get.to(() => const ChooseProfileCategory(
                           isCalling: true,
                         ));
                   } else if (link.linkType == QuickLinkType.clubs) {

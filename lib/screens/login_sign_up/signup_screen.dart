@@ -212,6 +212,7 @@ class SignUpScreenState extends State<SignUpScreen> {
             const SocialLogin().setPadding(left: 65, right: 65),
             // const Spacer(),
             Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
                   LocalizationString.alreadyHaveAcc,

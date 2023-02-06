@@ -93,14 +93,19 @@ class LoginController extends GetxController {
       required String password,
       required String confirmPassword,
       required BuildContext context}) {
-    if (FormValidator().isTextEmpty(name)) {
-      showErrorMessage(LocalizationString.pleaseEnterName, context);
+    if (FormValidator().isTextEmpty(name) || userNameCheckStatus != 1) {
+      showErrorMessage(LocalizationString.pleaseEnterValidUserName, context);
+    }
+    if (name.contains(' ')) {
+      showErrorMessage(LocalizationString.userNameCanNotHaveSpace, context);
     } else if (FormValidator().isTextEmpty(email)) {
       showErrorMessage(LocalizationString.pleaseEnterValidEmail, context);
     } else if (FormValidator().isNotValidEmail(email)) {
       showErrorMessage(LocalizationString.pleaseEnterValidEmail, context);
     } else if (FormValidator().isTextEmpty(password)) {
       showErrorMessage(LocalizationString.pleaseEnterPassword, context);
+    } else if (FormValidator().isTextEmpty(confirmPassword)) {
+      showErrorMessage(LocalizationString.pleaseEnterConfirmPassword, context);
     } else if (password != confirmPassword) {
       showErrorMessage(LocalizationString.passwordsDoesNotMatched, context);
     } else {
@@ -119,7 +124,7 @@ class LoginController extends GetxController {
                   ));
             } else {
               EasyLoading.dismiss();
-              showErrorMessage(LocalizationString.errorMessage, context);
+              showErrorMessage(response.message, context);
             }
           });
         } else {
@@ -161,6 +166,11 @@ class LoginController extends GetxController {
   }
 
   void verifyUsername(String userName) {
+    if (userName.contains(' ')) {
+      userNameCheckStatus = 0;
+      return;
+    }
+    print('correct');
     AppUtil.checkInternet().then((value) {
       if (value) {
         // AppUtil.showLoader(context);

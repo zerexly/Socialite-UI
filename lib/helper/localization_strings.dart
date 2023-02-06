@@ -197,11 +197,12 @@ class LocalizationString {
 
   static String pleaseEnterPassword = 'Please enter password'.tr;
   static String pleaseEnterConfirmPassword = 'Please enter confirm password'.tr;
-  static String passwordsDoesNotMatched = 'Password does not matched'.tr;
+  static String passwordsDoesNotMatched = 'Passwords do not match'.tr;
   static String createAccountForTopPicks =
       'Create an account to our top picks for you!'.tr;
   static String pleaseEnterUserName = 'Please enter user name'.tr;
   static String pleaseEnterValidUserName = 'Please enter valid user name'.tr;
+  static String userNameCanNotHaveSpace = 'Username can not have spaces'.tr;
 
   static String enterNewPassword = 'Enter new password'.tr;
   static String enterConfirmPassword = 'Enter confirm password'.tr;
@@ -987,8 +988,16 @@ class LocalizationString {
   static String setUserNameSubHeading =
       'This username will be shown to all user. Choose a wise user name like it_mike_here'
           .tr;
+
+  static String setProfileCategoryType = 'Choose profile category type'.tr;
+  static String setProfileCategoryTypeSubHeading =
+      'Category will help people find accounts like yours. You can change this'
+          .tr;
+
+  static String weWillSearchUserInCategory =
+      'We will search user in your specified category'.tr;
+
   static String audios = 'Audios'.tr;
   static String favourite = 'Favourite'.tr;
   static String subscribed = 'Subscribed'.tr;
-
 }

@@ -1,6 +1,8 @@
 import 'package:foap/helper/common_import.dart';
 import 'package:get/get.dart';
 
+import '../screens/login_sign_up/set_profile_category_type.dart';
+
 class ProfileController extends GetxController {
   final PostController postController = Get.find<PostController>();
 
@@ -77,8 +79,8 @@ class ProfileController extends GetxController {
 
   void updateLocation(
       {required String country,
-        required String city,
-        required BuildContext context}) {
+      required String city,
+      required BuildContext context}) {
     if (FormValidator().isTextEmpty(country)) {
       AppUtil.showToast(
           context: context,
@@ -127,9 +129,9 @@ class ProfileController extends GetxController {
 
   void resetPassword(
       {required String oldPassword,
-        required String newPassword,
-        required String confirmPassword,
-        required BuildContext context}) {
+      required String newPassword,
+      required String confirmPassword,
+      required BuildContext context}) {
     if (FormValidator().isTextEmpty(oldPassword)) {
       AppUtil.showToast(
           context: context,
@@ -213,8 +215,8 @@ class ProfileController extends GetxController {
 
   void updateMobile(
       {required String countryCode,
-        required String phoneNumber,
-        required BuildContext context}) {
+      required String phoneNumber,
+      required BuildContext context}) {
     if (FormValidator().isTextEmpty(phoneNumber)) {
       AppUtil.showToast(
           context: context,
@@ -233,8 +235,8 @@ class ProfileController extends GetxController {
             if (response.success) {
               getIt<UserProfileManager>().refreshProfile();
               Get.to(() => VerifyOTPPhoneNumberChange(
-                token: response.token!,
-              ));
+                    token: response.token!,
+                  ));
             }
           });
         } else {
@@ -249,8 +251,8 @@ class ProfileController extends GetxController {
 
   updateUserName(
       {required String userName,
-        required isSigningUp,
-        required BuildContext context}) {
+      required isSigningUp,
+      required BuildContext context}) {
     if (FormValidator().isTextEmpty(userName)) {
       AppUtil.showToast(
           context: context,
@@ -274,8 +276,9 @@ class ProfileController extends GetxController {
                   isSuccess: true);
               getMyProfile();
               if (isSigningUp == true) {
-                getIt<LocationManager>().postLocation();
-                Get.offAll(() => const DashboardScreen());
+                Get.to(() => const SetProfileCategoryType(
+                      isFromSignup: false,
+                    ));
               } else {
                 Future.delayed(const Duration(milliseconds: 1200), () {
                   Get.back();
@@ -292,6 +295,41 @@ class ProfileController extends GetxController {
         }
       });
     }
+  }
+
+  updateProfileCategoryType(
+      {required int profileCategoryType,
+      required isSigningUp,
+      required BuildContext context}) {
+    AppUtil.checkInternet().then((value) {
+      if (value) {
+        EasyLoading.show(status: LocalizationString.loading);
+        ApiController()
+            .updateUserName(profileCategoryType.toString())
+            .then((response) {
+          if (response.success == true) {
+            EasyLoading.dismiss();
+            AppUtil.showToast(
+                context: context,
+                message: LocalizationString.userNameIsUpdated,
+                isSuccess: true);
+            getMyProfile();
+            if (isSigningUp == true) {
+              getIt<LocationManager>().postLocation();
+              Get.offAll(() => const DashboardScreen());
+            } else {
+              Future.delayed(const Duration(milliseconds: 1200), () {
+                Get.back();
+              });
+            }
+          } else {
+            EasyLoading.dismiss();
+            AppUtil.showToast(
+                context: context, message: response.message, isSuccess: false);
+          }
+        });
+      }
+    });
   }
 
   void verifyUsername({required String userName}) {
@@ -520,8 +558,8 @@ class ProfileController extends GetxController {
             // posts.value = [];
             posts.addAll(response.success
                 ? response.posts
-                .where((element) => element.gallery.isNotEmpty)
-                .toList()
+                    .where((element) => element.gallery.isNotEmpty)
+                    .toList()
                 : []);
             posts.sort((a, b) => b.createDate!.compareTo(a.createDate!));
             isLoadingPosts = false;
@@ -551,8 +589,8 @@ class ProfileController extends GetxController {
               .then((response) async {
             reels.addAll(response.success
                 ? response.posts
-                .where((element) => element.gallery.isNotEmpty)
-                .toList()
+                    .where((element) => element.gallery.isNotEmpty)
+                    .toList()
                 : []);
             reels.sort((a, b) => b.createDate!.compareTo(a.createDate!));
             isLoadingReels = false;
@@ -602,7 +640,7 @@ class ProfileController extends GetxController {
       sendingGift.value = gift;
       ApiController()
           .sendGift(
-          gift: gift, liveId: null, userId: user.value!.id, postId: null)
+              gift: gift, liveId: null, userId: user.value!.id, postId: null)
           .then((value) {
         Timer(const Duration(seconds: 1), () {
           sendingGift.value = null;

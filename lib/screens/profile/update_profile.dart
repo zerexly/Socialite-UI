@@ -1,6 +1,8 @@
 import 'package:foap/helper/common_import.dart';
 import 'package:get/get.dart';
 
+import '../login_sign_up/set_profile_category_type.dart';
+
 class UpdateProfile extends StatefulWidget {
   const UpdateProfile({Key? key}) : super(key: key);
 
@@ -67,6 +69,40 @@ class UpdateProfileState extends State<UpdateProfile> {
                     size: 15,
                   ).ripple(() {
                     Get.to(() => const ChangeUserName())!.then((value) {
+                      reloadData();
+                    });
+                  })
+                ],
+              ),
+              divider(context: context).vP16,
+              Row(
+                children: [
+                  Text(
+                    LocalizationString.category,
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyLarge!
+                        .copyWith(fontWeight: FontWeight.w600),
+                  ),
+                  const Spacer(),
+                  Obx(() => profileController.user.value != null
+                      ? Text(
+                          profileController.user.value!.category,
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        )
+                      : Container()),
+                  const SizedBox(
+                    width: 20,
+                  ),
+                  ThemeIconWidget(
+                    ThemeIcon.edit,
+                    color: Theme.of(context).iconTheme.color,
+                    size: 15,
+                  ).ripple(() {
+                    Get.to(() => const SetProfileCategoryType(
+                              isFromSignup: false,
+                            ))!
+                        .then((value) {
                       reloadData();
                     });
                   })
@@ -193,8 +229,8 @@ class UpdateProfileState extends State<UpdateProfile> {
                   Text(
                     LocalizationString.datingProfile,
                     style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
+                          fontWeight: FontWeight.w600,
+                        ),
                   ),
                   const Spacer(),
                   ThemeIconWidget(
@@ -255,7 +291,9 @@ class UpdateProfileState extends State<UpdateProfile> {
             height: 210,
             child: profileController.user.value != null
                 ? Column(children: [
-                  const SizedBox(height: 20,),
+                    const SizedBox(
+                      height: 20,
+                    ),
                     UserAvatarView(
                             user: profileController.user.value!,
                             size: 65,
