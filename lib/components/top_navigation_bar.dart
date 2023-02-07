@@ -77,7 +77,6 @@ Widget backNavigationBarWithIconBadge(
       required ThemeIcon icon,
       required String title,
       required int badgeCount,
-
       required VoidCallback iconBtnClicked}) {
   return Stack(
     children: [
@@ -91,6 +90,17 @@ Widget backNavigationBarWithIconBadge(
           ).ripple(() {
             Get.back();
           }),
+  Expanded(
+  child: Align(
+  alignment: Alignment.centerRight,
+  child:
+         ThemeIconWidget(
+              ThemeIcon.setting,
+              size: 25,
+              color: Theme.of(context).iconTheme.color,
+            ).rP8.ripple(() {
+           iconBtnClicked();
+            }),)),
          Stack(
          children: [
            ThemeIconWidget(
@@ -116,7 +126,7 @@ Widget backNavigationBarWithIconBadge(
            )))
          ]).ripple(() {
            Get.to(() => const AcceptRejectInvitation());
-           //    iconBtnClicked();
+           //
           }),
         ],
       ),

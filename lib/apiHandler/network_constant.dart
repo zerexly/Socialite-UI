@@ -26,7 +26,6 @@ class NetworkConstantsUtil {
   static String joinCompetition = 'competitions/join';
   static String getCompetitionDetail =
       'competitions/{{id}}?expand=post,post.user,competitionPosition.post.user,winnerPost';
-
   static String addPost = 'posts';
   static String uploadPostImage = 'posts/upload-gallary';
   static String uploadFileImage = 'file-uploads/upload-file';
@@ -46,7 +45,7 @@ class NetworkConstantsUtil {
   static String deletePost = 'posts/{{id}}';
 
   static String otherUser =
-      'users/{{id}}?expand=isFollowing,isFollower,totalFollowing,totalFollower,totalPost,totalWinnerPost,userLiveDetail,giftSummary';
+      'users/{{id}}?expand=isFollowing,isFollower,totalFollowing,totalFollower,totalPost,totalWinnerPost,userLiveDetail,giftSummary,userSetting';
   static String followUser = 'followers';
   static String unfollowUser = 'followers/unfollow';
   static String followMultipleUser = 'followers/follow-multiple';
@@ -66,7 +65,7 @@ class NetworkConstantsUtil {
   static String searchUsers =
       'users/search-user?expand=isFollowing,userLiveDetail';
   static String getMyProfile =
-      'users/profile?expand=totalFollowing,totalFollower,totalActivePost,userLiveDetail,giftSummary';
+      'users/profile?expand=totalFollowing,totalFollower,totalActivePost,userLiveDetail,giftSummary,userSetting';
   static String updateUserProfile = 'users/profile-update';
   static String updateProfileImage = 'users/update-profile-image';
   static String updatePassword = 'users/update-password';
@@ -153,6 +152,8 @@ class NetworkConstantsUtil {
   static String myInvitations = 'relations/my-invitation?expand=relationShip, createdBy';
   static String postInviteUnInvite = 'relations/invite';
   static String putAcceptRejectInvite = 'relations/update-invitation';
+  static String postRelationshipSetting = 'users/add-setting';
+  static String getRelationbyId = 'relations/user-relation';
 
 
   //static String getHosts = 'podcasts?expand=currentViewer';

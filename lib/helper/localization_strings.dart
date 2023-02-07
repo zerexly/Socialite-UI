@@ -393,6 +393,8 @@ class LocalizationString {
   static String manageBlockedUser = 'Manage Blocked User list'.tr;
 
   static String addRelationship = 'Add Relationship'.tr;
+  static String relationship = 'View Relationships'.tr;
+
   static String myFamily = 'Family'.tr;
 
 

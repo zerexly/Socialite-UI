@@ -763,6 +763,23 @@ class ApiController {
     });
   }
 
+  Future<ApiResponseModel> postRelationshipSettings(
+      int relationSetting) async {
+    var url = NetworkConstantsUtil.baseUrl +
+        NetworkConstantsUtil.postRelationshipSetting;
+    String? authKey = await SharedPrefs().getAuthorizationKey();
+
+    return http.post(Uri.parse(url), headers: {
+      "Authorization": "Bearer ${authKey!}"
+    }, body: {
+      "relation_setting": relationSetting.toString(),
+    }).then((http.Response response) async {
+      final ApiResponseModel parsedResponse = await getResponse(
+          response.body, NetworkConstantsUtil.postRelationshipSetting);
+      return parsedResponse;
+    });
+  }
+
   Future<ApiResponseModel> getMyRelations() async {
     var url = NetworkConstantsUtil.baseUrl + NetworkConstantsUtil.myRelations;
     String? authKey = await SharedPrefs().getAuthorizationKey();
@@ -786,6 +803,19 @@ class ApiController {
     }).then((http.Response response) async {
       final ApiResponseModel parsedResponse = await getResponse(
           response.body, NetworkConstantsUtil.getRelationship);
+      return parsedResponse;
+    });
+  }
+
+  Future<ApiResponseModel> getRelationshipById(int userId) async {
+    String? authKey = await SharedPrefs().getAuthorizationKey();
+    var url = '${NetworkConstantsUtil.baseUrl}${NetworkConstantsUtil.getRelationbyId}?user_id=${userId}&expand=user,realationShip';
+
+    return await http.get(Uri.parse(url), headers: {
+      "Authorization": "Bearer ${authKey!}"
+    }).then((http.Response response) async {
+      final ApiResponseModel parsedResponse = await getResponse(
+          response.body, NetworkConstantsUtil.getRelationbyId);
       return parsedResponse;
     });
   }

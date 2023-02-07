@@ -3,6 +3,8 @@ import 'package:foap/screens/settings_menu/add_relationship/search_relation_prof
 import 'package:get/get.dart';
 import '../../../controllers/relationship_controller.dart';
 
+enum Privacy { Nobody, MyContacts, Everyone }
+
 class AddRelationship extends StatefulWidget {
   const AddRelationship({Key? key}) : super(key: key);
 
@@ -12,9 +14,14 @@ class AddRelationship extends StatefulWidget {
 
 class _AddRelationshipState extends State<AddRelationship> {
   final RelationshipController _relationshipController = Get.find();
+  final ProfileController _profileController = Get.find();
+
+  var isSwitched = false;
+
   @override
   void initState() {
     super.initState();
+    _profileController.getMyProfile();
     _relationshipController.getRelationships();
     _relationshipController.getMyRelationships();
     _relationshipController.getMyInvitations(() {
@@ -44,7 +51,106 @@ class _AddRelationshipState extends State<AddRelationship> {
               badgeCount: _relationshipController.myInvitations.isNotEmpty
                   ? _relationshipController.myInvitations.length
                   : 0,
-              iconBtnClicked: () {}),
+              iconBtnClicked: () {
+                Privacy _privacy = _profileController.user.value?.userSetting?[0].relationSetting == 0 ?
+                Privacy.Nobody :_profileController.user.value?.userSetting?[0].relationSetting == 1 ?
+                Privacy.Everyone: Privacy.MyContacts;
+                print(_profileController.user.value?.userSetting?[0].relationSetting);
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(content: StatefulBuilder(builder:
+                          (BuildContext context, StateSetter setState) {
+                        return SizedBox(
+                          height: MediaQuery.of(context).size.height / 3,
+                          width: MediaQuery.of(context).size.width - 20,
+                          child: Center(
+                            child: Column(
+                              children: [
+                                SizedBox(
+                                  child: Text(
+                                    'Choose who can view your Relationships',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium!
+                                        .copyWith(
+                                            fontWeight: FontWeight.w600,
+                                            color: Colors.white),
+                                  ),
+                                ),
+                                Column(
+                                  children: <Widget>[
+                                    ListTile(
+                                      title: const Text('Nobody'),
+                                      leading: Radio<Privacy>(
+                                        value: Privacy.Nobody,
+                                        groupValue: _privacy,
+                                        onChanged: (Privacy? value) {
+                                          setState(() {
+                                            _privacy = value!;
+                                          });
+                                          _relationshipController.postRelationshipSettings(0,()=>{
+                                          _profileController.getMyProfile()
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                    ListTile(
+                                      title: const Text('My Contacts'),
+                                      leading: Radio<Privacy>(
+                                        value: Privacy.MyContacts,
+                                        groupValue: _privacy,
+                                        onChanged: (Privacy? value) {
+                                          setState(() {
+                                            _privacy = value!;
+                                          });
+                                          _relationshipController.postRelationshipSettings(2,()=>{
+                                          _profileController.getMyProfile()
+                                          });
+
+                                        },
+                                      ),
+                                    ),
+                                    ListTile(
+                                      title: const Text('Everyone'),
+                                      leading: Radio<Privacy>(
+                                        value: Privacy.Everyone,
+                                        groupValue: _privacy,
+                                        onChanged: (Privacy? value) {
+                                          setState(() {
+                                            _privacy = value!;
+                                          });
+                                          _relationshipController.postRelationshipSettings(1,()=>{
+                                          _profileController.getMyProfile()
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Align(
+                                  alignment: Alignment.bottomRight,
+                                  child: BorderButtonType1(
+                                          text: LocalizationString.close,
+                                          height: 30,
+                                          width: 70,
+                                          textStyle: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge!
+                                              .copyWith(fontWeight: FontWeight.w600)
+                                              .copyWith(color: Theme.of(context).primaryColor),
+                                          onPress: () {
+                                            Navigator.pop(context);
+                                          }).paddingOnly(left: 15, right: 10, bottom: 10),
+                                ),
+
+                              ],
+                            ),
+                          ),
+                        );
+                      }));
+                    });
+              }),
           divider(context: context).tP8,
           Expanded(
             child: GetBuilder<RelationshipController>(
@@ -119,7 +225,8 @@ class _AddRelationshipState extends State<AddRelationship> {
                                           .titleSmall!
                                           .copyWith(
                                               fontWeight: FontWeight.w500,
-                                              color: Theme.of(context).primaryColor),
+                                              color: Theme.of(context)
+                                                  .primaryColor),
                                     ).paddingOnly(top: 10),
                                 ],
                               ),

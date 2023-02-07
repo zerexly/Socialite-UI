@@ -86,7 +86,7 @@ class ApiResponseModel {
   List<GetRelationshipModel> relationships = [];
   List<MyRelationsModel> myRelationships = [];
   List<MyInvitationsModel> myInvitations = [];
-
+  List<MyRelationsModel>relationshipsById= [];
 
   List<VerificationRequest> verificationRequests = [];
 
@@ -571,6 +571,13 @@ class ApiResponseModel {
           }
         }
         else if (data['invitation'] != null && url == NetworkConstantsUtil.myRelations) {
+          var items = data['invitation']['items'];
+          if (items != null && items.length > 0) {
+            model.myRelationships = List<MyRelationsModel>.from(
+                items.map((x) => MyRelationsModel.fromJson(x)));
+          }
+        }
+        else if (data['invitation'] != null && url == NetworkConstantsUtil.getRelationbyId) {
           var items = data['invitation']['items'];
           if (items != null && items.length > 0) {
             model.myRelationships = List<MyRelationsModel>.from(

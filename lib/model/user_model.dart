@@ -82,6 +82,7 @@ class UserModel {
 
   UserLiveCallDetail? liveCallDetail;
   GiftSummary? giftSummary;
+  List<UserSetting>? userSetting;
 
   // next release
   int isDatingEnabled = 0;
@@ -133,6 +134,9 @@ class UserModel {
         : null;
     model.giftSummary = json['giftSummary'] != null
         ? GiftSummary.fromJson(json['giftSummary'])
+        : null;
+    model.userSetting = json['userSetting'] != null
+        ? List<UserSetting>.from( json['userSetting'].map((x) => UserSetting.fromJson(x)))
         : null;
     return model;
   }
@@ -214,5 +218,27 @@ class UserModel {
   ChatRoomMember get toChatRoomMember {
     return ChatRoomMember(
         id: id, isAdmin: 0, roomId: 0, userDetail: this, userId: id);
+  }
+}
+
+class UserSetting {
+  int? id;
+  int? userId;
+  int? relationSetting;
+
+  UserSetting({this.id, this.userId, this.relationSetting});
+
+  UserSetting.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    userId = json['user_id'];
+    relationSetting = json['relation_setting'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['user_id'] = this.userId;
+    data['relation_setting'] = this.relationSetting;
+    return data;
   }
 }

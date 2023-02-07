@@ -9,7 +9,7 @@ class RelationshipController extends GetxController {
   RxList<GetRelationshipModel> relationship = <GetRelationshipModel>[].obs;
   RxList<MyRelationsModel> myRelationships = <MyRelationsModel>[].obs;
   RxList<MyInvitationsModel> myInvitations = <MyInvitationsModel>[].obs;
-
+  RxList<MyRelationsModel> relationshipbyId = <MyRelationsModel>[].obs;
   // clearCategories() {
   //   categories.clear();
   //   update();
@@ -19,6 +19,15 @@ class RelationshipController extends GetxController {
   getRelationships() {
     ApiController().getRelationships().then((response) {
       relationship.value = response.relationships
+          .toList();
+      relationship.refresh();
+      update();
+    });
+  }
+
+  getRelationshipsFromId() {
+    ApiController().getRelationshipById(171).then((response) {
+      relationshipbyId.value = response.relationshipsById
           .toList();
       relationship.refresh();
       update();
@@ -55,5 +64,13 @@ class RelationshipController extends GetxController {
     });
   }
 
+  postRelationshipSettings(int relationSetting, VoidCallback handler) {
+    update();
+    EasyLoading.show(status: LocalizationString.loading);
+    ApiController().postRelationshipSettings(relationSetting).then((value) {
+      handler();
+      EasyLoading.dismiss();
+    });
+  }
 
 }
