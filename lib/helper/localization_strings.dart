@@ -295,6 +295,7 @@ class LocalizationString {
   static String addPhoto = 'Add photo'.tr;
   static String takePhoto = 'Take photo'.tr;
   static String chooseFromGallery = 'Choose from gallery'.tr;
+  static String removePhoto = 'Remove photo'.tr;
 
   static String chooseCoverImage = 'Choose cover image'.tr;
 
@@ -939,6 +940,7 @@ class LocalizationString {
   static String dating = 'Dating'.tr;
   static String matched = 'Matched'.tr;
   static String preferences = 'Set Preferences'.tr;
+  static String set = 'Set'.tr;
   static String datingProfile = 'Dating Profile'.tr;
 
   static String locationHeader = 'Set your location services'.tr;
@@ -976,6 +978,7 @@ class LocalizationString {
 
   static String addInterestsHeader = 'Add Interests.'.tr;
   static String addInterestsSubHeader = 'Add your interests and habits'.tr;
+  static String chooseInterests = 'Choose your interests'.tr;
 
   static String addProfessionalHeader = 'Add Professional Details.'.tr;
 

@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 
 import '../../controllers/dating_controller.dart';
+import '../../model/preference_model.dart';
 
 class SetDatingPreference extends StatefulWidget {
   const SetDatingPreference({Key? key}) : super(key: key);
@@ -13,19 +14,44 @@ class SetDatingPreference extends StatefulWidget {
 }
 
 class SetDatingPreferenceState extends State<SetDatingPreference> {
-  PreferenceModel? model;
-  SfRangeValues _values = const SfRangeValues(16.0, 50.0);
+  int? selectedGender;
+
+  SfRangeValues _valuesForAge = const SfRangeValues(16.0, 50.0);
   SfRangeValues _valuesForHeight = const SfRangeValues(165.0, 182.0);
+
   final DatingController datingController = Get.find();
+  TextEditingController interestsController = TextEditingController();
+  List<InterestModel> selectedInterests = [];
+
+  List<String> colors = ["Black", "White", "Brown"];
+  int? selectedColor;
+
+  List<String> religions = ["Hindu", "Christian", "Muslim"];
+  TextEditingController religionController = TextEditingController();
+
+  List<String> status = ["Single", "Married", "Divorced"];
+  int? selectedStatus;
+
+  TextEditingController languageController = TextEditingController();
+  List<LanguageModel> languagesList = [
+    LanguageModel('Hindi', 1),
+    LanguageModel('English', 2),
+    LanguageModel('Arabic', 3),
+    LanguageModel('Turkish', 4),
+    LanguageModel('Russian', 5),
+    LanguageModel('Spanish', 6),
+    LanguageModel('French', 7)
+  ];
+  List<LanguageModel> selectedLanguages = [];
+
+  int smoke = 0;
+
+  TextEditingController drinkHabitController = TextEditingController();
+  List<String> drinkHabitList = ['Regular', 'Planning to quit', 'Socially'];
 
   @override
   void initState() {
     super.initState();
-    model = PreferenceModel();
-    model?.gender = 0;
-    model?.ageFrom = 16.0;
-    model?.ageTo = 50.0;
-
     datingController.getInterests();
   }
 
@@ -51,7 +77,11 @@ class SetDatingPreferenceState extends State<SetDatingPreference> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                         addHeader('Gender').paddingOnly(bottom: 8),
-                        addSegmentedBar(["Male", "Female", "Other"]),
+                        addSegmentedBar(
+                            ["Male", "Female", "Other"], selectedGender,
+                            (value) {
+                          setState(() => selectedGender = value);
+                        }),
                         addHeader('Age').paddingOnly(top: 30),
                         SfRangeSlider(
                           min: 16.0,
@@ -60,10 +90,10 @@ class SetDatingPreferenceState extends State<SetDatingPreference> {
                           activeColor: Theme.of(context).primaryColor,
                           showLabels: true,
                           enableTooltip: true,
-                          values: _values,
+                          values: _valuesForAge,
                           onChanged: (dynamic values) {
                             setState(() {
-                              _values = values;
+                              _valuesForAge = values;
                             });
                           },
                           tooltipTextFormatterCallback:
@@ -99,65 +129,111 @@ class SetDatingPreferenceState extends State<SetDatingPreference> {
                           },
                         ),
                         addHeader('Interests').paddingOnly(top: 30, bottom: 8),
-                        InputField(
-                          hintText: 'Select',
-                          // controller: _requestVerificationController
-                          //     .messageTf.value,
-                          showBorder: true,
-                          borderColor: Theme.of(context).disabledColor,
-                          cornerRadius: 10,
-                          iconOnRightSide: true,
-                          icon: ThemeIcon.downArrow,
-                          iconColor: Theme.of(context).disabledColor,
-                          isDisabled: true,
-                        ),
+                        addInputField(
+                            interestsController, () => openInterestsPopup()),
                         addHeader('Color').paddingOnly(top: 30, bottom: 8),
-                        addSegmentedBar(["Black", "White", "Brown"]),
+                        addSegmentedBar(colors, selectedColor, (sel) {
+                          setState(() => selectedColor = sel);
+                        }),
                         addHeader('Religion').paddingOnly(top: 30, bottom: 8),
-                        InputField(
-                          hintText: 'Select',
-                          // controller: _requestVerificationController
-                          //     .messageTf.value,
-                          showBorder: true,
-                          borderColor: Theme.of(context).disabledColor,
-                          cornerRadius: 10,
-                          iconOnRightSide: true,
-                          icon: ThemeIcon.downArrow,
-                          iconColor: Theme.of(context).disabledColor,
-                          isDisabled: true,
-                        ),
+                        addInputField(
+                            religionController, () => openReligionPopup()),
                         addHeader('Status').paddingOnly(top: 30, bottom: 8),
-                        addSegmentedBar(["Married", "Divorced", "Single"]),
+                        addSegmentedBar(status, selectedStatus, (sel) {
+                          setState(() => selectedStatus = sel);
+                        }),
                         addHeader('Language').paddingOnly(top: 30, bottom: 8),
-                        InputField(
-                          hintText: 'Select',
-                          // controller: _requestVerificationController
-                          //     .messageTf.value,
-                          showBorder: true,
-                          borderColor: Theme.of(context).disabledColor,
-                          cornerRadius: 10,
-                          iconOnRightSide: true,
-                          icon: ThemeIcon.downArrow,
-                          iconColor: Theme.of(context).disabledColor,
-                          isDisabled: true,
-                        ),
+                        addInputField(
+                            languageController, () => openLanguagePopup()),
                         addHeader('Do you smoke')
                             .paddingOnly(top: 30, bottom: 8),
-                        addSegmentedBar(["Yes", "No"]),
+                        addSegmentedBar(["Yes", "No"], smoke, (sel) {
+                          setState(() => smoke = sel);
+                        }),
                         addHeader('Drinking habit')
                             .paddingOnly(top: 30, bottom: 8),
-                        InputField(
-                          hintText: 'Select',
-                          // controller: _requestVerificationController
-                          //     .messageTf.value,
-                          showBorder: true,
-                          borderColor: Theme.of(context).disabledColor,
-                          cornerRadius: 10,
-                          iconOnRightSide: true,
-                          icon: ThemeIcon.downArrow,
-                          iconColor: Theme.of(context).disabledColor,
-                          isDisabled: true,
-                        )
+                        addInputField(drinkHabitController,
+                            () => openDrinkHabitListPopup()),
+                        Center(
+                          child: SizedBox(
+                              height: 50,
+                              width: MediaQuery.of(context).size.width - 50,
+                              child: FilledButtonType1(
+                                  cornerRadius: 25,
+                                  text: LocalizationString.set,
+                                  onPress: () {
+                                    if (selectedGender != null) {
+                                      getIt<AddPreferenceManager>()
+                                          .preferenceModel
+                                          ?.gender = selectedGender! + 1;
+                                    }
+                                    getIt<AddPreferenceManager>()
+                                        .preferenceModel
+                                        ?.ageFrom = _valuesForAge.start;
+
+                                    getIt<AddPreferenceManager>()
+                                        .preferenceModel
+                                        ?.ageTo = _valuesForAge.end;
+
+                                    getIt<AddPreferenceManager>()
+                                        .preferenceModel
+                                        ?.heightFrom = _valuesForHeight.start;
+
+                                    getIt<AddPreferenceManager>()
+                                        .preferenceModel
+                                        ?.heightTo = _valuesForHeight.end;
+
+                                    if (selectedInterests.isNotEmpty) {
+                                      String result = selectedInterests
+                                          .map((val) => val.id)
+                                          .join(',');
+                                      getIt<AddPreferenceManager>()
+                                          .preferenceModel
+                                          ?.interests = result;
+                                    }
+
+                                    if (selectedColor != null) {
+                                      getIt<AddPreferenceManager>()
+                                              .preferenceModel
+                                              ?.selectedColor =
+                                          colors[selectedColor!];
+                                    }
+
+                                    if (religionController.text.isNotEmpty) {
+                                      getIt<AddPreferenceManager>()
+                                          .preferenceModel
+                                          ?.religion = religionController.text;
+                                    }
+
+                                    if (selectedStatus != null) {
+                                      getIt<AddPreferenceManager>()
+                                          .preferenceModel
+                                          ?.status = selectedStatus! + 1;
+                                    }
+
+                                    if (selectedLanguages.isNotEmpty) {
+                                      String result = selectedLanguages
+                                          .map((val) => val.id)
+                                          .join(',');
+                                      getIt<AddPreferenceManager>()
+                                          .preferenceModel
+                                          ?.languages = result;
+                                    }
+
+                                    getIt<AddPreferenceManager>()
+                                        .preferenceModel
+                                        ?.smoke = smoke + 1;
+
+                                    if (drinkHabitController.text.isNotEmpty) {
+                                      int drink = drinkHabitList
+                                          .indexOf(drinkHabitController.text);
+                                      getIt<AddPreferenceManager>()
+                                          .preferenceModel
+                                          ?.drink = drink + 1;
+                                    }
+                                    ApiController().addUserPreference();
+                                  })),
+                        ).paddingOnly(top: 30),
                       ]).paddingAll(20)),
                 );
               }),
@@ -167,25 +243,24 @@ class SetDatingPreferenceState extends State<SetDatingPreference> {
   }
 
   Text addHeader(String header) {
-    return Text(
-      header,
-      style: Theme.of(context)
-          .textTheme
-          .bodyLarge!
-          .copyWith(fontWeight: FontWeight.w500),
-    );
+    return Text(header,
+        style: Theme.of(context)
+            .textTheme
+            .bodyLarge!
+            .copyWith(fontWeight: FontWeight.w500));
   }
 
-  addSegmentedBar(List<String> segments) {
+  addSegmentedBar(
+      List<String> segments, int? value, ValueChanged<int> onValueChanged) {
     return CupertinoSegmentedControl<int>(
       padding: EdgeInsets.zero,
       selectedColor: Theme.of(context).primaryColor,
       unselectedColor: Theme.of(context).backgroundColor,
       borderColor: Theme.of(context).disabledColor,
       children: addSegmentedChips(segments),
-      groupValue: model?.gender,
+      groupValue: value,
       onValueChanged: (value) {
-        setState(() => model?.gender = value);
+        onValueChanged(value);
       },
     );
   }
@@ -206,10 +281,145 @@ class SetDatingPreferenceState extends State<SetDatingPreference> {
     }
     return hashmap;
   }
-}
 
-class PreferenceModel {
-  late int gender;
-  late double ageFrom;
-  late double ageTo;
+  addInputField(TextEditingController controller, VoidCallback? onTap) {
+    return DropdownBorderedField(
+      hintText: 'Select',
+      controller: controller,
+      showBorder: true,
+      borderColor: Theme.of(context).disabledColor,
+      cornerRadius: 10,
+      iconOnRightSide: true,
+      icon: ThemeIcon.downArrow,
+      iconColor: Theme.of(context).disabledColor,
+      onTap: () => onTap!(),
+    );
+  }
+
+  void openInterestsPopup() {
+    showModalBottomSheet(
+        context: context,
+        builder: (context) => StatefulBuilder(// this is new
+                builder: (BuildContext context, StateSetter setState) {
+              return ListView.builder(
+                  itemCount: datingController.interests.length,
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  itemBuilder: (_, int index) {
+                    InterestModel model =
+                        datingController.interests.value[index];
+                    var anySelection = selectedInterests
+                        .where((element) => element.id == model.id);
+                    bool isAdded = anySelection.isNotEmpty;
+
+                    return ListTile(
+                        title: Text(model.name),
+                        onTap: () {
+                          isAdded
+                              ? selectedInterests.remove(model)
+                              : selectedInterests.add(model);
+
+                          String result = selectedInterests
+                              .map((val) => val.name)
+                              .join(', ');
+                          interestsController.text = result;
+                          setState(() {});
+                        },
+                        trailing: Icon(
+                            isAdded
+                                ? Icons.check_box
+                                : Icons.check_box_outline_blank,
+                            color: Theme.of(context).iconTheme.color));
+                  }).paddingOnly(top: 30);
+            }));
+  }
+
+  void openReligionPopup() {
+    showModalBottomSheet(
+        context: context,
+        builder: (context) => StatefulBuilder(// this is new
+                builder: (BuildContext context, StateSetter setState) {
+              return ListView.builder(
+                  itemCount: religions.length,
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  itemBuilder: (_, int index) {
+                    return ListTile(
+                        title: Text(religions[index]),
+                        onTap: () {
+                          setState(() {
+                            religionController.text = religions[index];
+                          });
+                        },
+                        trailing: Icon(
+                            religions[index] == religionController.text
+                                ? Icons.check_box
+                                : Icons.check_box_outline_blank,
+                            color: Theme.of(context).iconTheme.color));
+                  }).paddingOnly(top: 30);
+            }));
+  }
+
+  void openLanguagePopup() {
+    showModalBottomSheet(
+        context: context,
+        builder: (context) => StatefulBuilder(// this is new
+                builder: (BuildContext context, StateSetter setState) {
+              return ListView.builder(
+                  itemCount: languagesList.length,
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  itemBuilder: (_, int index) {
+                    LanguageModel model = languagesList[index];
+                    var anySelection = selectedLanguages
+                        .where((element) => element.id == model.id);
+                    bool isAdded = anySelection.isNotEmpty;
+
+                    return ListTile(
+                        title: Text(model.name ?? ''),
+                        onTap: () {
+                          isAdded
+                              ? selectedLanguages.remove(model)
+                              : selectedLanguages.add(model);
+
+                          String result = selectedLanguages
+                              .map((val) => val.name)
+                              .join(', ');
+                          languageController.text = result;
+                          setState(() {});
+                        },
+                        trailing: Icon(
+                            isAdded
+                                ? Icons.check_box
+                                : Icons.check_box_outline_blank,
+                            color: Theme.of(context).iconTheme.color));
+                  }).paddingOnly(top: 30);
+            }));
+  }
+
+  void openDrinkHabitListPopup() {
+    showModalBottomSheet(
+        context: context,
+        builder: (context) => StatefulBuilder(// this is new
+                builder: (BuildContext context, StateSetter setState) {
+              return ListView.builder(
+                  itemCount: drinkHabitList.length,
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  itemBuilder: (_, int index) {
+                    return ListTile(
+                        title: Text(drinkHabitList[index]),
+                        onTap: () {
+                          setState(() {
+                            drinkHabitController.text = drinkHabitList[index];
+                          });
+                        },
+                        trailing: Icon(
+                            drinkHabitList[index] == drinkHabitController.text
+                                ? Icons.check_box
+                                : Icons.check_box_outline_blank,
+                            color: Theme.of(context).iconTheme.color));
+                  }).paddingOnly(top: 30);
+            }));
+  }
 }

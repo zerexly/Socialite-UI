@@ -6,6 +6,7 @@ import 'package:foap/apiHandler/api_param_model.dart';
 import 'package:http_parser/http_parser.dart';
 
 import '../model/live_tv_model.dart';
+import '../model/preference_model.dart';
 
 class ApiController {
   final JsonDecoder _decoder = const JsonDecoder();
@@ -2597,6 +2598,38 @@ class ApiController {
     }).then((http.Response response) async {
       final ApiResponseModel parsedResponse =
           await getResponse(response.body, NetworkConstantsUtil.audios);
+      return parsedResponse;
+    });
+  }
+
+  //*********************** Dating ************************//
+  Future<ApiResponseModel> addUserPreference() async {
+    String? authKey = await SharedPrefs().getAuthorizationKey();
+    var url =
+        NetworkConstantsUtil.baseUrl + NetworkConstantsUtil.addUserPreference;
+    dynamic param = ApiParamModel().addUserPreferenceParam();
+
+    return await http.post(Uri.parse(url), body: param, headers: {
+      "Authorization": "Bearer ${authKey!}"
+    }).then((http.Response response) async {
+      final ApiResponseModel parsedResponse = await getResponse(
+          response.body, NetworkConstantsUtil.addUserPreference);
+      return parsedResponse;
+    });
+  }
+
+  Future<ApiResponseModel> updateDatingProfile() async {
+    var url =
+        NetworkConstantsUtil.baseUrl + NetworkConstantsUtil.updateUserProfile;
+    String? authKey = await SharedPrefs().getAuthorizationKey();
+    dynamic param = ApiParamModel().updateDatingProfileParam();
+
+    return http
+        .post(Uri.parse(url),
+            headers: {"Authorization": "Bearer ${authKey!}"}, body: param)
+        .then((http.Response response) async {
+      final ApiResponseModel parsedResponse = await getResponse(
+          response.body, NetworkConstantsUtil.updateUserProfile);
       return parsedResponse;
     });
   }

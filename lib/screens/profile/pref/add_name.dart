@@ -47,8 +47,10 @@ class _AddNameState extends State<AddName> {
                     cornerRadius: 25,
                     text: LocalizationString.next,
                     onPress: () {
-                      getIt<AddPreferenceManager>().preferenceModel?.name =
-                          nameController.text;
+                      if (nameController.text != '') {
+                        getIt<AddPreferenceManager>().preferenceModel?.name =
+                            nameController.text;
+                      }
                       Get.to(() => const AddPhotos());
                     })),
           ).paddingOnly(top: 150),

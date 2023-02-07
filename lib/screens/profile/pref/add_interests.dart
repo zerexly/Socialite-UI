@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:foap/helper/common_import.dart';
 
+import '../../../controllers/dating_controller.dart';
+import '../../../model/preference_model.dart';
 import 'add_profesional_details.dart';
 
 class AddInterests extends StatefulWidget {
@@ -13,6 +15,31 @@ class AddInterests extends StatefulWidget {
 
 class AddInterestsState extends State<AddInterests> {
   int smoke = 0;
+
+  TextEditingController drinkHabitController = TextEditingController();
+  List<String> drinkHabitList = ['Regular', 'Planning to quit', 'Socially'];
+
+  final DatingController datingController = Get.find();
+  TextEditingController interestsController = TextEditingController();
+  List<InterestModel> selectedInterests = [];
+
+  TextEditingController languageController = TextEditingController();
+  List<LanguageModel> languagesList = [
+    LanguageModel('Hindi', 1),
+    LanguageModel('English', 2),
+    LanguageModel('Arabic', 3),
+    LanguageModel('Turkish', 4),
+    LanguageModel('Russian', 5),
+    LanguageModel('Spanish', 6),
+    LanguageModel('French', 7)
+  ];
+  List<LanguageModel> selectedLanguages = [];
+
+  @override
+  void initState() {
+    super.initState();
+    datingController.getInterests();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,43 +64,46 @@ class AddInterestsState extends State<AddInterests> {
             addHeader('Do you smoke?').paddingOnly(top: 30, bottom: 8),
             addSegmentedBar(["Yes", "No"]),
             addHeader('Drinking habit').paddingOnly(top: 30, bottom: 8),
-            InputField(
+            DropdownBorderedField(
               hintText: 'Select',
-              // controller: _requestVerificationController
-              //     .messageTf.value,
+              controller: drinkHabitController,
               showBorder: true,
               borderColor: Theme.of(context).disabledColor,
               cornerRadius: 10,
               iconOnRightSide: true,
               icon: ThemeIcon.downArrow,
               iconColor: Theme.of(context).disabledColor,
-              isDisabled: true,
+              onTap: () {
+                openDrinkHabitListPopup();
+              },
             ),
             addHeader('Interests').paddingOnly(top: 30, bottom: 8),
-            InputField(
+            DropdownBorderedField(
               hintText: 'Select',
-              // controller: _requestVerificationController
-              //     .messageTf.value,
+              controller: interestsController,
               showBorder: true,
               borderColor: Theme.of(context).disabledColor,
               cornerRadius: 10,
               iconOnRightSide: true,
               icon: ThemeIcon.downArrow,
               iconColor: Theme.of(context).disabledColor,
-              isDisabled: true,
+              onTap: () {
+                openInterestsPopup();
+              },
             ),
             addHeader('Language').paddingOnly(top: 30, bottom: 8),
-            InputField(
+            DropdownBorderedField(
               hintText: 'Select',
-              // controller: _requestVerificationController
-              //     .messageTf.value,
+              controller: languageController,
               showBorder: true,
               borderColor: Theme.of(context).disabledColor,
               cornerRadius: 10,
               iconOnRightSide: true,
               icon: ThemeIcon.downArrow,
               iconColor: Theme.of(context).disabledColor,
-              isDisabled: true,
+              onTap: () {
+                openLanguagePopup();
+              },
             ),
             Center(
               child: SizedBox(
@@ -83,6 +113,32 @@ class AddInterestsState extends State<AddInterests> {
                       cornerRadius: 25,
                       text: LocalizationString.next,
                       onPress: () {
+                        getIt<AddPreferenceManager>().preferenceModel?.smoke =
+                            smoke + 1;
+
+                        if (drinkHabitController.text.isNotEmpty) {
+                          int drink =
+                              drinkHabitList.indexOf(drinkHabitController.text);
+                          getIt<AddPreferenceManager>().preferenceModel?.drink =
+                              drink + 1;
+                        }
+
+                        if (selectedInterests.isNotEmpty) {
+                          String result =
+                              selectedInterests.map((val) => val.id).join(',');
+                          getIt<AddPreferenceManager>()
+                              .preferenceModel
+                              ?.interests = result;
+                        }
+
+                        if (selectedLanguages.isNotEmpty) {
+                          String result =
+                              selectedLanguages.map((val) => val.id).join(',');
+                          getIt<AddPreferenceManager>()
+                              .preferenceModel
+                              ?.languages = result;
+                        }
+
                         Get.to(() => const AddProfessionalDetails());
                       })),
             ).paddingOnly(top: 100),
@@ -131,5 +187,106 @@ class AddInterestsState extends State<AddInterests> {
           ).alignCenter);
     }
     return hashmap;
+  }
+
+  void openDrinkHabitListPopup() {
+    showModalBottomSheet(
+        context: context,
+        builder: (context) => StatefulBuilder(// this is new
+                builder: (BuildContext context, StateSetter setState) {
+              return ListView.builder(
+                  itemCount: drinkHabitList.length,
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  itemBuilder: (_, int index) {
+                    return ListTile(
+                        title: Text(drinkHabitList[index]),
+                        onTap: () {
+                          setState(() {
+                            drinkHabitController.text = drinkHabitList[index];
+                          });
+                        },
+                        trailing: Icon(
+                            drinkHabitList[index] == drinkHabitController.text
+                                ? Icons.check_box
+                                : Icons.check_box_outline_blank,
+                            color: Theme.of(context).iconTheme.color));
+                  }).paddingOnly(top: 30);
+            }));
+  }
+
+  void openInterestsPopup() {
+    showModalBottomSheet(
+        context: context,
+        builder: (context) => StatefulBuilder(// this is new
+                builder: (BuildContext context, StateSetter setState) {
+              return ListView.builder(
+                  itemCount: datingController.interests.length,
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  itemBuilder: (_, int index) {
+                    InterestModel model =
+                        datingController.interests.value[index];
+                    var anySelection = selectedInterests
+                        .where((element) => element.id == model.id);
+                    bool isAdded = anySelection.isNotEmpty;
+
+                    return ListTile(
+                        title: Text(model.name),
+                        onTap: () {
+                          isAdded
+                              ? selectedInterests.remove(model)
+                              : selectedInterests.add(model);
+
+                          String result = selectedInterests
+                              .map((val) => val.name)
+                              .join(', ');
+                          interestsController.text = result;
+                          setState(() {});
+                        },
+                        trailing: Icon(
+                            isAdded
+                                ? Icons.check_box
+                                : Icons.check_box_outline_blank,
+                            color: Theme.of(context).iconTheme.color));
+                  }).paddingOnly(top: 30);
+            }));
+  }
+
+  void openLanguagePopup() {
+    showModalBottomSheet(
+        context: context,
+        builder: (context) => StatefulBuilder(// this is new
+                builder: (BuildContext context, StateSetter setState) {
+              return ListView.builder(
+                  itemCount: languagesList.length,
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  itemBuilder: (_, int index) {
+                    LanguageModel model = languagesList[index];
+                    var anySelection = selectedLanguages
+                        .where((element) => element.id == model.id);
+                    bool isAdded = anySelection.isNotEmpty;
+
+                    return ListTile(
+                        title: Text(model.name ?? ''),
+                        onTap: () {
+                          isAdded
+                              ? selectedLanguages.remove(model)
+                              : selectedLanguages.add(model);
+
+                          String result = selectedLanguages
+                              .map((val) => val.name)
+                              .join(', ');
+                          languageController.text = result;
+                          setState(() {});
+                        },
+                        trailing: Icon(
+                            isAdded
+                                ? Icons.check_box
+                                : Icons.check_box_outline_blank,
+                            color: Theme.of(context).iconTheme.color));
+                  }).paddingOnly(top: 30);
+            }));
   }
 }

@@ -228,4 +228,7 @@ class NetworkConstantsUtil {
   static String createPaymentIntent = 'payments/payment-intent';
   static String getPaypalClientToken = 'payments/paypal-client-token';
   static String submitPaypalPayment = 'payments/paypal-payment';
+
+  //***********Dating***********//
+  static String addUserPreference = 'datings/add-user-preference';
 }

@@ -1,5 +1,7 @@
 import 'package:foap/helper/common_import.dart';
 
+import '../model/preference_model.dart';
+
 class ApiParamModel {
   dynamic getLoginParam(String email, String password) async {
     String? fcmToken = await SharedPrefs().getFCMToken();
@@ -286,5 +288,58 @@ class ApiParamModel {
       'payment_method_nonce': nonce,
       'device_data': deviceData,
     };
+  }
+
+  dynamic addUserPreferenceParam() {
+    AddPreferenceModel? preferenceModel = getIt<AddPreferenceManager>().preferenceModel;
+
+    return {
+      'profile_category_type': '2',
+      'language': preferenceModel?.languages,
+      'religion': preferenceModel?.religion,
+      "marital_status": preferenceModel?.status,
+      "smoke_id": preferenceModel?.smoke,
+      "drinking_habit": preferenceModel?.drink,
+      "interest": preferenceModel?.interests,
+      "gander": preferenceModel?.gender,
+      "color": preferenceModel?.selectedColor,
+      "age_from": preferenceModel?.ageFrom,
+      "age_to": preferenceModel?.ageTo,
+      "work_experience_from": "2",
+      "work_experience_to": "4",
+    };
+  }
+
+  dynamic updateDatingProfileParam() {
+    AddPreferenceModel? preferenceModel = getIt<AddPreferenceManager>().preferenceModel;
+
+    return {
+      'profile_category_type': '2',
+      'language_id': preferenceModel?.languages,
+      'religion': preferenceModel?.religion,
+      "marital_status": preferenceModel?.status,
+      "smoke_id": preferenceModel?.smoke,
+      "drinking_habit": preferenceModel?.drink,
+      "interest_id": preferenceModel?.interests,
+      "sex": preferenceModel?.gender,
+      "color": preferenceModel?.selectedColor,
+      "dob": preferenceModel?.dob,
+      "height": preferenceModel?.height,
+      "qualification": "12",
+      "occupation": "Software",
+      "work_experience_month": "9",
+      "work_experience_year": "6",
+    };
+    // "username":"username2",
+    // "email":"user42@gmail.com",
+    // "bio":"dio info",
+    // "description":"hello msyfsjf",
+    // "is_biometric_login":"1",
+
+    // "country":"india",
+    // "city":"mohali",
+    // "state":"Punjab",
+    // "state_id":"23",
+    // "city_id":"2"
   }
 }

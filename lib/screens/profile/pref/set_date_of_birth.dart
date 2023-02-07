@@ -1,5 +1,13 @@
+import 'package:flutter/material.dart';
+import 'package:foap/helper/extension.dart';
+import 'package:foap/screens/profile/pref/set_your_gender.dart';
 import 'package:get/get.dart';
-import 'package:foap/helper/common_import.dart';
+
+import '../../../helper/localization_strings.dart';
+import '../../../manager/service_locator.dart';
+import '../../../model/preference_model.dart';
+import '../../../universal_components/app_buttons.dart';
+import '../../../universal_components/rounded_input_field.dart';
 
 class SetDateOfBirth extends StatefulWidget {
   const SetDateOfBirth({Key? key}) : super(key: key);
@@ -9,7 +17,9 @@ class SetDateOfBirth extends StatefulWidget {
 }
 
 class _SetDateOfBirthState extends State<SetDateOfBirth> {
-  TextEditingController nameController = TextEditingController();
+  TextEditingController day = TextEditingController();
+  TextEditingController month = TextEditingController();
+  TextEditingController year = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -32,11 +42,11 @@ class _SetDateOfBirthState extends State<SetDateOfBirth> {
           ).paddingOnly(top: 10),
           Row(
             children: [
-              addTextField('Day', 'dd'),
+              addTextField('Day', 'dd', day),
               const SizedBox(width: 10),
-              addTextField('Month', 'MM'),
+              addTextField('Month', 'MM', month),
               const SizedBox(width: 10),
-              addTextField('Year', 'YYYY'),
+              addTextField('Year', 'YYYY', year),
             ],
           ).paddingOnly(top: 50),
           Center(
@@ -47,6 +57,9 @@ class _SetDateOfBirthState extends State<SetDateOfBirth> {
                     cornerRadius: 25,
                     text: LocalizationString.next,
                     onPress: () {
+                      if (year.text != '' && month.text != '' && day.text != '') {
+                        getIt<AddPreferenceManager>().preferenceModel?.dob = "${year.text}-${month.text}-${day.text}";
+                      }
                       Get.to(() => const SetYourGender());
                     })),
           ).paddingOnly(top: 150),
@@ -55,7 +68,7 @@ class _SetDateOfBirthState extends State<SetDateOfBirth> {
     );
   }
 
-  Widget addTextField(String header, String hint) {
+  Widget addTextField(String header, String hint, TextEditingController controller) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -68,7 +81,7 @@ class _SetDateOfBirthState extends State<SetDateOfBirth> {
           width: 60,
           child: InputField(
             hintText: hint,
-            controller: nameController,
+            controller: controller,
             showBorder: true,
             borderColor: Theme.of(context).disabledColor,
             cornerRadius: 10,

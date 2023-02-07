@@ -1,8 +1,10 @@
+import 'dart:ffi';
+
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:foap/helper/common_import.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
-
+import '../../../model/preference_model.dart';
 import 'add_interests.dart';
 
 class AddPersonalInfo extends StatefulWidget {
@@ -13,8 +15,16 @@ class AddPersonalInfo extends StatefulWidget {
 }
 
 class AddPersonalInfoState extends State<AddPersonalInfo> {
-  int gender = 0;
+  List<String> colors = ["Black", "White", "Brown"];
+  int? selectedColor;
+
   SfRangeValues _valuesForHeight = const SfRangeValues(165.0, 182.0);
+
+  List<String> religions = ["Hindu", "Christian", "Muslim"];
+  TextEditingController religionController = TextEditingController();
+
+  List<String> status = ["Single", "Married", "Divorced"];
+  int? selectedStatus;
 
   @override
   Widget build(BuildContext context) {
@@ -31,13 +41,15 @@ class AddPersonalInfoState extends State<AddPersonalInfo> {
                   .textTheme
                   .displaySmall!
                   .copyWith(fontWeight: FontWeight.w600),
-            ).paddingOnly(top: 100),
+            ).paddingOnly(top: 80),
             Text(
               LocalizationString.personalInfoSubHeader,
               style: Theme.of(context).textTheme.titleSmall,
             ).paddingOnly(top: 20),
             addHeader('Color').paddingOnly(top: 30, bottom: 8),
-            addSegmentedBar(["Black", "White", "Brown"]),
+            addSegmentedBar(colors, selectedColor, (sel) {
+              setState(() => selectedColor = sel);
+            }),
             addHeader('Height').paddingOnly(top: 30),
             SfRangeSlider(
               min: 121.0,
@@ -61,21 +73,24 @@ class AddPersonalInfoState extends State<AddPersonalInfo> {
                 return '${actualValue.round()} cm';
               },
             ),
-            addHeader('Interests').paddingOnly(top: 30, bottom: 8),
-            InputField(
+            addHeader('Religion').paddingOnly(top: 30, bottom: 8),
+            DropdownBorderedField(
               hintText: 'Select',
-              // controller: _requestVerificationController
-              //     .messageTf.value,
+              controller: religionController,
               showBorder: true,
               borderColor: Theme.of(context).disabledColor,
               cornerRadius: 10,
               iconOnRightSide: true,
               icon: ThemeIcon.downArrow,
               iconColor: Theme.of(context).disabledColor,
-              isDisabled: true,
+              onTap: () {
+                openReligionPopup();
+              },
             ),
             addHeader('Status').paddingOnly(top: 30, bottom: 8),
-            addSegmentedBar(["Married", "Divorced", "Single"]),
+            addSegmentedBar(status, selectedStatus, (sel) {
+              setState(() => selectedStatus = sel);
+            }),
             Center(
               child: SizedBox(
                   height: 50,
@@ -84,6 +99,27 @@ class AddPersonalInfoState extends State<AddPersonalInfo> {
                       cornerRadius: 25,
                       text: LocalizationString.next,
                       onPress: () {
+                        if (selectedColor != null) {
+                          getIt<AddPreferenceManager>()
+                              .preferenceModel
+                              ?.selectedColor = colors[selectedColor!];
+                        }
+
+                        getIt<AddPreferenceManager>().preferenceModel?.height =
+                            _valuesForHeight.end;
+
+                        if (religionController.text.isNotEmpty) {
+                          getIt<AddPreferenceManager>()
+                              .preferenceModel
+                              ?.religion = religionController.text;
+                        }
+
+                        if (selectedStatus != null) {
+                          getIt<AddPreferenceManager>()
+                              .preferenceModel
+                              ?.status = selectedStatus! + 1;
+                        }
+
                         Get.to(() => const AddInterests());
                       })),
             ).paddingOnly(top: 100),
@@ -103,16 +139,17 @@ class AddPersonalInfoState extends State<AddPersonalInfo> {
     );
   }
 
-  addSegmentedBar(List<String> segments) {
+  addSegmentedBar(
+      List<String> segments, int? selection, ValueChanged<int> onValueChanged) {
     return CupertinoSegmentedControl<int>(
       padding: EdgeInsets.zero,
       selectedColor: Theme.of(context).primaryColor,
       unselectedColor: Theme.of(context).backgroundColor,
       borderColor: Theme.of(context).disabledColor,
       children: addSegmentedChips(segments),
-      groupValue: gender,
+      groupValue: selection ?? 0,
       onValueChanged: (value) {
-        setState(() => gender = value);
+        onValueChanged(value);
       },
     );
   }
@@ -132,5 +169,31 @@ class AddPersonalInfoState extends State<AddPersonalInfo> {
           ).alignCenter);
     }
     return hashmap;
+  }
+
+  void openReligionPopup() {
+    showModalBottomSheet(
+        context: context,
+        builder: (context) => StatefulBuilder(// this is new
+                builder: (BuildContext context, StateSetter setState) {
+              return ListView.builder(
+                  itemCount: religions.length,
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  itemBuilder: (_, int index) {
+                    return ListTile(
+                        title: Text(religions[index]),
+                        onTap: () {
+                          setState(() {
+                            religionController.text = religions[index];
+                          });
+                        },
+                        trailing: Icon(
+                            religions[index] == religionController.text
+                                ? Icons.check_box
+                                : Icons.check_box_outline_blank,
+                            color: Theme.of(context).iconTheme.color));
+                  }).paddingOnly(top: 30);
+            }));
   }
 }

@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:foap/helper/common_import.dart';
 
+import '../../../model/preference_model.dart';
 import 'add_personal_info.dart';
 
 class ChooseWhomToDate extends StatefulWidget {
@@ -11,7 +12,8 @@ class ChooseWhomToDate extends StatefulWidget {
 }
 
 class _ChooseWhomToDateState extends State<ChooseWhomToDate> {
-  TextEditingController nameController = TextEditingController();
+  List<String> genders = ['Open to all', 'Male', 'Female'];
+  int? selectedGender;
 
   @override
   Widget build(BuildContext context) {
@@ -36,9 +38,13 @@ class _ChooseWhomToDateState extends State<ChooseWhomToDate> {
                   .titleSmall!
                   .copyWith(fontWeight: FontWeight.w600),
             ).paddingOnly(top: 20),
-            addOption('Open to all').paddingOnly(top: 50),
-            addOption('Male').paddingOnly(top: 10),
-            addOption('Female').paddingOnly(top: 10),
+            ListView.builder(
+              itemCount: 3,
+              physics: const NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              itemBuilder: (_, int index) =>
+                  addOption(index).paddingOnly(top: 15),
+            ).paddingOnly(top: 30),
             Center(
               child: SizedBox(
                   height: 50,
@@ -47,30 +53,40 @@ class _ChooseWhomToDateState extends State<ChooseWhomToDate> {
                       cornerRadius: 25,
                       text: LocalizationString.next,
                       onPress: () {
+                        if (selectedGender != null) {
+                          getIt<AddPreferenceManager>()
+                              .preferenceModel
+                              ?.whomToDateGender = selectedGender! + 1;
+                        }
                         Get.to(() => const AddPersonalInfo());
-                        // Get.to(() => const ChooseGoal());
                       })),
-            ).paddingOnly(top: 110),
+            ).paddingOnly(top: 100),
           ],
         ).hP25,
       ),
     );
   }
 
-  Widget addOption(String option) {
+  Widget addOption(int index) {
     return SizedBox(
       height: 60,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(option,
+          Text(genders[index],
               style: Theme.of(context)
                   .textTheme
                   .titleSmall!
                   .copyWith(fontWeight: FontWeight.w600, color: Colors.white)),
-          const Icon(Icons.circle_outlined),
+          selectedGender == index
+              ? const Icon(Icons.circle_rounded)
+              : const Icon(Icons.circle_outlined),
         ],
-      ).hP25,
+      ).hP25.ripple(() {
+        setState(() {
+          selectedGender = index;
+        });
+      }),
     ).borderWithRadius(
         context: context,
         color: Theme.of(context).disabledColor,
