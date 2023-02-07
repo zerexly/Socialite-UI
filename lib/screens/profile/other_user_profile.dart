@@ -281,26 +281,32 @@ class OtherUserProfileState extends State<OtherUserProfile> {
                                               }));
                                         });
                                   })).lP8,
-
-
                       ],
                     ),
-                  //  if (_profileController.user.value?.userSetting?[0].relationSetting == 0)
-                    Container(
-                      margin: const EdgeInsets.only(top: 15.0),
-                      child : SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.40,
+                    if (_profileController.user.value?.userSetting != null &&
+                        _profileController
+                            .user.value!.userSetting!.isNotEmpty &&
+                        (_profileController
+                            .user.value?.userSetting?[0].relationSetting ==
+                            1 || (_profileController
+                            .user.value?.userSetting?[0].relationSetting ==
+                            2 && _profileController
+                            .user.value!.isFollowing)))
+                      Container(
+                        margin: const EdgeInsets.only(top: 15.0),
+                        child: SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.42,
                             child: FilledButtonType1(
                                 height: 35,
                                 enabledBackgroundColor:
-                                Theme.of(context).disabledColor,
+                                    Theme.of(context).disabledColor,
                                 enabledTextStyle:
-                                Theme.of(context).textTheme.bodyLarge,
+                                    Theme.of(context).textTheme.bodyLarge,
                                 text: LocalizationString.relationship,
                                 onPress: () {
                                   Get.to(() => const ViewRelationship());
                                 })).lP8,
-                      ),
+                      )
                   ],
                 ).hP16
               : Container();

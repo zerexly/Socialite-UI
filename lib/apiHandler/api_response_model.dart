@@ -571,6 +571,7 @@ class ApiResponseModel {
           }
         }
         else if (data['invitation'] != null && url == NetworkConstantsUtil.myRelations) {
+
           var items = data['invitation']['items'];
           if (items != null && items.length > 0) {
             model.myRelationships = List<MyRelationsModel>.from(
@@ -578,7 +579,7 @@ class ApiResponseModel {
           }
         }
         else if (data['invitation'] != null && url == NetworkConstantsUtil.getRelationbyId) {
-          var items = data['invitation']['items'];
+          var items = data['invitation'];
           if (items != null && items.length > 0) {
             model.myRelationships = List<MyRelationsModel>.from(
                 items.map((x) => MyRelationsModel.fromJson(x)));
