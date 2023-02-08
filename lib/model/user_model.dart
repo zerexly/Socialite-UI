@@ -88,6 +88,21 @@ class UserModel {
   int isDatingEnabled = 0;
   int chatDeleteTime = 0;
 
+  String? dob;
+  String? height;
+  String? color;
+  String? religion;
+  int? maritalStatus;
+  int? smoke;
+  String? drink;
+  String? qualification;
+  String? occupation;
+
+  int? experienceYear;
+  int? experienceMonth;
+  List<InterestsUserModel>? interests;
+  List<LanguageUserModel>? languages;
+
   UserModel();
 
   factory UserModel.fromJson(dynamic json) {
@@ -109,7 +124,7 @@ class UserModel {
     model.country = json['country'];
     model.countryCode = json['country_code'];
     model.city = json['city'];
-    model.gender = json['sex'] == null ? 'Male' : json['sex'].toString();
+    model.gender = json['sex'] == null ? '1' : json['sex'].toString();
 
     model.totalPost = json['totalActivePost'] ?? json['totalPost'] ?? 0;
     model.totalFollower = json['totalFollower'] ?? 0;
@@ -138,6 +153,26 @@ class UserModel {
     model.giftSummary = json['giftSummary'] != null
         ? GiftSummary.fromJson(json['giftSummary'])
         : null;
+
+    model.dob = json['dob'] ?? '';
+    model.height = json['height'] ?? '';
+    model.color = json['color'] ?? '';
+    model.religion = json['religion'] ?? '';
+    model.maritalStatus = json['marital_status'];
+
+    model.smoke = json['smoke_id'];
+    model.drink = json['drinking_habit'];
+
+    model.qualification = json['qualification'] ?? '';
+    model.occupation = json['occupation'] ?? '';
+
+    model.experienceMonth = json['work_experience_month'];
+    model.experienceYear = json['work_experience_year'];
+
+    model.interests = json['interest'] != null ? List<InterestsUserModel>.from(
+        json['interest'].map((x) => InterestsUserModel.fromJson(x))) : null;
+    model.languages = json['language'] != null ? List<LanguageUserModel>.from(
+        json['language'].map((x) => LanguageUserModel.fromJson(x))) : null;
     return model;
   }
 
@@ -233,6 +268,36 @@ class InterestModel {
     model.id = json['id'];
     model.name = json['name'];
     model.status = json['status'];
+
+    return model;
+  }
+}
+
+class InterestsUserModel {
+  int id = 0;
+  String name = "";
+  int status = 0;
+
+  InterestsUserModel();
+
+  factory InterestsUserModel.fromJson(dynamic json) {
+    InterestsUserModel model = InterestsUserModel();
+    model.id = json['interest_id'];
+    model.name = json['name'];
+    return model;
+  }
+}
+
+class LanguageUserModel {
+  int id = 0;
+  String name = "";
+
+  LanguageUserModel();
+
+  factory LanguageUserModel.fromJson(dynamic json) {
+    LanguageUserModel model = LanguageUserModel();
+    model.id = json['language_id'];
+    model.name = json['name'];
 
     return model;
   }

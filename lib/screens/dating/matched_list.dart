@@ -1,6 +1,7 @@
 import 'package:foap/helper/common_import.dart';
 import 'package:get/get.dart';
 
+import '../../controllers/dating_controller.dart';
 import 'dating_card.dart';
 
 class MatchedList extends StatefulWidget {
@@ -11,24 +12,13 @@ class MatchedList extends StatefulWidget {
 }
 
 class MatchedListState extends State<MatchedList> {
-  List<Profile> items = [
-    const Profile(
-        name: 'Rohini',
-        distance: '10 miles away',
-        imageAsset: 'assets/images/avatar_1.jpg'),
-    const Profile(
-        name: 'Rohini',
-        distance: '10 miles away',
-        imageAsset: 'assets/images/avatar_2.jpg'),
-    const Profile(
-        name: 'Rohini',
-        distance: '10 miles away',
-        imageAsset: 'assets/images/avatar_3.jpeg'),
-    const Profile(
-        name: 'Rohini',
-        distance: '10 miles away',
-        imageAsset: 'assets/images/avatar_4.jpeg'),
-  ];
+  final DatingController datingController = Get.find();
+
+  @override
+  void initState() {
+    super.initState();
+    datingController.getMatchedProfilesApi();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,19 +33,34 @@ class MatchedListState extends State<MatchedList> {
           ),
           divider(context: context).tP8,
           Expanded(
-              child: ListView.builder(
-                  padding: const EdgeInsets.only(top: 15, bottom: 15),
-                  shrinkWrap: true,
-                  itemCount: items.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return matchedTile(items[index]);
+              child: GetBuilder<DatingController>(
+                  init: datingController,
+                  builder: (ctx) {
+                    return datingController.isLoading.value
+                        ? const CardsStackShimmerWidget()
+                        : datingController.matchedUsers.isEmpty
+                            ? emptyData(
+                                title:
+                                    LocalizationString.noMatchedProfilesFound,
+                                subTitle:
+                                    LocalizationString.datingExploreForMatched,
+                                context: context)
+                            : ListView.builder(
+                                padding:
+                                    const EdgeInsets.only(top: 15, bottom: 15),
+                                shrinkWrap: true,
+                                itemCount: datingController.matchedUsers.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  return matchedTile(
+                                      datingController.matchedUsers[index]);
+                                });
                   })),
         ],
       ),
     );
   }
 
-  Widget matchedTile(Profile profile) {
+  Widget matchedTile(UserModel profile) {
     return Container(
             color: Theme.of(context).cardColor,
             child: Row(
@@ -64,19 +69,36 @@ class MatchedListState extends State<MatchedList> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Image.asset(
-                      profile.imageAsset,
-                      fit: BoxFit.cover,
-                      height: 40,
-                      width: 40,
-                    ).circular,
+                    profile.picture != null
+                        ? CachedNetworkImage(
+                            imageUrl: profile.picture!,
+                            fit: BoxFit.cover,
+                            height: 40,
+                            width: 40,
+                            placeholder: (context, url) => SizedBox(
+                                height: 40,
+                                width: 40,
+                                child: const CircularProgressIndicator().p16),
+                            errorWidget: (context, url, error) =>
+                                const SizedBox(
+                                    child: Icon(
+                              Icons.error,
+                              // size: size / 2,
+                            )),
+                          ).circular
+                        : Image.asset(
+                            'assets/images/avatar_1.jpg',
+                            fit: BoxFit.cover,
+                            height: 40,
+                            width: 40,
+                          ).circular,
                     SizedBox(
                       width: MediaQuery.of(context).size.width - 200,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Rohini',
+                            profile.userName,
                             style: Theme.of(context)
                                 .textTheme
                                 .bodyMedium!

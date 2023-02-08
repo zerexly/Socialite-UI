@@ -943,6 +943,12 @@ class LocalizationString {
   static String set = 'Set'.tr;
   static String datingProfile = 'Dating Profile'.tr;
 
+  static String noDatingProfilesFound = 'No dating profiles found'.tr;
+  static String datingExplore = 'Change your preferences and explore more'.tr;
+
+  static String noMatchedProfilesFound = 'No matching profiles found'.tr;
+  static String datingExploreForMatched = 'Explore more dating profiles and get matched'.tr;
+
   static String locationHeader = 'Set your location services'.tr;
   static String locationSubHeader =
       'We use your location to show you potential matches in your area'.tr;

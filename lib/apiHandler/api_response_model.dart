@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'package:foap/helper/common_import.dart';
 import 'package:foap/model/podcast_banner_model.dart';
+import 'package:foap/model/preference_model.dart';
 import 'package:get/get.dart';
 import '../model/club_invitation.dart';
 import '../model/club_join_request.dart';
@@ -87,6 +88,7 @@ class ApiResponseModel {
   List<ReelMusicModel> audios = [];
 
   List<InterestModel> interests = [];
+  List<UserModel> matchedUsers = [];
 
   List<VerificationRequest> verificationRequests = [];
 
@@ -96,6 +98,8 @@ class ApiResponseModel {
   // chat
   List<ChatRoomModel> chatRooms = [];
   List<ChatMessageModel> messages = [];
+
+  List<LanguageModel> languages = [];
 
   ChatRoomModel? room;
 
@@ -367,7 +371,8 @@ class ApiResponseModel {
                   items.map((x) => PodcastShowEpisodeModel.fromJson(x)));
             }
           }
-        } else if (data['interest'] != null && url == NetworkConstantsUtil.interests) {
+        } else if (data['interest'] != null &&
+            url == NetworkConstantsUtil.interests) {
           var items = data['interest'];
           if (items != null && items.length > 0) {
             model.interests = List<InterestModel>.from(
@@ -586,10 +591,21 @@ class ApiResponseModel {
                   List<FAQModel>.from(items.map((x) => FAQModel.fromJson(x)));
             }
           }
+        } else if (data['language'] != null &&
+            url == NetworkConstantsUtil.getLanguages) {
+          var items = data['language'];
+          model.languages = List<LanguageModel>.from(
+              items.map((x) => LanguageModel.fromJson(x)));
+        } else if (data['userMatch'] != null &&
+            url == NetworkConstantsUtil.matchedProfiles) {
+          var items = data['userMatch'];
+          if (items != null && items.length > 0) {
+            model.matchedUsers =
+                List<UserModel>.from(items.map((x) => UserModel.fromJson(x)));
+          }
         }
       }
-    }
-    else {
+    } else {
       if (data == null) {
         // Timer(const Duration(seconds: 1), () {
         //   Get.to(() => const LoginScreen());
@@ -607,7 +623,8 @@ class ApiResponseModel {
         // });
         model.message = LocalizationString.errorMessage;
       }
-    }    return model;
+    }
+    return model;
   }
 
   factory ApiResponseModel.fromUsersJson(dynamic json) {

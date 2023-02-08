@@ -33,15 +33,6 @@ class SetDatingPreferenceState extends State<SetDatingPreference> {
   int? selectedStatus;
 
   TextEditingController languageController = TextEditingController();
-  List<LanguageModel> languagesList = [
-    LanguageModel('Hindi', 1),
-    LanguageModel('English', 2),
-    LanguageModel('Arabic', 3),
-    LanguageModel('Turkish', 4),
-    LanguageModel('Russian', 5),
-    LanguageModel('Spanish', 6),
-    LanguageModel('French', 7)
-  ];
   List<LanguageModel> selectedLanguages = [];
 
   int smoke = 0;
@@ -53,6 +44,7 @@ class SetDatingPreferenceState extends State<SetDatingPreference> {
   void initState() {
     super.initState();
     datingController.getInterests();
+    datingController.getLanguages();
   }
 
   @override
@@ -177,12 +169,14 @@ class SetDatingPreferenceState extends State<SetDatingPreference> {
                                         ?.ageTo = _valuesForAge.end.toInt();
 
                                     getIt<AddPreferenceManager>()
-                                        .preferenceModel
-                                        ?.heightFrom = _valuesForHeight.start.toInt();
+                                            .preferenceModel
+                                            ?.heightFrom =
+                                        _valuesForHeight.start.toInt();
 
                                     getIt<AddPreferenceManager>()
-                                        .preferenceModel
-                                        ?.heightTo = _valuesForHeight.end.toInt();
+                                            .preferenceModel
+                                            ?.heightTo =
+                                        _valuesForHeight.end.toInt();
 
                                     if (selectedInterests.isNotEmpty) {
                                       String result = selectedInterests
@@ -367,11 +361,12 @@ class SetDatingPreferenceState extends State<SetDatingPreference> {
         builder: (context) => StatefulBuilder(// this is new
                 builder: (BuildContext context, StateSetter setState) {
               return ListView.builder(
-                  itemCount: languagesList.length,
+                  itemCount: datingController.languages.value.length,
                   physics: const NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
                   itemBuilder: (_, int index) {
-                    LanguageModel model = languagesList[index];
+                    LanguageModel model =
+                        datingController.languages.value[index];
                     var anySelection = selectedLanguages
                         .where((element) => element.id == model.id);
                     bool isAdded = anySelection.isNotEmpty;

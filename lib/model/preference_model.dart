@@ -41,7 +41,16 @@ class AddPreferenceManager {
 }
 
 class LanguageModel {
-  String? name;
   int? id;
-  LanguageModel(this.name, this.id);
+  String? name;
+
+  LanguageModel({
+    required this.id,
+    required this.name,
+  });
+
+  factory LanguageModel.fromJson(Map<String, dynamic> json) => LanguageModel(
+        id: json["id"],
+        name: json["name"],
+      );
 }

@@ -1,6 +1,8 @@
 import 'package:foap/helper/common_import.dart';
 import 'package:get/get.dart';
 
+import '../screens/dating/dating_card.dart';
+
 class HomeScreenShimmer extends StatelessWidget {
   const HomeScreenShimmer({Key? key}) : super(key: key);
 
@@ -645,5 +647,103 @@ class _EventBookingShimmerWidgetState extends State<EventBookingShimmerWidget> {
             height: 20,
           );
         });
+  }
+}
+
+class CardsStackShimmerWidget extends StatefulWidget {
+  const CardsStackShimmerWidget({Key? key}) : super(key: key);
+
+  @override
+  State<CardsStackShimmerWidget> createState() =>
+      _CardsStackShimmerWidgetState();
+}
+
+class _CardsStackShimmerWidgetState extends State<CardsStackShimmerWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        SizedBox(
+          height: MediaQuery.of(context).size.height - 270,
+          width: MediaQuery.of(context).size.width - 40,
+          child: Stack(
+            children: [
+              Positioned.fill(
+                child: Image.asset(
+                  'assets/images/avatar_1.jpg',
+                  fit: BoxFit.cover,
+                ).round(10),
+              ),
+              Positioned(
+                bottom: 0,
+                child: Container(
+                  height: 80,
+                  width: MediaQuery.of(context).size.width - 40,
+                  decoration: ShapeDecoration(
+                    color: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    shadows: <BoxShadow>[
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.05),
+                        blurRadius: 8,
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [
+                      Text(
+                        'David',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w800,
+                          fontSize: 16,
+                          color: Colors.black,
+                        ),
+                      ),
+                      Text('101 Km',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w400,
+                          fontSize: 14,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ],
+                  ).paddingOnly(left: 20),
+                ),
+              ),
+            ],
+          ),
+        ).round(10),
+        Positioned(
+          bottom: 10,
+          left: 0,
+          right: 0,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ActionButtonWidget(
+                onPressed: () {},
+                icon: const Icon(
+                  Icons.close,
+                  color: Colors.grey,
+                ),
+              ),
+              const SizedBox(width: 20),
+              ActionButtonWidget(
+                onPressed: () {},
+                icon: const Icon(
+                  Icons.favorite,
+                  color: Colors.red,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    ).addShimmer(context);
   }
 }

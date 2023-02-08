@@ -24,21 +24,13 @@ class AddInterestsState extends State<AddInterests> {
   List<InterestModel> selectedInterests = [];
 
   TextEditingController languageController = TextEditingController();
-  List<LanguageModel> languagesList = [
-    LanguageModel('Hindi', 1),
-    LanguageModel('English', 2),
-    LanguageModel('Arabic', 3),
-    LanguageModel('Turkish', 4),
-    LanguageModel('Russian', 5),
-    LanguageModel('Spanish', 6),
-    LanguageModel('French', 7)
-  ];
   List<LanguageModel> selectedLanguages = [];
 
   @override
   void initState() {
     super.initState();
     datingController.getInterests();
+    datingController.getLanguages();
   }
 
   @override
@@ -265,11 +257,11 @@ class AddInterestsState extends State<AddInterests> {
         builder: (context) => StatefulBuilder(// this is new
                 builder: (BuildContext context, StateSetter setState) {
               return ListView.builder(
-                  itemCount: languagesList.length,
+                  itemCount: datingController.languages.value.length,
                   physics: const NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
                   itemBuilder: (_, int index) {
-                    LanguageModel model = languagesList[index];
+                    LanguageModel model = datingController.languages.value[index];
                     var anySelection = selectedLanguages
                         .where((element) => element.id == model.id);
                     bool isAdded = anySelection.isNotEmpty;
