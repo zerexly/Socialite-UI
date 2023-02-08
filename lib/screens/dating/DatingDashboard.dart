@@ -27,7 +27,11 @@ class DatingDashboardState extends State<DatingDashboard> {
 
   @override
   void initState() {
-    items = [const DatingCard(), const MatchedList(), const SetDatingPreference()];
+    items = [
+      const DatingCard(),
+      const MatchedList(),
+      const SetDatingPreference()
+    ];
     super.initState();
   }
 
@@ -50,25 +54,22 @@ class DatingDashboardState extends State<DatingDashboard> {
             onTap: (index) => {onTabTapped(index)},
             items: [
               BottomNavigationBarItem(
-                  icon: Image.asset('assets/event.png',
-                      height: 20,
-                      width: 20,
+                  icon: ThemeIconWidget(ThemeIcon.dating,
+                      size: 20,
                       color: _dashboardController.currentIndex.value == 0
                           ? Theme.of(context).primaryColor
                           : Theme.of(context).disabledColor),
                   label: ''),
               BottomNavigationBarItem(
-                  icon: Image.asset('assets/search.png',
-                      height: 20,
-                      width: 20,
+                  icon: ThemeIconWidget(ThemeIcon.favFilled,
+                      size: 20,
                       color: _dashboardController.currentIndex.value == 1
                           ? Theme.of(context).primaryColor
                           : Theme.of(context).disabledColor),
                   label: ''),
               BottomNavigationBarItem(
-                icon: Image.asset('assets/bookings.png',
-                    height: 20,
-                    width: 20,
+                icon: ThemeIconWidget(ThemeIcon.filterIcon,
+                    size: 20,
                     color: _dashboardController.currentIndex.value == 2
                         ? Theme.of(context).primaryColor
                         : Theme.of(context).disabledColor),

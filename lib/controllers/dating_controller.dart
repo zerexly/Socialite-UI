@@ -16,4 +16,20 @@ class DatingController extends GetxController {
       update();
     });
   }
+
+  setPreferencesApi() {
+    EasyLoading.show(status: LocalizationString.loading);
+    ApiController().addUserPreference().then((response) {
+      EasyLoading.dismiss();
+      update();
+    });
+  }
+
+  updateDatingProfile() {
+    EasyLoading.show(status: LocalizationString.loading);
+    ApiController().updateDatingProfile().then((response) {
+      EasyLoading.dismiss();
+      update();
+    });
+  }
 }

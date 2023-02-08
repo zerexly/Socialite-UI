@@ -78,9 +78,11 @@ class _ChooseWhomToDateState extends State<ChooseWhomToDate> {
                   .textTheme
                   .titleSmall!
                   .copyWith(fontWeight: FontWeight.w600, color: Colors.white)),
-          selectedGender == index
-              ? const Icon(Icons.circle_rounded)
-              : const Icon(Icons.circle_outlined),
+          ThemeIconWidget(
+              selectedGender == index
+                  ? ThemeIcon.circle
+                  : ThemeIcon.circleOutline,
+              color: Theme.of(context).iconTheme.color),
         ],
       ).hP25.ripple(() {
         setState(() {

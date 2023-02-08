@@ -706,6 +706,12 @@ class ThemeIconWidget extends StatelessWidget {
           size: size ?? 20,
           color: color ?? Theme.of(context).iconTheme.color,
         );
+      case ThemeIcon.dating:
+        return Icon(
+          Icons.local_fire_department_outlined,
+          size: size ?? 20,
+          color: color ?? Theme.of(context).iconTheme.color,
+        );
     }
   }
 }

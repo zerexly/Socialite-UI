@@ -36,7 +36,7 @@ class AddPreferenceManager {
   AddPreferenceModel? preference;
 
   AddPreferenceModel? get preferenceModel {
-    return preference;
+    return preference ??= AddPreferenceModel();
   }
 }
 

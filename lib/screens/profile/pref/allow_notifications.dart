@@ -21,10 +21,8 @@ class _AllowNotificationState extends State<AllowNotification> {
             height: 60,
             width: 60,
             color: Theme.of(context).cardColor,
-            child: Icon(
-              Icons.notifications,
-              color: Theme.of(context).primaryColor,
-            ),
+            child: ThemeIconWidget(ThemeIcon.notification,
+                color: Theme.of(context).primaryColor),
           ).round(30),
           Text(
             LocalizationString.notificationHeader,

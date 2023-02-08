@@ -146,7 +146,7 @@ class _AddPhotosState extends State<AddPhotos> {
                     child: Text(LocalizationString.removePhoto,
                         style: Theme.of(context).textTheme.bodyLarge)),
                 ListTile(
-                    leading: Icon(Icons.delete,
+                    leading: ThemeIconWidget(ThemeIcon.delete,
                         color: Theme.of(context).iconTheme.color),
                     title: Text(LocalizationString.remove),
                     onTap: () {
@@ -157,7 +157,7 @@ class _AddPhotosState extends State<AddPhotos> {
                     }),
                 divider(context: context),
                 ListTile(
-                    leading: Icon(Icons.close,
+                    leading: ThemeIconWidget(ThemeIcon.close,
                         color: Theme.of(context).iconTheme.color),
                     title: Text(LocalizationString.cancel),
                     onTap: () => Get.back()),

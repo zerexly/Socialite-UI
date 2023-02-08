@@ -24,10 +24,9 @@ class _SetLocationState extends State<SetLocation> {
             height: 60,
             width: 60,
             color: Theme.of(context).cardColor,
-            child: Icon(
-              Icons.location_on_rounded,
-              color: Theme.of(context).primaryColor,
-            ),
+            child: ThemeIconWidget(ThemeIcon.location,
+                size: 20,
+                color: Theme.of(context).primaryColor),
           ).round(30),
           Text(
             LocalizationString.locationHeader,

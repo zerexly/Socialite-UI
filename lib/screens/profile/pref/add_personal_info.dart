@@ -106,7 +106,7 @@ class AddPersonalInfoState extends State<AddPersonalInfo> {
                         }
 
                         getIt<AddPreferenceManager>().preferenceModel?.height =
-                            _valuesForHeight.end;
+                            _valuesForHeight.end.toInt();
 
                         if (religionController.text.isNotEmpty) {
                           getIt<AddPreferenceManager>()
@@ -188,10 +188,10 @@ class AddPersonalInfoState extends State<AddPersonalInfo> {
                             religionController.text = religions[index];
                           });
                         },
-                        trailing: Icon(
+                        trailing: ThemeIconWidget(
                             religions[index] == religionController.text
-                                ? Icons.check_box
-                                : Icons.check_box_outline_blank,
+                                ? ThemeIcon.selectedCheckbox
+                                : ThemeIcon.emptyCheckbox,
                             color: Theme.of(context).iconTheme.color));
                   }).paddingOnly(top: 30);
             }));

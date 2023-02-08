@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:foap/helper/common_import.dart';
 
+import '../../../controllers/dating_controller.dart';
 import '../../../model/preference_model.dart';
 
 class AddProfessionalDetails extends StatefulWidget {
@@ -12,14 +13,11 @@ class AddProfessionalDetails extends StatefulWidget {
 }
 
 class AddProfessionalDetailsState extends State<AddProfessionalDetails> {
-  // String? qualification;
-  // String? occupation;
-  // String? industry;
-  // String? experience;
   TextEditingController qualificationController = TextEditingController();
   TextEditingController occupationController = TextEditingController();
   TextEditingController industryController = TextEditingController();
   TextEditingController experienceController = TextEditingController();
+  final DatingController datingController = Get.find();
 
   @override
   Widget build(BuildContext context) {
@@ -97,7 +95,7 @@ class AddProfessionalDetailsState extends State<AddProfessionalDetails> {
                               ?.experience = experienceController.text;
                         }
                         //Hit Api
-                        ApiController().updateDatingProfile();
+                        datingController.updateDatingProfile();
                       })),
             ).paddingOnly(top: 100),
           ],
@@ -116,33 +114,3 @@ class AddProfessionalDetailsState extends State<AddProfessionalDetails> {
     );
   }
 }
-
-// {
-// "country":"india",
-// "city":"mohali",
-// "dob":"1988-05-20",
-
-// "city_id":"2"
-// "state":"Punjab",
-// "state_id":"23",
-// "username":"username2",
-// "email":"user42@gmail.com",
-// "bio":"dio info",
-// "description":"hello msyfsjf",
-
-// "sex":"1",
-// "is_biometric_login":"1",
-// "interest_id":"1,2",
-// "height":"173",
-// "color":"fair",
-// "religion":"Hindu",
-// "marital_status":"2",
-// "language_id":"7,2",
-// "smoke_id":"2",
-// "drinking_habit":"1",
-// "qualification":"12",
-// "occupation":"Software",
-// "profile_category_type":"2",
-// "work_experience_month":"9",
-// "work_experience_year":"6",
-// }

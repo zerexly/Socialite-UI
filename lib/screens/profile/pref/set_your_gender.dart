@@ -34,7 +34,8 @@ class _SetYourGenderState extends State<SetYourGender> {
               itemCount: 3,
               physics: const NeverScrollableScrollPhysics(),
               shrinkWrap: true,
-              itemBuilder: (_, int index) => addOption(index).paddingOnly(top: 15),
+              itemBuilder: (_, int index) =>
+                  addOption(index).paddingOnly(top: 15),
             ).paddingOnly(top: 35),
             Center(
               child: SizedBox(
@@ -69,9 +70,11 @@ class _SetYourGenderState extends State<SetYourGender> {
                   .textTheme
                   .titleSmall!
                   .copyWith(fontWeight: FontWeight.w600, color: Colors.white)),
-          selectedGender == index
-              ? const Icon(Icons.circle_rounded)
-              : const Icon(Icons.circle_outlined),
+          ThemeIconWidget(
+              selectedGender == index
+                  ? ThemeIcon.circle
+                  : ThemeIcon.circleOutline,
+              color: Theme.of(context).iconTheme.color)
         ],
       ).hP25.ripple(() {
         setState(() {

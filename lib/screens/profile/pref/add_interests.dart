@@ -206,11 +206,17 @@ class AddInterestsState extends State<AddInterests> {
                             drinkHabitController.text = drinkHabitList[index];
                           });
                         },
-                        trailing: Icon(
+                        trailing: ThemeIconWidget(
                             drinkHabitList[index] == drinkHabitController.text
-                                ? Icons.check_box
-                                : Icons.check_box_outline_blank,
-                            color: Theme.of(context).iconTheme.color));
+                                ? ThemeIcon.selectedCheckbox
+                                : ThemeIcon.emptyCheckbox,
+                            color: Theme.of(context).iconTheme.color)
+                        // Icon(
+                        //     drinkHabitList[index] == drinkHabitController.text
+                        //         ? Icons.check_box
+                        //         : Icons.check_box_outline_blank,
+                        //     color: Theme.of(context).iconTheme.color)
+                        );
                   }).paddingOnly(top: 30);
             }));
   }
@@ -244,10 +250,10 @@ class AddInterestsState extends State<AddInterests> {
                           interestsController.text = result;
                           setState(() {});
                         },
-                        trailing: Icon(
+                        trailing: ThemeIconWidget(
                             isAdded
-                                ? Icons.check_box
-                                : Icons.check_box_outline_blank,
+                                ? ThemeIcon.selectedCheckbox
+                                : ThemeIcon.emptyCheckbox,
                             color: Theme.of(context).iconTheme.color));
                   }).paddingOnly(top: 30);
             }));
@@ -281,10 +287,10 @@ class AddInterestsState extends State<AddInterests> {
                           languageController.text = result;
                           setState(() {});
                         },
-                        trailing: Icon(
+                        trailing: ThemeIconWidget(
                             isAdded
-                                ? Icons.check_box
-                                : Icons.check_box_outline_blank,
+                                ? ThemeIcon.selectedCheckbox
+                                : ThemeIcon.emptyCheckbox,
                             color: Theme.of(context).iconTheme.color));
                   }).paddingOnly(top: 30);
             }));

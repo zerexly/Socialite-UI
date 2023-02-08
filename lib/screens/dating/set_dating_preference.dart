@@ -167,21 +167,22 @@ class SetDatingPreferenceState extends State<SetDatingPreference> {
                                           .preferenceModel
                                           ?.gender = selectedGender! + 1;
                                     }
-                                    getIt<AddPreferenceManager>()
-                                        .preferenceModel
-                                        ?.ageFrom = _valuesForAge.start;
 
                                     getIt<AddPreferenceManager>()
                                         .preferenceModel
-                                        ?.ageTo = _valuesForAge.end;
+                                        ?.ageFrom = _valuesForAge.start.toInt();
 
                                     getIt<AddPreferenceManager>()
                                         .preferenceModel
-                                        ?.heightFrom = _valuesForHeight.start;
+                                        ?.ageTo = _valuesForAge.end.toInt();
 
                                     getIt<AddPreferenceManager>()
                                         .preferenceModel
-                                        ?.heightTo = _valuesForHeight.end;
+                                        ?.heightFrom = _valuesForHeight.start.toInt();
+
+                                    getIt<AddPreferenceManager>()
+                                        .preferenceModel
+                                        ?.heightTo = _valuesForHeight.end.toInt();
 
                                     if (selectedInterests.isNotEmpty) {
                                       String result = selectedInterests
@@ -231,7 +232,7 @@ class SetDatingPreferenceState extends State<SetDatingPreference> {
                                           .preferenceModel
                                           ?.drink = drink + 1;
                                     }
-                                    ApiController().addUserPreference();
+                                    datingController.setPreferencesApi();
                                   })),
                         ).paddingOnly(top: 30),
                       ]).paddingAll(20)),

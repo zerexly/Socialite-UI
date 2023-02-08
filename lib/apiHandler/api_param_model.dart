@@ -212,7 +212,6 @@ class ApiParamModel {
     };
   }
 
-
   dynamic removeFromClub({
     required int userId,
     required int clubId,
@@ -239,7 +238,8 @@ class ApiParamModel {
     };
   }
 
-  dynamic getPollAnswerParam(int? pollId, int? pollQuestionId, int? questionOptionId) async {
+  dynamic getPollAnswerParam(
+      int? pollId, int? pollQuestionId, int? questionOptionId) async {
     return {
       "poll_id": pollId.toString(),
       "poll_question_id": pollQuestionId.toString(),
@@ -291,45 +291,94 @@ class ApiParamModel {
   }
 
   dynamic addUserPreferenceParam() {
-    AddPreferenceModel? preferenceModel = getIt<AddPreferenceManager>().preferenceModel;
+    AddPreferenceModel? preferenceModel =
+        getIt<AddPreferenceManager>().preferenceModel;
 
-    return {
+    dynamic param = {
       'profile_category_type': '2',
-      'language': preferenceModel?.languages,
-      'religion': preferenceModel?.religion,
-      "marital_status": preferenceModel?.status,
-      "smoke_id": preferenceModel?.smoke,
-      "drinking_habit": preferenceModel?.drink,
-      "interest": preferenceModel?.interests,
-      "gander": preferenceModel?.gender,
-      "color": preferenceModel?.selectedColor,
-      "age_from": preferenceModel?.ageFrom,
-      "age_to": preferenceModel?.ageTo,
       "work_experience_from": "2",
       "work_experience_to": "4",
     };
+    if (preferenceModel?.languages != null) {
+      param['language'] = preferenceModel?.languages;
+    }
+    if (preferenceModel?.religion != null) {
+      param['religion'] = preferenceModel?.religion;
+    }
+    if (preferenceModel?.status != null) {
+      param['marital_status'] = preferenceModel?.status.toString();
+    }
+    if (preferenceModel?.smoke != null) {
+      param['smoke_id'] = preferenceModel?.smoke.toString();
+    }
+    if (preferenceModel?.drink != null) {
+      param['drinking_habit'] = preferenceModel?.drink.toString();
+    }
+    if (preferenceModel?.interests != null) {
+      param['interest'] = preferenceModel?.interests;
+    }
+    if (preferenceModel?.gender != null) {
+      param['gander'] = preferenceModel?.gender.toString();
+    }
+    if (preferenceModel?.selectedColor != null) {
+      param['color'] = preferenceModel?.selectedColor;
+    }
+    if (preferenceModel?.ageFrom != null) {
+      param['age_from'] = preferenceModel?.ageFrom.toString();
+    }
+    if (preferenceModel?.ageTo != null) {
+      param['age_to'] = preferenceModel?.ageTo.toString();
+    }
+    return param;
   }
 
   dynamic updateDatingProfileParam() {
-    AddPreferenceModel? preferenceModel = getIt<AddPreferenceManager>().preferenceModel;
-
-    return {
+    AddPreferenceModel? preferenceModel =
+        getIt<AddPreferenceManager>().preferenceModel;
+    dynamic param = {
       'profile_category_type': '2',
-      'language_id': preferenceModel?.languages,
-      'religion': preferenceModel?.religion,
-      "marital_status": preferenceModel?.status,
-      "smoke_id": preferenceModel?.smoke,
-      "drinking_habit": preferenceModel?.drink,
-      "interest_id": preferenceModel?.interests,
-      "sex": preferenceModel?.gender,
-      "color": preferenceModel?.selectedColor,
-      "dob": preferenceModel?.dob,
-      "height": preferenceModel?.height,
-      "qualification": "12",
-      "occupation": "Software",
       "work_experience_month": "9",
-      "work_experience_year": "6",
     };
+    if (preferenceModel?.languages != null) {
+      param['language_id'] = preferenceModel?.languages;
+    }
+    if (preferenceModel?.religion != null) {
+      param['religion'] = preferenceModel?.religion;
+    }
+    if (preferenceModel?.status != null) {
+      param['marital_status'] = preferenceModel?.status.toString();
+    }
+    if (preferenceModel?.smoke != null) {
+      param['smoke_id'] = preferenceModel?.smoke.toString();
+    }
+    if (preferenceModel?.drink != null) {
+      param['drinking_habit'] = preferenceModel?.drink.toString();
+    }
+    if (preferenceModel?.interests != null) {
+      param['interest_id'] = preferenceModel?.interests;
+    }
+    if (preferenceModel?.gender != null) {
+      param['sex'] = preferenceModel?.gender.toString();
+    }
+    if (preferenceModel?.selectedColor != null) {
+      param['color'] = preferenceModel?.selectedColor;
+    }
+    if (preferenceModel?.dob != null) {
+      param['dob'] = preferenceModel?.dob;
+    }
+    if (preferenceModel?.height != null) {
+      param['height'] = preferenceModel?.height.toString();
+    }
+    if (preferenceModel?.qualification != null) {
+      param['qualification'] = preferenceModel?.qualification;
+    }
+    if (preferenceModel?.occupation != null) {
+      param['occupation'] = preferenceModel?.occupation;
+    }
+    if (preferenceModel?.experience != null) {
+      param['work_experience_year'] = preferenceModel?.experience;
+    }
+    return param;
     // "username":"username2",
     // "email":"user42@gmail.com",
     // "bio":"dio info",
