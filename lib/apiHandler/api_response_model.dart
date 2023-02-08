@@ -144,11 +144,13 @@ class ApiResponseModel {
             // model.metaData = APIMetaData.fromJson(data['user']['_meta']);
           }
           if (data['auth_key'] != null) {
+            String username = data['user']['username'] ?? '';
             model.authKey = data['auth_key'];
-            if (data['user']['username'] == null) {
+            if (data['is_login_first_time'] == 1) {
               model.isLoginFirstTime = true;
-            } else {
-              model.isLoginFirstTime = data['is_login_first_time'] == 1;
+            }
+            if (username.isEmpty) {
+              model.isLoginFirstTime = true;
             }
           }
         } else if (data['competition'] != null) {
@@ -303,6 +305,10 @@ class ApiResponseModel {
             model.metaData =
                 APIMetaData.fromJson(data['eventBooking']['_meta']);
           }
+        } else if (data['profileCategoryType'] != null) {
+          var items = data['profileCategoryType'];
+          model.categories = List<CategoryModel>.from(
+              items.map((x) => CategoryModel.fromJson(x)));
         } else if (data['category'] != null) {
           var items = data['category'];
 
@@ -316,8 +322,7 @@ class ApiResponseModel {
             } else if (url == NetworkConstantsUtil.giftsCategories) {
               model.giftCategories = List<GiftCategoryModel>.from(
                   items.map((x) => GiftCategoryModel.fromJson(x)));
-            }
-            if (url == NetworkConstantsUtil.eventsCategories) {
+            } else if (url == NetworkConstantsUtil.eventsCategories) {
               model.eventCategories = List<EventCategoryModel>.from(
                   items.map((x) => EventCategoryModel.fromJson(x)));
             } else {
@@ -367,7 +372,8 @@ class ApiResponseModel {
                   items.map((x) => PodcastShowEpisodeModel.fromJson(x)));
             }
           }
-        } else if (data['interest'] != null && url == NetworkConstantsUtil.interests) {
+        } else if (data['interest'] != null &&
+            url == NetworkConstantsUtil.interests) {
           var items = data['interest'];
           if (items != null && items.length > 0) {
             model.interests = List<InterestModel>.from(
@@ -588,8 +594,7 @@ class ApiResponseModel {
           }
         }
       }
-    }
-    else {
+    } else {
       if (data == null) {
         // Timer(const Duration(seconds: 1), () {
         //   Get.to(() => const LoginScreen());
@@ -607,7 +612,8 @@ class ApiResponseModel {
         // });
         model.message = LocalizationString.errorMessage;
       }
-    }    return model;
+    }
+    return model;
   }
 
   factory ApiResponseModel.fromUsersJson(dynamic json) {

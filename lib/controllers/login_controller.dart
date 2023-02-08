@@ -1,6 +1,8 @@
 import 'package:get/get.dart';
 import 'package:foap/helper/common_import.dart';
 
+import '../screens/login_sign_up/set_profile_category_type.dart';
+
 class LoginController extends GetxController {
   final SettingsController _settingsController = Get.find();
   bool passwordReset = false;
@@ -29,16 +31,21 @@ class LoginController extends GetxController {
           ApiController().login(email, password).then((response) async {
             if (response.success) {
               EasyLoading.dismiss();
-              SharedPrefs().setUserLoggedIn(true);
               await SharedPrefs().setAuthorizationKey(response.authKey!);
               await getIt<UserProfileManager>().refreshProfile();
               await _settingsController.getSettings();
+              getIt<SocketManager>().connect();
 
               // ask for location
               getIt<LocationManager>().postLocation();
-
-              Get.offAll(() => const DashboardScreen());
-              getIt<SocketManager>().connect();
+              if (response.isLoginFirstTime) {
+                Get.offAll(() => const SetProfileCategoryType(
+                      isFromSignup: false,
+                    ));
+              } else {
+                SharedPrefs().setUserLoggedIn(true);
+                Get.offAll(() => const DashboardScreen());
+              }
             } else {
               EasyLoading.dismiss();
               if (response.token != null) {
@@ -48,7 +55,7 @@ class LoginController extends GetxController {
                     ));
               } else {
                 EasyLoading.dismiss();
-                showErrorMessage(LocalizationString.errorMessage, context);
+                showErrorMessage(response.message, context);
               }
             }
           });
@@ -245,6 +252,9 @@ class LoginController extends GetxController {
                 Get.to(() => ResetPasswordScreen(token: response.token!));
               }
             });
+          } else {
+            AppUtil.showToast(
+                context: context, message: response.message, isSuccess: false);
           }
         });
       } else {

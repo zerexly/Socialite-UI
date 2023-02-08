@@ -95,14 +95,17 @@ class PageDetailState extends State<PageDetail> {
                       padding: EdgeInsets.zero,
                       itemBuilder: (BuildContext context, index) {
                         return PostCard(
-                          model: posts[index],
-                          textTapHandler: (text) {},
-                          // likeTapHandler: () {},
-                          removePostHandler: () {},
-                          // mediaTapHandler: (post){
-                          //   Get.to(()=> PostMediaFullScreen(post: post));
-                          // },
-                        );
+                            model: posts[index],
+                            textTapHandler: (text) {},
+                            // likeTapHandler: () {},
+                            removePostHandler: () {},
+                            blockUserHandler: () {
+                              // _homeController.removeUsersAllPostFromList(model);
+                            }
+                            // mediaTapHandler: (post){
+                            //   Get.to(()=> PostMediaFullScreen(post: post));
+                            // },
+                            );
                       },
                       separatorBuilder: (BuildContext context, index) {
                         return const SizedBox(

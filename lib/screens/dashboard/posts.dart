@@ -28,7 +28,7 @@ class Posts extends StatefulWidget {
 }
 
 class _PostsState extends State<Posts> {
-  final PostController postController = Get.find();
+  final PostController _postController = Get.find();
   final ItemScrollController itemScrollController = ItemScrollController();
   final ItemPositionsListener itemPositionsListener =
       ItemPositionsListener.create();
@@ -38,7 +38,7 @@ class _PostsState extends State<Posts> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      postController.addPosts(
+      _postController.addPosts(
           widget.posts ?? [], widget.page, widget.totalPages);
 
       loadData();
@@ -56,12 +56,12 @@ class _PostsState extends State<Posts> {
     if (widget.userId != null) {
       PostSearchQuery query = PostSearchQuery();
       query.userId = widget.userId!;
-      postController.setPostSearchQuery(query);
+      _postController.setPostSearchQuery(query);
     }
     if (widget.hashTag != null) {
       PostSearchQuery query = PostSearchQuery();
       query.hashTag = widget.hashTag!;
-      postController.setPostSearchQuery(query);
+      _postController.setPostSearchQuery(query);
     }
   }
 
@@ -69,7 +69,7 @@ class _PostsState extends State<Posts> {
   void dispose() {
     // TODO: implement dispose
 
-    postController.clearPosts();
+    _postController.clearPosts();
     super.dispose();
   }
 
@@ -123,12 +123,12 @@ class _PostsState extends State<Posts> {
       if (scrollController.position.maxScrollExtent ==
           scrollController.position.pixels) {
         if (widget.source == PostSource.posts) {
-          if (!postController.isLoadingPosts) {
-            postController.getPosts();
+          if (!_postController.isLoadingPosts) {
+            _postController.getPosts();
           }
         } else {
-          if (!postController.mentionsPostsIsLoading) {
-            postController.getMyMentions();
+          if (!_postController.mentionsPostsIsLoading) {
+            _postController.getMyMentions();
           }
         }
       }
@@ -136,10 +136,10 @@ class _PostsState extends State<Posts> {
 
     return Obx(() {
       List<PostModel> posts = widget.source == PostSource.posts
-          ? postController.posts
-          : postController.mentions;
+          ? _postController.posts
+          : _postController.mentions;
 
-      return postController.isLoadingPosts
+      return _postController.isLoadingPosts
           ? const HomeScreenShimmer()
           : posts.isEmpty
               ? Center(child: Text(LocalizationString.noData))
@@ -153,21 +153,23 @@ class _PostsState extends State<Posts> {
                     return Column(
                       children: [
                         PostCard(
-                          model: model,
-                          textTapHandler: (text) {
-                            postController.postTextTapHandler(
-                                post: model, text: text);
-                          },
-                          // mediaTapHandler: (post){
-                          //   Get.to(()=> PostMediaFullScreen(post: post));
-                          // },
-                          // likeTapHandler: () {
-                          //   postController.likeUnlikePost(model, context);
-                          // },
-                          removePostHandler: () {
-                            postController.removePostFromList(model);
-                          },
-                        ),
+                            model: model,
+                            textTapHandler: (text) {
+                              _postController.postTextTapHandler(
+                                  post: model, text: text);
+                            },
+                            // mediaTapHandler: (post){
+                            //   Get.to(()=> PostMediaFullScreen(post: post));
+                            // },
+                            // likeTapHandler: () {
+                            //   postController.likeUnlikePost(model, context);
+                            // },
+                            removePostHandler: () {
+                              _postController.removePostFromList(model);
+                            },
+                            blockUserHandler: () {
+                              _postController.removeUsersAllPostFromList(model);
+                            }),
                         const SizedBox(
                           height: 15,
                         )

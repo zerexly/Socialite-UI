@@ -6,9 +6,15 @@ class CommentsScreen extends StatefulWidget {
   final int? postId;
   final bool? isPopup;
   final VoidCallback? handler;
+  final VoidCallback commentPostedCallback;
 
   const CommentsScreen(
-      {Key? key, this.model, this.postId, this.handler, this.isPopup})
+      {Key? key,
+      this.model,
+      this.postId,
+      this.handler,
+      this.isPopup,
+      required this.commentPostedCallback})
       : super(key: key);
 
   @override
@@ -28,9 +34,9 @@ class CommentsScreenState extends State<CommentsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        backgroundColor: Theme.of(context).backgroundColor,
-        body: Column(
+    return Container(
+        color: Theme.of(context).backgroundColor,
+        child: Column(
           children: <Widget>[
             SizedBox(
               height: widget.isPopup == true ? 20 : 50,
@@ -39,40 +45,40 @@ class CommentsScreenState extends State<CommentsScreen> {
                 context: context, title: LocalizationString.comments),
             divider(context: context).tP8,
             Obx(() => _commentsController.hashTags.isNotEmpty ||
-                _commentsController.searchedUsers.isNotEmpty
+                    _commentsController.searchedUsers.isNotEmpty
                 ? Expanded(
-              child: Container(
-                // height: 500,
-                width: double.infinity,
-                color: Theme.of(context).disabledColor.withOpacity(0.1),
-                child: _commentsController.hashTags.isNotEmpty
-                    ? hashTagView()
-                    : _commentsController.searchedUsers.isNotEmpty
-                    ? usersView()
-                    : Container(),
-              ),
-            )
+                    child: Container(
+                      // height: 500,
+                      width: double.infinity,
+                      color: Theme.of(context).disabledColor.withOpacity(0.1),
+                      child: _commentsController.hashTags.isNotEmpty
+                          ? hashTagView()
+                          : _commentsController.searchedUsers.isNotEmpty
+                              ? usersView()
+                              : Container(),
+                    ),
+                  )
                 : Flexible(
-                child: GetBuilder<CommentsController>(
-                    init: _commentsController,
-                    builder: (ctx) {
-                      return ListView.separated(
-                        padding: const EdgeInsets.only(
-                            top: 20, left: 16, right: 16),
-                        itemCount: _commentsController.comments.length,
-                        // reverse: true,
-                        controller: _controller,
-                        itemBuilder: (context, index) {
-                          return CommentTile(
-                              model: _commentsController.comments[index]);
-                        },
-                        separatorBuilder: (ctx, index) {
-                          return const SizedBox(
-                            height: 20,
+                    child: GetBuilder<CommentsController>(
+                        init: _commentsController,
+                        builder: (ctx) {
+                          return ListView.separated(
+                            padding: const EdgeInsets.only(
+                                top: 20, left: 16, right: 16),
+                            itemCount: _commentsController.comments.length,
+                            // reverse: true,
+                            controller: _controller,
+                            itemBuilder: (context, index) {
+                              return CommentTile(
+                                  model: _commentsController.comments[index]);
+                            },
+                            separatorBuilder: (ctx, index) {
+                              return const SizedBox(
+                                height: 20,
+                              );
+                            },
                           );
-                        },
-                      );
-                    }))),
+                        }))),
             buildMessageTextField(),
             const SizedBox(
               height: 20,
@@ -89,41 +95,41 @@ class CommentsScreenState extends State<CommentsScreen> {
         children: <Widget>[
           Expanded(
               child: Obx(() {
-                commentInputField.value = TextEditingValue(
-                    text: _commentsController.searchText.value,
-                    selection: TextSelection.fromPosition(
-                        TextPosition(offset: _commentsController.position.value)));
+            commentInputField.value = TextEditingValue(
+                text: _commentsController.searchText.value,
+                selection: TextSelection.fromPosition(
+                    TextPosition(offset: _commentsController.position.value)));
 
-                return TextField(
-                  controller: commentInputField,
-                  onChanged: (text) {
-                    _commentsController.textChanged(
-                        text, commentInputField.selection.baseOffset);
-                  },
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    hintText: LocalizationString.writeComment,
-                    hintStyle: Theme.of(context)
-                        .textTheme
-                        .titleMedium!
-                        .copyWith(fontWeight: FontWeight.w600),
-                  ),
-                  textInputAction: TextInputAction.send,
-                  style: Theme.of(context)
-                      .textTheme
-                      .titleMedium!
-                      .copyWith(fontWeight: FontWeight.w600),
-                  onSubmitted: (_) {
-                    addNewMessage();
-                  },
-                  onTap: () {
-                    Timer(
-                        const Duration(milliseconds: 300),
-                            () => _controller
-                            .jumpTo(_controller.position.maxScrollExtent));
-                  },
-                ).hP8;
-              }).borderWithRadius(context: context, value: 0.5, radius: 25)),
+            return TextField(
+              controller: commentInputField,
+              onChanged: (text) {
+                _commentsController.textChanged(
+                    text, commentInputField.selection.baseOffset);
+              },
+              decoration: InputDecoration(
+                border: InputBorder.none,
+                hintText: LocalizationString.writeComment,
+                hintStyle: Theme.of(context)
+                    .textTheme
+                    .titleMedium!
+                    .copyWith(fontWeight: FontWeight.w600),
+              ),
+              textInputAction: TextInputAction.send,
+              style: Theme.of(context)
+                  .textTheme
+                  .titleMedium!
+                  .copyWith(fontWeight: FontWeight.w600),
+              onSubmitted: (_) {
+                addNewMessage();
+              },
+              onTap: () {
+                Timer(
+                    const Duration(milliseconds: 300),
+                    () => _controller
+                        .jumpTo(_controller.position.maxScrollExtent));
+              },
+            ).hP8;
+          }).borderWithRadius(context: context, value: 0.5, radius: 25)),
           SizedBox(
             width: 50.0,
             child: InkWell(
@@ -153,12 +159,15 @@ class CommentsScreenState extends State<CommentsScreen> {
 
       _commentsController.postCommentsApiCall(
           comment: commentInputField.text.trim(),
-          postId: widget.postId ?? widget.model!.id);
+          postId: widget.postId ?? widget.model!.id,
+          commentPosted: () {
+            widget.commentPostedCallback();
+          });
       commentInputField.text = '';
       // widget.model?.totalComment = comments.length;
 
       Timer(const Duration(milliseconds: 500),
-              () => _controller.jumpTo(_controller.position.maxScrollExtent));
+          () => _controller.jumpTo(_controller.position.maxScrollExtent));
     }
   }
 

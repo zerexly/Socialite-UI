@@ -37,6 +37,7 @@ class ProfileController extends GetxController {
   Rx<GiftModel?> sendingGift = Rx<GiftModel?>(null);
 
   clear() {
+    user.value = null;
     selectedSegment.value = 0;
 
     isLoadingPosts = false;
@@ -59,8 +60,6 @@ class ProfileController extends GetxController {
   }
 
   getMyProfile() async {
-    // user.value = getIt<UserProfileManager>().user!;
-    // update();
     await getIt<UserProfileManager>().refreshProfile();
     user.value = getIt<UserProfileManager>().user!;
     update();
@@ -95,26 +94,19 @@ class ProfileController extends GetxController {
       AppUtil.checkInternet().then((value) {
         if (value) {
           EasyLoading.show(status: LocalizationString.loading);
-          getIt<UserProfileManager>().user!.country = country;
-          getIt<UserProfileManager>().user!.city = city;
-
           ApiController()
               .updateUserProfile(getIt<UserProfileManager>().user!)
-              .then((response) {
+              .then((response) async {
             if (response.success == true) {
               EasyLoading.dismiss();
               AppUtil.showToast(
                   context: context,
                   message: LocalizationString.profileUpdated,
                   isSuccess: true);
-              getIt<UserProfileManager>().refreshProfile();
-
-              user.value!.country = country;
-              user.value!.city = city;
-              update();
-              Future.delayed(const Duration(milliseconds: 1200), () {
-                Get.back();
-              });
+              await getMyProfile();
+              // Future.delayed(const Duration(milliseconds: 1200), () {
+              Get.close(1);
+              // });
             } else {
               AppUtil.showToast(
                   context: context,
@@ -189,18 +181,18 @@ class ProfileController extends GetxController {
       AppUtil.checkInternet().then((value) {
         if (value) {
           EasyLoading.show(status: LocalizationString.loading);
-          ApiController().updatePaymentDetails(paypalId).then((response) {
+          ApiController().updatePaymentDetails(paypalId).then((response) async {
             if (response.success == true) {
               EasyLoading.dismiss();
               AppUtil.showToast(
                   context: context,
                   message: LocalizationString.paymentDetailUpdated,
                   isSuccess: true);
-              getIt<UserProfileManager>().refreshProfile();
+              await getMyProfile();
 
-              Future.delayed(const Duration(milliseconds: 1200), () {
-                Get.back();
-              });
+              // Future.delayed(const Duration(milliseconds: 1200), () {
+              Get.close(1);
+              // });
             } else {
               AppUtil.showToast(
                   context: context,
@@ -233,7 +225,8 @@ class ProfileController extends GetxController {
             AppUtil.showToast(
                 context: context, message: response.message, isSuccess: true);
             if (response.success) {
-              getIt<UserProfileManager>().refreshProfile();
+              await getMyProfile();
+
               Get.to(() => VerifyOTPPhoneNumberChange(
                     token: response.token!,
                   ));
@@ -267,22 +260,23 @@ class ProfileController extends GetxController {
       AppUtil.checkInternet().then((value) {
         if (value) {
           EasyLoading.show(status: LocalizationString.loading);
-          ApiController().updateUserName(userName).then((response) {
+          ApiController().updateUserName(userName).then((response) async {
             if (response.success == true) {
               EasyLoading.dismiss();
               AppUtil.showToast(
                   context: context,
                   message: LocalizationString.userNameIsUpdated,
                   isSuccess: true);
-              getMyProfile();
+              await getMyProfile();
               if (isSigningUp == true) {
                 Get.to(() => const SetProfileCategoryType(
                       isFromSignup: false,
                     ));
               } else {
-                Future.delayed(const Duration(milliseconds: 1200), () {
-                  Get.back();
-                });
+                print('go back');
+                // Future.delayed(const Duration(milliseconds: 1200), () {
+                Get.close(1);
+                // });
               }
             } else {
               EasyLoading.dismiss();
@@ -305,22 +299,22 @@ class ProfileController extends GetxController {
       if (value) {
         EasyLoading.show(status: LocalizationString.loading);
         ApiController()
-            .updateUserName(profileCategoryType.toString())
-            .then((response) {
+            .updateProfileCategoryType(profileCategoryType)
+            .then((response) async {
           if (response.success == true) {
             EasyLoading.dismiss();
             AppUtil.showToast(
                 context: context,
-                message: LocalizationString.userNameIsUpdated,
+                message: LocalizationString.profileCategoryTypeSaved,
                 isSuccess: true);
-            getMyProfile();
+            await getMyProfile();
             if (isSigningUp == true) {
               getIt<LocationManager>().postLocation();
               Get.offAll(() => const DashboardScreen());
             } else {
-              Future.delayed(const Duration(milliseconds: 1200), () {
-                Get.back();
-              });
+              // Future.delayed(const Duration(milliseconds: 1200), () {
+              Get.close(1);
+              // });
             }
           } else {
             EasyLoading.dismiss();
@@ -468,6 +462,7 @@ class ProfileController extends GetxController {
         EasyLoading.show(status: LocalizationString.loading);
         ApiController().blockUser(user.value!.id).then((response) async {
           EasyLoading.dismiss();
+          Get.back();
         });
       } else {
         AppUtil.showToast(
@@ -485,7 +480,7 @@ class ProfileController extends GetxController {
       if (value) {
         EasyLoading.show(status: LocalizationString.loading);
         ApiController().performWithdrawalRequest().then((response) async {
-          getMyProfile();
+          await getMyProfile();
           EasyLoading.dismiss();
           AppUtil.showToast(
               context: context, message: response.message, isSuccess: true);

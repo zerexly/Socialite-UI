@@ -6,12 +6,14 @@ class PostCard extends StatefulWidget {
   final Function(String) textTapHandler;
 
   final VoidCallback removePostHandler;
+  final VoidCallback blockUserHandler;
 
   const PostCard(
       {Key? key,
       required this.model,
       required this.textTapHandler,
-      required this.removePostHandler})
+      required this.removePostHandler,
+        required this.blockUserHandler})
       : super(key: key);
 
   @override
@@ -409,11 +411,18 @@ class PostCardState extends State<PostCard> {
                                   .copyWith(fontWeight: FontWeight.w900))),
                       onTap: () async {
                         Get.back();
-                        postCardController.reportPost(
-                            post: widget.model,
-                            context: context,
-                            callback: () {
-                              widget.removePostHandler();
+
+                        AppUtil.showConfirmationAlert(
+                            title: LocalizationString.report,
+                            subTitle: LocalizationString.areYouSureToReportPost,
+                            cxt: context,
+                            okHandler: () {
+                              postCardController.reportPost(
+                                  post: widget.model,
+                                  context: context,
+                                  callback: () {
+                                    widget.removePostHandler();
+                                  });
                             });
                       }),
                   divider(context: context),
@@ -426,11 +435,17 @@ class PostCardState extends State<PostCard> {
                                   .copyWith(fontWeight: FontWeight.w900))),
                       onTap: () async {
                         Get.back();
-                        postCardController.blockUser(
-                            userId: widget.model.user.id,
-                            context: context,
-                            callback: () {
-                              widget.removePostHandler();
+                        AppUtil.showConfirmationAlert(
+                            title: LocalizationString.block,
+                            subTitle: LocalizationString.areYouSureToBlockUser,
+                            cxt: context,
+                            okHandler: () {
+                              postCardController.blockUser(
+                                  userId: widget.model.user.id,
+                                  context: context,
+                                  callback: () {
+                                    widget.blockUserHandler();
+                                  });
                             });
                       }),
                   divider(context: context),
@@ -453,6 +468,11 @@ class PostCardState extends State<PostCard> {
     Get.bottomSheet(CommentsScreen(
       isPopup: true,
       model: widget.model,
+      commentPostedCallback: (){
+        setState(() {
+          widget.model.totalComment += 1;
+        });
+      },
     ));
     // Get.to(() => CommentsScreen(
     //       model: widget.model,

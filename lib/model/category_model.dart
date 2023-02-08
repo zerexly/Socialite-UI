@@ -24,7 +24,7 @@ class CategoryModel {
         name: json["name"],
         id: json["id"],
         // logo: json["logoUrl"] ?? 'https://images.unsplash.com/photo-1662286844552-81c31af1416c?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwzfHx8ZW58MHx8fHw%3D&auto=format&fit=crop&w=800&q=60',
-        coverImage: json["imageUrl"],
+        coverImage: json["imageUrl"] ?? '',
         // subCategories: json["subCategory"] == null
         //     ? []
         //     : (json["subCategory"] as List<dynamic>)

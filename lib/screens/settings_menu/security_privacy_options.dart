@@ -27,7 +27,7 @@ class _PrivacyOptionsState extends State<PrivacyOptions> {
             height: 50,
           ),
           backNavigationBar(
-              context: context, title: LocalizationString.account),
+              context: context, title: LocalizationString.privacy),
           divider(context: context).tP8,
           Expanded(
             child: ListView(

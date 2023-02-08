@@ -3,8 +3,10 @@ import 'package:get/get.dart';
 
 class StoryViewer extends StatefulWidget {
   final StoryModel story;
+  final VoidCallback storyDeleted;
 
-  const StoryViewer({Key? key, required this.story}) : super(key: key);
+  const StoryViewer({Key? key, required this.story, required this.storyDeleted})
+      : super(key: key);
 
   @override
   State<StoryViewer> createState() => _StoryViewerState();
@@ -137,19 +139,30 @@ class _StoryViewerState extends State<StoryViewer> {
             ),
           ],
         ),
-        SizedBox(
-          height: 25,
-          width: 40,
-          child: ThemeIconWidget(
-            ThemeIcon.more,
-            color: Theme.of(context).iconTheme.color,
-            size: 20,
-          ).ripple(() {
-            openActionPopup();
-          }),
-        )
+        if (widget.story.media.first.userId ==
+            getIt<UserProfileManager>().user!.id)
+          SizedBox(
+            height: 25,
+            width: 40,
+            child: ThemeIconWidget(
+              ThemeIcon.more,
+              color: Theme.of(context).iconTheme.color,
+              size: 20,
+            ).ripple(() {
+              openActionPopup();
+            }),
+          )
       ],
-    );
+    ).ripple(() {
+      int userId = widget.story.media.first.userId;
+      if (userId == getIt<UserProfileManager>().user!.id) {
+        Get.to(() => const MyProfile(showBack: true));
+      } else {
+        Get.to(() => OtherUserProfile(
+              userId: userId,
+            ));
+      }
+    });
   }
 
   void openActionPopup() {
@@ -165,7 +178,9 @@ class _StoryViewerState extends State<StoryViewer> {
                       Get.back();
                       controller.play();
 
-                      storyController.deleteStory();
+                      storyController.deleteStory(() {
+                        widget.storyDeleted();
+                      });
                     }),
                 divider(context: context),
                 ListTile(

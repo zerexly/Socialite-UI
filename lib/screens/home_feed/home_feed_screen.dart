@@ -250,7 +250,12 @@ class HomeFeedState extends State<HomeFeedScreen> {
                 Get.to(() => const ChooseMediaForStory());
               },
               viewStoryCallback: (story) {
-                Get.to(() => StoryViewer(story: story));
+                Get.to(() => StoryViewer(
+                      story: story,
+                      storyDeleted: () {
+                        _homeController.getStories();
+                      },
+                    ));
               },
               joinLiveUserCallback: (user) {
                 Live live = Live(
@@ -342,6 +347,9 @@ class HomeFeedState extends State<HomeFeedScreen> {
                     // },
                     removePostHandler: () {
                       _homeController.removePostFromList(model);
+                    },
+                    blockUserHandler: (){
+                      _homeController.removeUsersAllPostFromList(model);
                     },
                   );
                 }

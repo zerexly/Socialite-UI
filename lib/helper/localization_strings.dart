@@ -126,7 +126,7 @@ class LocalizationString {
   static String resendOTP = 'Resend OTP'.tr;
 
   static String pleaseEnterOneTimePassword =
-      "Please enter the one time password sent to your email or phone number to verify your account and change your password"
+      "Please enter the one time password sent to your email to verify your account and change your password"
           .tr;
   static String pleaseEnterOneTimePasswordPhoneNumberChange =
       "Please enter the one time password sent to your phone number to verify your phone number"
@@ -351,6 +351,7 @@ class LocalizationString {
   static String join = 'Join'.tr;
   static String fee = 'Fee'.tr;
   static String userNameIsUpdated = 'User name is updated'.tr;
+
   static String transaction = 'Transactions'.tr;
   static String phoneNumber = 'Phone number'.tr;
   static String changePhoneNumber = 'Change Phone number'.tr;
@@ -1000,4 +1001,13 @@ class LocalizationString {
   static String audios = 'Audios'.tr;
   static String favourite = 'Favourite'.tr;
   static String subscribed = 'Subscribed'.tr;
+
+  static String profileCategoryTypeSaved = 'Profile category type is saved'.tr;
+  static String installThisCoolApp = 'Install this cool app from'.tr;
+  static String accountIsDeleted = 'Account is deleted successfully'.tr;
+
+  static String storyDeleteSuccessfully = 'Story is deleted successfully'.tr;
+  static String areYouSureToReportPost = 'Are you sure to report this post?'.tr;
+  static String areYouSureToBlockUser = 'Are you sure to block this user?'.tr;
+
 }

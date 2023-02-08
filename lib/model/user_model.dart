@@ -45,7 +45,6 @@ class UserModel {
 
   // String? name;
   String userName = '';
-  String category = '';
 
   String? email = '';
   String? picture;
@@ -88,14 +87,15 @@ class UserModel {
   int isDatingEnabled = 0;
   int chatDeleteTime = 0;
 
+  int profileCategoryTypeId = 0;
+  String profileCategoryTypeName = 'Other';
+
   UserModel();
 
   factory UserModel.fromJson(dynamic json) {
     UserModel model = UserModel();
     model.id = json['id'];
     model.userName = json['username'].toString().toLowerCase();
-    model.category = json['category'] ?? 'Other';
-
     model.email = json['email'];
     model.picture = json['picture'];
     model.bio = json['bio'];
@@ -138,6 +138,9 @@ class UserModel {
     model.giftSummary = json['giftSummary'] != null
         ? GiftSummary.fromJson(json['giftSummary'])
         : null;
+    model.profileCategoryTypeId = json['profile_category_type'] ?? 0;
+    model.profileCategoryTypeName = json['profileCategoryName'] ?? 'Other';
+
     return model;
   }
 

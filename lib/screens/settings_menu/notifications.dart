@@ -77,7 +77,11 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       Get.to(() => OtherUserProfile(userId: userId));
     } else if (notification.type == 2) {
       int postId = notification.referenceId;
-      Get.to(() => CommentsScreen(postId: postId, handler: () {}));
+      Get.to(() => CommentsScreen(
+            postId: postId,
+            handler: () {},
+            commentPostedCallback: () {},
+          ));
     } else if (notification.type == 3) {
       Get.to(() => SinglePostDetail(postId: notification.referenceId));
     } else if (notification.type == 4) {

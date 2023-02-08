@@ -68,12 +68,13 @@ class _SettingsState extends State<Settings> {
                       darkModeTile(),
                     addTileEvent('assets/share.png', LocalizationString.share,
                         LocalizationString.shareAppSubtitle, () {
-                      Share.share('Install this cool app');
+                      Share.share(
+                          '${LocalizationString.installThisCoolApp} ${AppConfigConstants.liveAppLink}');
                     }, false),
                     addTileEvent('assets/logout.png', LocalizationString.logout,
                         LocalizationString.exitApp, () {
                       AppUtil.showConfirmationAlert(
-                          title: AppConfigConstants.appName,
+                          title: LocalizationString.logout,
                           subTitle: LocalizationString.logoutConfirmation,
                           cxt: context,
                           okHandler: () {
@@ -90,8 +91,7 @@ class _SettingsState extends State<Settings> {
                               LocalizationString.areYouSureToDeleteAccount,
                           cxt: context,
                           okHandler: () {
-                            Navigator.of(context).pop();
-                            getIt<UserProfileManager>().logout();
+                            _settingsController.deleteAccount();
                           });
                     }, false),
                   ],

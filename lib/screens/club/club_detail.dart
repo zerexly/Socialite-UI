@@ -148,14 +148,17 @@ class ClubDetailState extends State<ClubDetail> {
                           padding: EdgeInsets.zero,
                           itemBuilder: (BuildContext context, index) {
                             return PostCard(
-                              model: _clubDetailController.posts[index],
-                              textTapHandler: (text) {},
-                              // likeTapHandler: () {},
-                              removePostHandler: () {},
-                              // mediaTapHandler: (post){
-                              //   Get.to(()=> PostMediaFullScreen(post: post));
-                              // },
-                            );
+                                model: _clubDetailController.posts[index],
+                                textTapHandler: (text) {},
+                                // likeTapHandler: () {},
+                                removePostHandler: () {},
+                                blockUserHandler: () {
+                                  // _homeController.removeUsersAllPostFromList(model);
+                                }
+                                // mediaTapHandler: (post){
+                                //   Get.to(()=> PostMediaFullScreen(post: post));
+                                // },
+                                );
                           },
                           separatorBuilder: (BuildContext context, index) {
                             return const SizedBox(
@@ -377,6 +380,9 @@ class ClubDetailState extends State<ClubDetail> {
                         post: model, text: text);
                   },
                   removePostHandler: () {
+                    _clubDetailController.removePostFromList(model);
+                  },
+                  blockUserHandler: () {
                     _clubDetailController.removePostFromList(model);
                   },
                   // mediaTapHandler: (post){

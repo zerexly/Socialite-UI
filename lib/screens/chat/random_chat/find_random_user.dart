@@ -3,8 +3,11 @@ import 'package:get/get.dart';
 
 class FindRandomUser extends StatefulWidget {
   final bool isCalling;
+  final int? profileCategoryType;
 
-  const FindRandomUser({Key? key, required this.isCalling}) : super(key: key);
+  const FindRandomUser(
+      {Key? key, required this.isCalling, this.profileCategoryType})
+      : super(key: key);
 
   @override
   State<FindRandomUser> createState() => _FindRandomUserState();
@@ -16,14 +19,13 @@ class _FindRandomUserState extends State<FindRandomUser> {
 
   @override
   void initState() {
-    // TODO: implement initState
-    _randomChatAndCallController.getRandomOnlineUsers(true);
+    _randomChatAndCallController.getRandomOnlineUsers(
+        startFresh: true, profileCategoryType: widget.profileCategoryType);
     super.initState();
   }
 
   @override
   void dispose() {
-    // TODO: implement dispose
     _randomChatAndCallController.clear();
     super.dispose();
   }
@@ -100,16 +102,17 @@ class _FindRandomUserState extends State<FindRandomUser> {
                                       status: LocalizationString.loading);
 
                                   _chatDetailController.getChatRoomWithUser(
-                                      userId:_randomChatAndCallController
-                                          .randomOnlineUser.value!.id, callback:(room) {
-                                    EasyLoading.dismiss();
+                                      userId: _randomChatAndCallController
+                                          .randomOnlineUser.value!.id,
+                                      callback: (room) {
+                                        EasyLoading.dismiss();
 
-                                    Get.back();
-                                    Get.to(() => ChatDetail(
-                                          // opponent: usersList[index - 1].toChatRoomMember,
-                                          chatRoom: room,
-                                        ));
-                                  });
+                                        Get.back();
+                                        Get.to(() => ChatDetail(
+                                              // opponent: usersList[index - 1].toChatRoomMember,
+                                              chatRoom: room,
+                                            ));
+                                      });
                                 }),
                           ),
                   ],

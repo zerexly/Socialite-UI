@@ -18,10 +18,18 @@ class AppStoryController extends GetxController {
     update();
   }
 
-  deleteStory() async {
+  deleteStory(VoidCallback callback) async {
     await ApiController()
         .deleteStory(id: storyMediaModel.value!.id)
-        .then((response) async {});
+        .then((response) async {
+      if (response.success) {
+        callback();
+        // AppUtil.showToast(
+        //     context: Get.context!,
+        //     message: LocalizationString.storyDeleteSuccessfully,
+        //     isSuccess: true);
+      }
+    });
   }
 
   setCurrentStoryMedia(StoryMediaModel storyMedia) {

@@ -169,6 +169,11 @@ class HomeController extends GetxController {
     posts.refresh();
   }
 
+  removeUsersAllPostFromList(PostModel post) {
+    posts.removeWhere((element) => element.user.id == post.user.id);
+    posts.refresh();
+  }
+
   void addNewPost(PostModel post) {
     posts.insert(0, post);
     posts.refresh();

@@ -2,6 +2,7 @@ class AppConfigConstants {
   // Name of app
   static String appName = 'Socialified';
   static String currentVersion = '1.5';
+  static const liveAppLink = "https://www.google.com/";
 
   static String appTagline = 'Share your day activity with friends';
   static const googleMapApiKey = "AIzaSyA4vcqErGvq5NRbvhvq8JKSp0VFpNBBPjE";

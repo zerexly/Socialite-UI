@@ -186,6 +186,9 @@ class EnlargeImageViewState extends State<EnlargeImageViewScreen> {
   void openComments() {
     Get.to(() => CommentsScreen(
         model: model!,
+        commentPostedCallback: () {
+          model!.totalComment += 1;
+        },
         handler: () {
           if (widget.handler != null) {
             widget.handler!();

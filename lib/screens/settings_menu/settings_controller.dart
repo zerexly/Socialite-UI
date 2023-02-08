@@ -134,6 +134,18 @@ class SettingsController extends GetxController {
     }
   }
 
+  deleteAccount() {
+    ApiController().deleteAccountApi().then((response) {
+      if (response.success) {
+        getIt<UserProfileManager>().logout();
+        AppUtil.showToast(
+            context: Get.context!,
+            message: LocalizationString.accountIsDeleted,
+            isSuccess: true);
+      }
+    });
+  }
+
   askForRating(BuildContext context) {
     rateMyApp.init().then((value) {
       if (rateMyApp.shouldOpenDialog) {

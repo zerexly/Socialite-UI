@@ -87,7 +87,7 @@ class UpdateProfileState extends State<UpdateProfile> {
                   const Spacer(),
                   Obx(() => profileController.user.value != null
                       ? Text(
-                          profileController.user.value!.category,
+                          profileController.user.value!.profileCategoryTypeName,
                           style: Theme.of(context).textTheme.bodyMedium,
                         )
                       : Container()),

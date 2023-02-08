@@ -66,7 +66,7 @@ class _ChangeUserNameState extends State<ChangeUserName> {
                     top: 0,
                     child: Center(
                       child: Obx(() =>
-                      profileController.userNameCheckStatus.value == true
+                      profileController.userNameCheckStatus.value == 1
                           ? ThemeIconWidget(
                         ThemeIcon.checkMark,
                         color: Theme.of(context).primaryColor,

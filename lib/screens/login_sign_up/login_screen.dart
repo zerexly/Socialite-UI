@@ -126,6 +126,7 @@ class LoginScreenState extends State<LoginScreen> {
                     const SocialLogin().setPadding(left: 65, right: 65),
                     const Spacer(),
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
                           LocalizationString.dontHaveAccount,
@@ -141,7 +142,6 @@ class LoginScreenState extends State<LoginScreen> {
                             .ripple(() {
                           Get.to(() => const SignUpScreen());
                         }),
-                        const Spacer(),
                       ],
                     ),
                     SizedBox(

@@ -55,18 +55,23 @@ class _ChatRoomDetailState extends State<ChatRoomDetail> {
                             .titleMedium!
                             .copyWith(fontWeight: FontWeight.w600),
                       )),
-                ThemeIconWidget(
-                  ThemeIcon.edit,
-                  color: Theme.of(context).iconTheme.color,
-                  size: 20,
-                ).ripple(() {
-                  Get.to(() => UpdateGroupInfo(
-                          group: chatRoomDetailController.room.value!))!
-                      .then((value) {
-                    chatRoomDetailController
-                        .getUpdatedChatRoomDetail(widget.chatRoom);
-                  });
-                }),
+                if (chatRoomDetailController.room.value?.amIGroupAdmin == true)
+                  ThemeIconWidget(
+                    ThemeIcon.edit,
+                    color: Theme.of(context).iconTheme.color,
+                    size: 20,
+                  ).ripple(() {
+                    Get.to(() => UpdateGroupInfo(
+                            group: chatRoomDetailController.room.value!))!
+                        .then((value) {
+                      chatRoomDetailController
+                          .getUpdatedChatRoomDetail(widget.chatRoom);
+                    });
+                  }),
+                if (chatRoomDetailController.room.value?.amIGroupAdmin == false)
+                  const SizedBox(
+                    width: 20,
+                  )
               ],
             ).hP16,
             divider(context: context).tP8,

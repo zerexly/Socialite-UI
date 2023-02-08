@@ -30,7 +30,10 @@ class WinnerDetailState extends State<WinnerDetailScreen> {
           elevation: 0.0,
           title: Text(
             LocalizationString.winner,
-            style: Theme.of(context).textTheme.titleMedium!.copyWith(color: Theme.of(context).primaryColor),
+            style: Theme.of(context)
+                .textTheme
+                .titleMedium!
+                .copyWith(color: Theme.of(context).primaryColor),
           ),
           leading: InkWell(
               onTap: () => Get.back(),
@@ -43,22 +46,28 @@ class WinnerDetailState extends State<WinnerDetailScreen> {
             addUserInfo(),
             Padding(
                 padding: const EdgeInsets.only(left: 10, right: 10, top: 5),
-                child: Text(model.title, style: Theme.of(context).textTheme.bodyLarge!.copyWith(color: Theme.of(context).backgroundColor))),
+                child: Text(model.title,
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyLarge!
+                        .copyWith(color: Theme.of(context).backgroundColor))),
             Padding(
                 padding: const EdgeInsets.only(
                     left: 10, right: 10, top: 5, bottom: 15),
                 child: Text(model.tags.join(' '),
-                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(color: Theme.of(context).backgroundColor,fontWeight: FontWeight.w600))),
+                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                        color: Theme.of(context).backgroundColor,
+                        fontWeight: FontWeight.w600))),
             InkWell(
                 onTap: () async {
                   // File path =
                   //     await AppUtil.findPath(model.gallery.first.filePath);
 
                   Get.to(() => EnlargeImageViewScreen(
-                          model: model,
-                          handler: () {
-                            setState(() {});
-                          }));
+                      model: model,
+                      handler: () {
+                        setState(() {});
+                      }));
                 },
                 child: SizedBox(
                     height: 300.0,
@@ -67,7 +76,7 @@ class WinnerDetailState extends State<WinnerDetailScreen> {
                       fit: BoxFit.fill,
                       width: MediaQuery.of(context).size.width,
                       placeholder: (context, url) =>
-                          AppUtil.addProgressIndicator(context,100),
+                          AppUtil.addProgressIndicator(context, 100),
                       errorWidget: (context, url, error) =>
                           const Icon(Icons.error),
                     ))),
@@ -88,7 +97,13 @@ class WinnerDetailState extends State<WinnerDetailScreen> {
                           model.totalLike > 0
                               ? Text(
                                   '${model.totalLike} ${LocalizationString.likes}',
-                                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.w600,color: Theme.of(context).backgroundColor))
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge!
+                                      .copyWith(
+                                          fontWeight: FontWeight.w600,
+                                          color: Theme.of(context)
+                                              .backgroundColor))
                               : Container(),
                         ]),
                     Column(
@@ -103,8 +118,13 @@ class WinnerDetailState extends State<WinnerDetailScreen> {
                             child: model.totalComment > 0
                                 ? Text(
                                     '${model.totalComment} ${LocalizationString.comments}',
-                                    style:
-                                        Theme.of(context).textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.w600,color: Theme.of(context).backgroundColor))
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge!
+                                        .copyWith(
+                                            fontWeight: FontWeight.w600,
+                                            color: Theme.of(context)
+                                                .backgroundColor))
                                 : Container(),
                           )
                         ])
@@ -133,14 +153,18 @@ class WinnerDetailState extends State<WinnerDetailScreen> {
                         imageUrl: model.user.picture!,
                         fit: BoxFit.fill,
                         placeholder: (context, url) =>
-                            AppUtil.addProgressIndicator(context,100),
+                            AppUtil.addProgressIndicator(context, 100),
                         errorWidget: (context, url, error) =>
                             const Icon(Icons.error),
                       ))
                   : Icon(Icons.person, color: Colors.grey.shade600, size: 40),
             ),
             const SizedBox(width: 5),
-            Text(model.user.userName, style: Theme.of(context).textTheme.titleMedium!.copyWith(color: Theme.of(context).primaryColor)),
+            Text(model.user.userName,
+                style: Theme.of(context)
+                    .textTheme
+                    .titleMedium!
+                    .copyWith(color: Theme.of(context).primaryColor)),
           ]),
         ));
   }
@@ -157,18 +181,23 @@ class WinnerDetailState extends State<WinnerDetailScreen> {
             .likeUnlike(!model.isLike, model.id)
             .then((response) async {});
       } else {
-        AppUtil.showToast(context: context,
-            message: LocalizationString.noInternet, isSuccess: false);
+        AppUtil.showToast(
+            context: context,
+            message: LocalizationString.noInternet,
+            isSuccess: false);
       }
     });
   }
 
   void openComments() {
     Get.to(() => CommentsScreen(
-            model: model,
-            handler: () {
-              setState(() {});
-            }));
+        model: model,
+        commentPostedCallback: () {
+          model.totalComment += 1;
+        },
+        handler: () {
+          setState(() {});
+        }));
   }
 
   void openProfile() async {

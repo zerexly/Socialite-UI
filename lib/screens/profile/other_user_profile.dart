@@ -108,8 +108,7 @@ class OtherUserProfileState extends State<OtherUserProfile> {
                       const SizedBox(height: 20),
                     if (_settingsController.setting.value!.enableHighlights)
                       addHighlightsView(),
-                    const SizedBox(height: 50),
-                    const SizedBox(height: 50),
+                    const SizedBox(height: 20),
                     segmentView(),
                     Obx(() => _profileController.selectedSegment.value == 1
                         ? addReelsGrid()
@@ -191,6 +190,17 @@ class OtherUserProfileState extends State<OtherUserProfile> {
                                   ),
                               ],
                             ).bP4,
+                            if (_profileController
+                                    .user.value!.profileCategoryTypeId !=
+                                0)
+                              Text(
+                                _profileController
+                                    .user.value!.profileCategoryTypeName,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge!
+                                    .copyWith(fontWeight: FontWeight.w400),
+                              ).bP4,
                             _profileController.user.value?.country != null
                                 ? Text(
                                     '${_profileController.user.value!.country},${_profileController.user.value!.city}',

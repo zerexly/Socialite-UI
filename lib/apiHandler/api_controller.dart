@@ -166,6 +166,22 @@ class ApiController {
     });
   }
 
+  Future<ApiResponseModel> getProfileCategoryType() async {
+    var url =
+        '${NetworkConstantsUtil.baseUrl}${NetworkConstantsUtil.profileCategoryTypes}';
+
+    String? authKey = await SharedPrefs().getAuthorizationKey();
+
+    return http.get(Uri.parse(url), headers: {
+      "Authorization": "Bearer ${authKey!}"
+    }).then((http.Response response) async {
+      final ApiResponseModel parsedResponse = await getResponse(
+          response.body, NetworkConstantsUtil.profileCategoryTypes);
+      return parsedResponse;
+    });
+  }
+
+  // **************** Post ***************** //
   Future<ApiResponseModel> getPolls() async {
     String? authKey = await SharedPrefs().getAuthorizationKey();
     var url = NetworkConstantsUtil.baseUrl + NetworkConstantsUtil.getPolls;
@@ -571,6 +587,22 @@ class ApiController {
       "Authorization": "Bearer ${authKey!}"
     }, body: {
       "username": userName,
+    }).then((http.Response response) async {
+      final ApiResponseModel parsedResponse = await getResponse(
+          response.body, NetworkConstantsUtil.updateUserProfile);
+      return parsedResponse;
+    });
+  }
+
+  Future<ApiResponseModel> updateProfileCategoryType(int categoryType) async {
+    var url =
+        NetworkConstantsUtil.baseUrl + NetworkConstantsUtil.updateUserProfile;
+    String? authKey = await SharedPrefs().getAuthorizationKey();
+
+    return http.post(Uri.parse(url), headers: {
+      "Authorization": "Bearer ${authKey!}"
+    }, body: {
+      "profile_category_type": categoryType.toString(),
     }).then((http.Response response) async {
       final ApiResponseModel parsedResponse = await getResponse(
           response.body, NetworkConstantsUtil.updateUserProfile);
@@ -1392,9 +1424,13 @@ class ApiController {
     });
   }
 
-  Future<ApiResponseModel> getRandomOnlineUsers() async {
+  Future<ApiResponseModel> getRandomOnlineUsers(
+      int? profileCategoryType) async {
     var url =
         '${NetworkConstantsUtil.baseUrl}${NetworkConstantsUtil.randomOnlineUser}';
+    if (profileCategoryType != null) {
+      url = '$url${profileCategoryType.toString()}';
+    }
     String? authKey = await SharedPrefs().getAuthorizationKey();
 
     return http.get(Uri.parse(url), headers: {
