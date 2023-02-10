@@ -5,6 +5,7 @@ import '../../../controllers/relationship_search_controller.dart';
 class SearchProfile extends StatefulWidget {
   final int? relationId;
   final VoidCallback? actionPerformed;
+
   const SearchProfile({Key? key, this.relationId, this.actionPerformed})
       : super(key: key);
 
@@ -103,7 +104,7 @@ class _SearchProfileState extends State<SearchProfile> {
         : relationshipSearchController.searchedUsers.isNotEmpty
             ? ListView.separated(
                 controller: scrollController,
-                padding: const EdgeInsets.only(top: 20),
+                padding: const EdgeInsets.only(left: 16, right: 16, top: 20, bottom: 100),
                 itemCount: relationshipSearchController.searchedUsers.length,
                 itemBuilder: (BuildContext ctx, int index) {
                   return RelationUserTile(

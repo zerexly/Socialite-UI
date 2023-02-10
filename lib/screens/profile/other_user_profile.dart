@@ -1,7 +1,8 @@
 import 'package:foap/helper/common_import.dart';
 import 'package:get/get.dart';
-
-import '../settings_menu/add_relationship/view_relationships.dart';
+import '../../components/profile/relationship_card.dart';
+import '../../controllers/relationship_controller.dart';
+import '../../model/myRelations/my_relations_model.dart';
 
 class OtherUserProfile extends StatefulWidget {
   final int userId;
@@ -17,6 +18,7 @@ class OtherUserProfileState extends State<OtherUserProfile> {
   final HighlightsController _highlightsController = Get.find();
   final ChatDetailController _chatDetailController = Get.find();
   final SettingsController _settingsController = Get.find();
+  final RelationshipController _relationshipController = Get.find();
 
   @override
   void initState() {
@@ -30,10 +32,10 @@ class OtherUserProfileState extends State<OtherUserProfile> {
   initialLoad() {
     _profileController.getMyMentions(widget.userId);
     _profileController.getPosts(widget.userId);
-    _profileController.getOtherUserDetail(
-        userId: widget.userId, context: context);
+    _profileController.getOtherUserDetail(userId: widget.userId);
     _highlightsController.getHighlights(userId: widget.userId);
-    _profileController.getReels(getIt<UserProfileManager>().user!.id);
+    _profileController.getReels(widget.userId);
+    _relationshipController.getUsersRelationships(userId: widget.userId);
   }
 
   @override
@@ -45,6 +47,7 @@ class OtherUserProfileState extends State<OtherUserProfile> {
   @override
   void dispose() {
     _profileController.clear();
+    _relationshipController.clear();
     super.dispose();
   }
 
@@ -114,7 +117,9 @@ class OtherUserProfileState extends State<OtherUserProfile> {
                     segmentView(),
                     Obx(() => _profileController.selectedSegment.value == 1
                         ? addReelsGrid()
-                        : addPhotoGrid()),
+                        : _profileController.selectedSegment.value == 3
+                            ? addFamilyRelationGrid()
+                            : addPhotoGrid()),
                     const SizedBox(height: 50),
                   ],
                 ),
@@ -297,30 +302,6 @@ class OtherUserProfileState extends State<OtherUserProfile> {
                                   })).lP8,
                       ],
                     ),
-                    if (_profileController.user.value?.userSetting != null &&
-                        _profileController
-                            .user.value!.userSetting!.isNotEmpty &&
-                        (_profileController
-                            .user.value?.userSetting?[0].relationSetting ==
-                            1 || (_profileController
-                            .user.value?.userSetting?[0].relationSetting ==
-                            2 && _profileController
-                            .user.value!.isFollowing)))
-                      Container(
-                        margin: const EdgeInsets.only(top: 15.0),
-                        child: SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.42,
-                            child: FilledButtonType1(
-                                height: 35,
-                                enabledBackgroundColor:
-                                    Theme.of(context).disabledColor,
-                                enabledTextStyle:
-                                    Theme.of(context).textTheme.bodyLarge,
-                                text: LocalizationString.relationship,
-                                onPress: () {
-                                  Get.to(() => const ViewRelationship());
-                                })).lP8,
-                      )
                   ],
                 ).hP16
               : Container();
@@ -328,93 +309,96 @@ class OtherUserProfileState extends State<OtherUserProfile> {
   }
 
   statsView() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(
-              _profileController.user.value!.totalPost.toString(),
-              style: Theme.of(context).textTheme.titleLarge,
-            ).bP8,
-            Text(
-              LocalizationString.posts,
-              style: Theme.of(context).textTheme.bodySmall,
-            ),
-          ],
-        ),
-        // const SizedBox(
-        //   width: 20,
-        // ),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(
-              '${_profileController.user.value!.totalFollower}',
-              style: Theme.of(context).textTheme.titleLarge,
-            ).bP8,
-            Text(
-              LocalizationString.followers,
-              style: Theme.of(context).textTheme.bodySmall,
-            ),
-          ],
-        ).ripple(() {
-          if (_profileController.user.value!.totalFollower > 0) {
-            Get.to(() => FollowerFollowingList(
-                      isFollowersList: true,
-                      userId: widget.userId,
-                    ))!
-                .then((value) {
-              initialLoad();
-            });
-          }
-        }),
-        // const SizedBox(
-        //   width: 20,
-        // ),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(
-              '${_profileController.user.value!.totalFollowing}',
-              style: Theme.of(context).textTheme.titleLarge,
-            ).bP8,
-            Text(
-              LocalizationString.following,
-              style: Theme.of(context).textTheme.bodySmall,
-            ),
-          ],
-        ).ripple(() {
-          if (_profileController.user.value!.totalFollowing > 0) {
-            Get.to(() => FollowerFollowingList(
-                      isFollowersList: false,
-                      userId: widget.userId,
-                    ))!
-                .then((value) {
-              initialLoad();
-            });
-          }
-        }),
-        _profileController.user.value?.giftSummary == null
-            ? Container()
-            : Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    _profileController
-                        .user.value!.giftSummary!.totalCoin.formatNumber
-                        .toString(),
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ).bP8,
-                  Text(
-                    LocalizationString.coins,
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
-                ],
+    return Container(
+      color: Theme.of(context).cardColor,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                _profileController.user.value!.totalPost.toString(),
+                style: Theme.of(context).textTheme.titleLarge,
+              ).bP8,
+              Text(
+                LocalizationString.posts,
+                style: Theme.of(context).textTheme.bodySmall,
               ),
-      ],
-    ).p16.shadow(context: context);
+            ],
+          ),
+          // const SizedBox(
+          //   width: 20,
+          // ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                '${_profileController.user.value!.totalFollower}',
+                style: Theme.of(context).textTheme.titleLarge,
+              ).bP8,
+              Text(
+                LocalizationString.followers,
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+            ],
+          ).ripple(() {
+            if (_profileController.user.value!.totalFollower > 0) {
+              Get.to(() => FollowerFollowingList(
+                        isFollowersList: true,
+                        userId: widget.userId,
+                      ))!
+                  .then((value) {
+                initialLoad();
+              });
+            }
+          }),
+          // const SizedBox(
+          //   width: 20,
+          // ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                '${_profileController.user.value!.totalFollowing}',
+                style: Theme.of(context).textTheme.titleLarge,
+              ).bP8,
+              Text(
+                LocalizationString.following,
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+            ],
+          ).ripple(() {
+            if (_profileController.user.value!.totalFollowing > 0) {
+              Get.to(() => FollowerFollowingList(
+                        isFollowersList: false,
+                        userId: widget.userId,
+                      ))!
+                  .then((value) {
+                initialLoad();
+              });
+            }
+          }),
+          _profileController.user.value?.giftSummary == null
+              ? Container()
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      _profileController
+                          .user.value!.giftSummary!.totalCoin.formatNumber
+                          .toString(),
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ).bP8,
+                    Text(
+                      LocalizationString.coins,
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ],
+                ),
+        ],
+      ).p16,
+    ).round(15);
   }
 
   addHighlightsView() {
@@ -451,11 +435,18 @@ class OtherUserProfileState extends State<OtherUserProfile> {
           _profileController.segmentChanged(segment);
         },
         hideHighlightIndicator: false,
-        segments: [
-          LocalizationString.posts,
-          LocalizationString.reels,
-          LocalizationString.mentions,
-        ]);
+        segments: (_profileController.user.value?.canViewRelations == true)
+            ? [
+                LocalizationString.posts,
+                LocalizationString.reels,
+                LocalizationString.mentions,
+                LocalizationString.myFamily,
+              ]
+            : [
+                LocalizationString.posts,
+                LocalizationString.reels,
+                LocalizationString.mentions,
+              ]);
   }
 
   addPhotoGrid() {
@@ -611,6 +602,55 @@ class OtherUserProfileState extends State<OtherUserProfile> {
                   mainAxisSpacing: 8.0,
                   crossAxisSpacing: 8.0,
                 ).hP16;
+        });
+  }
+
+  addFamilyRelationGrid() {
+    return GetBuilder<RelationshipController>(
+        init: _relationshipController,
+        builder: (ctx) {
+          ScrollController scrollController = ScrollController();
+          scrollController.addListener(() {
+            if (scrollController.position.maxScrollExtent ==
+                scrollController.position.pixels) {
+              _relationshipController.getUsersRelationships(
+                  userId: widget.userId);
+            }
+          });
+
+          List<MyRelationsModel> relationships =
+              _relationshipController.relationships;
+
+          print('relationships ${relationships.length}');
+          return MasonryGridView.count(
+            controller: scrollController,
+            padding: const EdgeInsets.only(top: 10),
+            shrinkWrap: true,
+            crossAxisCount: 2,
+            itemCount: relationships.length,
+            physics: const NeverScrollableScrollPhysics(),
+            itemBuilder: (BuildContext context, int index) {
+              return RelationshipCard(relationship: relationships[index])
+                  .ripple(() {
+                if (relationships[index].userId ==
+                    getIt<UserProfileManager>().user!.id) {
+                  Get.to(() => const MyProfile(showBack: true))!.then((value) {
+                    _relationshipController.getUsersRelationships(
+                        userId: widget.userId);
+                  });
+                } else {
+                  Get.to(() => OtherUserProfile(
+                          userId: relationships[index].userId!))!
+                      .then((value) {
+                    _relationshipController.getUsersRelationships(
+                        userId: widget.userId);
+                  });
+                }
+              });
+            },
+            mainAxisSpacing: 8.0,
+            crossAxisSpacing: 8.0,
+          ).hP16;
         });
   }
 

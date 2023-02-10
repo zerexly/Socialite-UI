@@ -144,7 +144,7 @@ class _ChatHistoryState extends State<ChatHistory> {
                     callback: (room) {
                       EasyLoading.dismiss();
 
-                      Get.back();
+                      Get.close(1);
                       Get.to(() => ChatDetail(
                                 // opponent: usersList[index - 1].toChatRoomMember,
                                 chatRoom: room,

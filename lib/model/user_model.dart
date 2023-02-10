@@ -143,7 +143,8 @@ class UserModel {
     model.profileCategoryTypeName = json['profileCategoryName'] ?? 'Other';
 
     model.userSetting = json['userSetting'] != null
-        ? List<UserSetting>.from( json['userSetting'].map((x) => UserSetting.fromJson(x)))
+        ? List<UserSetting>.from(
+            json['userSetting'].map((x) => UserSetting.fromJson(x)))
         : null;
     return model;
   }
@@ -215,7 +216,7 @@ class UserModel {
 
     DateTime dateTime =
         DateTime.fromMillisecondsSinceEpoch(chatLastTimeOnline! * 1000).toUtc();
-    return '${LocalizationString.lastSeen} ${timeago.format(dateTime)}';
+    return '${LocalizationString.lastSeen}${timeago.format(dateTime)}';
   }
 
   bool get isMe {
@@ -225,6 +226,28 @@ class UserModel {
   ChatRoomMember get toChatRoomMember {
     return ChatRoomMember(
         id: id, isAdmin: 0, roomId: 0, userDetail: this, userId: id);
+  }
+
+  RelationsRevealSetting get relationsRevealSetting {
+    if (userSetting == null || (userSetting ?? []).isEmpty) {
+      return RelationsRevealSetting.none;
+    } else if (userSetting?.first.relationSetting == 1) {
+      return RelationsRevealSetting.all;
+    } else if (userSetting?.first.relationSetting == 2) {
+      return RelationsRevealSetting.followers;
+    }
+    return RelationsRevealSetting.none;
+  }
+
+  bool get canViewRelations {
+    if (relationsRevealSetting == RelationsRevealSetting.none) {
+      return false;
+    } else if (relationsRevealSetting == RelationsRevealSetting.followers &&
+        isFollowing) {
+      return true;
+    } else {
+      return true;
+    }
   }
 }
 
@@ -242,6 +265,8 @@ class InterestModel {
     model.status = json['status'];
 
     return model;
+  }
+}
 
 class UserSetting {
   int? id;
@@ -257,10 +282,10 @@ class UserSetting {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['user_id'] = this.userId;
-    data['relation_setting'] = this.relationSetting;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['user_id'] = userId;
+    data['relation_setting'] = relationSetting;
     return data;
   }
 }

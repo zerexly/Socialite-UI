@@ -81,7 +81,6 @@ class SettingsController extends GetxController {
     if (authKey != null) {
       await ApiController().getSettings().then((response) async {
         setting.value = response.settings;
-        print('getSettings = ${setting.value!.pid}');
 
         if (setting.value?.latestVersion! !=
             AppConfigConstants.currentVersion) {

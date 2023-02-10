@@ -399,7 +399,6 @@ class LocalizationString {
 
   static String myFamily = 'Family'.tr;
 
-
   static String replied = 'Replied'.tr;
 
   static String postToStory = 'Post to story'.tr;
@@ -411,7 +410,7 @@ class LocalizationString {
   static String followBack = 'Follow back'.tr;
 
   static String unInvite = 'Cancel'.tr;
-  static String pendingApproval= 'Pending'.tr;
+  static String pendingApproval = 'Pending'.tr;
   static String unFollow = 'UnFollow'.tr;
 
   static String newFollower = 'New Follower'.tr;
@@ -612,7 +611,7 @@ class LocalizationString {
   static String online = 'Online'.tr;
   static String offline = 'Offline'.tr;
 
-  static String lastSeen = 'Last seen '.tr;
+  static String lastSeen = 'Last seen'.tr;
 
   static String appLocked = 'App is locked'.tr;
 
@@ -998,9 +997,6 @@ class LocalizationString {
 
   static String followFriendsToSendPost = 'Follow friends to send post.'.tr;
 
-  static String requested = 'Requested'.tr;
-  static String requestJoin = 'Request to join'.tr;
-
   static String setUserName = 'Set username'.tr;
   static String setUserNameSubHeading =
       'This username will be shown to all user. Choose a wise user name like it_mike_here'
@@ -1025,5 +1021,7 @@ class LocalizationString {
   static String storyDeleteSuccessfully = 'Story is deleted successfully'.tr;
   static String areYouSureToReportPost = 'Are you sure to report this post?'.tr;
   static String areYouSureToBlockUser = 'Are you sure to block this user?'.tr;
+
+  static String requestPending = 'Request Pending'.tr;
 
 }

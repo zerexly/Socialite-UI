@@ -343,7 +343,6 @@ class _DrawingScreenState extends State<DrawingScreen> {
 
       // print('file path == ${file.path}');
       _chatDetailController.sendImageMessage(
-          context: context,
           media: Media(
               id: randomId(),
               fileSize: imageBytes.length,

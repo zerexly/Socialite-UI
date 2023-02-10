@@ -15,7 +15,7 @@ class _ChatDetailState extends State<ChatDetail> {
   final ChatDetailController _chatDetailController = Get.find();
   final ScrollController _controller = ScrollController();
   final RefreshController _refreshController =
-  RefreshController(initialRefresh: false);
+      RefreshController(initialRefresh: false);
   final SettingsController _settingsController = Get.find();
 
   @override
@@ -76,9 +76,9 @@ class _ChatDetailState extends State<ChatDetail> {
                 children: [
                   SizedBox(
                     height:
-                    _chatDetailController.smartReplySuggestions.isNotEmpty
-                        ? 50
-                        : 0,
+                        _chatDetailController.smartReplySuggestions.isNotEmpty
+                            ? 50
+                            : 0,
                     child: ListView.separated(
                         padding: const EdgeInsets.only(
                             left: 16, right: 16, top: 5, bottom: 10),
@@ -98,12 +98,11 @@ class _ChatDetailState extends State<ChatDetail> {
                             ),
                           )
                               .borderWithRadius(
-                              context: context, value: 1, radius: 10)
+                                  context: context, value: 1, radius: 10)
                               .ripple(() {
                             _chatDetailController.sendTextMessage(
                                 messageText: _chatDetailController
                                     .smartReplySuggestions[index],
-                                context: context,
                                 mode: _chatDetailController.actionMode.value,
                                 room: _chatDetailController.chatRoom.value!);
                           });
@@ -114,7 +113,7 @@ class _ChatDetailState extends State<ChatDetail> {
                           );
                         },
                         itemCount:
-                        _chatDetailController.smartReplySuggestions.length),
+                            _chatDetailController.smartReplySuggestions.length),
                   ),
                 ],
               );
@@ -122,13 +121,13 @@ class _ChatDetailState extends State<ChatDetail> {
             Obx(() {
               return _chatDetailController.chatRoom.value?.amIMember == true
                   ? _chatDetailController.actionMode.value ==
-                  ChatMessageActionMode.none ||
-                  _chatDetailController.actionMode.value ==
-                      ChatMessageActionMode.reply
-                  ? _chatDetailController.chatRoom.value!.canIChat
-                  ? messageComposerView()
-                  : cantChatView()
-                  : selectedMessageView()
+                              ChatMessageActionMode.none ||
+                          _chatDetailController.actionMode.value ==
+                              ChatMessageActionMode.reply
+                      ? _chatDetailController.chatRoom.value!.canIChat
+                          ? messageComposerView()
+                          : cantChatView()
+                      : selectedMessageView()
                   : cantChatView();
             })
           ],
@@ -156,25 +155,25 @@ class _ChatDetailState extends State<ChatDetail> {
             }),
             Obx(() => _chatDetailController.chatRoom.value?.isGroupChat == false
                 ? Row(
-              children: [
-                if (_settingsController.setting.value!.enableAudioCalling)
-                  ThemeIconWidget(
-                    ThemeIcon.mobile,
-                    color: Theme.of(context).iconTheme.color,
-                    size: 25,
-                  ).p4.ripple(() {
-                    audioCall();
-                  }).rp(20),
-                if (_settingsController.setting.value!.enableVideoCalling)
-                  ThemeIconWidget(
-                    ThemeIcon.videoCamera,
-                    color: Theme.of(context).iconTheme.color,
-                    size: 25,
-                  ).p4.ripple(() {
-                    videoCall();
-                  })
-              ],
-            )
+                    children: [
+                      if (_settingsController.setting.value!.enableAudioCalling)
+                        ThemeIconWidget(
+                          ThemeIcon.mobile,
+                          color: Theme.of(context).iconTheme.color,
+                          size: 25,
+                        ).p4.ripple(() {
+                          audioCall();
+                        }).rp(20),
+                      if (_settingsController.setting.value!.enableVideoCalling)
+                        ThemeIconWidget(
+                          ThemeIcon.videoCamera,
+                          color: Theme.of(context).iconTheme.color,
+                          size: 25,
+                        ).p4.ripple(() {
+                          videoCall();
+                        })
+                    ],
+                  )
                 : Container()),
           ],
         ).hP16,
@@ -190,114 +189,111 @@ class _ChatDetailState extends State<ChatDetail> {
                   const Spacer(),
                   Obx(() {
                     return _chatDetailController.chatRoom.value == null ||
-                        _chatDetailController
-                            .chatRoom.value!.roomMembers.isEmpty
+                            _chatDetailController
+                                .chatRoom.value!.roomMembers.isEmpty
                         ? Container()
                         : Column(
-                      children: [
-                        Row(
-                          children: [
-                            Text(
+                            children: [
+                              Row(
+                                children: [
+                                  Text(
+                                    _chatDetailController
+                                                .chatRoom.value!.isGroupChat ==
+                                            true
+                                        ? _chatDetailController
+                                            .chatRoom.value!.name!
+                                        : _chatDetailController.chatRoom.value!
+                                            .opponent.userDetail.userName,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge!
+                                        .copyWith(fontWeight: FontWeight.w900),
+                                  ),
+                                  const SizedBox(width: 5),
+                                  _chatDetailController
+                                              .chatRoom.value!.isGroupChat ==
+                                          false
+                                      ? Container(
+                                          height: 8,
+                                          width: 8,
+                                          color: _chatDetailController
+                                                      .chatRoom
+                                                      .value!
+                                                      .opponent
+                                                      .userDetail
+                                                      .isOnline ==
+                                                  true
+                                              ? Theme.of(context).primaryColor
+                                              : Theme.of(context).disabledColor,
+                                        ).circular
+                                      : Container(),
+                                ],
+                              ),
                               _chatDetailController
-                                  .chatRoom.value!.isGroupChat ==
-                                  true
-                                  ? _chatDetailController
-                                  .chatRoom.value!.name!
-                                  : _chatDetailController.chatRoom.value!
-                                  .opponent.userDetail.userName,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyLarge!
-                                  .copyWith(fontWeight: FontWeight.w900),
-                            ),
-                            const SizedBox(width: 5),
-                            _chatDetailController
-                                .chatRoom.value!.isGroupChat ==
-                                false
-                                ? Container(
-                              height: 8,
-                              width: 8,
-                              color: _chatDetailController
-                                  .chatRoom
-                                  .value!
-                                  .opponent
-                                  .userDetail
-                                  .isOnline ==
-                                  true
-                                  ? Theme.of(context).primaryColor
-                                  : Theme.of(context).disabledColor,
-                            ).circular
-                                : Container(),
-                          ],
-                        ),
-                        _chatDetailController
-                            .chatRoom.value!.isGroupChat ==
-                            false
-                            ? _chatDetailController.isTypingMapping[
-                        _chatDetailController
-                            .chatRoom
-                            .value!
-                            .opponent
-                            .userDetail
-                            .userName] ==
-                            true
-                            ? Text(
-                          LocalizationString.typing,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyMedium,
-                        )
-                            : Text(
-                          _chatDetailController
-                              .chatRoom
-                              .value!
-                              .opponent
-                              .userDetail
-                              .isOnline ==
-                              true
-                              ? LocalizationString.online
-                              : _chatDetailController
-                              .chatRoom
-                              .value!
-                              .opponent
-                              .userDetail
-                              .lastSeenAtTime,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyMedium!
-                              .copyWith(
-                              fontWeight: FontWeight.w500),
-                        )
-                            : SizedBox(
-                          width: MediaQuery.of(context).size.width -
-                              120,
-                          child: Text(
-                              _chatDetailController
-                                  .whoIsTyping.isNotEmpty
-                                  ? '${_chatDetailController.whoIsTyping.join(',')} ${LocalizationString.typing}'
-                                  : _chatDetailController
-                                  .chatRoom.value!.roomMembers
-                                  .map((e) {
-                                if (e.userDetail.isMe) {
-                                  return LocalizationString
-                                      .you;
-                                }
-                                return e
-                                    .userDetail.userName;
-                              })
-                                  .toList()
-                                  .join(','),
-                              maxLines: 1,
-                              textAlign: TextAlign.center,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium),
-                        ),
-                      ],
-                    );
+                                          .chatRoom.value!.isGroupChat ==
+                                      false
+                                  ? _chatDetailController.isTypingMapping[
+                                              _chatDetailController
+                                                  .chatRoom
+                                                  .value!
+                                                  .opponent
+                                                  .userDetail
+                                                  .userName] ==
+                                          true
+                                      ? Text(
+                                          LocalizationString.typing,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium,
+                                        )
+                                      : Text(
+                                          _chatDetailController
+                                                      .chatRoom
+                                                      .value!
+                                                      .opponent
+                                                      .userDetail
+                                                      .isOnline ==
+                                                  true
+                                              ? LocalizationString.online
+                                              : _chatDetailController.opponent
+                                                      .value?.lastSeenAtTime ??
+                                                  '',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium!
+                                              .copyWith(
+                                                  fontWeight: FontWeight.w500),
+                                        )
+                                  : SizedBox(
+                                      width: MediaQuery.of(context).size.width -
+                                          120,
+                                      child: Text(
+                                          _chatDetailController
+                                                  .whoIsTyping.isNotEmpty
+                                              ? '${_chatDetailController.whoIsTyping.join(',')} ${LocalizationString.typing}'
+                                              : _chatDetailController
+                                                  .chatRoom.value!.roomMembers
+                                                  .map((e) {
+                                                    if (e.userDetail.isMe) {
+                                                      return LocalizationString
+                                                          .you;
+                                                    }
+                                                    return e
+                                                        .userDetail.userName;
+                                                  })
+                                                  .toList()
+                                                  .join(','),
+                                          maxLines: 1,
+                                          textAlign: TextAlign.center,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium),
+                                    ),
+                            ],
+                          );
                   }).ripple(() {
                     Get.to(() => ChatRoomDetail(
-                        chatRoom: _chatDetailController.chatRoom.value!))!
+                            chatRoom: _chatDetailController.chatRoom.value!))!
                         .then((value) {
                       loadChat();
                     });
@@ -314,50 +310,50 @@ class _ChatDetailState extends State<ChatDetail> {
 
   Widget selectedMessageView() {
     return Obx(() => Container(
-      color: Theme.of(context).backgroundColor.darken(0.02),
-      height: 70,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          ThemeIconWidget(
-            _chatDetailController.actionMode.value ==
-                ChatMessageActionMode.forward
-                ? ThemeIcon.fwd
-                : _chatDetailController.actionMode.value ==
-                ChatMessageActionMode.delete
-                ? ThemeIcon.delete
-                : ThemeIcon.send,
-            color: Theme.of(context).primaryColor,
-          ).ripple(() {
-            if (_chatDetailController.actionMode.value ==
-                ChatMessageActionMode.forward) {
-              selectUserForMessageForward();
-            } else {
-              deleteMessageActionPopup();
-            }
-          }),
-          Text(
-              '${_chatDetailController.selectedMessages.length} ${LocalizationString.selected.toLowerCase()}',
-              style: Theme.of(context).textTheme.bodyLarge),
-          Text(
-            LocalizationString.cancel,
-            style: Theme.of(context)
-                .textTheme
-                .bodyLarge!
-                .copyWith(fontWeight: FontWeight.w900),
-          ).ripple(() {
-            _chatDetailController.setToActionMode(
-                mode: ChatMessageActionMode.none);
-          })
-        ],
-      ).hP16,
-    ));
+          color: Theme.of(context).backgroundColor.darken(0.02),
+          height: 70,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              ThemeIconWidget(
+                _chatDetailController.actionMode.value ==
+                        ChatMessageActionMode.forward
+                    ? ThemeIcon.fwd
+                    : _chatDetailController.actionMode.value ==
+                            ChatMessageActionMode.delete
+                        ? ThemeIcon.delete
+                        : ThemeIcon.send,
+                color: Theme.of(context).primaryColor,
+              ).ripple(() {
+                if (_chatDetailController.actionMode.value ==
+                    ChatMessageActionMode.forward) {
+                  selectUserForMessageForward();
+                } else {
+                  deleteMessageActionPopup();
+                }
+              }),
+              Text(
+                  '${_chatDetailController.selectedMessages.length} ${LocalizationString.selected.toLowerCase()}',
+                  style: Theme.of(context).textTheme.bodyLarge),
+              Text(
+                LocalizationString.cancel,
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyLarge!
+                    .copyWith(fontWeight: FontWeight.w900),
+              ).ripple(() {
+                _chatDetailController.setToActionMode(
+                    mode: ChatMessageActionMode.none);
+              })
+            ],
+          ).hP16,
+        ));
   }
 
   Widget replyMessageView() {
     return Obx(() => _chatDetailController
-        .selectedMessage.value!.messageContentType ==
-        MessageContentType.text
+                .selectedMessage.value!.messageContentType ==
+            MessageContentType.text
         ? replyTextMessageView(_chatDetailController.selectedMessage.value!)
         : replyMediaMessageView(_chatDetailController.selectedMessage.value!));
   }
@@ -462,36 +458,36 @@ class _ChatDetailState extends State<ChatDetail> {
                           child: SizedBox(
                             height: 40,
                             child: Obx(() => TextField(
-                              controller:
-                              _chatDetailController.messageTf.value,
-                              textAlign: TextAlign.start,
-                              style:
-                              Theme.of(context).textTheme.titleMedium,
-                              maxLines: 50,
-                              onChanged: (text) {
-                                _chatDetailController.messageChanges();
-                              },
-                              decoration: InputDecoration(
-                                  floatingLabelBehavior:
-                                  FloatingLabelBehavior.never,
-                                  border: InputBorder.none,
-                                  contentPadding: const EdgeInsets.only(
-                                      left: 10, right: 10, top: 5),
-                                  labelStyle: Theme.of(context)
-                                      .textTheme
-                                      .bodyLarge!
-                                      .copyWith(
-                                      color: Theme.of(context)
-                                          .primaryColor),
-                                  hintStyle: Theme.of(context)
-                                      .textTheme
-                                      .titleMedium!
-                                      .copyWith(
-                                      color: Theme.of(context)
-                                          .primaryColor),
-                                  hintText: LocalizationString
-                                      .pleaseEnterMessage),
-                            )),
+                                  controller:
+                                      _chatDetailController.messageTf.value,
+                                  textAlign: TextAlign.start,
+                                  style:
+                                      Theme.of(context).textTheme.titleMedium,
+                                  maxLines: 50,
+                                  onChanged: (text) {
+                                    _chatDetailController.messageChanges();
+                                  },
+                                  decoration: InputDecoration(
+                                      floatingLabelBehavior:
+                                          FloatingLabelBehavior.never,
+                                      border: InputBorder.none,
+                                      contentPadding: const EdgeInsets.only(
+                                          left: 10, right: 10, top: 5),
+                                      labelStyle: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge!
+                                          .copyWith(
+                                              color: Theme.of(context)
+                                                  .primaryColor),
+                                      hintStyle: Theme.of(context)
+                                          .textTheme
+                                          .titleMedium!
+                                          .copyWith(
+                                              color: Theme.of(context)
+                                                  .primaryColor),
+                                      hintText: LocalizationString
+                                          .pleaseEnterMessage),
+                                )),
                           ),
                         ),
                         const SizedBox(
@@ -499,31 +495,31 @@ class _ChatDetailState extends State<ChatDetail> {
                         ),
                         Obx(() {
                           return _chatDetailController
-                              .messageTf.value.text.isNotEmpty
+                                  .messageTf.value.text.isNotEmpty
                               ? Text(
-                            LocalizationString.send,
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleMedium!
-                                .copyWith(
-                                color: Theme.of(context).primaryColor,
-                                fontWeight: FontWeight.w900),
-                          ).ripple(() {
-                            sendMessage();
-                          })
+                                  LocalizationString.send,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleMedium!
+                                      .copyWith(
+                                          color: Theme.of(context).primaryColor,
+                                          fontWeight: FontWeight.w900),
+                                ).ripple(() {
+                                  sendMessage();
+                                })
                               : Container(
-                            height: 30,
-                            width: 30,
-                            color: Theme.of(context).primaryColor,
-                            child: ThemeIconWidget(
-                              ThemeIcon.plus,
-                              color: Theme.of(context).iconTheme.color,
-                            ),
-                          ).circular.ripple(() {
-                            openMediaSharingOptionView();
-                            // chatDetailController
-                            //     .expandCollapseActions();
-                          });
+                                  height: 30,
+                                  width: 30,
+                                  color: Theme.of(context).primaryColor,
+                                  child: ThemeIconWidget(
+                                    ThemeIcon.plus,
+                                    color: Theme.of(context).iconTheme.color,
+                                  ),
+                                ).circular.ripple(() {
+                                  openMediaSharingOptionView();
+                                  // chatDetailController
+                                  //     .expandCollapseActions();
+                                });
                         }),
                       ],
                     ),
@@ -560,63 +556,63 @@ class _ChatDetailState extends State<ChatDetail> {
           return _chatDetailController.messages.isEmpty
               ? Container()
               : Container(
-              decoration: _chatDetailController.wallpaper.value.isEmpty
-                  ? null
-                  : BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(
-                      _chatDetailController.wallpaper.value),
-                  fit: BoxFit.cover,
-                ),
-              ),
-              child: ListView.separated(
-                  controller: _controller,
-                  // itemScrollController: _itemScrollController,
-                  // itemPositionsListener: _itemPositionsListener,
-                  padding: const EdgeInsets.only(
-                      top: 10, bottom: 50, left: 16, right: 16),
-                  itemCount: _chatDetailController.messages.length,
-                  itemBuilder: (ctx, index) {
-                    ChatMessageModel message =
-                    _chatDetailController.messages[index];
+                  decoration: _chatDetailController.wallpaper.value.isEmpty
+                      ? null
+                      : BoxDecoration(
+                          image: DecorationImage(
+                            image: AssetImage(
+                                _chatDetailController.wallpaper.value),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                  child: ListView.separated(
+                          controller: _controller,
+                          // itemScrollController: _itemScrollController,
+                          // itemPositionsListener: _itemPositionsListener,
+                          padding: const EdgeInsets.only(
+                              top: 10, bottom: 50, left: 16, right: 16),
+                          itemCount: _chatDetailController.messages.length,
+                          itemBuilder: (ctx, index) {
+                            ChatMessageModel message =
+                                _chatDetailController.messages[index];
 
-                    ChatMessageModel? lastMessage;
+                            ChatMessageModel? lastMessage;
 
-                    if (index > 0) {
-                      lastMessage =
-                      _chatDetailController.messages[index - 1];
-                    }
+                            if (index > 0) {
+                              lastMessage =
+                                  _chatDetailController.messages[index - 1];
+                            }
 
-                    String dateTimeStr = message.date;
-                    bool addDateSeparator = false;
-                    if (dateTimeStr != lastMessage?.date &&
-                        message.isDateSeparator == false) {
-                      addDateSeparator = true;
-                    }
+                            String dateTimeStr = message.date;
+                            bool addDateSeparator = false;
+                            if (dateTimeStr != lastMessage?.date &&
+                                message.isDateSeparator == false) {
+                              addDateSeparator = true;
+                            }
 
-                    return Column(
-                      children: [
-                        if (addDateSeparator)
-                          dateSeparatorWidget(message),
-                        message.isDeleted == true ||
-                            message.isDateSeparator ||
-                            message.messageContentType ==
-                                MessageContentType.groupAction
-                            ? messageTile(message)
-                            : chatMessageFocusMenu(message),
-                      ],
-                    );
-                  },
-                  separatorBuilder: (ctx, index) {
-                    return const SizedBox(
-                      height: 20,
-                    );
-                  })
-                  .addPullToRefresh(
-                  refreshController: _refreshController,
-                  enablePullUp: false,
-                  onRefresh: refreshData,
-                  onLoading: () {}));
+                            return Column(
+                              children: [
+                                if (addDateSeparator)
+                                  dateSeparatorWidget(message),
+                                message.isDeleted == true ||
+                                        message.isDateSeparator ||
+                                        message.messageContentType ==
+                                            MessageContentType.groupAction
+                                    ? messageTile(message)
+                                    : chatMessageFocusMenu(message),
+                              ],
+                            );
+                          },
+                          separatorBuilder: (ctx, index) {
+                            return const SizedBox(
+                              height: 20,
+                            );
+                          })
+                      .addPullToRefresh(
+                          refreshController: _refreshController,
+                          enablePullUp: false,
+                          onRefresh: refreshData,
+                          onLoading: () {}));
         });
   }
 
@@ -665,7 +661,7 @@ class _ChatDetailState extends State<ChatDetail> {
               onPressed: () {
                 _chatDetailController.setReplyMessage(message: message);
               }),
-        if(_settingsController.setting.value!.enableForwardingInChat)
+        if (_settingsController.setting.value!.enableForwardingInChat)
           FocusedMenuItem(
               backgroundColor: Theme.of(context).backgroundColor,
               title: Text(
@@ -694,7 +690,7 @@ class _ChatDetailState extends State<ChatDetail> {
               _chatDetailController.setToActionMode(
                   mode: ChatMessageActionMode.delete);
             }),
-        if(_settingsController.setting.value!.enableStarMessage)
+        if (_settingsController.setting.value!.enableStarMessage)
           FocusedMenuItem(
               backgroundColor: Theme.of(context).backgroundColor,
               title: Text(
@@ -728,7 +724,7 @@ class _ChatDetailState extends State<ChatDetail> {
       message: chatMessage,
       showName: _chatDetailController.chatRoom.value?.isGroupChat == true,
       actionMode: _chatDetailController.actionMode.value ==
-          ChatMessageActionMode.forward ||
+              ChatMessageActionMode.forward ||
           _chatDetailController.actionMode.value ==
               ChatMessageActionMode.delete,
       replyMessageTapHandler: (message) {
@@ -760,29 +756,29 @@ class _ChatDetailState extends State<ChatDetail> {
           .indexWhere((element) => element == model);
 
       Get.to(() => MediaListViewer(
-        chatRoom: _chatDetailController.chatRoom.value!,
-        medias: _chatDetailController.mediaMessages,
-        startFrom: index,
-      ))!
+                chatRoom: _chatDetailController.chatRoom.value!,
+                medias: _chatDetailController.mediaMessages,
+                startFrom: index,
+              ))!
           .then((value) => loadChat());
     } else if (model.messageContentType == MessageContentType.video) {
       if (model.messageContent.isNotEmpty) {
         Get.to(() => PlayVideoController(
-          chatMessage: model,
-        ))!
+                  chatMessage: model,
+                ))!
             .then((value) => loadChat());
       }
     } else if (model.messageContentType == MessageContentType.post) {
       Get.to(() => SinglePostDetail(
-        postId: model.postContent.postId,
-      ))!
+                postId: model.postContent.postId,
+              ))!
           .then((value) => loadChat());
     } else if (model.messageContentType == MessageContentType.contact) {
       openActionPopupForContact(model.mediaContent.contact!);
     } else if (model.messageContentType == MessageContentType.profile) {
       Get.to(() => OtherUserProfile(
-        userId: model.profileContent.userId,
-      ))!
+                userId: model.profileContent.userId,
+              ))!
           .then((value) => loadChat());
     } else if (model.messageContentType == MessageContentType.location) {
       try {
@@ -836,51 +832,47 @@ class _ChatDetailState extends State<ChatDetail> {
     showModalBottomSheet(
         context: context,
         builder: (context) => Wrap(
-          children: [
-            ListTile(
-                title: Center(
-                    child: Text(
+              children: [
+                ListTile(
+                    title: Center(
+                        child: Text(
                       contact.displayName,
                       style: Theme.of(context)
                           .textTheme
                           .titleMedium!
                           .copyWith(fontWeight: FontWeight.w900),
                     )),
-                onTap: () async {}),
-            divider(context: context),
-            ListTile(
-                title: Center(child: Text(LocalizationString.saveContact)),
-                onTap: () async {
-                  Get.back();
-                  _chatDetailController.addNewContact(contact);
-                  AppUtil.showToast(
-                      context: context,
-                      message: LocalizationString.contactSaved,
-                      isSuccess: false);
-                }),
-            divider(context: context),
-            ListTile(
-                title: Center(child: Text(LocalizationString.cancel)),
-                onTap: () => Get.back()),
-          ],
-        ));
+                    onTap: () async {}),
+                divider(context: context),
+                ListTile(
+                    title: Center(child: Text(LocalizationString.saveContact)),
+                    onTap: () async {
+                      Get.back();
+                      _chatDetailController.addNewContact(contact);
+                      AppUtil.showToast(
+                          context: context,
+                          message: LocalizationString.contactSaved,
+                          isSuccess: false);
+                    }),
+                divider(context: context),
+                ListTile(
+                    title: Center(child: Text(LocalizationString.cancel)),
+                    onTap: () => Get.back()),
+              ],
+            ));
   }
 
   sendMessage() {
-    // if (messageTf.text.removeAllWhitespace.trim().isNotEmpty) {
     _chatDetailController.sendTextMessage(
         messageText: _chatDetailController.messageTf.value.text,
-        context: context,
         mode: _chatDetailController.actionMode.value,
         room: _chatDetailController.chatRoom.value!);
-    // messageTf.text = '';
     scrollToBottom();
-    // }
   }
 
   void replyMessageTapped(ChatMessageModel model) {
     int index = _chatDetailController.messages.indexWhere((element) =>
-    element.localMessageId == model.originalMessage.localMessageId);
+        element.localMessageId == model.originalMessage.localMessageId);
     if (index != -1) {
       Scrollable.ensureVisible(model.globalKey!.currentContext!);
       // _controller.jumpTo(
@@ -899,11 +891,11 @@ class _ChatDetailState extends State<ChatDetail> {
   }
 
   void videoCall() {
-    _chatDetailController.initiateVideoCall(context);
+    _chatDetailController.initiateVideoCall();
   }
 
   void audioCall() {
-    _chatDetailController.initiateAudioCall(context);
+    _chatDetailController.initiateAudioCall();
   }
 
   selectUserForMessageForward() {
@@ -940,33 +932,33 @@ class _ChatDetailState extends State<ChatDetail> {
     showModalBottomSheet(
         context: context,
         builder: (context) => Wrap(
-          children: [
-            ListTile(
-                title: Center(
-                    child: Text(LocalizationString.deleteMessageForMe)),
-                onTap: () async {
-                  Get.back();
-                  _chatDetailController.deleteMessage(deleteScope: 1);
-                  // postCardController.reportPost(widget.model);
-                }),
-            divider(context: context),
-            ifAnyMessageByOpponent == false &&
-                _chatDetailController.chatRoom.value?.canIChat == true
-                ? ListTile(
-                title: Center(
-                    child:
-                    Text(LocalizationString.deleteMessageForAll)),
-                onTap: () async {
-                  Get.back();
-                  _chatDetailController.deleteMessage(deleteScope: 2);
-                  // postCardController.blockUser(widget.model.user.id);
-                })
-                : Container(),
-            divider(context: context),
-            ListTile(
-                title: Center(child: Text(LocalizationString.cancel)),
-                onTap: () => Get.back()),
-          ],
-        ));
+              children: [
+                ListTile(
+                    title: Center(
+                        child: Text(LocalizationString.deleteMessageForMe)),
+                    onTap: () async {
+                      Get.back();
+                      _chatDetailController.deleteMessage(deleteScope: 1);
+                      // postCardController.reportPost(widget.model);
+                    }),
+                divider(context: context),
+                ifAnyMessageByOpponent == false &&
+                        _chatDetailController.chatRoom.value?.canIChat == true
+                    ? ListTile(
+                        title: Center(
+                            child:
+                                Text(LocalizationString.deleteMessageForAll)),
+                        onTap: () async {
+                          Get.back();
+                          _chatDetailController.deleteMessage(deleteScope: 2);
+                          // postCardController.blockUser(widget.model.user.id);
+                        })
+                    : Container(),
+                divider(context: context),
+                ListTile(
+                    title: Center(child: Text(LocalizationString.cancel)),
+                    onTap: () => Get.back()),
+              ],
+            ));
   }
 }

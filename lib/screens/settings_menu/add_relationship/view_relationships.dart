@@ -1,12 +1,11 @@
 import 'package:foap/helper/common_import.dart';
-import 'package:foap/screens/settings_menu/add_relationship/search_relation_profile.dart';
 import 'package:get/get.dart';
 import '../../../controllers/relationship_controller.dart';
 
-enum Privacy { Nobody, MyContacts, Everyone }
-
 class ViewRelationship extends StatefulWidget {
-  const ViewRelationship({Key? key}) : super(key: key);
+  final int userId;
+
+  const ViewRelationship({Key? key, required this.userId}) : super(key: key);
 
   @override
   State<ViewRelationship> createState() => _ViewRelationshipState();
@@ -20,13 +19,14 @@ class _ViewRelationshipState extends State<ViewRelationship> {
   @override
   void initState() {
     super.initState();
-    _relationshipController.getRelationshipsFromId();
+    _relationshipController.getUsersRelationships(userId: widget.userId);
     _relationshipController.getMyRelationships();
   }
 
   String getRelationFromId(int id) {
-    List outputList =
-    _relationshipController.relationship.where((o) => o.id == id).toList();
+    List outputList = _relationshipController.relationshipNames
+        .where((o) => o.id == id)
+        .toList();
     return outputList.isNotEmpty ? outputList[0].name : '';
   }
 
@@ -48,18 +48,18 @@ class _ViewRelationshipState extends State<ViewRelationship> {
                 builder: (ctx) {
                   return GridView.builder(
                       gridDelegate:
-                      const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          childAspectRatio: 1.0,
-                          crossAxisSpacing: 0.0,
-                          mainAxisSpacing: 5,
-                          mainAxisExtent: 260),
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              childAspectRatio: 1.0,
+                              crossAxisSpacing: 0.0,
+                              mainAxisSpacing: 5,
+                              mainAxisExtent: 260),
                       padding: EdgeInsets.zero,
                       itemCount:
-                      _relationshipController.myRelationships.length + 1,
+                          _relationshipController.relationships.length + 1,
                       itemBuilder: (BuildContext context, int index) {
                         if (index !=
-                            _relationshipController.myRelationships.length) {
+                            _relationshipController.relationships.length) {
                           return Card(
                             color: Theme.of(context).cardColor,
                             margin: const EdgeInsets.all(6),
@@ -74,39 +74,37 @@ class _ViewRelationshipState extends State<ViewRelationship> {
                                 children: [
                                   AvatarView(
                                     url: _relationshipController
-                                        .myRelationships[index]
-                                        .user
-                                        ?.picture ??
+                                            .relationships[index]
+                                            .user
+                                            ?.picture ??
                                         '',
                                     size: 110,
                                   ).tP25,
                                   Text(
-                                    _relationshipController
-                                        .myRelationships[index]
-                                        .user
-                                        ?.username ??
+                                    _relationshipController.relationships[index]
+                                            .user?.userName ??
                                         '',
                                     style: Theme.of(context)
                                         .textTheme
                                         .titleLarge!
                                         .copyWith(
-                                        fontWeight: FontWeight.w300,
-                                        color: Colors.white),
+                                            fontWeight: FontWeight.w300,
+                                            color: Colors.white),
                                   ).paddingOnly(top: 15, bottom: 2),
                                   Text(
                                     getRelationFromId(_relationshipController
-                                        .myRelationships[index]
-                                        .relationShipId ??
+                                            .relationships[index]
+                                            .relationShipId ??
                                         0),
                                     style: Theme.of(context)
                                         .textTheme
                                         .titleMedium!
                                         .copyWith(
-                                        fontWeight: FontWeight.w600,
-                                        color: Colors.white),
+                                            fontWeight: FontWeight.w600,
+                                            color: Colors.white),
                                   ),
                                   if (_relationshipController
-                                      .myRelationships[index].status !=
+                                          .relationships[index].status !=
                                       4)
                                     Text(
                                       LocalizationString.pendingApproval,
@@ -114,16 +112,14 @@ class _ViewRelationshipState extends State<ViewRelationship> {
                                           .textTheme
                                           .titleSmall!
                                           .copyWith(
-                                          fontWeight: FontWeight.w500,
-                                          color: Theme.of(context)
-                                              .primaryColor),
+                                              fontWeight: FontWeight.w500,
+                                              color: Theme.of(context)
+                                                  .primaryColor),
                                     ).paddingOnly(top: 10),
                                 ],
                               ),
                             ),
-                          ).ripple(() {
-                            print(_relationshipController.relationshipbyId.length);
-                          });
+                          ).ripple(() {});
                         } else {
                           return Container();
                         }

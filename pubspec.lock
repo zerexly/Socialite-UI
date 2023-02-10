@@ -627,10 +627,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_callkit_incoming
-      sha256: e689c7f6152e14dc5ef28c163384e3959b31cc14420d8ef3910283b95bc95666
+      sha256: "8e76be35d86bce00c358fc083c6f6232a7630958616d3e49cbc89ef661a4a464"
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.2+2"
+    version: "1.0.3+3"
   flutter_contacts:
     dependency: "direct main"
     description:
@@ -894,6 +894,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.3.2"
+  geocoding:
+    dependency: "direct main"
+    description:
+      name: geocoding
+      sha256: "26218460a902d4249b81e6baf9d55ce400fd1ebe6fc0a7e92b2c12b0b8e1e14e"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.5"
+  geocoding_platform_interface:
+    dependency: transitive
+    description:
+      name: geocoding_platform_interface
+      sha256: "8848605d307d844d89937cdb4b8ad7dfa880552078f310fa24d8a460f6dddab4"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.1"
   get:
     dependency: "direct main"
     description:
@@ -1374,15 +1390,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.3.1"
-  open_file:
+  open_filex:
     dependency: "direct main"
     description:
-      path: "."
-      ref: HEAD
-      resolved-ref: fbf68e4bb5cb3e262d8f8ebe10b2f8449ff8e030
-      url: "https://github.com/crazecoder/open_file"
-    source: git
-    version: "3.2.2"
+      name: open_filex
+      sha256: "854aefd72dfd74219dc8c8d1767c34ec1eae64b8399a5be317bddb1ec2108915"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.3.2"
   overlay_support:
     dependency: "direct main"
     description:
@@ -2012,6 +2027,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "7.0.0"
+  syncfusion_flutter_core:
+    dependency: transitive
+    description:
+      name: syncfusion_flutter_core
+      sha256: b5cb2525beb38fae36a363f72f8a2db92ed3995d6f0695968412cc6836e3a7b7
+      url: "https://pub.dev"
+    source: hosted
+    version: "20.4.49"
+  syncfusion_flutter_sliders:
+    dependency: "direct main"
+    description:
+      name: syncfusion_flutter_sliders
+      sha256: "6c1e81332e83dd587d606f1e8021944cab7575cd60e8985faded43eff6951726"
+      url: "https://pub.dev"
+    source: hosted
+    version: "20.4.49"
   synchronized:
     dependency: transitive
     description:

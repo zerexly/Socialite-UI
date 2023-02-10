@@ -17,8 +17,9 @@ class CategoryClubsListingState extends State<CategoryClubsListing> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _clubsController.getClubs(categoryId: widget.category.id);
-      _clubsController.selectedSegmentIndex(0);
+      _clubsController.getClubs(
+          categoryId: widget.category.id, isStartOver: true);
+      _clubsController.selectedSegmentIndex(index: 0, forceRefresh: false);
     });
 
     super.initState();
@@ -60,7 +61,8 @@ class CategoryClubsListingState extends State<CategoryClubsListing> {
                               padding:
                                   const EdgeInsets.only(left: 16, right: 16),
                               onSegmentChange: (segment) {
-                                _clubsController.selectedSegmentIndex(segment);
+                                _clubsController.selectedSegmentIndex(
+                                    index: segment, forceRefresh: false);
                               },
                               selectedIndex:
                                   _clubsController.segmentIndex.value,
@@ -75,17 +77,6 @@ class CategoryClubsListingState extends State<CategoryClubsListing> {
                     height: 20,
                   ),
                   Obx(() {
-                    ScrollController scrollController = ScrollController();
-                    scrollController.addListener(() {
-                      if (scrollController.position.maxScrollExtent ==
-                          scrollController.position.pixels) {
-                        if (!_clubsController.isLoadingClubs.value) {
-                          _clubsController.getClubs(
-                              categoryId: widget.category.id);
-                        }
-                      }
-                    });
-
                     List<ClubModel> clubs = _clubsController.clubs;
 
                     return _clubsController.clubs.isEmpty
@@ -117,7 +108,8 @@ class CategoryClubsListingState extends State<CategoryClubsListing> {
                                                 needRefreshCallback: () {
                                                   _clubsController.getClubs(
                                                       categoryId:
-                                                          widget.category.id);
+                                                          widget.category.id,
+                                                      isStartOver: false);
                                                 },
                                                 deleteCallback: (club) {
                                                   AppUtil.showToast(

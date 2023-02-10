@@ -259,6 +259,7 @@ class ChatMessageModel {
         'username': userName,
         'is_encrypted': isEncrypted,
         'isStar': isStar,
+        'chat_version': chatVersion
       };
 
   int get originalMessageId {

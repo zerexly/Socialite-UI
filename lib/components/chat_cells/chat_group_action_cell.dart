@@ -10,7 +10,7 @@ class ChatGroupActionCell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Map<String, dynamic> actionMessage = json.decode(message.messageContent);
+    Map<String, dynamic> actionMessage = json.decode(message.messageContent.decrypted());
     int action = actionMessage['action'] as int;
     String actionMessageString = '';
 

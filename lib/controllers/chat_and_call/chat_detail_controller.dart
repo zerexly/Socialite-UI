@@ -24,6 +24,7 @@ class ChatDetailController extends GetxController {
   Rx<ChatMessageModel?> selectedMessage = Rx<ChatMessageModel?>(null);
 
   Rx<ChatRoomModel?> chatRoom = Rx<ChatRoomModel?>(null);
+  Rx<UserModel?> opponent = Rx<UserModel?>(null);
 
   DateTime? typingStatusUpdatedAt;
 
@@ -81,6 +82,18 @@ class ChatDetailController extends GetxController {
     update();
   }
 
+  getUpdatedChatRoomDetail(ChatRoomModel room) {
+    ApiController().getChatRoomDetail(room.id).then((response) {
+      chatRoom.value = response.room;
+      chatRoom.refresh();
+
+      // update room in local storage
+      getIt<DBManager>().updateRoom(chatRoom.value!);
+
+      // update();
+    });
+  }
+
   getChatRoomWithUser(
       {required int userId, required Function(ChatRoomModel) callback}) {
     createChatRoom(userId, (roomId) async {
@@ -93,6 +106,14 @@ class ChatDetailController extends GetxController {
     });
   }
 
+  Future<UserModel?> getOpponentUser({required int userId}) async {
+    UserModel? user;
+    await ApiController().getOtherUser(userId.toString()).then((response) {
+      user = response.user;
+    });
+    return user;
+  }
+
   loadChat(ChatRoomModel chatRoom, VoidCallback completion) async {
     if (this.chatRoom.value == null) {
       this.chatRoom.value = chatRoom;
@@ -102,6 +123,11 @@ class ChatDetailController extends GetxController {
     List<ChatMessageModel> msgList = await getIt<DBManager>().getAllMessages(
         roomId: chatRoom.id, limit: 20, offset: messages.length);
     messages.insertAll(0, msgList);
+
+    if (chatRoom.isGroupChat == false) {
+      opponent.value =
+          await getOpponentUser(userId: chatRoom.opponent.userDetail.id);
+    }
 
     if (msgList.length == 20) {
       completion();
@@ -134,7 +160,10 @@ class ChatDetailController extends GetxController {
           if (response.messages.isNotEmpty) {
             // for (ChatMessageModel message in response.messages) {
             //   print('saving ${message.id}');
-              await getIt<DBManager>().saveMessage(chatRoom:chatRoom, chatMessages:response.messages);
+            print('3');
+
+            await getIt<DBManager>()
+                .saveMessage(chatMessages: response.messages);
             // }
 
             if (chatRoom.id == this.chatRoom.value?.id) {
@@ -284,17 +313,6 @@ class ChatDetailController extends GetxController {
       'postThumbnail': post.gallery.first.thumbnail
     };
 
-    // var currentMessage = {
-    //   'userId': getIt<UserProfileManager>().user!.id,
-    //   'localMessageId': localMessageId,
-    //   'is_encrypted': AppConfigConstants.enableEncryption,
-    //   'messageType': messageTypeId(MessageContentType.post),
-    //   'message': json.encode(content).encrypted(),
-    //   'room': room.id,
-    //   'created_by': getIt<UserProfileManager>().user!.id,
-    //   'created_at': (DateTime.now().millisecondsSinceEpoch / 1000).round(),
-    // };
-
     var message = {
       'userId': getIt<UserProfileManager>().user!.id,
       'localMessageId': localMessageId,
@@ -327,7 +345,9 @@ class ChatDetailController extends GetxController {
 
     addNewMessage(message: currentMessageModel, roomId: room.id);
     // save message to database
-    getIt<DBManager>().saveMessage(chatRoom:room, chatMessages:[currentMessageModel]);
+    print('4');
+
+    getIt<DBManager>().saveMessage(chatMessages: [currentMessageModel]);
     // send message to socket server
 
     status = getIt<SocketManager>().emit(SocketConstants.sendMessage, message);
@@ -340,7 +360,6 @@ class ChatDetailController extends GetxController {
   Future<bool> sendTextMessage(
       {required String messageText,
       required ChatMessageActionMode mode,
-      required BuildContext context,
       required ChatRoomModel room}) async {
     bool status = true;
 
@@ -348,7 +367,7 @@ class ChatDetailController extends GetxController {
     bool hasProfanity = filter.hasProfanity(messageText);
     if (hasProfanity) {
       AppUtil.showToast(
-          context: context,
+          context: Get.context!,
           message: LocalizationString.notAllowedMessage,
           isSuccess: true);
       return false;
@@ -366,29 +385,6 @@ class ChatDetailController extends GetxController {
 
     if (encryptedTextMessage.removeAllWhitespace.trim().isNotEmpty) {
       String localMessageId = randomId();
-
-      // if (mode == ChatMessageActionMode.reply) {
-      // var currentMessage = {
-      //   'id': 0,
-      //   'created_by': getIt<UserProfileManager>().user!.id,
-      //   'created_at': (DateTime.now().millisecondsSinceEpoch / 1000).round(),
-      //   'userId': getIt<UserProfileManager>().user!.id,
-      //   'is_encrypted': AppConfigConstants.enableEncryption,
-      //   'localMessageId': localMessageId,
-      //   'messageType': messageTypeId(MessageContentType.text),
-      //   'message': encryptedTextMessage,
-      //   'room': room.id,
-      //   'username': LocalizationString.you
-      // };
-
-      // var replyContent = {
-      //   'originalMessage': selectedMessage.value!.toJson(),
-      //   'reply': currentMessage
-      // };
-      //
-      // replyMessage = json.encode(replyContent).encrypted();
-      // }
-
       var message = {
         'userId': getIt<UserProfileManager>().user!.id,
         'localMessageId': localMessageId,
@@ -431,7 +427,9 @@ class ChatDetailController extends GetxController {
 
       addNewMessage(message: currentMessageModel, roomId: room.id);
       // save message to database
-      getIt<DBManager>().saveMessage(chatRoom:room, chatMessages:[currentMessageModel]);
+      print('5');
+
+      getIt<DBManager>().saveMessage(chatMessages: [currentMessageModel]);
 
       setReplyMessage(message: null);
       messageTf.value.text = '';
@@ -445,7 +443,6 @@ class ChatDetailController extends GetxController {
   Future<bool> sendContactMessage(
       {required Contact contact,
       required ChatMessageActionMode mode,
-      required BuildContext context,
       required ChatRoomModel room}) async {
     bool status = true;
 
@@ -458,20 +455,6 @@ class ChatDetailController extends GetxController {
       'messageType': messageTypeId(MessageContentType.contact),
       'contactCard': contact.toVCard(),
     };
-
-    // var currentMessage = {
-    //   'id': 0,
-    //   'created_by': getIt<UserProfileManager>().user!.id,
-    //   'created_at': (DateTime.now().millisecondsSinceEpoch / 1000).round(),
-    //   'userId': getIt<UserProfileManager>().user!.id,
-    //   'localMessageId': localMessageId,
-    //   'is_encrypted': AppConfigConstants.enableEncryption,
-    //   'chat_version': AppConfigConstants.chatVersion,
-    //   'messageType': messageTypeId(MessageContentType.contact),
-    //   'message': json.encode(content).encrypted(),
-    //   'room': room.id,
-    //   'username': LocalizationString.you
-    // };
 
     var message = {
       'userId': getIt<UserProfileManager>().user!.id,
@@ -513,7 +496,9 @@ class ChatDetailController extends GetxController {
 
     addNewMessage(message: currentMessageModel, roomId: room.id);
     // save message to database
-    getIt<DBManager>().saveMessage(chatRoom:room, chatMessages:[currentMessageModel]);
+    print('6');
+
+    getIt<DBManager>().saveMessage(chatMessages: [currentMessageModel]);
 
     setReplyMessage(message: null);
     update();
@@ -538,20 +523,6 @@ class ChatDetailController extends GetxController {
       'location':
           user.city != null ? '${user.city ?? ''}, ${user.country ?? ''}' : '',
     };
-
-    // var currentMessage = {
-    //   'id': 0,
-    //   'created_by': getIt<UserProfileManager>().user!.id,
-    //   'created_at': (DateTime.now().millisecondsSinceEpoch / 1000).round(),
-    //   'userId': getIt<UserProfileManager>().user!.id,
-    //   'localMessageId': localMessageId,
-    //   'is_encrypted': AppConfigConstants.enableEncryption,
-    //   'chat_version': AppConfigConstants.chatVersion,
-    //   'messageType': messageTypeId(MessageContentType.profile),
-    //   'message': json.encode(content).encrypted(),
-    //   'room': room.id,
-    //   'username': LocalizationString.you
-    // };
 
     var message = {
       'userId': getIt<UserProfileManager>().user!.id,
@@ -591,7 +562,9 @@ class ChatDetailController extends GetxController {
 
     addNewMessage(message: currentMessageModel, roomId: room.id);
     // save message to database
-    getIt<DBManager>().saveMessage(chatRoom:room, chatMessages:[currentMessageModel]);
+    print('7');
+
+    getIt<DBManager>().saveMessage(chatMessages: [currentMessageModel]);
     // send message to socket server
 
     status = getIt<SocketManager>().emit(SocketConstants.sendMessage, message);
@@ -604,7 +577,6 @@ class ChatDetailController extends GetxController {
   Future<bool> sendLocationMessage(
       {required LocationModel location,
       required ChatMessageActionMode mode,
-      required BuildContext context,
       required ChatRoomModel room}) async {
     bool status = true;
 
@@ -623,29 +595,6 @@ class ChatDetailController extends GetxController {
       'location': locationData,
       'messageType': messageTypeId(MessageContentType.location),
     };
-
-    // if (mode == ChatMessageActionMode.reply) {
-    // var currentMessage = {
-    //   'id': 0,
-    //   'created_by': getIt<UserProfileManager>().user!.id,
-    //   'created_at': (DateTime.now().millisecondsSinceEpoch / 1000).round(),
-    //   'userId': getIt<UserProfileManager>().user!.id,
-    //   'localMessageId': localMessageId,
-    //   'is_encrypted': AppConfigConstants.enableEncryption,
-    //   'messageType': messageTypeId(MessageContentType.location),
-    //   'message': json.encode(content).encrypted(),
-    //   'chat_version': AppConfigConstants.chatVersion,
-    //   'room': room.id,
-    //   'username': LocalizationString.you
-    // };
-
-    //   var replyContent = {
-    //     'originalMessage': selectedMessage.value!.toJson(),
-    //     'reply': json.encode(currentMessage)
-    //   };
-    //
-    //   replyMessage = json.encode(replyContent).encrypted();
-    // }
 
     var message = {
       'userId': getIt<UserProfileManager>().user!.id,
@@ -687,67 +636,14 @@ class ChatDetailController extends GetxController {
 
     addNewMessage(message: currentMessageModel, roomId: room.id);
     // save message to database
-    getIt<DBManager>().saveMessage(chatRoom:room, chatMessages:[currentMessageModel]);
+    print('8');
+
+    getIt<DBManager>().saveMessage(chatMessages: [currentMessageModel]);
 
     setReplyMessage(message: null);
     update();
     return status;
   }
-
-  // Future<bool> sendSmartMessage(
-  //     {required String smartMessage, required ChatRoomModel room}) async {
-  //   bool status = true;
-  //   String localMessageId = randomId();
-  //
-  //   var currentMessage = {
-  //     'userId': getIt<UserProfileManager>().user!.id,
-  //     'localMessageId': localMessageId,
-  //     'is_encrypted': AppConfigConstants.enableEncryption,
-  //     'chat_version': AppConfigConstants.chatVersion,
-  //     'messageType': messageTypeId(MessageContentType.text),
-  //     'message': smartMessage.encrypted(),
-  //     'room': room.id,
-  //     'created_by': getIt<UserProfileManager>().user!.id,
-  //     'created_at': (DateTime.now().millisecondsSinceEpoch / 1000).round()
-  //   };
-  //
-  //   var message = {
-  //     'userId': getIt<UserProfileManager>().user!.id,
-  //     'localMessageId': localMessageId,
-  //     'is_encrypted': AppConfigConstants.enableEncryption,
-  //     'chat_version': AppConfigConstants.chatVersion,
-  //     'messageType': messageTypeId(MessageContentType.text),
-  //     'message': json.encode(currentMessage).encrypted(),
-  //     'room': room.id,
-  //     'created_by': getIt<UserProfileManager>().user!.id,
-  //     'created_at': (DateTime.now().millisecondsSinceEpoch / 1000).round()
-  //   };
-  //
-  //   //save message to socket server
-  //   status = getIt<SocketManager>().emit(SocketConstants.sendMessage, message);
-  //
-  //   ChatMessageModel currentMessageModel = ChatMessageModel();
-  //   currentMessageModel.isEncrypted = AppConfigConstants.enableEncryption;
-  //   currentMessageModel.chatVersion = AppConfigConstants.chatVersion;
-  //
-  //   currentMessageModel.localMessageId = localMessageId;
-  //   currentMessageModel.sender = getIt<UserProfileManager>().user!;
-  //
-  //   currentMessageModel.roomId = room.id;
-  //   currentMessageModel.userName = LocalizationString.you;
-  //   currentMessageModel.senderId = getIt<UserProfileManager>().user!.id;
-  //   currentMessageModel.messageType = messageTypeId(MessageContentType.text);
-  //   currentMessageModel.messageContent = smartMessage.encrypted();
-  //   currentMessageModel.createdAt =
-  //       (DateTime.now().millisecondsSinceEpoch / 1000).round();
-  //
-  //   addNewMessage(message: currentMessageModel, roomId: room.id);
-  //   // save message to database
-  //   getIt<DBManager>().saveMessage(room, [currentMessageModel]);
-  //   setReplyMessage(message: null);
-  //   update();
-  //   return status;
-  // }
 
   Future<bool> forwardMessage(
       {required ChatMessageModel msg, required ChatRoomModel room}) async {
@@ -755,15 +651,7 @@ class ChatDetailController extends GetxController {
 
     String localMessageId = randomId();
     var originalContent = {
-      // 'originalMessage': msg.messageContentType == MessageContentType.reply
-      //     ? msg.reply.toJson()
-      //     : msg.messageContentType == MessageContentType.forward
-      //         ? msg.originalMessage.toJson()
-      //         : msg.toJson(),
-
       'originalMessage': msg.toJson(),
-
-      ///TODO
       'messageType': msg.messageType,
     };
 
@@ -796,14 +684,15 @@ class ChatDetailController extends GetxController {
     };
 
     status = getIt<SocketManager>().emit(SocketConstants.sendMessage, message);
-    getIt<DBManager>().saveMessage(chatRoom:room, chatMessages:[currentMessageModel]);
+    print('9');
+
+    getIt<DBManager>().saveMessage(chatMessages: [currentMessageModel]);
     // setReplyMessage(message: null);
     return status;
   }
 
   Future<bool> sendImageMessage(
-      {required BuildContext context,
-      required Media media,
+      {required Media media,
       required ChatMessageActionMode mode,
       required ChatRoomModel room}) async {
     bool status = true;
@@ -823,44 +712,6 @@ class ChatDetailController extends GetxController {
 
     ChatMessageModel currentMessageModel = ChatMessageModel();
 
-    // if (mode == ChatMessageActionMode.reply) {
-    //   topLevelMessageModel.localMessageId = localMessageId;
-    //   topLevelMessageModel.sender = getIt<UserProfileManager>().user!;
-    //
-    //   topLevelMessageModel.isEncrypted = AppConfigConstants.enableEncryption;
-    //   topLevelMessageModel.chatVersion = AppConfigConstants.chatVersion;
-    //
-    //   topLevelMessageModel.roomId = room.id;
-    //   topLevelMessageModel.userName = LocalizationString.you;
-    //   topLevelMessageModel.senderId = getIt<UserProfileManager>().user!.id;
-    //   topLevelMessageModel.messageType =
-    //       messageTypeId(MessageContentType.reply);
-    //
-    //   topLevelMessageModel.createdAt =
-    //       (DateTime.now().millisecondsSinceEpoch / 1000).round();
-    //   topLevelMessageModel.messageContent = ''.encrypted();
-    //   topLevelMessageModel.repliedOnMessageContent = repliedOnMessage;
-    //
-    //   // reply content start
-    //   ChatMessageModel replyContentMessage = ChatMessageModel();
-    //   replyContentMessage.isEncrypted = AppConfigConstants.enableEncryption;
-    //   replyContentMessage.chatVersion = AppConfigConstants.chatVersion;
-    //
-    //   replyContentMessage.id = 0;
-    //   replyContentMessage.roomId = room.id;
-    //   replyContentMessage.localMessageId = localMessageId;
-    //   replyContentMessage.senderId = getIt<UserProfileManager>().user!.id;
-    //   replyContentMessage.messageType = messageTypeId(MessageContentType.photo);
-    //   replyContentMessage.messageContent = ''.encrypted();
-    //   replyContentMessage.createdAt =
-    //       (DateTime.now().millisecondsSinceEpoch / 1000).round();
-    //
-    //   topLevelMessageModel.cachedReplyMessage = replyContentMessage;
-    //   // reply content end
-    //
-    //   addNewMessage(message: topLevelMessageModel, roomId: room.id);
-    //   getIt<DBManager>().saveMessage(room, [topLevelMessageModel]);
-    // } else {
     currentMessageModel.localMessageId = localMessageId;
     currentMessageModel.sender = getIt<UserProfileManager>().user!;
     currentMessageModel.isEncrypted = AppConfigConstants.enableEncryption;
@@ -880,15 +731,15 @@ class ChatDetailController extends GetxController {
     currentMessageModel.repliedOnMessageContent = repliedOnMessage;
 
     addNewMessage(message: currentMessageModel, roomId: room.id);
-    getIt<DBManager>().saveMessage(chatRoom:room, chatMessages:[currentMessageModel]);
-    // }
+    print('10');
+
+    getIt<DBManager>().saveMessage(chatMessages: [currentMessageModel]);
 
     update();
 
     // upload photo and send message
 
     uploadMedia(
-        context: context,
         messageId: localMessageId,
         media: media,
         mainFile: mainFile,
@@ -897,29 +748,6 @@ class ChatDetailController extends GetxController {
             'messageType': messageTypeId(MessageContentType.photo),
             'image': uploadedMedia.thumbnail!,
           };
-
-          // if (mode == ChatMessageActionMode.reply) {
-          // var currentMessage = {
-          //   'userId': getIt<UserProfileManager>().user!.id,
-          //   'created_by': getIt<UserProfileManager>().user!.id,
-          //   'username': LocalizationString.you,
-          //   'created_at':
-          //       (DateTime.now().millisecondsSinceEpoch / 1000).round(),
-          //   'localMessageId': localMessageId,
-          //   'is_encrypted': AppConfigConstants.enableEncryption,
-          //   'messageType': messageTypeId(MessageContentType.photo),
-          //   'message': json.encode(content).encrypted(),
-          //   'chat_version': AppConfigConstants.chatVersion,
-          //   'room': room.id
-          // };
-
-          //   var replyContent = {
-          //     'originalMessage': selectedMessage.value!.toJson(),
-          //     'reply': json.encode(currentMessage)
-          //   };
-          //
-          //   replyMessageStringContent = json.encode(replyContent).encrypted();
-          // }
 
           var message = {
             'userId': getIt<UserProfileManager>().user!.id,
@@ -955,8 +783,7 @@ class ChatDetailController extends GetxController {
   }
 
   Future<bool> sendVideoMessage(
-      {required BuildContext context,
-      required Media media,
+      {required Media media,
       required ChatMessageActionMode mode,
       required ChatRoomModel room}) async {
     bool status = true;
@@ -976,46 +803,6 @@ class ChatDetailController extends GetxController {
 
     ChatMessageModel currentMessageModel = ChatMessageModel();
 
-    // if (mode == ChatMessageActionMode.reply) {
-    //   topLevelMessageModel.localMessageId = localMessageId;
-    //   topLevelMessageModel.sender = getIt<UserProfileManager>().user!;
-    //
-    //   topLevelMessageModel.roomId = room.id;
-    //   topLevelMessageModel.isEncrypted = AppConfigConstants.enableEncryption;
-    //   topLevelMessageModel.chatVersion = AppConfigConstants.chatVersion;
-    //
-    //   // currentMessageModel.messageTime = LocalizationString.justNow;
-    //   topLevelMessageModel.userName = LocalizationString.you;
-    //   topLevelMessageModel.senderId = getIt<UserProfileManager>().user!.id;
-    //   topLevelMessageModel.messageType =
-    //       messageTypeId(MessageContentType.reply);
-    //   topLevelMessageModel.repliedOnMessageContent = repliedOnMessage;
-    //
-    //   // reply content start
-    //   ChatMessageModel replyMessage = ChatMessageModel();
-    //   replyMessage.isEncrypted = AppConfigConstants.enableEncryption;
-    //
-    //   replyMessage.id = 0;
-    //   replyMessage.roomId = room.id;
-    //   replyMessage.localMessageId = localMessageId;
-    //   replyMessage.senderId = getIt<UserProfileManager>().user!.id;
-    //   replyMessage.messageType = messageTypeId(MessageContentType.video);
-    //   // replyMessage.media = media;
-    //   replyMessage.messageContent = ''.encrypted();
-    //   replyMessage.createdAt =
-    //       (DateTime.now().millisecondsSinceEpoch / 1000).round();
-    //
-    //   topLevelMessageModel.cachedReplyMessage = replyMessage;
-    //   // reply content end
-    //
-    //   topLevelMessageModel.createdAt =
-    //       (DateTime.now().millisecondsSinceEpoch / 1000).round();
-    //   topLevelMessageModel.messageContent = '';
-    //   // messages.value = [topLevelMessageModel];
-    //   addNewMessage(message: topLevelMessageModel, roomId: room.id);
-    //
-    //   getIt<DBManager>().saveMessage(room, [topLevelMessageModel]);
-    // } else {
     currentMessageModel.localMessageId = localMessageId;
     currentMessageModel.roomId = room.id;
     currentMessageModel.isEncrypted = AppConfigConstants.enableEncryption;
@@ -1036,15 +823,15 @@ class ChatDetailController extends GetxController {
     currentMessageModel.repliedOnMessageContent = repliedOnMessage;
 
     addNewMessage(message: currentMessageModel, roomId: room.id);
-    getIt<DBManager>().saveMessage(chatRoom:room, chatMessages:[currentMessageModel]);
-    // }
+    print('11');
+
+    getIt<DBManager>().saveMessage(chatMessages: [currentMessageModel]);
 
     update();
 
     // upload video and send message
 
     uploadMedia(
-        context: context,
         messageId: localMessageId,
         media: media,
         mainFile: mainFile,
@@ -1055,29 +842,6 @@ class ChatDetailController extends GetxController {
             'image': uploadedMedia.thumbnail,
             'video': uploadedMedia.video!,
           };
-
-          // if (mode == ChatMessageActionMode.reply) {
-          // var currentMessage = {
-          //   'userId': getIt<UserProfileManager>().user!.id,
-          //   'created_by': getIt<UserProfileManager>().user!.id,
-          //   'username': LocalizationString.you,
-          //   'created_at':
-          //       (DateTime.now().millisecondsSinceEpoch / 1000).round(),
-          //   'localMessageId': localMessageId,
-          //   'is_encrypted': AppConfigConstants.enableEncryption,
-          //   'chat_version': AppConfigConstants.chatVersion,
-          //   'messageType': messageTypeId(MessageContentType.video),
-          //   'message': json.encode(content).encrypted(),
-          //   'room': room.id
-          // };
-
-          //   var replyContent = {
-          //     'originalMessage': selectedMessage.value!.toJson(),
-          //     'reply': json.encode(currentMessage)
-          //   };
-          //
-          //   replyMessageStringContent = json.encode(replyContent).encrypted();
-          // }
 
           var message = {
             'userId': getIt<UserProfileManager>().user!.id,
@@ -1114,8 +878,7 @@ class ChatDetailController extends GetxController {
   }
 
   Future<bool> sendAudioMessage(
-      {required BuildContext context,
-      required Media media,
+      {required Media media,
       required ChatMessageActionMode mode,
       required ChatRoomModel room}) async {
     bool status = true;
@@ -1134,42 +897,6 @@ class ChatDetailController extends GetxController {
     var content = {
       'messageType': messageTypeId(MessageContentType.audio),
     };
-
-    // if (mode == ChatMessageActionMode.reply) {
-    //   topLevelMessageModel.localMessageId = localMessageId;
-    //   topLevelMessageModel.isEncrypted = AppConfigConstants.enableEncryption;
-    //   topLevelMessageModel.sender = getIt<UserProfileManager>().user!;
-    //   topLevelMessageModel.roomId = room.id;
-    //   topLevelMessageModel.userName = LocalizationString.you;
-    //   topLevelMessageModel.senderId = getIt<UserProfileManager>().user!.id;
-    //   topLevelMessageModel.messageType =
-    //       messageTypeId(MessageContentType.reply);
-    //   topLevelMessageModel.createdAt =
-    //       (DateTime.now().millisecondsSinceEpoch / 1000).round();
-    //   topLevelMessageModel.repliedOnMessageContent = repliedOnMessage;
-    //   topLevelMessageModel.messageContent = ''.encrypted();
-    //
-    //   // reply content start
-    //   ChatMessageModel replyMessage = ChatMessageModel();
-    //   replyMessage.id = 0;
-    //   replyMessage.isEncrypted = AppConfigConstants.enableEncryption;
-    //   replyMessage.chatVersion = AppConfigConstants.chatVersion;
-    //
-    //   replyMessage.roomId = room.id;
-    //   replyMessage.localMessageId = localMessageId;
-    //   replyMessage.senderId = getIt<UserProfileManager>().user!.id;
-    //   replyMessage.messageType = messageTypeId(MessageContentType.audio);
-    //   // replyMessage.media = media;
-    //   replyMessage.messageContent = ''.encrypted();
-    //   replyMessage.createdAt =
-    //       (DateTime.now().millisecondsSinceEpoch / 1000).round();
-    //
-    //   topLevelMessageModel.cachedReplyMessage = replyMessage;
-    //   // reply content end
-    //
-    //   addNewMessage(message: topLevelMessageModel, roomId: room.id);
-    //   getIt<DBManager>().saveMessage(room, [topLevelMessageModel]);
-    // } else {
     currentMessageModel.localMessageId = localMessageId;
     currentMessageModel.roomId = room.id;
     currentMessageModel.isEncrypted = AppConfigConstants.enableEncryption;
@@ -1190,15 +917,14 @@ class ChatDetailController extends GetxController {
     currentMessageModel.repliedOnMessageContent = repliedOnMessage;
 
     addNewMessage(message: currentMessageModel, roomId: room.id);
-    getIt<DBManager>().saveMessage(chatRoom:room,chatMessages: [currentMessageModel]);
-    // }
+    print('12');
 
+    getIt<DBManager>().saveMessage(chatMessages: [currentMessageModel]);
     update();
 
     // upload audio and send message
 
     uploadMedia(
-        context: context,
         messageId: localMessageId,
         media: media,
         mainFile: mainFile,
@@ -1207,29 +933,6 @@ class ChatDetailController extends GetxController {
             'messageType': messageTypeId(MessageContentType.audio),
             'audio': uploadedMedia.audio,
           };
-
-          // if (mode == ChatMessageActionMode.reply) {
-          // var currentMessage = {
-          //   'userId': getIt<UserProfileManager>().user!.id,
-          //   'created_by': getIt<UserProfileManager>().user!.id,
-          //   'username': LocalizationString.you,
-          //   'created_at':
-          //       (DateTime.now().millisecondsSinceEpoch / 1000).round(),
-          //   'localMessageId': localMessageId,
-          //   'is_encrypted': AppConfigConstants.enableEncryption,
-          //   'chat_version': AppConfigConstants.chatVersion,
-          //   'messageType': messageTypeId(MessageContentType.audio),
-          //   'message': json.encode(content).encrypted(),
-          //   'room': room.id
-          // };
-
-          //   var replyContent = {
-          //     'originalMessage': selectedMessage.value!.toJson(),
-          //     'reply': json.encode(currentMessage)
-          //   };
-          //
-          //   replyMessageStringContent = json.encode(replyContent).encrypted();
-          // }
 
           var message = {
             'userId': getIt<UserProfileManager>().user!.id,
@@ -1283,49 +986,6 @@ class ChatDetailController extends GetxController {
 
     ChatMessageModel currentMessageModel = ChatMessageModel();
 
-    // if (mode == ChatMessageActionMode.reply) {
-    //   topLevelMessageModel.localMessageId = localMessageId;
-    //   topLevelMessageModel.isEncrypted = AppConfigConstants.enableEncryption;
-    //   topLevelMessageModel.chatVersion = AppConfigConstants.chatVersion;
-    //   topLevelMessageModel.sender = getIt<UserProfileManager>().user!;
-    //
-    //   topLevelMessageModel.roomId = room.id;
-    //   // currentMessageModel. messageTime= LocalizationString.justNow;
-    //   topLevelMessageModel.userName = LocalizationString.you;
-    //   topLevelMessageModel.senderId = getIt<UserProfileManager>().user!.id;
-    //   topLevelMessageModel.messageType =
-    //       messageTypeId(MessageContentType.reply);
-    //   topLevelMessageModel.repliedOnMessageContent = repliedOnMessage;
-    //
-    //   // reply content start
-    //   ChatMessageModel replyMessage = ChatMessageModel();
-    //   replyMessage.id = 0;
-    //   replyMessage.isEncrypted = AppConfigConstants.enableEncryption;
-    //   replyMessage.chatVersion = AppConfigConstants.chatVersion;
-    //
-    //   replyMessage.roomId = room.id;
-    //   replyMessage.localMessageId = localMessageId;
-    //   replyMessage.senderId = getIt<UserProfileManager>().user!.id;
-    //   replyMessage.messageType = messageTypeId(MessageContentType.gif);
-    //   replyMessage.messageContent =
-    //       json.encode(content).replaceAll('\\', '').encrypted();
-    //   replyMessage.createdAt =
-    //       (DateTime.now().millisecondsSinceEpoch / 1000).round();
-    //
-    //   topLevelMessageModel.cachedReplyMessage = replyMessage;
-    //   // reply content end
-    //
-    //   topLevelMessageModel.messageContent =
-    //       json.encode(replyMessage.toJson()).replaceAll('\\', '').encrypted();
-    //
-    //   topLevelMessageModel.createdAt =
-    //       (DateTime.now().millisecondsSinceEpoch / 1000).round();
-    //   // currentMessageModel.messageContent = ''.encrypted();
-    //
-    //   addNewMessage(message: topLevelMessageModel, roomId: room.id);
-    //
-    //   // getIt<DBManager>().saveMessage(room, [currentMessageModel]);
-    // } else {
     currentMessageModel.localMessageId = localMessageId;
     currentMessageModel.roomId = room.id;
     currentMessageModel.isEncrypted = AppConfigConstants.enableEncryption;
@@ -1346,33 +1006,8 @@ class ChatDetailController extends GetxController {
         json.encode(content).replaceAll('\\', '').encrypted();
 
     addNewMessage(message: currentMessageModel, roomId: room.id);
-    // getIt<DBManager>().saveMessage(room, [currentMessageModel]);
-    // }
 
     update();
-
-    // send message to socket
-    // if (mode == ChatMessageActionMode.reply) {
-    // var currentMessage = {
-    //   'userId': getIt<UserProfileManager>().user!.id,
-    //   'created_by': getIt<UserProfileManager>().user!.id,
-    //   'username': LocalizationString.you,
-    //   'created_at': (DateTime.now().millisecondsSinceEpoch / 1000).round(),
-    //   'localMessageId': localMessageId,
-    //   'is_encrypted': AppConfigConstants.enableEncryption,
-    //   'chat_version': AppConfigConstants.chatVersion,
-    //   'messageType': messageTypeId(MessageContentType.gif),
-    //   'message': json.encode(content).replaceAll('\\', '').encrypted(),
-    //   'room': room.id
-    // };
-
-    //   var replyContent = {
-    //     'originalMessage': selectedMessage.value!.toJson(),
-    //     'reply': json.encode(currentMessage).replaceAll('\\', '')
-    //   };
-    //
-    //   replyMessage = json.encode(replyContent).replaceAll('\\', '').encrypted();
-    // }
 
     var message = {
       'userId': getIt<UserProfileManager>().user!.id,
@@ -1392,14 +1027,15 @@ class ChatDetailController extends GetxController {
     status = getIt<SocketManager>().emit(SocketConstants.sendMessage, message);
 
     // save message to database
-    getIt<DBManager>().saveMessage(chatRoom:room, chatMessages:[currentMessageModel]);
+    print('13');
+
+    getIt<DBManager>().saveMessage(chatMessages: [currentMessageModel]);
     setReplyMessage(message: null);
     return status;
   }
 
   Future<bool> sendFileMessage(
-      {required BuildContext context,
-      required Media media,
+      {required Media media,
       required ChatMessageActionMode mode,
       required ChatRoomModel room}) async {
     bool status = true;
@@ -1473,7 +1109,9 @@ class ChatDetailController extends GetxController {
     currentMessageModel.repliedOnMessageContent = repliedOnMessage;
 
     addNewMessage(message: currentMessageModel, roomId: room.id);
-    getIt<DBManager>().saveMessage(chatRoom:room, chatMessages:[currentMessageModel]);
+    print('14');
+
+    getIt<DBManager>().saveMessage(chatMessages: [currentMessageModel]);
     // }
 
     update();
@@ -1481,7 +1119,6 @@ class ChatDetailController extends GetxController {
     // upload file and send message
 
     uploadMedia(
-        context: context,
         messageId: localMessageId,
         media: media,
         mainFile: mainFile,
@@ -1497,30 +1134,6 @@ class ChatDetailController extends GetxController {
             'file': fileContent,
             'messageType': messageTypeId(MessageContentType.file),
           };
-
-          // if (mode == ChatMessageActionMode.reply) {
-          // var currentMessage = {
-          //   'userId': getIt<UserProfileManager>().user!.id,
-          //   'created_by': getIt<UserProfileManager>().user!.id,
-          //   'username': LocalizationString.you,
-          //   'created_at':
-          //       (DateTime.now().millisecondsSinceEpoch / 1000).round(),
-          //   'localMessageId': localMessageId,
-          //   'is_encrypted': AppConfigConstants.enableEncryption,
-          //   'chat_version': AppConfigConstants.chatVersion,
-          //   'messageType': messageTypeId(MessageContentType.file),
-          //   'message': json.encode(content).encrypted(),
-          //   'replied_on_message': repliedOnMessage,
-          //   'room': room.id
-          // };
-
-          //   var replyContent = {
-          //     'originalMessage': selectedMessage.value!.toJson(),
-          //     'reply': json.encode(currentMessage)
-          //   };
-          //
-          //   replyMessageStringContent = json.encode(replyContent).encrypted();
-          // }
 
           var message = {
             'userId': getIt<UserProfileManager>().user!.id,
@@ -1576,15 +1189,6 @@ class ChatDetailController extends GetxController {
     if (message.messageContentType == MessageContentType.text &&
         message.isDateSeparator == false &&
         message.isMineMessage == false) {
-      // TextMessage lastMsg = TextMessage(
-      //   text: message.messageContent,
-      //   timestamp: DateTime.now(),
-      //   userId: message.senderId.toString(),
-      //   isLocalUser: message.isMineMessage(),
-      // );
-
-      // smartReply.suggestReplies(message.messageContent,
-      //     message.createdAt, message.senderId.toString());
       smartReply.addMessageToConversationFromRemoteUser(
           message.isEncrypted == 1
               ? message.messageContent.decrypted()
@@ -1614,8 +1218,7 @@ class ChatDetailController extends GetxController {
   }
 
   Future<Map<String, String>> uploadMedia(
-      {required BuildContext context,
-      required String messageId,
+      {required String messageId,
       required Media media,
       required File mainFile,
       File? thumbnailFile,
@@ -1720,7 +1323,7 @@ class ChatDetailController extends GetxController {
         });
       } else {
         AppUtil.showToast(
-            context: context,
+            context: Get.context!,
             message: LocalizationString.noInternet,
             isSuccess: false);
       }
@@ -1817,21 +1420,6 @@ class ChatDetailController extends GetxController {
       }
     } else {
       showNewMessageBanner(message, message.roomId);
-      // keep this commented as it is already handled in chatcontroller
-      // await getIt<DBManager>().updateUnReadCount(roomId: message.roomId);
-    }
-
-    ChatRoomModel? existingRoom =
-        await getIt<DBManager>().getRoomById(message.roomId);
-    if (existingRoom == null) {
-      // save room in database
-
-      await getRoomDetail(message.roomId, (chatroom) async {
-        await getIt<DBManager>().saveRooms([chatroom]);
-        await getIt<DBManager>().saveMessage(chatRoom:chatroom, chatMessages:[message]);
-      });
-    } else {
-      await getIt<DBManager>().saveMessage(chatRoom:existingRoom, chatMessages:[message]);
     }
 
     update();
@@ -1952,9 +1540,9 @@ class ChatDetailController extends GetxController {
   }
 
   // call
-  void initiateVideoCall(BuildContext context) {
+  void initiateVideoCall() {
     PermissionUtils.requestPermission(
-        [Permission.camera, Permission.microphone], context,
+        [Permission.camera, Permission.microphone], Get.context!,
         isOpenSettings: false, permissionGrant: () async {
       Call call = Call(
           uuid: '',
@@ -1963,24 +1551,24 @@ class ChatDetailController extends GetxController {
           token: '',
           isOutGoing: true,
           callType: 2,
-          opponent: chatRoom.value!.opponent.userDetail);
+          opponent: opponent.value!);
 
       agoraCallController.makeCallRequest(call: call);
     }, permissionDenied: () {
       AppUtil.showToast(
-          context: context,
+          context: Get.context!,
           message: LocalizationString.pleaseAllowAccessToCameraForVideoCall,
           isSuccess: false);
     }, permissionNotAskAgain: () {
       AppUtil.showToast(
-          context: context,
+          context: Get.context!,
           message: LocalizationString.pleaseAllowAccessToCameraForVideoCall,
           isSuccess: false);
     });
   }
 
-  void initiateAudioCall(BuildContext context) {
-    PermissionUtils.requestPermission([Permission.microphone], context,
+  void initiateAudioCall() {
+    PermissionUtils.requestPermission([Permission.microphone], Get.context!,
         isOpenSettings: false, permissionGrant: () async {
       Call call = Call(
           uuid: '',
@@ -1989,17 +1577,17 @@ class ChatDetailController extends GetxController {
           token: '',
           isOutGoing: true,
           callType: 1,
-          opponent: chatRoom.value!.opponent.userDetail);
+          opponent: opponent.value!);
 
       agoraCallController.makeCallRequest(call: call);
     }, permissionDenied: () {
       AppUtil.showToast(
-          context: context,
+          context: Get.context!,
           message: LocalizationString.pleaseAllowAccessToMicrophoneForAudioCall,
           isSuccess: false);
     }, permissionNotAskAgain: () {
       AppUtil.showToast(
-          context: context,
+          context: Get.context!,
           message: LocalizationString.pleaseAllowAccessToMicrophoneForAudioCall,
           isSuccess: false);
     });

@@ -1,20 +1,22 @@
-import 'dart:math';
+import 'dart:math' as math;
 import 'package:foap/helper/common_import.dart';
 import 'package:path/path.dart' as p;
+import 'dart:developer';
+import 'package:get/get.dart';
 
 class DBManager {
-  // final db = Localstore.instance;
+  final ChatDetailController _chatDetailController = Get.find();
+  final ChatHistoryController _chatHistoryController = Get.find();
+
   late Database database;
-  var random = Random.secure();
+  var random = math.Random.secure();
 
   createDatabase() async {
     var databasesPath = await getDatabasesPath();
     var path = p.join(databasesPath, 'socialified.db');
 
-    print(databasesPath);
     try {
       await Directory(databasesPath).create(recursive: true);
-      print('createDatabase');
       database = await openDatabase(path,
           version: 2,
           onCreate: (Database db, int version) async {
@@ -33,7 +35,6 @@ class DBManager {
           },
           onOpen: (db) {},
           onUpgrade: (db, oldVersion, currentVersion) async {
-            print('onUpgrade');
             await db.execute(
                 'CREATE TABLE ChatMessageUser (chat_message_id INTEGER,user_id INTEGER,status INTEGER)');
             await db.execute(
@@ -98,6 +99,26 @@ class DBManager {
   //   }
   // }
 
+  newMessageReceived(ChatMessageModel message) async {
+    ChatRoomModel? existingRoom =
+        await getIt<DBManager>().getRoomById(message.roomId);
+    if (existingRoom == null) {
+      // save room in database
+      print('1');
+
+      _chatDetailController.getRoomDetail(message.roomId, (chatroom) async {
+        await getIt<DBManager>().saveRooms([chatroom]);
+        await getIt<DBManager>().saveMessage(chatMessages: [message]);
+      });
+    } else {
+      print('2');
+      await getIt<DBManager>().saveMessage(chatMessages: [message]);
+    }
+
+    _chatDetailController.newMessageReceived(message);
+    _chatHistoryController.newMessageReceived(message);
+  }
+
   Future saveRooms(List<ChatRoomModel> chatRooms) async {
     var batch = database.batch();
 
@@ -126,11 +147,10 @@ class DBManager {
         }
         if (chatRoom.lastMessage != null) {
           saveMessage(
-              chatRoom: chatRoom,
-              chatMessages: [chatRoom.lastMessage!],
-              currentBatch: batch);
+              chatMessages: [chatRoom.lastMessage!], currentBatch: batch);
         }
       } else {
+        print('1');
         updateRoom(chatRoom);
       }
     }
@@ -140,9 +160,10 @@ class DBManager {
   Future updateRoom(ChatRoomModel chatRoom) async {
     // ChatRoomModel? room = await getRoomById(chatRoom.id);
     ChatMessageModel? lastMessage = chatRoom.lastMessage;
-    int? updateAt = chatRoom.updatedAt;
+    int? updateAt = chatRoom.updatedAt ?? DateTime.now().millisecondsSinceEpoch;
     var batch = database.batch();
 
+    print('updateAt $updateAt');
     // await database.transaction((txn) async {
     batch.rawUpdate('UPDATE ChatRooms '
         'SET title = "${chatRoom.name}",'
@@ -174,13 +195,12 @@ class DBManager {
     await batch.commit(noResult: true);
   }
 
-  Future updateRoomUpdateAtTime(ChatRoomModel chatRoom) async {
+  Future updateRoomUpdateAtTime(int chatRoomId) async {
     int? updateAt = DateTime.now().millisecondsSinceEpoch;
 
-    print('updateRoomUpdateAtTime');
     await database.transaction((txn) async {
       txn.rawUpdate(
-          'UPDATE ChatRooms SET updated_at = $updateAt WHERE id = ${chatRoom.id}');
+          'UPDATE ChatRooms SET updated_at = $updateAt WHERE id = $chatRoomId');
     });
   }
 
@@ -365,8 +385,7 @@ class DBManager {
   }
 
   saveMessage(
-      {required ChatRoomModel chatRoom,
-      required List<ChatMessageModel> chatMessages,
+      {required List<ChatMessageModel> chatMessages,
       Batch? currentBatch}) async {
     var batch = currentBatch ?? database.batch();
 
@@ -394,7 +413,7 @@ class DBManager {
           '${chatMessage.id},'
           '${chatMessage.isEncrypted}, '
           '${chatMessage.chatVersion}, '
-          '"${chatRoom.id}", '
+          '"${chatMessage.roomId}", '
           '"${chatMessage.status}", '
           '${chatMessage.messageType},'
           '"${chatMessage.messageContent}", '
@@ -409,7 +428,7 @@ class DBManager {
 
       if (chatMessage.isDateSeparator == false &&
           chatMessage.messageContentType != MessageContentType.groupAction) {
-        updateRoomUpdateAtTime(chatRoom);
+        updateRoomUpdateAtTime(chatMessage.roomId);
       }
 
       saveUserInCache(

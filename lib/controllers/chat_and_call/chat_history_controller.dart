@@ -42,6 +42,7 @@ class ChatHistoryController extends GetxController {
   searchTextChanged(String text) {
     if (text.isEmpty) {
       searchedRooms.value = allRooms;
+      update();
       return;
     }
     searchedRooms.value = allRooms.where((room) {
@@ -52,11 +53,11 @@ class ChatHistoryController extends GetxController {
       }
     }).toList();
     searchedRooms.refresh();
+    update();
   }
 
   clearUnreadCount({required ChatRoomModel chatRoom}) async {
     getIt<DBManager>().clearUnReadCount(roomId: chatRoom.id);
-
     int roomsWithUnreadMessageCount =
         await getIt<DBManager>().roomsWithUnreadMessages();
     _dashboardController.updateUnreadMessageCount(roomsWithUnreadMessageCount);

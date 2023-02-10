@@ -16,7 +16,7 @@ class PageListingState extends State<PageListing> {
     // TODO: implement initState
 
     clubsController.getCategories();
-    clubsController.getClubs();
+    // clubsController.getClubs();
     super.initState();
   }
 
@@ -108,7 +108,7 @@ class PageListingState extends State<PageListing> {
                               if (scrollController.position.maxScrollExtent ==
                                   scrollController.position.pixels) {
                                 if (!clubsController.isLoadingClubs.value) {
-                                  clubsController.getClubs();
+                                  // clubsController.getClubs();
                                 }
                               }
                             });

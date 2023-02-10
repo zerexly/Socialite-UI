@@ -170,6 +170,7 @@ class _EnterGroupInfoState extends State<EnterGroupInfo> {
           isSuccess: false);
       return;
     }
+    EasyLoading.show(status: LocalizationString.loading);
     enterGroupInfoController.createGroup(
         name: groupName.text,
         description: groupDescription.text,

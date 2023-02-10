@@ -46,31 +46,46 @@ class ClubsController extends GetxController {
     canLoadMoreMembers = true;
   }
 
-  selectedSegmentIndex(int index) {
+  refreshClubs() {
+    canLoadMoreClubs = true;
+    selectedSegmentIndex(index: segmentIndex.value, forceRefresh: true);
+  }
+
+  selectedSegmentIndex({required int index, required bool forceRefresh}) {
     if (isLoadingClubs.value == true) {
       return;
     }
     update();
 
-    if (index == 0 && segmentIndex.value != index) {
+    if (index == 0 && (segmentIndex.value != index || forceRefresh == true)) {
       clear();
-      getClubs();
-    } else if (index == 1 && segmentIndex.value != index) {
+      getClubs(isStartOver: true);
+    } else if (index == 1 &&
+        (segmentIndex.value != index || forceRefresh == true)) {
       clear();
-      getClubs(isJoined: 1);
-    } else if (index == 2 && segmentIndex.value != index) {
+      getClubs(isJoined: 1, isStartOver: true);
+    } else if (index == 2 &&
+        (segmentIndex.value != index || forceRefresh == true)) {
       clear();
-      getClubs(userId: getIt<UserProfileManager>().user!.id);
-    } else if (index == 3 && segmentIndex.value != index) {
+      getClubs(userId: getIt<UserProfileManager>().user!.id, isStartOver: true);
+    } else if (index == 3 &&
+        (segmentIndex.value != index || forceRefresh == true)) {
       getClubInvitations();
     }
 
     segmentIndex.value = index;
   }
 
-  getClubs({String? name, int? categoryId, int? userId, int? isJoined}) {
+  getClubs(
+      {String? name,
+      int? categoryId,
+      int? userId,
+      int? isJoined,
+      required bool isStartOver}) {
     if (canLoadMoreClubs) {
-      isLoadingClubs.value = true;
+      if (isStartOver == true) {
+        isLoadingClubs.value = true;
+      }
       ApiController()
           .getClubs(
               name: name,
@@ -80,11 +95,12 @@ class ClubsController extends GetxController {
               page: clubsPage)
           .then((response) {
         clubs.addAll(response.clubs);
+        clubs.value = clubs.toSet().toList();
         isLoadingClubs.value = false;
 
-        clubsPage += 1;
         if (response.clubs.length == response.metaData?.perPage) {
           canLoadMoreClubs = true;
+          clubsPage += 1;
         } else {
           canLoadMoreClubs = false;
         }

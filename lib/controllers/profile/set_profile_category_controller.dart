@@ -14,7 +14,6 @@ class SetProfileCategoryController extends GetxController {
 
   setProfileCategoryType(int categoryType) {
     profileCategoryType.value = categoryType;
-    print('categoryType $categoryType');
     update();
   }
 

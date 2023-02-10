@@ -362,10 +362,10 @@ class _GroupChatRoomDetailState extends State<GroupChatRoomDetail> {
   }
 
   void videoCall() {
-    chatDetailController.initiateVideoCall(context);
+    chatDetailController.initiateVideoCall();
   }
 
   void audioCall() {
-    chatDetailController.initiateAudioCall(context);
+    chatDetailController.initiateAudioCall();
   }
 }

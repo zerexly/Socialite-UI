@@ -1,3 +1,5 @@
+import 'package:foap/model/user_model.dart';
+
 class MyInvitationsModel  {
   int? id;
   int? relationShipId;
@@ -6,7 +8,7 @@ class MyInvitationsModel  {
   int? createdAt;
   int? createdBy;
   RelationShip? relationShip;
-  CreatedBy? createdByObj;
+  UserModel? createdByObj;
 
   MyInvitationsModel(
       {this.id,
@@ -29,7 +31,7 @@ class MyInvitationsModel  {
         ? RelationShip.fromJson(json['relationShip'])
         : null;
     createdByObj = json['createdBy'] != null
-        ? CreatedBy.fromJson(json['createdBy'])
+        ? UserModel.fromJson(json['createdBy'])
         : null;
   }
 }
@@ -53,55 +55,55 @@ class RelationShip {
   }
 }
 
-class CreatedBy {
-  int? id;
-  String? username;
-  String? email;
-  String? bio;
-  String? sex;
-  String? image;
-  int? isReported;
-  String? picture;
-  String? userStory;
-  String? profileCategoryName;
-
-  CreatedBy(
-      {this.id,
-        this.username,
-        this.email,
-        this.bio,
-        this.sex,
-        this.image,
-        this.isReported,
-        this.picture,
-        this.userStory,
-        this.profileCategoryName});
-
-  CreatedBy.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    username = json['username'];
-    email = json['email'];
-    bio = json['bio'];
-    sex = json['sex'];
-    image = json['image'];
-    isReported = json['is_reported'];
-    picture = json['picture'];
-    userStory = json['userStory'];
-    profileCategoryName = json['profileCategoryName'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['id'] = id;
-    data['username'] = username;
-    data['email'] = email;
-    data['bio'] = bio;
-    data['sex'] = sex;
-    data['image'] = image;
-    data['is_reported'] = isReported;
-    data['picture'] = picture;
-    data['userStory'] = userStory;
-    data['profileCategoryName'] = profileCategoryName;
-    return data;
-  }
-}
+// class CreatedBy {
+//   int? id;
+//   String? username;
+//   String? email;
+//   String? bio;
+//   String? sex;
+//   String? image;
+//   int? isReported;
+//   String? picture;
+//   String? userStory;
+//   String? profileCategoryName;
+//
+//   CreatedBy(
+//       {this.id,
+//         this.username,
+//         this.email,
+//         this.bio,
+//         this.sex,
+//         this.image,
+//         this.isReported,
+//         this.picture,
+//         this.userStory,
+//         this.profileCategoryName});
+//
+//   CreatedBy.fromJson(Map<String, dynamic> json) {
+//     id = json['id'];
+//     username = json['username'];
+//     email = json['email'];
+//     bio = json['bio'];
+//     sex = json['sex'];
+//     image = json['image'];
+//     isReported = json['is_reported'];
+//     picture = json['picture'];
+//     userStory = json['userStory'];
+//     profileCategoryName = json['profileCategoryName'];
+//   }
+//
+//   Map<String, dynamic> toJson() {
+//     final Map<String, dynamic> data = <String, dynamic>{};
+//     data['id'] = id;
+//     data['username'] = username;
+//     data['email'] = email;
+//     data['bio'] = bio;
+//     data['sex'] = sex;
+//     data['image'] = image;
+//     data['is_reported'] = isReported;
+//     data['picture'] = picture;
+//     data['userStory'] = userStory;
+//     data['profileCategoryName'] = profileCategoryName;
+//     return data;
+//   }
+// }

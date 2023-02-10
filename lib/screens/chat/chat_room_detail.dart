@@ -11,16 +11,16 @@ class ChatRoomDetail extends StatefulWidget {
 }
 
 class _ChatRoomDetailState extends State<ChatRoomDetail> {
-  final ChatRoomDetailController chatRoomDetailController = Get.find();
-  final ChatDetailController chatDetailController = Get.find();
+  final ChatRoomDetailController _chatRoomDetailController = Get.find();
+  final ChatDetailController _chatDetailController = Get.find();
   final SettingsController _settingsController = Get.find();
 
   @override
   void initState() {
     if (_settingsController.setting.value!.enableStarMessage) {
-      chatRoomDetailController.getStarredMessages(widget.chatRoom);
+      _chatRoomDetailController.getStarredMessages(widget.chatRoom);
     }
-    chatRoomDetailController.getUpdatedChatRoomDetail(widget.chatRoom);
+    _chatDetailController.getUpdatedChatRoomDetail(widget.chatRoom);
     super.initState();
   }
 
@@ -43,35 +43,35 @@ class _ChatRoomDetailState extends State<ChatRoomDetail> {
                 ).p8.ripple(() {
                   Get.back();
                 }),
-                Obx(() => chatRoomDetailController.room.value == null
+                Obx(() => _chatDetailController.chatRoom.value == null
                     ? Container()
                     : Text(
-                        chatRoomDetailController.room.value!.isGroupChat
-                            ? chatRoomDetailController.room.value!.name!
-                            : chatRoomDetailController
-                                .room.value!.opponent.userDetail.userName,
+                        _chatDetailController.chatRoom.value!.isGroupChat
+                            ? _chatDetailController.chatRoom.value!.name!
+                            : _chatDetailController
+                                .chatRoom.value!.opponent.userDetail.userName,
                         style: Theme.of(context)
                             .textTheme
                             .titleMedium!
                             .copyWith(fontWeight: FontWeight.w600),
                       )),
-                if (chatRoomDetailController.room.value?.amIGroupAdmin == true)
-                  ThemeIconWidget(
-                    ThemeIcon.edit,
-                    color: Theme.of(context).iconTheme.color,
-                    size: 20,
-                  ).ripple(() {
-                    Get.to(() => UpdateGroupInfo(
-                            group: chatRoomDetailController.room.value!))!
-                        .then((value) {
-                      chatRoomDetailController
-                          .getUpdatedChatRoomDetail(widget.chatRoom);
-                    });
-                  }),
-                if (chatRoomDetailController.room.value?.amIGroupAdmin == false)
-                  const SizedBox(
-                    width: 20,
-                  )
+                Obx(() => _chatDetailController.chatRoom.value?.amIGroupAdmin ==
+                        true && _chatDetailController.chatRoom.value?.isGroupChat == true
+                    ? ThemeIconWidget(
+                        ThemeIcon.edit,
+                        color: Theme.of(context).iconTheme.color,
+                        size: 20,
+                      ).ripple(() {
+                        Get.to(() => UpdateGroupInfo(
+                                group: _chatDetailController.chatRoom.value!))!
+                            .then((value) {
+                          _chatDetailController
+                              .getUpdatedChatRoomDetail(widget.chatRoom);
+                        });
+                      })
+                    : const SizedBox(
+                        width: 20,
+                      )),
               ],
             ).hP16,
             divider(context: context).tP8,
@@ -98,7 +98,8 @@ class _ChatRoomDetailState extends State<ChatRoomDetail> {
                           ],
                         ),
                   Obx(() =>
-                      chatRoomDetailController.room.value?.description == null
+                      (_chatDetailController.chatRoom.value?.description ?? '')
+                              .isEmpty
                           ? Container()
                           : Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -113,9 +114,9 @@ class _ChatRoomDetailState extends State<ChatRoomDetail> {
                   const SizedBox(
                     height: 50,
                   ),
-                  Obx(() => chatRoomDetailController.room.value?.isGroupChat ==
+                  Obx(() => _chatDetailController.chatRoom.value?.isGroupChat ==
                               true &&
-                          chatRoomDetailController.room.value?.amIGroupAdmin ==
+                          _chatDetailController.chatRoom.value?.amIGroupAdmin ==
                               true
                       ? Column(children: [
                           groupSettingWidget(),
@@ -158,7 +159,7 @@ class _ChatRoomDetailState extends State<ChatRoomDetail> {
       color: Theme.of(context).cardColor,
       width: double.infinity,
       child: Text(
-        chatRoomDetailController.room.value!.description!,
+        _chatDetailController.chatRoom.value!.description!,
         style: Theme.of(context)
             .textTheme
             .titleSmall!
@@ -294,7 +295,7 @@ class _ChatRoomDetailState extends State<ChatRoomDetail> {
               ));
         }),
         divider(context: context),
-        chatRoomDetailController.starredMessages.isNotEmpty &&
+        _chatRoomDetailController.starredMessages.isNotEmpty &&
                 _settingsController.setting.value!.enableStarMessage
             ? Obx(() => Container(
                   height: 50,
@@ -326,7 +327,7 @@ class _ChatRoomDetailState extends State<ChatRoomDetail> {
                       Row(
                         children: [
                           Text(
-                            '(${chatRoomDetailController.starredMessages.length})',
+                            '(${_chatRoomDetailController.starredMessages.length})',
                             style: Theme.of(context)
                                 .textTheme
                                 .bodyLarge!
@@ -388,8 +389,8 @@ class _ChatRoomDetailState extends State<ChatRoomDetail> {
             ).hP8,
           ),
         ).ripple(() {
-          chatRoomDetailController.deleteRoomChat(widget.chatRoom);
-          chatDetailController.deleteChat(widget.chatRoom.id);
+          _chatRoomDetailController.deleteRoomChat(widget.chatRoom);
+          _chatDetailController.deleteChat(widget.chatRoom.id);
           AppUtil.showToast(
               context: context,
               message: LocalizationString.chatDeleted,
@@ -421,9 +422,9 @@ class _ChatRoomDetailState extends State<ChatRoomDetail> {
           ),
         ).ripple(() {
           if (widget.chatRoom.amIMember) {
-            chatRoomDetailController.leaveGroup(widget.chatRoom);
+            _chatRoomDetailController.leaveGroup(widget.chatRoom);
           } else {
-            chatRoomDetailController.deleteGroup(widget.chatRoom);
+            _chatRoomDetailController.deleteGroup(widget.chatRoom);
           }
           Get.back();
         }),
@@ -486,20 +487,20 @@ class _ChatRoomDetailState extends State<ChatRoomDetail> {
   }
 
   Widget groupInfo() {
-    return Obx(() => chatRoomDetailController.room.value == null
+    return Obx(() => _chatDetailController.chatRoom.value == null
         ? Container()
         : Column(
             children: [
               AvatarView(
-                url: chatRoomDetailController.room.value!.image,
+                url: _chatDetailController.chatRoom.value!.image,
                 size: 100,
-                name: chatRoomDetailController.room.value!.name!,
+                name: _chatDetailController.chatRoom.value!.name!,
               ),
               const SizedBox(
                 height: 10,
               ),
               Text(
-                chatRoomDetailController.room.value!.name!,
+                _chatDetailController.chatRoom.value!.name!,
                 style: Theme.of(context)
                     .textTheme
                     .titleSmall!
@@ -510,12 +511,12 @@ class _ChatRoomDetailState extends State<ChatRoomDetail> {
   }
 
   Widget opponentInfo() {
-    return Obx(() => chatRoomDetailController.room.value == null
+    return Obx(() => _chatDetailController.chatRoom.value == null
         ? Container()
         : Column(
             children: [
               UserAvatarView(
-                user: chatRoomDetailController.room.value!.opponent.userDetail,
+                user: _chatDetailController.chatRoom.value!.opponent.userDetail,
                 size: 100,
                 onTapHandler: () {
                   //open live
@@ -525,8 +526,8 @@ class _ChatRoomDetailState extends State<ChatRoomDetail> {
                 height: 10,
               ),
               Text(
-                chatRoomDetailController
-                    .room.value!.opponent.userDetail.userName,
+                _chatDetailController
+                    .chatRoom.value!.opponent.userDetail.userName,
                 style: Theme.of(context)
                     .textTheme
                     .titleSmall!
@@ -565,13 +566,13 @@ class _ChatRoomDetailState extends State<ChatRoomDetail> {
   }
 
   Widget participantsWidget() {
-    return Obx(() => chatRoomDetailController.room.value == null
+    return Obx(() => _chatDetailController.chatRoom.value == null
         ? Container()
         : Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '${chatRoomDetailController.room.value!.roomMembers.length} ${LocalizationString.participants}',
+                '${_chatDetailController.chatRoom.value!.roomMembers.length} ${LocalizationString.participants}',
                 style: Theme.of(context)
                     .textTheme
                     .titleMedium!
@@ -582,23 +583,23 @@ class _ChatRoomDetailState extends State<ChatRoomDetail> {
               ),
               Container(
                 height:
-                    (chatRoomDetailController.room.value!.roomMembers.length +
-                            (chatRoomDetailController.room.value!.amIGroupAdmin
+                    (_chatDetailController.chatRoom.value!.roomMembers.length +
+                            (_chatDetailController.chatRoom.value!.amIGroupAdmin
                                 ? 1
                                 : 0)) *
                         60,
                 color: Theme.of(context).cardColor,
                 child: ListView.separated(
                     padding: EdgeInsets.zero,
-                    itemCount: chatRoomDetailController
-                            .room.value!.roomMembers.length +
-                        (chatRoomDetailController.room.value!.amIGroupAdmin
+                    itemCount: _chatDetailController
+                            .chatRoom.value!.roomMembers.length +
+                        (_chatDetailController.chatRoom.value!.amIGroupAdmin
                             ? 1
                             : 0),
                     physics: const NeverScrollableScrollPhysics(),
                     itemBuilder: (ctx, index) {
                       if (index == 0 &&
-                          chatRoomDetailController.room.value!.amIGroupAdmin) {
+                          _chatDetailController.chatRoom.value!.amIGroupAdmin) {
                         return Row(
                           children: [
                             Container(
@@ -629,9 +630,10 @@ class _ChatRoomDetailState extends State<ChatRoomDetail> {
                               builder: (context) => FractionallySizedBox(
                                   heightFactor: 0.9,
                                   child: SelectUserForGroupChat(
-                                    group: chatRoomDetailController.room.value!,
+                                    group:
+                                        _chatDetailController.chatRoom.value!,
                                     invitedUserCallback: () {
-                                      chatRoomDetailController
+                                      _chatDetailController
                                           .getUpdatedChatRoomDetail(
                                               widget.chatRoom);
                                     },
@@ -639,10 +641,10 @@ class _ChatRoomDetailState extends State<ChatRoomDetail> {
                         });
                       }
                       ChatRoomMember member =
-                          chatRoomDetailController.room.value!.roomMembers[
+                          _chatDetailController.chatRoom.value!.roomMembers[
                               index -
-                                  (chatRoomDetailController
-                                          .room.value!.amIGroupAdmin
+                                  (_chatDetailController
+                                          .chatRoom.value!.amIGroupAdmin
                                       ? 1
                                       : 0)];
                       return Row(
@@ -756,13 +758,13 @@ class _ChatRoomDetailState extends State<ChatRoomDetail> {
                         userId: member.userDetail.id,
                       ));
                 } else if (item.id == '2') {
-                  chatRoomDetailController.makeUserAsAdmin(
+                  _chatRoomDetailController.makeUserAsAdmin(
                       member.userDetail, widget.chatRoom);
                 } else if (item.id == '3') {
-                  chatRoomDetailController.removeUserAsAdmin(
+                  _chatRoomDetailController.removeUserAsAdmin(
                       member.userDetail, widget.chatRoom);
                 } else if (item.id == '4') {
-                  chatRoomDetailController.removeUserFormGroup(
+                  _chatRoomDetailController.removeUserFormGroup(
                       member.userDetail, widget.chatRoom);
                 }
               },
@@ -770,25 +772,25 @@ class _ChatRoomDetailState extends State<ChatRoomDetail> {
   }
 
   void exportChatWithMedia() {
-    chatRoomDetailController.exportChat(
+    _chatRoomDetailController.exportChat(
         roomId: widget.chatRoom.id, includeMedia: true);
   }
 
   void exportChatWithoutMedia() {
-    chatRoomDetailController.exportChat(
+    _chatRoomDetailController.exportChat(
         roomId: widget.chatRoom.id, includeMedia: false);
   }
 
   leaveChat() {
-    chatRoomDetailController.leaveGroup(widget.chatRoom);
+    _chatRoomDetailController.leaveGroup(widget.chatRoom);
     Get.back();
   }
 
   void videoCall() {
-    chatDetailController.initiateVideoCall(context);
+    _chatDetailController.initiateVideoCall();
   }
 
   void audioCall() {
-    chatDetailController.initiateAudioCall(context);
+    _chatDetailController.initiateAudioCall();
   }
 }

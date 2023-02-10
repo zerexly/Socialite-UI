@@ -91,10 +91,9 @@ class ApiResponseModel {
 
   List<InterestModel> interests = [];
 
-  List<GetRelationshipModel> relationships = [];
-  List<MyRelationsModel> myRelationships = [];
+  List<RelationshipName> relationshipNames = [];
+  List<MyRelationsModel> relationships = [];
   List<MyInvitationsModel> myInvitations = [];
-  List<MyRelationsModel>relationshipsById= [];
 
   List<VerificationRequest> verificationRequests = [];
 
@@ -126,7 +125,7 @@ class ApiResponseModel {
     dynamic data = json['data'];
     model.isInvalidLogin = json['isInvalidLogin'] == null ? false : true;
 
-    log(json.toString());
+    // log(json.toString());
     // log(url);
 
     if (model.success) {
@@ -202,21 +201,51 @@ class ApiResponseModel {
                 List<ClubModel>.from(items.map((x) => ClubModel.fromJson(x)));
             model.metaData = APIMetaData.fromJson(data['club']['_meta']);
           }
-        } else if (data['invitation'] != null && url == NetworkConstantsUtil.clubJoinInvites) {
-          var items = data['invitation']['items'];
-          if (items != null && items.length > 0) {
-            model.clubInvitations = List<ClubInvitation>.from(
-                items.map((x) => ClubInvitation.fromJson(x)));
-            model.metaData = APIMetaData.fromJson(data['invitation']['_meta']);
+        } else if (data['invitation'] != null) {
+          if (url == NetworkConstantsUtil.clubJoinInvites) {
+            var items = data['invitation']['items'];
+            if (items != null && items.length > 0) {
+              model.clubInvitations = List<ClubInvitation>.from(
+                  items.map((x) => ClubInvitation.fromJson(x)));
+              model.metaData =
+                  APIMetaData.fromJson(data['invitation']['_meta']);
+            }
+          } else if (url == NetworkConstantsUtil.getRelationbyUser) {
+            var items = data['invitation'];
+            if (items != null && items.length > 0) {
+              model.relationships = List<MyRelationsModel>.from(
+                  items.map((x) => MyRelationsModel.fromJson(x)));
+            }
+          } else if (url == NetworkConstantsUtil.myInvitations) {
+            var items = data['invitation']['items'];
+            if (items != null && items.length > 0) {
+              model.myInvitations = List<MyInvitationsModel>.from(
+                  items.map((x) => MyInvitationsModel.fromJson(x)));
+            }
+          }
+        } else if (data['relations'] != null) {
+          if (url == NetworkConstantsUtil.myRelations ||
+              url == NetworkConstantsUtil.getRelationbyUser) {
+            var items = data['relations']['items'];
+            if (items != null && items.length > 0) {
+              model.relationships = List<MyRelationsModel>.from(
+                  items.map((x) => MyRelationsModel.fromJson(x)));
+              model.metaData = APIMetaData.fromJson(data['relations']['_meta']);
+            }
+          } else if (url == NetworkConstantsUtil.relationshipNames) {
+            var items = data['relations'];
+            if (url == NetworkConstantsUtil.relationshipNames) {
+              model.relationshipNames = List<RelationshipName>.from(
+                  items.map((x) => RelationshipName.fromJson(x)));
+            }
           }
         } else if (data['join_request'] != null) {
           var items = data['join_request']['items'];
-          if (items != null && items.length > 0) {
-            model.clubJoinRequests = List<ClubJoinRequest>.from(
-                items.map((x) => ClubJoinRequest.fromJson(x)));
-            model.metaData =
-                APIMetaData.fromJson(data['join_request']['_meta']);
-          }
+          // if (items != null && items.length > 0) {
+          model.clubJoinRequests = List<ClubJoinRequest>.from(
+              items.map((x) => ClubJoinRequest.fromJson(x)));
+          model.metaData = APIMetaData.fromJson(data['join_request']['_meta']);
+          // }
         } else if (data['club_id'] != null) {
           model.clubId = data['club_id'];
         } else if (data['audio'] != null) {
@@ -584,6 +613,9 @@ class ApiResponseModel {
               var roomData = data['room'];
               model.room = ChatRoomModel.fromJson(roomData);
             }
+          } else if (url == NetworkConstantsUtil.updateGroupChatRoom) {
+            var room = data['room'] as Map<String, dynamic>?;
+            model.roomId = room!['id'];
           }
         } else if (data['chatMessage'] != null) {
           var items = data['chatMessage']['items'];
@@ -600,38 +632,6 @@ class ApiResponseModel {
                   List<FAQModel>.from(items.map((x) => FAQModel.fromJson(x)));
             }
           }
-        }
-        else if (data['relations'] != null) {
-          var items = data['relations'];
-
-          if (items != null && items.length > 0) {
-            if (url == NetworkConstantsUtil.getRelationship) {
-              model.relationships = List<GetRelationshipModel>.from(
-                  items.map((x) => GetRelationshipModel.fromJson(x)));
-            }
-          }
-        }
-        else if (data['invitation'] != null && url == NetworkConstantsUtil.myRelations) {
-
-          var items = data['invitation']['items'];
-          if (items != null && items.length > 0) {
-            model.myRelationships = List<MyRelationsModel>.from(
-                items.map((x) => MyRelationsModel.fromJson(x)));
-          }
-        }
-        else if (data['invitation'] != null && url == NetworkConstantsUtil.getRelationbyId) {
-          var items = data['invitation'];
-          if (items != null && items.length > 0) {
-            model.myRelationships = List<MyRelationsModel>.from(
-                items.map((x) => MyRelationsModel.fromJson(x)));
-          }
-        }
-        else if (data['invitation'] != null && url == NetworkConstantsUtil.myInvitations) {
-           var items = data['invitation']['items'];
-           if (items != null && items.length > 0) {
-             model.myInvitations = List<MyInvitationsModel>.from(
-            items.map((x) => MyInvitationsModel.fromJson(x)));
-           }
         }
       }
     } else {

@@ -273,7 +273,6 @@ class ProfileController extends GetxController {
                       isFromSignup: false,
                     ));
               } else {
-                print('go back');
                 // Future.delayed(const Duration(milliseconds: 1200), () {
                 Get.close(1);
                 // });
@@ -398,7 +397,7 @@ class ProfileController extends GetxController {
   //////////////********** other user profile **************/////////////////
 
   void getOtherUserDetail(
-      {required int userId, required BuildContext context}) {
+      {required int userId}) {
     AppUtil.checkInternet().then((value) {
       if (value) {
         ApiController().getOtherUser(userId.toString()).then((response) async {
@@ -407,7 +406,7 @@ class ProfileController extends GetxController {
             update();
           } else {
             AppUtil.showToast(
-                context: context, message: response.message, isSuccess: false);
+                context: Get.context!, message: response.message, isSuccess: false);
           }
         });
       }

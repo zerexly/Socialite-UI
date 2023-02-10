@@ -11,15 +11,16 @@ class AcceptRejectInvitation extends StatefulWidget {
 
 class _AcceptRejectInvitationState extends State<AcceptRejectInvitation> {
   final RelationshipController _relationshipController = Get.find();
+
   @override
   void initState() {
     super.initState();
-    _relationshipController.getMyInvitations(() {});
+    _relationshipController.getMyInvitations();
   }
 
   String getRelationFromId(int id) {
     List outputList =
-        _relationshipController.relationship.where((o) => o.id == id).toList();
+        _relationshipController.relationshipNames.where((o) => o.id == id).toList();
     return outputList.isNotEmpty ? outputList[0].name : '';
   }
 
@@ -34,18 +35,23 @@ class _AcceptRejectInvitationState extends State<AcceptRejectInvitation> {
           ),
           backNavigationBar(
               context: context, title: LocalizationString.invites),
-          divider(context: context).tP8.paddingOnly(bottom: 20),
+          divider(context: context).vP16,
           Expanded(
             child: GetBuilder<RelationshipController>(
                 init: _relationshipController,
                 builder: (ctx) {
                   return _relationshipController.myInvitations.isNotEmpty
-                      ? ListView.builder(
-                          padding: const EdgeInsets.all(0),
+                      ? ListView.separated(
+                          padding: const EdgeInsets.only(left: 16, right: 16),
                           itemCount:
                               _relationshipController.myInvitations.length,
                           itemBuilder: (context, index) {
                             return getRow(index);
+                          },
+                          separatorBuilder: (context, index) {
+                            return const SizedBox(
+                              height: 20,
+                            );
                           })
                       : SizedBox(
                           height: MediaQuery.of(context).size.height * 0.5,
@@ -63,33 +69,41 @@ class _AcceptRejectInvitationState extends State<AcceptRejectInvitation> {
   }
 
   Widget getRow(int i) {
-    return Card(
-      color: Colors.black,
+    return Container(
+      color: Theme.of(context).cardColor,
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          ListTile(
-            leading: AvatarView(
-              url: _relationshipController
-                      .myInvitations[i].createdByObj?.picture ??
-                  '',
-              size: 69,
-            ),
-            title: Text(
-              _relationshipController.myInvitations[i].createdByObj?.username ??
-                  '',
-              style: Theme.of(context)
-                  .textTheme
-                  .titleLarge!
-                  .copyWith(fontWeight: FontWeight.w700, color: Colors.white),
-            ),
-            subtitle: Text(
-              "${LocalizationString.claimsToBe} ${_relationshipController.myInvitations[i].relationShip?.name}",
-              style: Theme.of(context)
-                  .textTheme
-                  .titleMedium!
-                  .copyWith(fontWeight: FontWeight.w300, color: Colors.white),
-            ),
-          ).paddingOnly(bottom: 10),
+          Row(
+            children: [
+              AvatarView(
+                url: _relationshipController
+                        .myInvitations[i].createdByObj?.picture ??
+                    '',
+                // size: 60,
+              ),
+              const SizedBox(
+                width: 10,
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    _relationshipController
+                            .myInvitations[i].createdByObj?.userName ??
+                        '',
+                    style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                        fontWeight: FontWeight.w700, color: Colors.white),
+                  ),
+                  Text(
+                    "${LocalizationString.claimsToBe} ${_relationshipController.myInvitations[i].relationShip?.name}",
+                    style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                        fontWeight: FontWeight.w300, color: Colors.white),
+                  )
+                ],
+              )
+            ],
+          ).setPadding(bottom: 10),
           Row(children: [
             Expanded(
                 flex: 1, // you can play with this value, by default it is 1
@@ -105,9 +119,12 @@ class _AcceptRejectInvitationState extends State<AcceptRejectInvitation> {
                       _relationshipController.acceptRejectInvitation(
                           _relationshipController.myInvitations[i].id ?? 0, 4,
                           () {
-                        _relationshipController.getMyInvitations(() {});
+                        _relationshipController.getMyInvitations();
                       });
-                    }).paddingOnly(left: 15, right: 10, bottom: 10)),
+                    })),
+            const SizedBox(
+              width: 10,
+            ),
             Expanded(
               flex: 1, // you can play with this value, by default it is 1
               child: FilledButtonType1(
@@ -123,13 +140,13 @@ class _AcceptRejectInvitationState extends State<AcceptRejectInvitation> {
                     _relationshipController.acceptRejectInvitation(
                         _relationshipController.myInvitations[i].id ?? 0, 3,
                         () {
-                      _relationshipController.getMyInvitations(() {});
+                      _relationshipController.getMyInvitations();
                     });
-                  }).paddingOnly(left: 10, right: 15, bottom: 10),
+                  }),
             ),
           ])
         ],
-      ).paddingAll(10),
-    ).round(20).paddingOnly(left: 10, right: 10, bottom: 10);
+      ).p16,
+    ).round(20);
   }
 }

@@ -10,11 +10,9 @@ class RandomChatAndCallController extends GetxController {
   clear() {
     randomOnlineUser.value = null;
     stopSearching = true;
-    print('clear');
   }
 
   getRandomOnlineUsers({bool? startFresh, int? profileCategoryType}) {
-    print('stopSearching $stopSearching');
 
     if (startFresh == true) {
       stopSearching = false;

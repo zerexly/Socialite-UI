@@ -16,7 +16,10 @@ class UserProfileManager {
     Get.offAll(() => const LoginScreen());
     getIt<SocketManager>().disconnect();
     getIt<DBManager>().clearAllUnreadCount();
-    _dashboardController.indexChanged(0);
+
+    Future.delayed(const Duration(seconds: 2), () {
+      _dashboardController.indexChanged(0);
+    });
   }
 
   Future refreshProfile() async {

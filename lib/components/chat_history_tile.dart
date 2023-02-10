@@ -22,11 +22,19 @@ class ChatHistoryTile extends StatelessWidget {
                           color: Theme.of(context).primaryColor,
                           height: 45,
                           width: 45,
-                          child: const ThemeIconWidget(
-                            ThemeIcon.group,
-                            color: Colors.white,
-                            size: 35,
-                          ),
+                          child:
+                              model.image == null || (model.image ?? '').isEmpty
+                                  ? const ThemeIconWidget(
+                                      ThemeIcon.group,
+                                      color: Colors.white,
+                                      size: 35,
+                                    )
+                                  : CachedNetworkImage(
+                                      imageUrl: model.image!,
+                                      height: 35,
+                                      width: 35,
+                                      fit: BoxFit.cover,
+                                    ),
                         ).round(15)
                       : UserAvatarView(
                           size: 45,
@@ -63,8 +71,7 @@ class ChatHistoryTile extends StatelessWidget {
                               )
                             : model.lastMessage == null
                                 ? Container()
-                                :
-                        messageTypeShortInfo(
+                                : messageTypeShortInfo(
                                     message: model.lastMessage!,
                                     context: context,
                                   ),

@@ -35,7 +35,6 @@ class LoginController extends GetxController {
               await getIt<UserProfileManager>().refreshProfile();
               await _settingsController.getSettings();
               getIt<SocketManager>().connect();
-
               // ask for location
               getIt<LocationManager>().postLocation();
               if (response.isLoginFirstTime) {
@@ -177,7 +176,6 @@ class LoginController extends GetxController {
       userNameCheckStatus = 0;
       return;
     }
-    print('correct');
     AppUtil.checkInternet().then((value) {
       if (value) {
         // AppUtil.showLoader(context);

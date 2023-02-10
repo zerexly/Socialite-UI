@@ -179,10 +179,10 @@ class _FindRandomUserState extends State<FindRandomUser> {
   }
 
   void videoCall() {
-    _chatDetailController.initiateVideoCall(context);
+    _chatDetailController.initiateVideoCall();
   }
 
   void audioCall() {
-    _chatDetailController.initiateAudioCall(context);
+    _chatDetailController.initiateAudioCall();
   }
 }

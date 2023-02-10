@@ -164,104 +164,106 @@ class MyProfileState extends State<MyProfile> {
                       const SizedBox(
                         height: 40,
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Text(
-                                _profileController.user.value!.totalPost
-                                    .toString(),
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleLarge!
-                                    .copyWith(fontWeight: FontWeight.w600),
-                              ).bP8,
-                              Text(
-                                LocalizationString.posts,
-                                style: Theme.of(context).textTheme.bodySmall,
-                              ),
-                            ],
-                          ),
-                          // const Spacer(),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Text(
-                                '${_profileController.user.value!.totalFollower}',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleLarge!
-                                    .copyWith(fontWeight: FontWeight.w600),
-                              ).bP8,
-                              Text(
-                                LocalizationString.followers,
-                                style: Theme.of(context).textTheme.bodySmall,
-                              ),
-                            ],
-                          ).ripple(() {
-                            if (_profileController.user.value!.totalFollower >
-                                0) {
-                              Get.to(() => FollowerFollowingList(
-                                        isFollowersList: true,
+                      Container(
+                        color: Theme.of(context).cardColor,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  _profileController.user.value!.totalPost
+                                      .toString(),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleLarge!
+                                      .copyWith(fontWeight: FontWeight.w600),
+                                ).bP8,
+                                Text(
+                                  LocalizationString.posts,
+                                  style: Theme.of(context).textTheme.bodySmall,
+                                ),
+                              ],
+                            ),
+                            // const Spacer(),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  '${_profileController.user.value!.totalFollower}',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleLarge!
+                                      .copyWith(fontWeight: FontWeight.w600),
+                                ).bP8,
+                                Text(
+                                  LocalizationString.followers,
+                                  style: Theme.of(context).textTheme.bodySmall,
+                                ),
+                              ],
+                            ).ripple(() {
+                              if (_profileController.user.value!.totalFollower >
+                                  0) {
+                                Get.to(() => FollowerFollowingList(
+                                          isFollowersList: true,
+                                          userId: getIt<UserProfileManager>()
+                                              .user!
+                                              .id,
+                                        ))!
+                                    .then((value) {
+                                  loadData();
+                                });
+                              }
+                            }),
+                            // const Spacer(),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  '${_profileController.user.value!.totalFollowing}',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleLarge!
+                                      .copyWith(fontWeight: FontWeight.w600),
+                                ).bP8,
+                                Text(
+                                  LocalizationString.following,
+                                  style: Theme.of(context).textTheme.bodySmall,
+                                ),
+                              ],
+                            ).ripple(() {
+                              if (_profileController.user.value!.totalFollowing >
+                                  0) {
+                                Get.to(() => FollowerFollowingList(
+                                        isFollowersList: false,
                                         userId: getIt<UserProfileManager>()
                                             .user!
-                                            .id,
-                                      ))!
-                                  .then((value) {
-                                loadData();
-                              });
-                            }
-                          }),
+                                            .id))!
+                                    .then((value) {
+                                  loadData();
+                                });
+                              }
+                            }),
 
-                          // const Spacer(),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Text(
-                                '${_profileController.user.value!.totalFollowing}',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleLarge!
-                                    .copyWith(fontWeight: FontWeight.w600),
-                              ).bP8,
-                              Text(
-                                LocalizationString.following,
-                                style: Theme.of(context).textTheme.bodySmall,
-                              ),
-                            ],
-                          ).ripple(() {
-                            if (_profileController.user.value!.totalFollowing >
-                                0) {
-                              Get.to(() => FollowerFollowingList(
-                                      isFollowersList: false,
-                                      userId: getIt<UserProfileManager>()
-                                          .user!
-                                          .id))!
-                                  .then((value) {
-                                loadData();
-                              });
-                            }
-                          }),
-
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Text(
-                                _profileController.user.value!.giftSummary!
-                                    .totalCoin.formatNumber
-                                    .toString(),
-                                style: Theme.of(context).textTheme.titleLarge,
-                              ).bP8,
-                              Text(
-                                LocalizationString.coins,
-                                style: Theme.of(context).textTheme.bodySmall,
-                              ),
-                            ],
-                          ),
-                        ],
-                      ).p16.shadow(context: context).hP16,
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  _profileController.user.value!.giftSummary!
+                                      .totalCoin.formatNumber
+                                      .toString(),
+                                  style: Theme.of(context).textTheme.titleLarge,
+                                ).bP8,
+                                Text(
+                                  LocalizationString.coins,
+                                  style: Theme.of(context).textTheme.bodySmall,
+                                ),
+                              ],
+                            ),
+                          ],
+                        ).p16,
+                      ).round(15),
                       const SizedBox(
                         height: 40,
                       ),

@@ -75,73 +75,63 @@ class ClubsScreenShimmer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const SizedBox(
-          height: 15,
-        ),
-        SizedBox(
-          height: 5 * 350,
-          child: ListView.separated(
-              padding: const EdgeInsets.only(left: 16, right: 16),
-              itemCount: 5,
-              physics: const NeverScrollableScrollPhysics(),
-              itemBuilder: (BuildContext ctx, int index) {
-                return Container(
-                  // width: 250,
-                  height: 320,
-                  color: Theme.of(context).cardColor,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Expanded(
-                        child: Container(
-                          width: Get.width,
-                          height: double.infinity,
-                          color: Theme.of(context).cardColor,
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Text(
-                        'Club name',
-                        style: Theme.of(context)
-                            .textTheme
-                            .titleSmall!
-                            .copyWith(fontWeight: FontWeight.w600),
-                      ).p8,
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            '250k ${LocalizationString.clubMembers}',
-                            style: Theme.of(context).textTheme.bodyLarge,
-                          ),
-                          const Spacer(),
-                          SizedBox(
-                              height: 40,
-                              width: 120,
-                              child: FilledButtonType1(
-                                  text: LocalizationString.join,
-                                  onPress: () {}))
-                        ],
-                      ).setPadding(left: 12, right: 12, bottom: 20)
-                    ],
+    return ListView.separated(
+        padding: const EdgeInsets.only(left: 16, right: 16),
+        itemCount: 5,
+        physics: const NeverScrollableScrollPhysics(),
+        itemBuilder: (BuildContext ctx, int index) {
+          return Container(
+            // width: 250,
+            height: 320,
+            color: Theme.of(context).cardColor,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(
+                  child: Container(
+                    width: Get.width,
+                    height: double.infinity,
+                    color: Theme.of(context).cardColor,
                   ),
-                ).round(15).addShimmer(context);
-              },
-              separatorBuilder: (BuildContext ctx, int index) {
-                return const SizedBox(
-                  height: 25,
-                );
-              }),
-        ),
-      ],
-    ).bP16;
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  'Club name',
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleSmall!
+                      .copyWith(fontWeight: FontWeight.w600),
+                ).p8,
+                const SizedBox(
+                  height: 20,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      '250k ${LocalizationString.clubMembers}',
+                      style: Theme.of(context).textTheme.bodyLarge,
+                    ),
+                    const Spacer(),
+                    SizedBox(
+                        height: 40,
+                        width: 120,
+                        child: FilledButtonType1(
+                            text: LocalizationString.join,
+                            onPress: () {}))
+                  ],
+                ).setPadding(left: 12, right: 12, bottom: 20)
+              ],
+            ),
+          ).round(15).addShimmer(context);
+        },
+        separatorBuilder: (BuildContext ctx, int index) {
+          return const SizedBox(
+            height: 25,
+          );
+        });
   }
 }
 
@@ -385,7 +375,7 @@ class ShimmerUsers extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.separated(
-      padding: const EdgeInsets.only(top: 20),
+      padding: const EdgeInsets.only(left: 16, right: 16, top: 20, bottom: 100),
       itemCount: 20,
       itemBuilder: (ctx, index) {
         return Row(
