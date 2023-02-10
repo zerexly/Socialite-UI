@@ -66,7 +66,7 @@ class NetworkConstantsUtil {
   static String searchUsers =
       'users/search-user?expand=isFollowing,userLiveDetail';
   static String getMyProfile =
-      'users/profile?expand=totalFollowing,totalFollower,totalActivePost,userLiveDetail,giftSummary';
+      'users/profile?expand=totalFollowing,totalFollower,totalActivePost,userLiveDetail,giftSummary,language,interest';
 
   static String updateUserProfile = 'users/profile-update';
   static String updateProfileImage = 'users/update-profile-image';
@@ -236,9 +236,10 @@ class NetworkConstantsUtil {
   static String addUserPreference = 'datings/add-user-preference';
   static String getUserPreference =
       'datings/preference-profile?expand=preferenceInterest,preferenceLanguage';
-  // static String getDatingProfiles = 'users/profile?expand=interest,language';
-  static String getLanguages = 'languages';
+  static String getDatingProfiles = 'datings/preference-profile-match';
   static String profileLike = 'datings/profile-action-like';
   static String profileSkip = 'datings/profile-action-skip';
+  static String undoProfileLike = 'datings/profile-action-remove';
   static String matchedProfiles = 'datings/profile-matching';
+  static String getLanguages = 'languages';
 }

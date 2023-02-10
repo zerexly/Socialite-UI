@@ -30,6 +30,7 @@ class _ChangeUserNameState extends State<ChangeUserName> {
           profileScreensNavigationBar(
               context: context,
               title: LocalizationString.changeUserName,
+              rightBtnTitle: LocalizationString.done,
               completion: () {
                 profileController.updateUserName(
                     userName: userName.text,isSigningUp: false, context: context);

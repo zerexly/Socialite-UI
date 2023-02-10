@@ -941,7 +941,12 @@ class LocalizationString {
   static String matched = 'Matched'.tr;
   static String preferences = 'Set Preferences'.tr;
   static String set = 'Set'.tr;
-  static String datingProfile = 'Dating Profile'.tr;
+  static String currentLocation = 'Current location'.tr;
+  static String dob = 'DOB'.tr;
+  static String gender = 'Gender'.tr;
+  static String personalDetails = 'Personal details'.tr;
+  static String interests = 'Interests'.tr;
+  static String professional = 'Professional details'.tr;
 
   static String noDatingProfilesFound = 'No dating profiles found'.tr;
   static String datingExplore = 'Change your preferences and explore more'.tr;
@@ -949,6 +954,7 @@ class LocalizationString {
   static String noMatchedProfilesFound = 'No matching profiles found'.tr;
   static String datingExploreForMatched = 'Explore more dating profiles and get matched'.tr;
 
+  static String locationMainHeader = 'Set location'.tr;
   static String locationHeader = 'Set your location services'.tr;
   static String locationSubHeader =
       'We use your location to show you potential matches in your area'.tr;
@@ -960,6 +966,7 @@ class LocalizationString {
   static String allowNotification = 'Allow notifications'.tr;
   static String notNow = 'Not now'.tr;
 
+  static String nameMainHeader = 'Add name'.tr;
   static String nameHeader = 'What\'s your first name?'.tr;
   static String nameSubHeader = 'You won\'t be able to change this later'.tr;
 
@@ -968,10 +975,12 @@ class LocalizationString {
       'Profile with more good photos are getting more matches, so add your best photos'
           .tr;
 
+  static String birthdayMainHeader = 'Add DOB'.tr;
   static String birthdayHeader = 'When\'s your birthday?'.tr;
   static String birthdaySubHeader =
       'Be accurate to specify this to get genuine matches'.tr;
 
+  static String genderMainHeader = 'Add gender'.tr;
   static String genderHeader = 'Mention your gender'.tr;
 
   static String likeToDateHeader = 'Who would you like to date?'.tr;

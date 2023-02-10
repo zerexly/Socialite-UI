@@ -89,6 +89,7 @@ class ApiResponseModel {
 
   List<InterestModel> interests = [];
   List<UserModel> matchedUsers = [];
+  List<UserModel> datingUsers = [];
 
   List<VerificationRequest> verificationRequests = [];
 
@@ -107,6 +108,7 @@ class ApiResponseModel {
   SettingModel? settings;
   PostModel? post;
   EventModel? event;
+  AddPreferenceModel? preference;
 
   int roomId = 0;
   String? stripePaymentIntentClientSecret;
@@ -152,7 +154,7 @@ class ApiResponseModel {
             if (data['user']['username'] == null) {
               model.isLoginFirstTime = true;
             } else {
-              model.isLoginFirstTime = data['is_login_first_time'] == 1;
+              model.isLoginFirstTime = data['user']['is_login_first_time'] == 1;
             }
           }
         } else if (data['competition'] != null) {
@@ -603,6 +605,17 @@ class ApiResponseModel {
             model.matchedUsers =
                 List<UserModel>.from(items.map((x) => UserModel.fromJson(x)));
           }
+        } else if (data['preferenceMatchProfile'] != null &&
+            url == NetworkConstantsUtil.getDatingProfiles) {
+          var items = data['preferenceMatchProfile'];
+          if (items != null && items.length > 0) {
+            model.datingUsers =
+                List<UserModel>.from(items.map((x) => UserModel.fromJson(x)));
+          }
+        } else if (data['preferenceSetting'] != null &&
+            url == NetworkConstantsUtil.getUserPreference) {
+          var settings = data['preferenceSetting'];
+          model.preference = AddPreferenceModel.fromJson(settings);
         }
       }
     } else {

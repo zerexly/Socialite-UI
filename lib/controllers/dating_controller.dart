@@ -7,7 +7,8 @@ class DatingController extends GetxController {
   RxList<UserModel> datingUsers = <UserModel>[].obs;
   RxList<UserModel> matchedUsers = <UserModel>[].obs;
   RxList<LanguageModel> languages = <LanguageModel>[].obs;
-  RxBool isLoading = false.obs;
+  Rx isLoading = false.obs;
+  AddPreferenceModel? preferenceModel;
 
   clearInterests() {
     interests.clear();
@@ -23,35 +24,36 @@ class DatingController extends GetxController {
     });
   }
 
-  setPreferencesApi() {
+  setPreferencesApi(AddPreferenceModel selectedPreferences) {
     EasyLoading.show(status: LocalizationString.loading);
-    ApiController().addUserPreference().then((response) {
+    ApiController().addUserPreference(selectedPreferences).then((response) {
       EasyLoading.dismiss();
       update();
     });
   }
 
-  updateDatingProfile() {
+  updateDatingProfile(AddDatingDataModel dataModel, Function(String) handler) {
     EasyLoading.show(status: LocalizationString.loading);
-    ApiController().updateDatingProfile().then((response) {
+    ApiController().updateDatingProfile(dataModel).then((response) {
       EasyLoading.dismiss();
       update();
+      handler(response.message);
     });
   }
 
-  getUserPreference() {
-    EasyLoading.show(status: LocalizationString.loading);
+  getUserPreference(VoidCallback handler) {
     ApiController().getUserPreferenceApi().then((response) {
-      EasyLoading.dismiss();
+      preferenceModel = response.preference;
       update();
+      handler();
     });
   }
 
   getDatingProfiles() {
     isLoading.value = true;
-    ApiController().getPopularUsers().then((response) {
+    ApiController().getDatingProfilesApi().then((response) {
       isLoading.value = false;
-      datingUsers.value = response.users;
+      datingUsers.value = response.datingUsers;
       update();
     });
   }
@@ -63,7 +65,7 @@ class DatingController extends GetxController {
     });
   }
 
-  likeUnlikeProfile(bool like, String profileId) {
+  likeUnlikeProfile(DatingActions like, String profileId) {
     ApiController().likeUnlikeDatingProfile(like, profileId).then((response) {
       update();
     });
@@ -77,4 +79,10 @@ class DatingController extends GetxController {
       update();
     });
   }
+}
+
+enum DatingActions {
+  liked,
+  rejected,
+  undoLiked,
 }

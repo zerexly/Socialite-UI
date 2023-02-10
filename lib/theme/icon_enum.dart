@@ -96,6 +96,7 @@ enum ThemeIcon {
   delete,
   message,
   chat,
+  chatBordered,
   randomChat,
   closeCircle,
 

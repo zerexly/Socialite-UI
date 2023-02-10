@@ -1,4 +1,7 @@
 import 'package:foap/helper/common_import.dart';
+import 'package:foap/screens/profile/pref/add_interests.dart';
+import 'package:foap/screens/profile/pref/add_personal_info.dart';
+import 'package:foap/screens/profile/pref/add_profesional_details.dart';
 import 'package:get/get.dart';
 
 import '../login_sign_up/set_profile_category_type.dart';
@@ -228,7 +231,7 @@ class UpdateProfileState extends State<UpdateProfile> {
                   Row(
                     children: [
                       Text(
-                        LocalizationString.datingProfile,
+                        LocalizationString.currentLocation,
                         style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                               fontWeight: FontWeight.w600,
                             ),
@@ -240,6 +243,132 @@ class UpdateProfileState extends State<UpdateProfile> {
                         size: 15,
                       ).ripple(() {
                         Get.to(() => const SetLocation())!.then((value) {
+                          reloadData();
+                        });
+                      })
+                    ],
+                  ),
+                  divider(context: context).vP16,
+                  Row(
+                    children: [
+                      Text(
+                        LocalizationString.name,
+                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
+                      ),
+                      const Spacer(),
+                      ThemeIconWidget(
+                        ThemeIcon.edit,
+                        color: Theme.of(context).iconTheme.color,
+                        size: 15,
+                      ).ripple(() {
+                        Get.to(() => const AddName())!.then((value) {
+                          reloadData();
+                        });
+                      })
+                    ],
+                  ),
+                  divider(context: context).vP16,
+                  Row(
+                    children: [
+                      Text(
+                        LocalizationString.dob,
+                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
+                      ),
+                      const Spacer(),
+                      ThemeIconWidget(
+                        ThemeIcon.edit,
+                        color: Theme.of(context).iconTheme.color,
+                        size: 15,
+                      ).ripple(() {
+                        Get.to(() => const SetDateOfBirth())!.then((value) {
+                          reloadData();
+                        });
+                      })
+                    ],
+                  ),
+                  divider(context: context).vP16,
+                  Row(
+                    children: [
+                      Text(
+                        LocalizationString.gender,
+                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const Spacer(),
+                      ThemeIconWidget(
+                        ThemeIcon.edit,
+                        color: Theme.of(context).iconTheme.color,
+                        size: 15,
+                      ).ripple(() {
+                        Get.to(() => const SetYourGender())!.then((value) {
+                          reloadData();
+                        });
+                      })
+                    ],
+                  ),
+                  divider(context: context).vP16,
+                  Row(
+                    children: [
+                      Text(
+                        LocalizationString.personalDetails,
+                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const Spacer(),
+                      ThemeIconWidget(
+                        ThemeIcon.edit,
+                        color: Theme.of(context).iconTheme.color,
+                        size: 15,
+                      ).ripple(() {
+                        Get.to(() => const AddPersonalInfo())!.then((value) {
+                          reloadData();
+                        });
+                      })
+                    ],
+                  ),
+                  divider(context: context).vP16,
+                  Row(
+                    children: [
+                      Text(
+                        LocalizationString.interests,
+                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const Spacer(),
+                      ThemeIconWidget(
+                        ThemeIcon.edit,
+                        color: Theme.of(context).iconTheme.color,
+                        size: 15,
+                      ).ripple(() {
+                        Get.to(() => const AddInterests())!.then((value) {
+                          reloadData();
+                        });
+                      })
+                    ],
+                  ),
+                  divider(context: context).vP16,
+                  Row(
+                    children: [
+                      Text(
+                        LocalizationString.professional,
+                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const Spacer(),
+                      ThemeIconWidget(
+                        ThemeIcon.edit,
+                        color: Theme.of(context).iconTheme.color,
+                        size: 15,
+                      ).ripple(() {
+                        Get.to(() => const AddProfessionalDetails())!.then((value) {
                           reloadData();
                         });
                       })

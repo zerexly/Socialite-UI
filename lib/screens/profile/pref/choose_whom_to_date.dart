@@ -53,11 +53,6 @@ class _ChooseWhomToDateState extends State<ChooseWhomToDate> {
                       cornerRadius: 25,
                       text: LocalizationString.next,
                       onPress: () {
-                        if (selectedGender != null) {
-                          getIt<AddPreferenceManager>()
-                              .preferenceModel
-                              ?.whomToDateGender = selectedGender! + 1;
-                        }
                         Get.to(() => const AddPersonalInfo());
                       })),
             ).paddingOnly(top: 100),

@@ -3,6 +3,7 @@ import 'package:foap/helper/common_import.dart';
 import 'package:get/get.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 
+import '../../components/segmented_control.dart';
 import '../../controllers/dating_controller.dart';
 import '../../model/preference_model.dart';
 
@@ -45,6 +46,70 @@ class SetDatingPreferenceState extends State<SetDatingPreference> {
     super.initState();
     datingController.getInterests();
     datingController.getLanguages();
+    datingController.getUserPreference(() {
+      if (datingController.preferenceModel?.gender != null) {
+        selectedGender = (datingController.preferenceModel?.gender ?? 1) - 1;
+      }
+
+      double ageFrom = 16.0;
+      if (datingController.preferenceModel?.ageFrom != null) {
+        ageFrom = datingController.preferenceModel!.ageFrom!.toDouble();
+      }
+
+      double ageTo = 50.0;
+      if (datingController.preferenceModel?.ageTo != null) {
+        ageTo = datingController.preferenceModel!.ageTo!.toDouble();
+      }
+      _valuesForAge = SfRangeValues(ageFrom, ageTo);
+
+      double heightFrom = 165.0;
+      if (datingController.preferenceModel?.heightFrom != null) {
+        heightFrom = datingController.preferenceModel!.heightFrom!.toDouble();
+      }
+
+      double heightTo = 182.0;
+      if (datingController.preferenceModel?.heightTo != null) {
+        heightTo = datingController.preferenceModel!.heightTo!.toDouble();
+      }
+      _valuesForHeight = SfRangeValues(heightFrom, heightTo);
+
+      if (datingController.preferenceModel?.interests != null) {
+        selectedInterests = datingController.preferenceModel!.interests!;
+        String result = selectedInterests.map((val) => val.name).join(', ');
+        interestsController.text = result;
+      }
+
+      if (datingController.preferenceModel?.selectedColor != null) {
+        selectedColor =
+            colors.indexOf(datingController.preferenceModel!.selectedColor!);
+      }
+
+      if (datingController.preferenceModel?.religion != null) {
+        int index =
+            religions.indexOf(datingController.preferenceModel!.religion!);
+        religionController.text = religions[index];
+      }
+
+      if (datingController.preferenceModel?.status != null) {
+        selectedStatus = datingController.preferenceModel!.status! - 1;
+      }
+
+      if (datingController.preferenceModel?.languages != null) {
+        selectedLanguages = datingController.preferenceModel!.languages!;
+        String result = selectedLanguages.map((val) => val.name).join(', ');
+        languageController.text = result;
+      }
+
+      if (datingController.preferenceModel?.smoke != null) {
+        smoke = (datingController.preferenceModel?.smoke ?? 1) - 1;
+      }
+
+      if (datingController.preferenceModel?.drink != null) {
+        int drink = (datingController.preferenceModel?.drink ?? 1) - 1;
+        drinkHabitController.text = drinkHabitList[drink];
+      }
+      setState(() {});
+    });
   }
 
   @override
@@ -69,11 +134,12 @@ class SetDatingPreferenceState extends State<SetDatingPreference> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                         addHeader('Gender').paddingOnly(bottom: 8),
-                        addSegmentedBar(
-                            ["Male", "Female", "Other"], selectedGender,
-                            (value) {
-                          setState(() => selectedGender = value);
-                        }),
+                        SegmentedControl(
+                            segments: const ["Male", "Female", "Other"],
+                            value: selectedGender,
+                            onValueChanged: (value) {
+                              setState(() => selectedGender = value);
+                            }),
                         addHeader('Age').paddingOnly(top: 30),
                         SfRangeSlider(
                           min: 16.0,
@@ -124,24 +190,33 @@ class SetDatingPreferenceState extends State<SetDatingPreference> {
                         addInputField(
                             interestsController, () => openInterestsPopup()),
                         addHeader('Color').paddingOnly(top: 30, bottom: 8),
-                        addSegmentedBar(colors, selectedColor, (sel) {
-                          setState(() => selectedColor = sel);
-                        }),
+                        SegmentedControl(
+                            segments: colors,
+                            value: selectedColor,
+                            onValueChanged: (value) {
+                              setState(() => selectedColor = value);
+                            }),
                         addHeader('Religion').paddingOnly(top: 30, bottom: 8),
                         addInputField(
                             religionController, () => openReligionPopup()),
                         addHeader('Status').paddingOnly(top: 30, bottom: 8),
-                        addSegmentedBar(status, selectedStatus, (sel) {
-                          setState(() => selectedStatus = sel);
-                        }),
+                        SegmentedControl(
+                            segments: status,
+                            value: selectedStatus,
+                            onValueChanged: (value) {
+                              setState(() => selectedStatus = value);
+                            }),
                         addHeader('Language').paddingOnly(top: 30, bottom: 8),
                         addInputField(
                             languageController, () => openLanguagePopup()),
                         addHeader('Do you smoke')
                             .paddingOnly(top: 30, bottom: 8),
-                        addSegmentedBar(["Yes", "No"], smoke, (sel) {
-                          setState(() => smoke = sel);
-                        }),
+                        SegmentedControl(
+                            segments: const ["Yes", "No"],
+                            value: smoke,
+                            onValueChanged: (value) {
+                              setState(() => smoke = value);
+                            }),
                         addHeader('Drinking habit')
                             .paddingOnly(top: 30, bottom: 8),
                         addInputField(drinkHabitController,
@@ -154,79 +229,53 @@ class SetDatingPreferenceState extends State<SetDatingPreference> {
                                   cornerRadius: 25,
                                   text: LocalizationString.set,
                                   onPress: () {
+                                    AddPreferenceModel preferences =
+                                        AddPreferenceModel();
                                     if (selectedGender != null) {
-                                      getIt<AddPreferenceManager>()
-                                          .preferenceModel
-                                          ?.gender = selectedGender! + 1;
+                                      preferences.gender = selectedGender! + 1;
                                     }
 
-                                    getIt<AddPreferenceManager>()
-                                        .preferenceModel
-                                        ?.ageFrom = _valuesForAge.start.toInt();
+                                    preferences.ageFrom =
+                                        _valuesForAge.start.toInt();
+                                    preferences.ageTo =
+                                        _valuesForAge.end.toInt();
 
-                                    getIt<AddPreferenceManager>()
-                                        .preferenceModel
-                                        ?.ageTo = _valuesForAge.end.toInt();
-
-                                    getIt<AddPreferenceManager>()
-                                            .preferenceModel
-                                            ?.heightFrom =
+                                    preferences.heightFrom =
                                         _valuesForHeight.start.toInt();
-
-                                    getIt<AddPreferenceManager>()
-                                            .preferenceModel
-                                            ?.heightTo =
+                                    preferences.heightTo =
                                         _valuesForHeight.end.toInt();
 
                                     if (selectedInterests.isNotEmpty) {
-                                      String result = selectedInterests
-                                          .map((val) => val.id)
-                                          .join(',');
-                                      getIt<AddPreferenceManager>()
-                                          .preferenceModel
-                                          ?.interests = result;
+                                      preferences.interests = selectedInterests;
                                     }
 
                                     if (selectedColor != null) {
-                                      getIt<AddPreferenceManager>()
-                                              .preferenceModel
-                                              ?.selectedColor =
+                                      preferences.selectedColor =
                                           colors[selectedColor!];
                                     }
 
                                     if (religionController.text.isNotEmpty) {
-                                      getIt<AddPreferenceManager>()
-                                          .preferenceModel
-                                          ?.religion = religionController.text;
+                                      preferences.religion =
+                                          religionController.text;
                                     }
 
                                     if (selectedStatus != null) {
-                                      getIt<AddPreferenceManager>()
-                                          .preferenceModel
-                                          ?.status = selectedStatus! + 1;
+                                      preferences.status = selectedStatus! + 1;
                                     }
 
                                     if (selectedLanguages.isNotEmpty) {
-                                      String result = selectedLanguages
-                                          .map((val) => val.id)
-                                          .join(',');
-                                      getIt<AddPreferenceManager>()
-                                          .preferenceModel
-                                          ?.languages = result;
+                                      preferences.languages = selectedLanguages;
                                     }
 
-                                    getIt<AddPreferenceManager>()
-                                        .preferenceModel
-                                        ?.smoke = smoke + 1;
+                                    preferences.smoke = smoke + 1;
 
                                     if (drinkHabitController.text.isNotEmpty) {
                                       int drink = drinkHabitList
                                           .indexOf(drinkHabitController.text);
-                                      getIt<AddPreferenceManager>()
-                                          .preferenceModel
-                                          ?.drink = drink + 1;
+                                      preferences.drink = drink + 1;
                                     }
-                                    datingController.setPreferencesApi();
+                                    datingController
+                                        .setPreferencesApi(preferences);
                                   })),
                         ).paddingOnly(top: 30),
                       ]).paddingAll(20)),
@@ -243,38 +292,6 @@ class SetDatingPreferenceState extends State<SetDatingPreference> {
             .textTheme
             .bodyLarge!
             .copyWith(fontWeight: FontWeight.w500));
-  }
-
-  addSegmentedBar(
-      List<String> segments, int? value, ValueChanged<int> onValueChanged) {
-    return CupertinoSegmentedControl<int>(
-      padding: EdgeInsets.zero,
-      selectedColor: Theme.of(context).primaryColor,
-      unselectedColor: Theme.of(context).backgroundColor,
-      borderColor: Theme.of(context).disabledColor,
-      children: addSegmentedChips(segments),
-      groupValue: value,
-      onValueChanged: (value) {
-        onValueChanged(value);
-      },
-    );
-  }
-
-  addSegmentedChips(List<String> segments) {
-    Map<int, Widget> hashmap = {};
-    for (int i = 0; i < segments.length; i++) {
-      hashmap[i] = SizedBox(
-          width: (MediaQuery.of(context).size.width - 40) / segments.length,
-          height: 36,
-          child: Text(
-            segments[i],
-            style: Theme.of(context)
-                .textTheme
-                .bodySmall!
-                .copyWith(fontWeight: FontWeight.w300),
-          ).alignCenter);
-    }
-    return hashmap;
   }
 
   addInputField(TextEditingController controller, VoidCallback? onTap) {
@@ -310,8 +327,10 @@ class SetDatingPreferenceState extends State<SetDatingPreference> {
                     return ListTile(
                         title: Text(model.name),
                         onTap: () {
-                          isAdded
-                              ? selectedInterests.remove(model)
+                          int index = selectedInterests
+                              .indexWhere((element) => element.id == model.id);
+                          index != -1
+                              ? selectedInterests.removeAt(index)
                               : selectedInterests.add(model);
 
                           String result = selectedInterests
@@ -374,8 +393,10 @@ class SetDatingPreferenceState extends State<SetDatingPreference> {
                     return ListTile(
                         title: Text(model.name ?? ''),
                         onTap: () {
-                          isAdded
-                              ? selectedLanguages.remove(model)
+                          int index = selectedLanguages
+                              .indexWhere((element) => element.id == model.id);
+                          index != -1
+                              ? selectedLanguages.removeAt(index)
                               : selectedLanguages.add(model);
 
                           String result = selectedLanguages

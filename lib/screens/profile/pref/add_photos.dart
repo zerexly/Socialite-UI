@@ -53,8 +53,6 @@ class _AddPhotosState extends State<AddPhotos> {
                       cornerRadius: 25,
                       text: LocalizationString.next,
                       onPress: () {
-                        getIt<AddPreferenceManager>().preferenceModel?.images =
-                            images;
                         Get.to(() => const SetDateOfBirth());
                       })),
             ).paddingOnly(top: 110),

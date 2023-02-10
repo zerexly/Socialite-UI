@@ -290,17 +290,16 @@ class ApiParamModel {
     };
   }
 
-  dynamic addUserPreferenceParam() {
-    AddPreferenceModel? preferenceModel =
-        getIt<AddPreferenceManager>().preferenceModel;
-
+  dynamic addUserPreferenceParam(AddPreferenceModel? preferenceModel) {
     dynamic param = {
       'profile_category_type': '2',
       "work_experience_from": "2",
       "work_experience_to": "4",
     };
     if (preferenceModel?.languages != null) {
-      param['language'] = preferenceModel?.languages;
+      String? result =
+          preferenceModel?.languages!.map((val) => val.id).join(',');
+      param['language'] = result;
     }
     if (preferenceModel?.religion != null) {
       param['religion'] = preferenceModel?.religion;
@@ -315,7 +314,9 @@ class ApiParamModel {
       param['drinking_habit'] = preferenceModel?.drink.toString();
     }
     if (preferenceModel?.interests != null) {
-      param['interest'] = preferenceModel?.interests;
+      String? result =
+          preferenceModel?.interests!.map((val) => val.id).join(',');
+      param['interest'] = result;
     }
     if (preferenceModel?.gender != null) {
       param['gander'] = preferenceModel?.gender.toString();
@@ -329,66 +330,69 @@ class ApiParamModel {
     if (preferenceModel?.ageTo != null) {
       param['age_to'] = preferenceModel?.ageTo.toString();
     }
+
+    if (preferenceModel?.heightTo != null) {
+      param['height'] = preferenceModel?.heightTo.toString();
+    }
     return param;
   }
 
-  dynamic updateDatingProfileParam() {
-    AddPreferenceModel? preferenceModel =
-        getIt<AddPreferenceManager>().preferenceModel;
+  dynamic updateDatingProfileParam(AddDatingDataModel? dataModel) {
     dynamic param = {
       'profile_category_type': '2',
       "work_experience_month": "9",
     };
-    if (preferenceModel?.languages != null) {
-      param['language_id'] = preferenceModel?.languages;
+    if (dataModel?.latitude != null) {
+      param['latitude'] = dataModel?.latitude.toString();
+      param['longitude'] = dataModel?.longitude.toString();
     }
-    if (preferenceModel?.religion != null) {
-      param['religion'] = preferenceModel?.religion;
+    if (dataModel?.name != null) {
+      param['name'] = dataModel?.name;
     }
-    if (preferenceModel?.status != null) {
-      param['marital_status'] = preferenceModel?.status.toString();
+    if (dataModel?.dob != null) {
+      param['dob'] = dataModel?.dob;
     }
-    if (preferenceModel?.smoke != null) {
-      param['smoke_id'] = preferenceModel?.smoke.toString();
+    if (dataModel?.gender != null) {
+      param['sex'] = dataModel?.gender.toString();
     }
-    if (preferenceModel?.drink != null) {
-      param['drinking_habit'] = preferenceModel?.drink.toString();
+    if (dataModel?.selectedColor != null) {
+      param['color'] = dataModel?.selectedColor;
     }
-    if (preferenceModel?.interests != null) {
-      param['interest_id'] = preferenceModel?.interests;
+    if (dataModel?.height != null) {
+      param['height'] = dataModel?.height.toString();
     }
-    if (preferenceModel?.gender != null) {
-      param['sex'] = preferenceModel?.gender.toString();
+    if (dataModel?.religion != null) {
+      param['religion'] = dataModel?.religion;
     }
-    if (preferenceModel?.selectedColor != null) {
-      param['color'] = preferenceModel?.selectedColor;
+    if (dataModel?.status != null) {
+      param['marital_status'] = dataModel?.status.toString();
     }
-    if (preferenceModel?.dob != null) {
-      param['dob'] = preferenceModel?.dob;
+    if (dataModel?.smoke != null) {
+      param['smoke_id'] = dataModel?.smoke.toString();
     }
-    if (preferenceModel?.height != null) {
-      param['height'] = preferenceModel?.height.toString();
+    if (dataModel?.drink != null) {
+      param['drinking_habit'] = dataModel?.drink.toString();
     }
-    if (preferenceModel?.qualification != null) {
-      param['qualification'] = preferenceModel?.qualification;
+    if (dataModel?.interests != null) {
+      String result = dataModel!.interests!.map((val) => val.id).join(',');
+      param['interest_id'] = result;
     }
-    if (preferenceModel?.occupation != null) {
-      param['occupation'] = preferenceModel?.occupation;
+    if (dataModel?.languages != null) {
+      String result = dataModel!.languages!.map((val) => val.id).join(',');
+      param['language_id'] = result;
     }
-    if (preferenceModel?.experience != null) {
-      param['work_experience_year'] = preferenceModel?.experience;
+    if (dataModel?.qualification != null) {
+      param['qualification'] = dataModel?.qualification;
+    }
+    if (dataModel?.occupation != null) {
+      param['occupation'] = dataModel?.occupation;
+    }
+    if (dataModel?.experienceYear != null) {
+      param['work_experience_year'] = dataModel?.experienceYear;
+    }
+    if (dataModel?.experienceMonth != null) {
+      param['work_experience_month'] = dataModel?.experienceMonth;
     }
     return param;
-    // "username":"username2",
-    // "email":"user42@gmail.com",
-    // "bio":"dio info",
-    // "description":"hello msyfsjf",
-    // "is_biometric_login":"1",
-
-    // "country":"india",
-    // "city":"mohali",
-    // "state":"Punjab",
-    // "state_id":"23",
-    // "city_id":"2"
   }
 }

@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:foap/apiHandler/api_param_model.dart';
 import 'package:http_parser/http_parser.dart';
 
+import '../controllers/dating_controller.dart';
 import '../model/live_tv_model.dart';
 import '../model/preference_model.dart';
 
@@ -2603,11 +2604,11 @@ class ApiController {
   }
 
   //*********************** Dating ************************//
-  Future<ApiResponseModel> addUserPreference() async {
+  Future<ApiResponseModel> addUserPreference(AddPreferenceModel selectedPreferences) async {
     String? authKey = await SharedPrefs().getAuthorizationKey();
     var url =
         NetworkConstantsUtil.baseUrl + NetworkConstantsUtil.addUserPreference;
-    dynamic param = ApiParamModel().addUserPreferenceParam();
+    dynamic param = ApiParamModel().addUserPreferenceParam(selectedPreferences);
 
     return await http.post(Uri.parse(url), body: param, headers: {
       "Authorization": "Bearer ${authKey!}"
@@ -2632,11 +2633,11 @@ class ApiController {
     });
   }
 
-  Future<ApiResponseModel> updateDatingProfile() async {
+  Future<ApiResponseModel> updateDatingProfile(AddDatingDataModel dataModel) async {
     var url =
         NetworkConstantsUtil.baseUrl + NetworkConstantsUtil.updateUserProfile;
     String? authKey = await SharedPrefs().getAuthorizationKey();
-    dynamic param = ApiParamModel().updateDatingProfileParam();
+    dynamic param = ApiParamModel().updateDatingProfileParam(dataModel);
 
     return http
         .post(Uri.parse(url),
@@ -2648,27 +2649,29 @@ class ApiController {
     });
   }
 
-  // Future<ApiResponseModel> getDatingProfilesApi() async {
-  //   String? authKey = await SharedPrefs().getAuthorizationKey();
-  //   var url =
-  //       NetworkConstantsUtil.baseUrl + NetworkConstantsUtil.getDatingProfiles;
-  //
-  //   return await http.get(Uri.parse(url), headers: {
-  //     "Authorization": "Bearer ${authKey!}"
-  //   }).then((http.Response response) async {
-  //     final ApiResponseModel parsedResponse = await getResponse(
-  //         response.body, NetworkConstantsUtil.getDatingProfiles);
-  //     return parsedResponse;
-  //   });
-  // }
+  Future<ApiResponseModel> getDatingProfilesApi() async {
+    String? authKey = await SharedPrefs().getAuthorizationKey();
+    var url =
+        NetworkConstantsUtil.baseUrl + NetworkConstantsUtil.getDatingProfiles;
+
+    return await http.get(Uri.parse(url), headers: {
+      "Authorization": "Bearer ${authKey!}"
+    }).then((http.Response response) async {
+      final ApiResponseModel parsedResponse = await getResponse(
+          response.body, NetworkConstantsUtil.getDatingProfiles);
+      return parsedResponse;
+    });
+  }
 
   Future<ApiResponseModel> likeUnlikeDatingProfile(
-      bool like, String profileId) async {
+      DatingActions action, String profileId) async {
     String? authKey = await SharedPrefs().getAuthorizationKey();
     var url = NetworkConstantsUtil.baseUrl +
-        (like
+        (action == DatingActions.liked
             ? NetworkConstantsUtil.profileLike
-            : NetworkConstantsUtil.profileSkip);
+            : action == DatingActions.rejected
+                ? NetworkConstantsUtil.profileSkip
+                : NetworkConstantsUtil.undoProfileLike);
 
     return await http.post(Uri.parse(url), body: {
       'profile_user_id': profileId
@@ -2683,7 +2686,8 @@ class ApiController {
 
   Future<ApiResponseModel> getMatchedProfilesApi() async {
     String? authKey = await SharedPrefs().getAuthorizationKey();
-    var url = NetworkConstantsUtil.baseUrl + NetworkConstantsUtil.matchedProfiles;
+    var url =
+        NetworkConstantsUtil.baseUrl + NetworkConstantsUtil.matchedProfiles;
 
     return await http.get(Uri.parse(url), headers: {
       "Authorization": "Bearer ${authKey!}"

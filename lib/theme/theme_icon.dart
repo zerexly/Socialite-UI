@@ -421,6 +421,12 @@ class ThemeIconWidget extends StatelessWidget {
           size: size ?? 20,
           color: color ?? Theme.of(context).iconTheme.color,
         );
+      case ThemeIcon.chatBordered:
+        return Icon(
+          Icons.messenger_outline,
+          size: size ?? 20,
+          color: color ?? Theme.of(context).iconTheme.color,
+        );
       case ThemeIcon.closeCircle:
         return Icon(
           Icons.highlight_remove_outlined,

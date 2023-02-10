@@ -1,4 +1,5 @@
 import 'package:foap/helper/common_import.dart';
+import 'package:foap/model/preference_model.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class UserLiveCallDetail {
@@ -43,7 +44,7 @@ class GiftSummary {
 class UserModel {
   int id = 0;
 
-  // String? name;
+  String? name;
   String userName = '';
   String category = '';
 
@@ -100,14 +101,15 @@ class UserModel {
 
   int? experienceYear;
   int? experienceMonth;
-  List<InterestsUserModel>? interests;
-  List<LanguageUserModel>? languages;
+  List<InterestModel>? interests;
+  List<LanguageModel>? languages;
 
   UserModel();
 
   factory UserModel.fromJson(dynamic json) {
     UserModel model = UserModel();
     model.id = json['id'];
+    model.name = json['name'];
     model.userName = json['username'].toString().toLowerCase();
     model.category = json['category'] ?? 'Other';
 
@@ -169,10 +171,10 @@ class UserModel {
     model.experienceMonth = json['work_experience_month'];
     model.experienceYear = json['work_experience_year'];
 
-    model.interests = json['interest'] != null ? List<InterestsUserModel>.from(
-        json['interest'].map((x) => InterestsUserModel.fromJson(x))) : null;
-    model.languages = json['language'] != null ? List<LanguageUserModel>.from(
-        json['language'].map((x) => LanguageUserModel.fromJson(x))) : null;
+    model.interests = json['interest'] != null ? List<InterestModel>.from(
+        json['interest'].map((x) => InterestModel.fromJson(x))) : null;
+    model.languages = json['language'] != null ? List<LanguageModel>.from(
+        json['language'].map((x) => LanguageModel.fromJson(x))) : null;
     return model;
   }
 
@@ -259,46 +261,28 @@ class UserModel {
 class InterestModel {
   int id = 0;
   String name = "";
-  int status = 0;
 
   InterestModel();
 
   factory InterestModel.fromJson(dynamic json) {
     InterestModel model = InterestModel();
-    model.id = json['id'];
-    model.name = json['name'];
-    model.status = json['status'];
-
-    return model;
-  }
-}
-
-class InterestsUserModel {
-  int id = 0;
-  String name = "";
-  int status = 0;
-
-  InterestsUserModel();
-
-  factory InterestsUserModel.fromJson(dynamic json) {
-    InterestsUserModel model = InterestsUserModel();
-    model.id = json['interest_id'];
+    model.id = json['id'] ?? json['interest_id'];
     model.name = json['name'];
     return model;
   }
 }
 
-class LanguageUserModel {
-  int id = 0;
-  String name = "";
+class LanguageModel {
+  int? id;
+  String? name;
 
-  LanguageUserModel();
+  LanguageModel({
+    required this.id,
+    required this.name,
+  });
 
-  factory LanguageUserModel.fromJson(dynamic json) {
-    LanguageUserModel model = LanguageUserModel();
-    model.id = json['language_id'];
-    model.name = json['name'];
-
-    return model;
-  }
+  factory LanguageModel.fromJson(Map<String, dynamic> json) => LanguageModel(
+    id: json["id"] ?? json["language_id"],
+    name: json["name"],
+  );
 }

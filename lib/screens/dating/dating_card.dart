@@ -54,7 +54,9 @@ class _CardsStackWidgetState extends State<CardsStackWidget>
     );
     _animationController.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
-        datingController.datingUsers.removeLast();
+        setState(() {
+          datingController.datingUsers.removeLast();
+        });
         _animationController.reset();
         swipeNotifier.value = Swipe.none;
       }
@@ -158,7 +160,7 @@ class _CardsStackWidgetState extends State<CardsStackWidget>
                               setState(() {
                                 //dislike
                                 datingController.likeUnlikeProfile(
-                                    false,
+                                    DatingActions.rejected,
                                     datingController.datingUsers[index].id
                                         .toString());
                                 datingController.datingUsers.removeAt(index);
@@ -166,37 +168,53 @@ class _CardsStackWidgetState extends State<CardsStackWidget>
                             },
                           ),
                         ),
-                        Positioned(
-                          bottom: 10,
-                          left: 0,
-                          right: 0,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              ActionButtonWidget(
-                                onPressed: () {
-                                  swipeNotifier.value = Swipe.left;
-                                  _animationController.forward();
-                                },
-                                icon: const Icon(
-                                  Icons.close,
-                                  color: Colors.grey,
+                        if (datingController.datingUsers.isNotEmpty)
+                          Positioned(
+                            bottom: 10,
+                            left: 0,
+                            right: 0,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                ActionButtonWidget(
+                                  onPressed: () {
+                                    int index =
+                                        datingController.datingUsers.length - 1;
+                                    datingController.likeUnlikeProfile(
+                                        DatingActions.rejected,
+                                        datingController.datingUsers[index].id
+                                            .toString());
+                                    swipeNotifier.value = Swipe.right;
+                                    _animationController.forward();
+                                    swipeNotifier.value = Swipe.left;
+                                    _animationController.forward();
+                                  },
+                                  icon: const Icon(
+                                    Icons.close,
+                                    color: Colors.grey,
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(width: 20),
-                              ActionButtonWidget(
-                                onPressed: () {
-                                  swipeNotifier.value = Swipe.right;
-                                  _animationController.forward();
-                                },
-                                icon: const Icon(
-                                  Icons.favorite,
-                                  color: Colors.red,
+                                const SizedBox(width: 20),
+                                ActionButtonWidget(
+                                  onPressed: () {
+                                    //like
+                                    int index =
+                                        datingController.datingUsers.length - 1;
+                                    datingController.likeUnlikeProfile(
+                                        DatingActions.liked,
+                                        datingController.datingUsers[index].id
+                                            .toString());
+                                    swipeNotifier.value = Swipe.right;
+                                    _animationController.forward();
+                                  },
+                                  icon: const Icon(
+                                    Icons.favorite,
+                                    color: Colors.red,
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
                         Positioned(
                           right: 0,
                           child: DragTarget<int>(
@@ -217,7 +235,7 @@ class _CardsStackWidgetState extends State<CardsStackWidget>
                               setState(() {
                                 //like
                                 datingController.likeUnlikeProfile(
-                                    true,
+                                    DatingActions.liked,
                                     datingController.datingUsers[index].id
                                         .toString());
                                 datingController.datingUsers.removeAt(index);
@@ -448,7 +466,9 @@ class ProfileCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    profile.userName,
+                    profile.name == null
+                        ? profile.userName
+                        : profile.name ?? '',
                     style: const TextStyle(
                       fontWeight: FontWeight.w800,
                       fontSize: 16,
@@ -473,7 +493,7 @@ class ProfileCard extends StatelessWidget {
           ),
         ],
       ),
-    );
+    ).paddingOnly(left: 20, right: 20);
   }
 }
 

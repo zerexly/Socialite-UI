@@ -1,5 +1,6 @@
 import 'package:foap/helper/common_import.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 import '../../controllers/dating_controller.dart';
 import 'dating_card.dart';
@@ -13,6 +14,7 @@ class MatchedList extends StatefulWidget {
 
 class MatchedListState extends State<MatchedList> {
   final DatingController datingController = Get.find();
+  final ChatDetailController _chatDetailController = Get.find();
 
   @override
   void initState() {
@@ -45,14 +47,18 @@ class MatchedListState extends State<MatchedList> {
                                 subTitle:
                                     LocalizationString.datingExploreForMatched,
                                 context: context)
-                            : ListView.builder(
-                                padding:
-                                    const EdgeInsets.only(top: 15, bottom: 15),
-                                shrinkWrap: true,
+                            : GridView.builder(
                                 itemCount: datingController.matchedUsers.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  return matchedTile(
-                                      datingController.matchedUsers[index]);
+                                padding: const EdgeInsets.only(
+                                    top: 15, bottom: 15, left: 30, right: 30),
+                                gridDelegate:
+                                    const SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: 2,
+                                        crossAxisSpacing: 15.0,
+                                        mainAxisSpacing: 15.0,
+                                        mainAxisExtent: 210),
+                                itemBuilder: (ctx, index) {
+                                  return matchedGrid(index);
                                 });
                   })),
         ],
@@ -60,76 +66,104 @@ class MatchedListState extends State<MatchedList> {
     );
   }
 
-  Widget matchedTile(UserModel profile) {
-    return Container(
-            color: Theme.of(context).cardColor,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    profile.picture != null
-                        ? CachedNetworkImage(
-                            imageUrl: profile.picture!,
-                            fit: BoxFit.cover,
-                            height: 40,
-                            width: 40,
-                            placeholder: (context, url) => SizedBox(
-                                height: 40,
-                                width: 40,
-                                child: const CircularProgressIndicator().p16),
-                            errorWidget: (context, url, error) =>
-                                const SizedBox(
-                                    child: Icon(
-                              Icons.error,
-                              // size: size / 2,
-                            )),
-                          ).circular
-                        : Image.asset(
-                            'assets/images/avatar_1.jpg',
-                            fit: BoxFit.cover,
-                            height: 40,
-                            width: 40,
-                          ).circular,
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width - 200,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            profile.userName,
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyMedium!
-                                .copyWith(fontWeight: FontWeight.w900),
-                          ).bP4,
-                          Text(
-                            'Canada',
-                            style: Theme.of(context).textTheme.bodySmall,
-                          )
-                        ],
-                      ).hP16,
-                    ),
-                    // const Spacer(),
-                  ],
-                ).ripple(() {
-                  // if (viewCallback == null) {
-                  //   profileController.setUser(profile);
-                  //   Get.to(() => OtherUserProfile(userId: profile.id));
-                  // } else {
-                  //   viewCallback!();
-                  // }
-                }),
-                const Spacer(),
-                const ThemeIconWidget(
-                  ThemeIcon.favFilled,
-                  size: 18,
-                  color: Colors.red,
-                )
-              ],
-            ).paddingAll(15))
-        .round(10)
-        .paddingOnly(bottom: 15, left: 15, right: 15);
+  Widget matchedGrid(int index) {
+    UserModel profile = datingController.matchedUsers[index];
+    String? yearStr;
+    if (profile.dob != null && profile.dob != '') {
+      DateTime birthDate = DateFormat("yyyy-MM-dd").parse(profile.dob!);
+      Duration diff = DateTime.now().difference(birthDate);
+      int years = diff.inDays ~/ 365;
+      yearStr = years.toString();
+    }
+
+    return Stack(children: [
+      Container(
+              height: double.infinity,
+              width: double.infinity,
+              foregroundDecoration: const BoxDecoration(
+                gradient: LinearGradient(
+                    begin: Alignment.bottomCenter,
+                    end: Alignment.topCenter,
+                    colors: [Colors.black38, Colors.transparent],
+                    stops: [0.0, 1.0]),
+              ),
+              child: profile.picture != null
+                  ? CachedNetworkImage(
+                      imageUrl: profile.picture!,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) => SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: const CircularProgressIndicator().p16),
+                      errorWidget: (context, url, error) => const Icon(
+                        Icons.error,
+                      ),
+                    )
+                  : const Icon(
+                      Icons.error,
+                    ))
+          .borderWithRadius(
+              context: context,
+              value: 1,
+              radius: 10,
+              color: Theme.of(context).primaryColor),
+      Positioned.fill(
+          child: Align(
+        alignment: Alignment.bottomCenter,
+        child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                (profile.name == null ? profile.userName : profile.name ?? '') +
+                    (yearStr != null ? ', $yearStr' : ''),
+                style: Theme.of(context)
+                    .textTheme
+                    .bodySmall!
+                    .copyWith(fontWeight: FontWeight.w600),
+              ).paddingOnly(left: 15, bottom: 10),
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                Flexible(
+                    child: Container(
+                  height: 40,
+                  color: Colors.white.withOpacity(0.5),
+                  child: const Center(
+                      child: ThemeIconWidget(
+                    ThemeIcon.close,
+                    size: 18,
+                    color: Colors.white,
+                  )),
+                ).rp(1).leftRounded(10).ripple(() {
+                  datingController.likeUnlikeProfile(
+                      DatingActions.undoLiked, profile.id.toString());
+                  setState(() {
+                    datingController.matchedUsers.removeAt(index);
+                  });
+                })),
+                Flexible(
+                    child: Container(
+                  height: 40,
+                  color: Colors.white.withOpacity(0.5),
+                  child: const Center(
+                      child: ThemeIconWidget(
+                    ThemeIcon.chatBordered,
+                    size: 18,
+                    color: Colors.white,
+                  )),
+                ).lp(1).rightRounded(10).ripple(() {
+                  EasyLoading.show(status: LocalizationString.loading);
+                  _chatDetailController.getChatRoomWithUser(
+                      userId: profile.id,
+                      callback: (room) {
+                        EasyLoading.dismiss();
+                        Get.to(() => ChatDetail(
+                              chatRoom: room,
+                            ));
+                      });
+                }))
+              ]).paddingOnly(left: 4, right: 4, bottom: 4)
+            ]),
+      ))
+    ]);
   }
 }

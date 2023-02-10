@@ -1,6 +1,8 @@
 import 'package:get/get.dart';
 import 'package:foap/helper/common_import.dart';
 
+bool isLoginFirstTime = false;
+
 class LoginController extends GetxController {
   final SettingsController _settingsController = Get.find();
   bool passwordReset = false;
@@ -35,10 +37,20 @@ class LoginController extends GetxController {
               await _settingsController.getSettings();
 
               // ask for location
-              getIt<LocationManager>().postLocation();
+              // getIt<LocationManager>().postLocation();
 
-              Get.offAll(() => const DashboardScreen());
-              getIt<SocketManager>().connect();
+              //For Testing Dating Flow
+              // isLoginFirstTime = true;
+              // Get.to(() => const SetLocation())!.then((value) {});
+
+              if (response.isLoginFirstTime) {
+                isLoginFirstTime = true;
+                Get.to(() => const SetLocation())!.then((value) {});
+              } else {
+                isLoginFirstTime = false;
+                Get.offAll(() => const DashboardScreen());
+                getIt<SocketManager>().connect();
+              }
             } else {
               EasyLoading.dismiss();
               if (response.token != null) {
