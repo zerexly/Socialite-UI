@@ -17,6 +17,10 @@ class HighlightsController extends GetxController {
 
   bool isLoading = true;
 
+  clear(){
+    selectedStoriesMedia.clear();
+  }
+
   setCurrentStoryMedia(HighlightMediaModel storyMedia) {
     storyMediaModel.value = storyMedia;
     update();
@@ -76,8 +80,10 @@ class HighlightsController extends GetxController {
                 .toList()
                 .join(','))
         .then((value) async {
+      getHighlights(userId: getIt<UserProfileManager>().user!.id);
       EasyLoading.dismiss();
-      Get.back();
+
+      Get.close(2);
       // Get.offAll(const DashboardScreen(selectedTab: 4));
     });
   }

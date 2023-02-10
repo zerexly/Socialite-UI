@@ -296,7 +296,7 @@ class NotificationManager {
               ).vp(12).ripple(() {
                 OverlaySupportEntry.of(context)!.dismiss();
                 Get.to(
-                    () => CommentsScreen(postId: referenceId, handler: () {}));
+                    () => CommentsScreen(postId: referenceId, handler: () {},commentPostedCallback: (){},));
               }),
             ).setPadding(top: 50, left: 8, right: 8).round(10),
           );
@@ -358,7 +358,7 @@ class NotificationManager {
       } else if (notificationType == 2) {
         int referenceId = int.parse(data['reference_id'] as String);
         // comment notification
-        Get.to(() => CommentsScreen(postId: referenceId, handler: () {}));
+        Get.to(() => CommentsScreen(postId: referenceId, handler: () {},commentPostedCallback: (){},));
       } else if (notificationType == 4) {
         int referenceId = int.parse(data['reference_id'] as String);
         // new competition added notification

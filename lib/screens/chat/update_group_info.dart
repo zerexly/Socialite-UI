@@ -19,7 +19,6 @@ class _UpdateGroupInfoState extends State<UpdateGroupInfo> {
 
   @override
   void initState() {
-    // TODO: implement initState
     groupName.text = widget.group.name!;
     groupDescription.text = widget.group.description ?? '';
 

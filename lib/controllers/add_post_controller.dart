@@ -36,6 +36,7 @@ class AddPostController extends GetxController {
   bool accountsIsLoading = false;
 
   clear() {
+    searchText.value = '';
     hashtagsPage = 1;
     canLoadMoreHashtags = true;
     hashtagsIsLoading = false;

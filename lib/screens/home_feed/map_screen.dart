@@ -64,7 +64,7 @@ class _MapsUsersScreenState extends State<MapsUsersScreen> {
             mapToolbarEnabled: false,
             zoomControlsEnabled: true,
             myLocationButtonEnabled: false,
-            myLocationEnabled: false,
+            myLocationEnabled: true,
             onMapCreated: (google_map.GoogleMapController controller) {
               mapController = controller;
               _goToCurrentLocation();

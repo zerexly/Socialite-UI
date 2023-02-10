@@ -84,7 +84,7 @@ class CheckoutController extends GetxController {
       case PaymentGateway.googlePay:
         payWithGooglePay(ticketOrder);
         break;
-      case PaymentGateway.inAppPurchse:
+      case PaymentGateway.inAppPurchase:
         placeOrder();
         break;
       case PaymentGateway.wallet:
@@ -381,13 +381,11 @@ class CheckoutController extends GetxController {
 
   void _handlePaymentError(PaymentFailureResponse response) {
     // Do something when payment fails
-    print(response.message);
   }
 
   void _handleExternalWallet(ExternalWalletResponse response) {
     // Do something when an external wallet is selected
     // Do something when payment fails
-    print(response.walletName);
   }
 
   placeOrder() {

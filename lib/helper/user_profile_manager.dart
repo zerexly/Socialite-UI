@@ -2,6 +2,8 @@ import 'package:foap/helper/common_import.dart';
 import 'package:get/get.dart';
 
 class UserProfileManager {
+  final DashboardController _dashboardController = Get.find();
+
   UserModel? user;
 
   bool get isLogin {
@@ -14,6 +16,10 @@ class UserProfileManager {
     Get.offAll(() => const LoginScreen());
     getIt<SocketManager>().disconnect();
     getIt<DBManager>().clearAllUnreadCount();
+
+    Future.delayed(const Duration(seconds: 2), () {
+      _dashboardController.indexChanged(0);
+    });
   }
 
   Future refreshProfile() async {

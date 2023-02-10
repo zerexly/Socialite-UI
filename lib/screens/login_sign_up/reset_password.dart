@@ -43,15 +43,38 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen> {
               //   width: 80,
               //   height: 25,
               // )),
+
               const SizedBox(
-                height: 105,
+                height: 70,
               ),
+              Text(
+                LocalizationString.resetPwd,
+                style: Theme.of(context)
+                    .textTheme
+                    .displayMedium!
+                    .copyWith(color: Theme.of(context).primaryColor)
+                    .copyWith(fontWeight: FontWeight.w900),
+                textAlign: TextAlign.start,
+              ),
+              const SizedBox(
+                height: 40,
+              ),
+              // Text(
+              //   LocalizationString.helpToGetAccount,
+              //   style: Theme.of(context)
+              //       .textTheme
+              //       .headlineSmall!
+              //       .copyWith(fontWeight: FontWeight.w600),
+              //   textAlign: TextAlign.start,
+              // ).setPadding(top: 10, bottom: 80),
               Padding(
                   padding: const EdgeInsets.only(top: 30),
-                  child: addTextField(newPassword, LocalizationString.newPassword)),
+                  child: addTextField(
+                      newPassword, LocalizationString.newPassword)),
               Padding(
                   padding: const EdgeInsets.only(top: 30, bottom: 25),
-                  child: addTextField(confirmPassword, LocalizationString.confirmPassword)),
+                  child: addTextField(
+                      confirmPassword, LocalizationString.confirmPassword)),
               const Spacer(),
               addSubmitBtn(),
               const SizedBox(
@@ -88,8 +111,9 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen> {
         showRevealPasswordIcon: true,
         hintText: hint,
       ),
-    ).vP8.borderWithRadius(context: context,
-      value: 1,
+    ).vP8.borderWithRadius(
+          context: context,
+          value: 1,
           radius: 5,
           color: Theme.of(context).dividerColor,
         );
@@ -98,14 +122,19 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen> {
   addSubmitBtn() {
     return FilledButtonType1(
       onPress: () {
-        controller.resetPassword(context: context,
+        controller.resetPassword(
+          context: context,
           newPassword: newPassword.text.trim(),
           confirmPassword: confirmPassword.text.trim(),
           token: token,
         );
       },
       text: LocalizationString.changePwd,
-      enabledTextStyle: Theme.of(context).textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.w900).copyWith(color: Colors.white70),
+      enabledTextStyle: Theme.of(context)
+          .textTheme
+          .bodyLarge!
+          .copyWith(fontWeight: FontWeight.w900)
+          .copyWith(color: Colors.white70),
       isEnabled: true,
     );
   }

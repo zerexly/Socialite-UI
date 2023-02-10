@@ -68,7 +68,7 @@ class AppUtil {
           backgroundColor: Colors.transparent,
           elevation: 0,
           child: Container(
-            height: 220,
+            height: 200,
             width: Get.width,
             color: Theme.of(context).backgroundColor,
             child: Column(
@@ -84,10 +84,10 @@ class AppUtil {
                 ),
                 Text(
                   subTitle,
-                  style: Theme.of(context).textTheme.titleLarge,
+                  style: Theme.of(context).textTheme.titleSmall,
                 ),
                 const SizedBox(
-                  height: 40,
+                  height: 20,
                 ),
                 Column(
                   children: [

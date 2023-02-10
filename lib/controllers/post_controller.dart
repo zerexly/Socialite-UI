@@ -66,6 +66,14 @@ class PostController extends GetxController {
     mentions.refresh();
   }
 
+  removeUsersAllPostFromList(PostModel post) {
+    posts.removeWhere((element) => element.user.id == post.user.id);
+    mentions.removeWhere((element) => element.user.id == post.user.id);
+
+    posts.refresh();
+    mentions.refresh();
+  }
+
   void getPosts() async {
     if (canLoadMorePosts == true && totalPages > postsCurrentPage) {
       AppUtil.checkInternet().then((value) async {

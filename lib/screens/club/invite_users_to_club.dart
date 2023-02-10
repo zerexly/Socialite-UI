@@ -62,13 +62,13 @@ class InviteUsersToClubState extends State<InviteUsersToClub> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        LocalizationString.invite,
-                        style: Theme.of(context)
-                            .textTheme
-                            .titleSmall!
-                            .copyWith(fontWeight: FontWeight.w600),
-                      ),
+                      // Text(
+                      //   LocalizationString.invite,
+                      //   style: Theme.of(context)
+                      //       .textTheme
+                      //       .titleSmall!
+                      //       .copyWith(fontWeight: FontWeight.w600),
+                      // ),
                       Obx(() => _inviteFriendsToClubController
                               .selectedFriends.isNotEmpty
                           ? Text(

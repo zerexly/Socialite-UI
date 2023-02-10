@@ -54,7 +54,7 @@ class CommentsController extends GetxController {
     });
   }
 
-  void postCommentsApiCall({required String comment, required int postId}) {
+  void postCommentsApiCall({required String comment, required int postId, required VoidCallback commentPosted}) {
     CommentModel newMessage =
         CommentModel.fromNewMessage(comment, getIt<UserProfileManager>().user!);
     newMessage.commentTime = LocalizationString.justNow;
@@ -63,7 +63,11 @@ class CommentsController extends GetxController {
 
     AppUtil.checkInternet().then((value) async {
       if (value) {
-        ApiController().postComments(postId, comment);
+        ApiController().postComments(postId, comment).then((response) {
+          if(response.success){
+            commentPosted();
+          }
+        });
       }
     });
   }

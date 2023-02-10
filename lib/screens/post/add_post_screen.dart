@@ -48,6 +48,12 @@ class AddPostState extends State<AddPostScreen> {
       }
     });
   }
+  @override
+
+  void dispose() {
+    descriptionText.text = '';
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

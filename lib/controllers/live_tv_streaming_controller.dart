@@ -237,7 +237,6 @@ class TvStreamingController extends GetxController {
       category.tvs = tvs;
       return category;
     }).toList();
-    print(categories.map((element) => element.id));
 
     tvs.value = tvs.map((currentTvInIteration) {
       if (tv.id == currentTvInIteration.id) {

@@ -126,7 +126,7 @@ class LocalizationString {
   static String resendOTP = 'Resend OTP'.tr;
 
   static String pleaseEnterOneTimePassword =
-      "Please enter the one time password sent to your email or phone number to verify your account and change your password"
+      "Please enter the one time password sent to your email to verify your account and change your password"
           .tr;
   static String pleaseEnterOneTimePasswordPhoneNumberChange =
       "Please enter the one time password sent to your phone number to verify your phone number"
@@ -352,6 +352,7 @@ class LocalizationString {
   static String join = 'Join'.tr;
   static String fee = 'Fee'.tr;
   static String userNameIsUpdated = 'User name is updated'.tr;
+
   static String transaction = 'Transactions'.tr;
   static String phoneNumber = 'Phone number'.tr;
   static String changePhoneNumber = 'Change Phone number'.tr;
@@ -394,6 +395,11 @@ class LocalizationString {
   static String blockedUser = 'Blocked User'.tr;
   static String manageBlockedUser = 'Manage Blocked User list'.tr;
 
+  static String addRelationship = 'Add Relationship'.tr;
+  static String relationship = 'View Relationships'.tr;
+
+  static String myFamily = 'Family'.tr;
+
   static String replied = 'Replied'.tr;
 
   static String postToStory = 'Post to story'.tr;
@@ -405,6 +411,8 @@ class LocalizationString {
   static String followBack = 'Follow back'.tr;
   static String likeBack = 'Like back'.tr;
 
+  static String unInvite = 'Cancel'.tr;
+  static String pendingApproval = 'Pending'.tr;
   static String unFollow = 'UnFollow'.tr;
 
   static String newFollower = 'New Follower'.tr;
@@ -494,6 +502,8 @@ class LocalizationString {
   static String followFriendsToSeeUpdates =
       "Follow your friends to see their post updates".tr;
   static String noUserFound = "No user found".tr;
+  static String noInvitationRequest = "No invitation request".tr;
+
   static String noHashtagFound = "No hashtag found".tr;
   static String noPhotosFound = "No photos found".tr;
   static String openIn = "Open in".tr;
@@ -603,7 +613,7 @@ class LocalizationString {
   static String online = 'Online'.tr;
   static String offline = 'Offline'.tr;
 
-  static String lastSeen = 'Last seen '.tr;
+  static String lastSeen = 'Last seen'.tr;
 
   static String appLocked = 'App is locked'.tr;
 
@@ -934,6 +944,12 @@ class LocalizationString {
   static String joinInvitations = "Join invitations".tr;
   static String invites = "Invites".tr;
 
+  static String requestJoin = 'Request Join'.tr;
+  static String requested = 'Requested'.tr;
+  static String claimsToBe = 'Claims to be your'.tr;
+  static String approve = 'Approve'.tr;
+  static String reject = 'Reject'.tr;
+
   static String accept = 'Accept'.tr;
   static String decline = 'Decline'.tr;
   static String addComment = 'Add comment'.tr;
@@ -1007,6 +1023,7 @@ class LocalizationString {
   static String requested = 'Requested'.tr;
   static String requestJoin = 'Request to join'.tr;
 
+
   static String setUserName = 'Set username'.tr;
   static String setUserNameSubHeading =
       'This username will be shown to all user. Choose a wise user name like it_mike_here'
@@ -1023,4 +1040,17 @@ class LocalizationString {
   static String audios = 'Audios'.tr;
   static String favourite = 'Favourite'.tr;
   static String subscribed = 'Subscribed'.tr;
+
+
+  static String profileCategoryTypeSaved = 'Profile category type is saved'.tr;
+  static String installThisCoolApp = 'Install this cool app from'.tr;
+  static String accountIsDeleted = 'Account is deleted successfully'.tr;
+
+  static String storyDeleteSuccessfully = 'Story is deleted successfully'.tr;
+  static String areYouSureToReportPost = 'Are you sure to report this post?'.tr;
+  static String areYouSureToBlockUser = 'Are you sure to block this user?'.tr;
+
+  static String requestPending = 'Request Pending'.tr;
+
+
 }

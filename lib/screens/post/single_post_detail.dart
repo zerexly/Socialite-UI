@@ -66,10 +66,13 @@ class _SinglePostDetailState extends State<SinglePostDetail> {
                             removePostHandler: () {
                               Get.back();
                             },
+                            blockUserHandler: () {
+                              Get.back();
+                            }
                             // mediaTapHandler: (post) {
                             //   Get.to(() => PostMediaFullScreen(post: post));
                             // },
-                          )
+                            )
                         : Container();
               }),
         ],

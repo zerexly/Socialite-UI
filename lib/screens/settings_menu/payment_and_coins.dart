@@ -29,7 +29,7 @@ class _PaymentAndCoinsState extends State<PaymentAndCoins> {
             height: 50,
           ),
           backNavigationBar(
-              context: context, title: LocalizationString.account),
+              context: context, title: LocalizationString.paymentAndCoins),
           divider(context: context).tP8,
           Expanded(
             child: ListView(

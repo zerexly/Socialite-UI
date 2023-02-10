@@ -10,7 +10,7 @@ class ChooseStoryForHighlights extends StatefulWidget {
 }
 
 class _ChooseStoryForHighlightsState extends State<ChooseStoryForHighlights> {
-  final HighlightsController highlightsController = Get.find();
+  final HighlightsController _highlightsController = Get.find();
 
   final _numberOfColumns = 3;
 
@@ -19,8 +19,14 @@ class _ChooseStoryForHighlightsState extends State<ChooseStoryForHighlights> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      highlightsController.getAllStories();
+      _highlightsController.getAllStories();
     });
+  }
+
+  @override
+  void dispose() {
+    _highlightsController.clear();
+    super.dispose();
   }
 
   @override
@@ -62,11 +68,11 @@ class _ChooseStoryForHighlightsState extends State<ChooseStoryForHighlights> {
           const SizedBox(height: 20),
           Expanded(
             child: GetBuilder<HighlightsController>(
-                init: highlightsController,
+                init: _highlightsController,
                 builder: (ctx) {
-                  return highlightsController.isLoading
+                  return _highlightsController.isLoading
                       ? const StoriesShimmerWidget()
-                      : highlightsController.stories.isNotEmpty
+                      : _highlightsController.stories.isNotEmpty
                           ? GridView.builder(
                               padding: EdgeInsets.zero,
                               gridDelegate:
@@ -75,7 +81,7 @@ class _ChooseStoryForHighlightsState extends State<ChooseStoryForHighlights> {
                                       mainAxisSpacing: 5,
                                       childAspectRatio: 0.6,
                                       crossAxisCount: _numberOfColumns),
-                              itemCount: highlightsController.stories.length,
+                              itemCount: _highlightsController.stories.length,
                               itemBuilder: (context, index) {
                                 return _buildItem(index);
                               }).hP16
@@ -92,26 +98,26 @@ class _ChooseStoryForHighlightsState extends State<ChooseStoryForHighlights> {
   }
 
   _isSelected(int id) {
-    return highlightsController.selectedStoriesMedia
+    return _highlightsController.selectedStoriesMedia
         .where((item) => item.id == id)
         .isNotEmpty;
   }
 
   _selectItem(int index) async {
-    var highlight = highlightsController.stories[index];
+    var highlight = _highlightsController.stories[index];
 
     setState(() {
       if (_isSelected(highlight.id)) {
-        highlightsController.selectedStoriesMedia
+        _highlightsController.selectedStoriesMedia
             .removeWhere((anItem) => anItem.id == highlight.id);
-        if (highlightsController.selectedStoriesMedia.isEmpty) {
-          highlightsController.selectedStoriesMedia
-              .add(highlightsController.stories[0]);
+        if (_highlightsController.selectedStoriesMedia.isEmpty) {
+          _highlightsController.selectedStoriesMedia
+              .add(_highlightsController.stories[0]);
           setState(() {});
         }
       } else {
-        if (highlightsController.selectedStoriesMedia.length < 10) {
-          highlightsController.selectedStoriesMedia.add(highlight);
+        if (_highlightsController.selectedStoriesMedia.length < 10) {
+          _highlightsController.selectedStoriesMedia.add(highlight);
         }
       }
     });
@@ -130,12 +136,12 @@ class _ChooseStoryForHighlightsState extends State<ChooseStoryForHighlights> {
               children: [
                 CachedNetworkImage(
   imageUrl:
-                  highlightsController.stories[index].image!,
+                  _highlightsController.stories[index].image!,
                   fit: BoxFit.cover,
                   height: double.infinity,
                   width: double.infinity,
                 ).round(5),
-                highlightsController.stories[index].isVideoPost() == true
+                _highlightsController.stories[index].isVideoPost() == true
                     ? const Positioned(
                         top: 0,
                         right: 0,
@@ -150,7 +156,7 @@ class _ChooseStoryForHighlightsState extends State<ChooseStoryForHighlights> {
               ],
             ),
           ),
-          _isSelected(highlightsController.stories[index].id)
+          _isSelected(_highlightsController.stories[index].id)
               ? Positioned(
                   top: 5,
                   right: 5,

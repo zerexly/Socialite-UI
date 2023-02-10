@@ -21,6 +21,12 @@ class _SetProfileCategoryTypeState extends State<SetProfileCategoryType> {
   @override
   void initState() {
     super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _setProfileCategoryController.getProfileTypeCategories();
+      _setProfileCategoryController.setProfileCategoryType(
+          getIt<UserProfileManager>().user!.profileCategoryTypeId);
+    });
   }
 
   @override
@@ -64,37 +70,47 @@ class _SetProfileCategoryTypeState extends State<SetProfileCategoryType> {
             height: 20,
           ),
           Expanded(
-              child: ListView.separated(
+              child: Obx(() => ListView.separated(
                   padding: const EdgeInsets.only(
                       top: 20, bottom: 100, left: 16, right: 16),
-                  itemCount: 10,
+                  itemCount: _setProfileCategoryController.categories.length,
                   itemBuilder: (ctx, index) {
+                    CategoryModel category =
+                        _setProfileCategoryController.categories[index];
                     return Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'type',
+                          category.name,
                           style: Theme.of(context).textTheme.titleSmall,
                         ),
-                        Obx(() => ThemeIconWidget(_setProfileCategoryController
-                                    .profileCategoryType.value ==
-                                index
-                            ? ThemeIcon.checkMarkWithCircle
-                            : ThemeIcon.circleOutline)),
+                        Obx(() => ThemeIconWidget(
+                              _setProfileCategoryController
+                                          .profileCategoryType.value ==
+                                      category.id
+                                  ? ThemeIcon.checkMarkWithCircle
+                                  : ThemeIcon.circleOutline,
+                              color: _setProfileCategoryController
+                                          .profileCategoryType.value ==
+                                      category.id
+                                  ? Theme.of(context).primaryColor
+                                  : Theme.of(context).iconTheme.color,
+                            )),
                       ],
                     ).ripple(() {
                       _setProfileCategoryController
-                          .setProfileCategoryType(index);
+                          .setProfileCategoryType(category.id);
                     });
                   },
                   separatorBuilder: (ctx, index) {
                     return const SizedBox(height: 20);
-                  })),
+                  }))),
           FilledButtonType1(
               text: LocalizationString.submit,
               onPress: () {
                 profileController.updateProfileCategoryType(
-                    profileCategoryType: 1,
+                    profileCategoryType:
+                        _setProfileCategoryController.profileCategoryType.value,
                     isSigningUp: true,
                     context: context);
               }).hP16,

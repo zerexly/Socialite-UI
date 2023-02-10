@@ -4,6 +4,8 @@ import 'package:foap/util/app_config_constants.dart';
 
 class NetworkConstantsUtil {
   static String baseUrl = AppConfigConstants.restApiBaseUrl;
+
+  // *************** Login and profile *************//
   static String login = 'users/login';
   static String socialLogin = 'users/login-social';
   static String forgotPassword = 'users/forgot-password-request';
@@ -14,19 +16,74 @@ class NetworkConstantsUtil {
   static String verifyChangePhoneOTP = 'users/verify-otp';
 
   static String updatedDeviceToken = 'users/update-token';
-
-  static String getSuggestedUsers =
-      'users/sugested-user?expand=isFollowing,isFollower,userLiveDetail';
-
   static String register = 'users/register';
   static String checkUserName = 'users/check-username';
+  static String otherUser = 'users/{{id}}?expand=isFollowing,isFollower,totalFollowing,totalFollower,totalPost,totalWinnerPost,userLiveDetail,giftSummary,userSetting';
 
-  static String getCompetitions =
-      'competitions?expand=competitionPosition,post,post.user';
-  static String joinCompetition = 'competitions/join';
-  static String getCompetitionDetail =
-      'competitions/{{id}}?expand=post,post.user,competitionPosition.post.user,winnerPost';
+  static String getMyProfile =
+      'users/profile?expand=totalFollowing,totalFollower,totalActivePost,userLiveDetail,giftSummary,userSetting';
+  static String updateUserProfile = 'users/profile-update';
+  static String updateProfileImage = 'users/update-profile-image';
+  static String updatePassword = 'users/update-password';
+  static String updatePhone = 'users/update-mobile';
+  static String updateLocation = 'users/update-location';
+  static String deleteAccount = 'users/delete-account';
+  static String profileCategoryTypes = 'profile-category-types';
 
+  //*********** User *************//
+  static String getSuggestedUsers =
+      'users/sugested-user?expand=isFollowing,isFollower,userLiveDetail';
+  static String followUser = 'followers';
+  static String unfollowUser = 'followers/unfollow';
+  static String followMultipleUser = 'followers/follow-multiple';
+
+  static String followers =
+      'followers/my-follower?expand=followerUserDetail,followerUserDetail.isFollowing,followerUserDetail.isFollower&user_id=';
+  static String following =
+      'followers/my-following?expand=followingUserDetail,followingUserDetail.isFollowing,followerUserDetail.isFollower&user_id=';
+  static String searchUsers =
+      'users/search-user?expand=isFollowing,userLiveDetail';
+  static String reportUser = 'users/report-user';
+  static String blockUser = 'blocked-users';
+  static String blockedUsers =
+      'blocked-users?expand=blockedUserDetail,userLiveDetail';
+  static String unBlockUser = 'blocked-users/un-blocked';
+
+  static String findFriends =
+      'users/find-friend?expand=isFollowing,isFollower&';
+
+  //********************* Misc ***********//
+
+  static String searchHashtag = 'posts/hash-counter-list?hashtag=';
+  static String getCountries = 'countries';
+
+  static String getNotifications = 'notifications';
+  static String submitRequest = 'support-requests';
+  static String supportRequests = 'support-requests?is_reply=';
+  static String notificationSettings = 'users/push-notification-status';
+
+  static String currentLiveUsers =
+      'followers/my-following-live?expand=followingUserDetail,followingUserDetail.isFollowing,,followingUserDetail.isFollower,followingUserDetail.userLiveDetail&user_id=';
+
+  static String getSettings = 'settings';
+
+  //********************* Story and Highlights ***********//
+
+  static String stories = 'stories?expand=user,user.userLiveDetail';
+  static String addStory = 'stories';
+  static String myStories = 'stories/my-story';
+  static String myCurrentActiveStories =
+      'stories/my-active-story?expand=userStory';
+  static String deleteStory = 'stories/';
+  static String highlights =
+      'highlights?expand=highlightStory,highlightStory.story.user&user_id=';
+  static String addStoryToHighlight = 'highlights/add-story';
+  static String removeStoryFromHighlight = 'highlights/remove-story';
+  static String addHighlight = 'highlights';
+  static String updateHighlight = 'highlights/';
+  static String deleteHighlight = 'highlights';
+
+  //********************* Post ***********//
   static String addPost = 'posts';
   static String uploadPostImage = 'posts/upload-gallary';
   static String uploadFileImage = 'file-uploads/upload-file';
@@ -45,69 +102,13 @@ class NetworkConstantsUtil {
   static String reportPost = 'posts/report-post';
   static String deletePost = 'posts/{{id}}';
 
-  static String otherUser =
-      'users/{{id}}?expand=isFollowing,isFollower,totalFollowing,totalFollower,totalPost,totalWinnerPost,userLiveDetail,giftSummary';
-  static String followUser = 'followers';
-  static String unfollowUser = 'followers/unfollow';
-  static String followMultipleUser = 'followers/follow-multiple';
+  //********************* competition ***********//
+  static String getCompetitions =
+      'competitions?expand=competitionPosition,post,post.user';
+  static String joinCompetition = 'competitions/join';
+  static String getCompetitionDetail =
+      'competitions/{{id}}?expand=post,post.user,competitionPosition.post.user,winnerPost';
 
-  static String followers =
-      'followers/my-follower?expand=followerUserDetail,followerUserDetail.isFollowing,followerUserDetail.isFollower&user_id=';
-  static String following =
-      'followers/my-following?expand=followingUserDetail,followingUserDetail.isFollowing,followerUserDetail.isFollower&user_id=';
-
-  static String stories = 'stories?expand=user,user.userLiveDetail';
-  static String addStory = 'stories';
-
-  static String findFriends =
-      'users/find-friend?expand=isFollowing,isFollower&';
-  static String searchHashtag = 'posts/hash-counter-list?hashtag=';
-
-  static String searchUsers =
-      'users/search-user?expand=isFollowing,userLiveDetail';
-  static String getMyProfile =
-      'users/profile?expand=totalFollowing,totalFollower,totalActivePost,userLiveDetail,giftSummary,language,interest';
-
-  static String updateUserProfile = 'users/profile-update';
-  static String updateProfileImage = 'users/update-profile-image';
-  static String updatePassword = 'users/update-password';
-  static String updatePhone = 'users/update-mobile';
-  static String updateLocation = 'users/update-location';
-
-  static String getCountries = 'countries';
-  static String reportUser = 'users/report-user';
-
-  static String getPackages = 'packages';
-  static String subscribePackage = 'payments/package-subscription';
-  static String updatePaymentDetail = 'users/update-payment-detail';
-  static String withdrawHistory = 'payments/withdrawal-history';
-  static String withdrawalRequest = 'payments/withdrawal';
-  static String redeemCoins = 'payments/redeem-coin';
-
-  static String rewardedAdCoins = 'posts/promotion-ad-view';
-  static String getNotifications = 'notifications';
-  static String submitRequest = 'support-requests';
-  static String supportRequests = 'support-requests?is_reply=';
-  static String notificationSettings = 'users/push-notification-status';
-  static String myStories = 'stories/my-story';
-  static String myCurrentActiveStories =
-      'stories/my-active-story?expand=userStory';
-  static String deleteStory = 'stories/';
-  static String currentLiveUsers =
-      'followers/my-following-live?expand=followingUserDetail,followingUserDetail.isFollowing,,followingUserDetail.isFollower,followingUserDetail.userLiveDetail&user_id=';
-  static String highlights =
-      'highlights?expand=highlightStory,highlightStory.story.user&user_id=';
-  static String addHighlight = 'highlights';
-  static String updateHighlight = 'highlights/';
-  static String deleteHighlight = 'highlights';
-  static String addStoryToHighlight = 'highlights/add-story';
-  static String removeStoryFromHighlight = 'highlights/remove-story';
-  static String getSettings = 'settings';
-  static String blockUser = 'blocked-users';
-  static String blockedUsers =
-      'blocked-users?expand=blockedUserDetail,userLiveDetail';
-  static String unBlockUser = 'blocked-users/un-blocked';
-  static String deleteAccount = 'users/delete-account';
 
   //******************** reel ******************//
   static String reelAudioCategories = 'categories/reel-audio';
@@ -161,6 +162,21 @@ class NetworkConstantsUtil {
 
   static String getPodcastShows = 'podcast-shows?expand=podcastShow';
   static String getPodcastShowsEpisode = 'podcast-shows/podcast-show-episodes?';
+
+  //*********** Relations ***********//
+  static String relationshipNames = 'relations';
+  static String myRelations = 'relations/my-relation?expand=user,realationShip';
+  static String myInvitations = 'relations/my-invitation?expand=relationShip, createdBy';
+  static String postInviteUnInvite = 'relations/invite';
+  static String putAcceptRejectInvite = 'relations/update-invitation';
+  static String postRelationshipSetting = 'users/add-setting';
+  static String getRelationbyUser = 'relations/user-relation';
+
+
+  //static String getHosts = 'podcasts?expand=currentViewer';
+  //static String getPodcastShows = 'podcast-shows?expand=podcastShow';
+  //static String getPodcastShowsEpisode = 'podcast-shows/podcast-show-episodes?';
+
   //***********Polls***********//
 
   static String getPolls =
@@ -209,7 +225,7 @@ class NetworkConstantsUtil {
 
   //***********random live and chat***********//
   static String randomLives = 'chats/live-user?expand=userLiveDetail';
-  static String randomOnlineUser = 'chats/online-user';
+  static String randomOnlineUser = 'chats/online-user?profile_category_type=';
 
   //***********gifts***********//
   static String giftsCategories = 'categories/gift?expand=gift';
@@ -231,16 +247,16 @@ class NetworkConstantsUtil {
   static String createPaymentIntent = 'payments/payment-intent';
   static String getPaypalClientToken = 'payments/paypal-client-token';
   static String submitPaypalPayment = 'payments/paypal-payment';
+  static String updatePaymentDetail = 'users/update-payment-detail';
+  static String withdrawHistory = 'payments/withdrawal-history';
+  static String withdrawalRequest = 'payments/withdrawal';
 
-  //***********Dating***********//
-  static String addUserPreference = 'datings/add-user-preference';
-  static String getUserPreference =
-      'datings/preference-profile?expand=preferenceInterest,preferenceLanguage';
-  static String getDatingProfiles = 'datings/preference-profile-match';
-  static String profileLike = 'datings/profile-action-like';
-  static String profileSkip = 'datings/profile-action-skip';
-  static String undoProfileLike = 'datings/profile-action-remove';
-  static String matchedProfiles = 'datings/profile-matching';
-  static String likeProfiles = 'datings/profile-like-by-other-users';
-  static String getLanguages = 'languages';
+  //***********Package and coins***********//
+
+  static String getPackages = 'packages';
+  static String subscribePackage = 'payments/package-subscription';
+
+  static String redeemCoins = 'payments/redeem-coin';
+
+  static String rewardedAdCoins = 'posts/promotion-ad-view';
 }

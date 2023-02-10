@@ -81,7 +81,6 @@ class SettingsController extends GetxController {
     if (authKey != null) {
       await ApiController().getSettings().then((response) async {
         setting.value = response.settings;
-        print('getSettings = ${setting.value!.pid}');
 
         if (setting.value?.latestVersion! !=
             AppConfigConstants.currentVersion) {
@@ -132,6 +131,18 @@ class SettingsController extends GetxController {
         // Handle this exception here.
       }
     }
+  }
+
+  deleteAccount() {
+    ApiController().deleteAccountApi().then((response) {
+      if (response.success) {
+        getIt<UserProfileManager>().logout();
+        AppUtil.showToast(
+            context: Get.context!,
+            message: LocalizationString.accountIsDeleted,
+            isSuccess: true);
+      }
+    });
   }
 
   askForRating(BuildContext context) {

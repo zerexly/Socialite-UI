@@ -1,6 +1,10 @@
 import 'package:foap/helper/common_import.dart';
 import 'package:get/get.dart';
+
 import '../chat/random_chat/choose_profile_ctageory.dart';
+
+import '../chat/random_chat/choose_profile_category.dart';
+
 import '../podcast/podcast_list_dashboard.dart';
 import '../tvs/tv_dashboard.dart';
 import '../dating/dating_dashboard.dart';

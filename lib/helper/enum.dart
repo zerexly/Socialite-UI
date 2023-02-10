@@ -94,7 +94,7 @@ enum PaymentGateway {
   wallet,
   stripe,
   googlePay,
-  inAppPurchse
+  inAppPurchase
 }
 
 enum BookingStatus { confirmed, cancelled }
@@ -102,4 +102,7 @@ enum BookingStatus { confirmed, cancelled }
 enum EventStatus { upcoming, active, completed }
 
 enum TvBannerType { tv, show }
+
 enum PodcastBannerType { host, show }
+
+enum RelationsRevealSetting { none, followers, all }

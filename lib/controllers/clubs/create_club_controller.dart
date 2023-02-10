@@ -2,11 +2,20 @@ import 'package:foap/helper/common_import.dart';
 import 'package:get/get.dart';
 
 class CreateClubController extends GetxController {
+  final ClubsController _clubsController = Get.find();
+
   RxInt privacyType = 1.obs;
 
   RxBool enableChat = false.obs;
   Rx<CategoryModel?> category = Rx<CategoryModel?>(null);
   Rx<File?> imageFile = Rx<File?>(null);
+
+  clear() {
+    privacyType.value = 1;
+    enableChat.value = false;
+    imageFile.value = null;
+    category.value = null;
+  }
 
   privacyTypeChange(int type) {
     privacyType.value = type;
@@ -35,12 +44,11 @@ class CreateClubController extends GetxController {
                 description: club.desc!)
             .then((response) {
           EasyLoading.dismiss();
-          Get.close(2);
-          // callback();
+          _clubsController.refreshClubs();
+          Get.close(3);
+          clear();
 
-          // if(privacyType.value == 2){
           Get.to(() => InviteUsersToClub(clubId: response.clubId!));
-          // }
         });
       } else {
         EasyLoading.dismiss();

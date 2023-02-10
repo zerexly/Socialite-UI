@@ -220,7 +220,6 @@ class _ChatMediaSharingOptionPopupState
             _chatDetailController.sendAudioMessage(
                 media: media,
                 mode: _chatDetailController.actionMode.value,
-                context: context,
                 room: _chatDetailController.chatRoom.value!);
           },
         ));
@@ -239,7 +238,6 @@ class _ChatMediaSharingOptionPopupState
                 _chatDetailController.sendContactMessage(
                     contact: contact,
                     mode: _chatDetailController.actionMode.value,
-                    context: context,
                     room: _chatDetailController.chatRoom.value!);
               }
             },
@@ -268,7 +266,6 @@ class _ChatMediaSharingOptionPopupState
         _chatDetailController.sendLocationMessage(
             location: locationModel,
             mode: _chatDetailController.actionMode.value,
-            context: context,
             room: _chatDetailController.chatRoom.value!);
       }
     });
@@ -296,7 +293,6 @@ class _ChatMediaSharingOptionPopupState
                 _chatDetailController.sendImageMessage(
                     media: media,
                     mode: _chatDetailController.actionMode.value,
-                    context: context,
                     room: _chatDetailController.chatRoom.value!);
                 Navigator.of(context).pop();
               } else {
@@ -304,7 +300,6 @@ class _ChatMediaSharingOptionPopupState
                 _chatDetailController.sendVideoMessage(
                     media: media,
                     mode: _chatDetailController.actionMode.value,
-                    context: context,
                     room: _chatDetailController.chatRoom.value!);
               }
             }
@@ -334,7 +329,6 @@ class _ChatMediaSharingOptionPopupState
             _chatDetailController.sendAudioMessage(
                 media: media,
                 mode: _chatDetailController.actionMode.value,
-                context: context,
                 room: _chatDetailController.chatRoom.value!);
           },
         ));
@@ -383,25 +377,21 @@ class _ChatMediaSharingOptionPopupState
         _chatDetailController.sendImageMessage(
             media: media,
             mode: _chatDetailController.actionMode.value,
-            context: context,
             room: _chatDetailController.chatRoom.value!);
       } else if (file.mediaType == GalleryMediaType.video) {
         _chatDetailController.sendVideoMessage(
             media: media,
             mode: _chatDetailController.actionMode.value,
-            context: context,
             room: _chatDetailController.chatRoom.value!);
       } else if (file.mediaType == GalleryMediaType.audio) {
         _chatDetailController.sendAudioMessage(
             media: media,
             mode: _chatDetailController.actionMode.value,
-            context: context,
             room: _chatDetailController.chatRoom.value!);
       } else {
         _chatDetailController.sendFileMessage(
             media: media,
             mode: _chatDetailController.actionMode.value,
-            context: context,
             room: _chatDetailController.chatRoom.value!);
       }
       Get.back();

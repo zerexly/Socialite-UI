@@ -10,6 +10,7 @@ class GroupSettings extends StatefulWidget {
 
 class _GroupSettingsState extends State<GroupSettings> {
   final ChatRoomDetailController _chatRoomDetailController = Get.find();
+  final ChatDetailController _chatDetailController = Get.find();
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +53,7 @@ class _GroupSettingsState extends State<GroupSettings> {
                     ),
                     const Spacer(),
                     Obx(() => Text(
-                          _chatRoomDetailController.room.value!.groupAccess == 1
+                          _chatDetailController.chatRoom.value!.groupAccess == 1
                               ? LocalizationString.onlyAdmins
                               : LocalizationString.allParticipants,
                           style: Theme.of(context).textTheme.titleSmall,
@@ -101,5 +102,4 @@ class _GroupSettingsState extends State<GroupSettings> {
               },
             ));
   }
-
 }

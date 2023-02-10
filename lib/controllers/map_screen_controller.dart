@@ -15,10 +15,7 @@ class MapScreenController extends GetxController {
   }
 
   getLocation() {
-    print('getLocation');
-
     Location().getLocation().then((locationData) {
-      print('getLocation 1');
       currentLocation.value = locationData;
       update();
       queryFollowers();
@@ -26,7 +23,6 @@ class MapScreenController extends GetxController {
   }
 
   Future<List<UserModel>> queryFollowers() async {
-    print('queryFollowers');
     await ApiController().getFollowingUsers().then((response) {
       users.value = response.users;
       createMarkers();
@@ -38,13 +34,10 @@ class MapScreenController extends GetxController {
   createMarkers() async {
     for (UserModel userModel in users) {
       if (userModel.latitude != null) {
-        print('createMarkers for latitude');
-
         String? imgUrl = userModel.picture;
         Uint8List bytes;
 
         if (imgUrl != null) {
-          print('imgUrl = $imgUrl');
           bytes = (await NetworkAssetBundle(Uri.parse(imgUrl)).load(imgUrl))
               .buffer
               .asUint8List();
@@ -58,8 +51,6 @@ class MapScreenController extends GetxController {
             getMarkers(userModel, value);
           });
         } else {
-          print('account_selected ');
-
           final ByteData bytesData =
               (await rootBundle.load('assets/account_selected.png'));
           bytes = bytesData.buffer.asUint8List();

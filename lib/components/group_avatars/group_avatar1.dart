@@ -24,6 +24,7 @@ class CategoryAvatarType1 extends StatelessWidget {
               right: 5,
               child: Text(
                 category.name,
+                maxLines: 1,
                 style: Theme.of(context)
                     .textTheme
                     .bodyMedium!

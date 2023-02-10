@@ -39,7 +39,7 @@ class HighlightsBar extends StatelessWidget {
                     Text(LocalizationString.add,
                         style: Theme.of(context)
                             .textTheme
-                            .bodyLarge!
+                            .bodySmall!
                             .copyWith(fontWeight: FontWeight.w600)),
                   ],
                 ).ripple(() {
@@ -66,7 +66,7 @@ class HighlightsBar extends StatelessWidget {
                       highlights[index - 1].name,
                       style: Theme.of(context)
                           .textTheme
-                          .bodyLarge!
+                          .bodySmall!
                           .copyWith(fontWeight: FontWeight.w600),
                       maxLines: 1,
                       textAlign: TextAlign.center,

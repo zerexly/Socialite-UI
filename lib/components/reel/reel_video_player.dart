@@ -94,7 +94,11 @@ class _ReelVideoPlayerState extends State<ReelVideoPlayer> {
               children: [
                 Row(
                   children: [
-                    UserAvatarView(size: 25, user: widget.reel.user,hideOnlineIndicator: true,),
+                    UserAvatarView(
+                      size: 25,
+                      user: widget.reel.user,
+                      hideOnlineIndicator: true,
+                    ),
                     const SizedBox(
                       width: 10,
                     ),
@@ -175,12 +179,12 @@ class _ReelVideoPlayerState extends State<ReelVideoPlayer> {
                         },
                         child: ThemeIconWidget(
                           _reelsController.likedReels.contains(widget.reel) ||
-                              widget.reel.isLike
+                                  widget.reel.isLike
                               ? ThemeIcon.favFilled
                               : ThemeIcon.fav,
                           color: _reelsController.likedReels
-                              .contains(widget.reel) ||
-                              widget.reel.isLike
+                                      .contains(widget.reel) ||
+                                  widget.reel.isLike
                               ? Theme.of(context).errorColor
                               : Theme.of(context).iconTheme.color,
                         ))),
@@ -234,9 +238,9 @@ class _ReelVideoPlayerState extends State<ReelVideoPlayer> {
                 // ),
                 if (widget.reel.audio != null)
                   CachedNetworkImage(
-                      height: 25,
-                      width: 25,
-                      imageUrl: widget.reel.audio!.thumbnail)
+                          height: 25,
+                          width: 25,
+                          imageUrl: widget.reel.audio!.thumbnail)
                       .borderWithRadius(context: context, value: 1, radius: 5)
                       .ripple(() {
                     if (widget.reel.audio != null) {
@@ -279,6 +283,11 @@ class _ReelVideoPlayerState extends State<ReelVideoPlayer> {
     Get.bottomSheet(CommentsScreen(
       isPopup: true,
       model: widget.reel,
+      commentPostedCallback: () {
+        setState((){
+          widget.reel.totalComment += 1;
+        });
+      },
     ));
   }
 

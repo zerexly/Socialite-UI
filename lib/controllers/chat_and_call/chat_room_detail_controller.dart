@@ -6,39 +6,28 @@ class ChatRoomDetailController extends GetxController {
   RxList<ChatMessageModel> videos = <ChatMessageModel>[].obs;
   RxList<ChatMessageModel> starredMessages = <ChatMessageModel>[].obs;
   final ChatDetailController _chatDetailController = Get.find();
-  Rx<ChatRoomModel?> room = Rx<ChatRoomModel?>(null);
+  // Rx<ChatRoomModel?> room = Rx<ChatRoomModel?>(null);
 
   RxInt selectedSegment = 0.obs;
 
-  getUpdatedChatRoomDetail(ChatRoomModel chatRoom) {
-    ApiController().getChatRoomDetail(chatRoom.id).then((response) {
-      room.value = response.room;
-      room.refresh();
-
-      // update room in local storage
-      getIt<DBManager>().updateRoom(chatRoom);
-
-      update();
-    });
-  }
 
   makeUserAsAdmin(UserModel user, ChatRoomModel chatRoom) {
     getIt<SocketManager>().emit(SocketConstants.makeUserAdmin,
         {'room': chatRoom.id, 'userId': user.id});
-    getUpdatedChatRoomDetail(chatRoom);
+    _chatDetailController.getUpdatedChatRoomDetail(chatRoom);
   }
 
   removeUserAsAdmin(UserModel user, ChatRoomModel chatRoom) {
     getIt<SocketManager>().emit(SocketConstants.removeUserAdmin,
         {'room': chatRoom.id, 'userId': user.id});
-    getUpdatedChatRoomDetail(chatRoom);
+    _chatDetailController.getUpdatedChatRoomDetail(chatRoom);
   }
 
   removeUserFormGroup(UserModel user, ChatRoomModel chatRoom) {
     getIt<SocketManager>().emit(SocketConstants.removeUserFromGroupChat,
         {'room': chatRoom.id, 'userId': user.id});
 
-    getUpdatedChatRoomDetail(chatRoom);
+    _chatDetailController.getUpdatedChatRoomDetail(chatRoom);
   }
 
   leaveGroup(ChatRoomModel chatRoom) {
@@ -48,9 +37,9 @@ class ChatRoomDetailController extends GetxController {
 
   updateGroupAccess(int access) {
     getIt<SocketManager>().emit(SocketConstants.updateChatAccessGroup,
-        {'room': room.value!.id, 'chatAccessGroup': access});
+        {'room': _chatDetailController.chatRoom.value!.id, 'chatAccessGroup': access});
 
-    getUpdatedChatRoomDetail(room.value!);
+    _chatDetailController.getUpdatedChatRoomDetail(_chatDetailController.chatRoom.value!);
   }
 
   deleteGroup(ChatRoomModel chatRoom) {

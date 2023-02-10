@@ -32,12 +32,13 @@ class SocketManager {
   StreamSubscription<FGBGType>? subscription;
 
   disconnect() {
-    _socketInstance = null;
     _socketInstance?.disconnect();
+    _socketInstance = null;
   }
 
 //Initialize Socket Connection
   dynamic connect() {
+
     // buildContext = context;
     if (_socketInstance != null) return;
     _socketInstance = io.io(
@@ -122,8 +123,7 @@ class SocketManager {
   bool emit(String event, Map<String, dynamic> data) {
     log('emiting ${_socketInstance!.connected}');
     if (_socketInstance!.connected == true) {
-      log(
-          'event == $event ========== data = ${jsonDecode(json.encode(data))}');
+      log('event == $event ========== data = ${jsonDecode(json.encode(data))}');
       _socketInstance?.emit(event, jsonDecode(json.encode(data)));
     } else {
       // print('socked is not connected');
@@ -195,9 +195,9 @@ class SocketManager {
     chatMessage['created_at'] = response['created_at'];
 
     ChatMessageModel message = ChatMessageModel.fromJson(chatMessage);
-    _chatController.newMessageReceived(message);
-    _chatDetailController.newMessageReceived(message);
-
+    // _chatController.newMessageReceived(message);
+    // _chatDetailController.newMessageReceived(message);
+    getIt<DBManager>().newMessageReceived(message);
     // getIt<SocketManager>().emit(SocketConstants.addUserInChatRoom, {
     //   'userId': '${getIt<UserProfileManager>().user!.id}',
     //   'room': response['room'].toString()
@@ -205,13 +205,16 @@ class SocketManager {
   }
 
   void onReceiveMessage(dynamic response) async {
+    print('onReceiveMessage $response');
     ChatMessageModel message = ChatMessageModel.fromJson(response);
 
-    await _chatDetailController.newMessageReceived(message);
-    _chatController.newMessageReceived(message);
+    await getIt<DBManager>().newMessageReceived(message);
+    // await _chatDetailController.newMessageReceived(message);
+    // _chatController.newMessageReceived(message);
 
     int roomsWithUnreadMessageCount =
         await getIt<DBManager>().roomsWithUnreadMessages();
+
     _dashboardController.updateUnreadMessageCount(roomsWithUnreadMessageCount);
   }
 
@@ -238,7 +241,6 @@ class SocketManager {
   }
 
   void updateMessageStatus(dynamic response) {
-    print('updateMessageStatus $response');
     _chatDetailController.messageUpdateReceived(response);
   }
 
@@ -268,13 +270,14 @@ class SocketManager {
     chatMessage['local_message_id'] = randomId();
     chatMessage['room'] = response['room'];
     chatMessage['messageType'] = 100;
-    chatMessage['message'] = jsonEncode(response);
+    chatMessage['message'] = jsonEncode(response).encrypted();
     chatMessage['created_by'] = response['userId'];
     chatMessage['created_at'] = response['created_at'];
 
     ChatMessageModel message = ChatMessageModel.fromJson(chatMessage);
-    _chatController.newMessageReceived(message);
-    _chatDetailController.newMessageReceived(message);
+    // _chatController.newMessageReceived(message);
+    // _chatDetailController.newMessageReceived(message);
+    getIt<DBManager>().newMessageReceived(message);
   }
 
   removeUserAdmin(dynamic response) {
@@ -285,30 +288,31 @@ class SocketManager {
     chatMessage['local_message_id'] = randomId();
     chatMessage['room'] = response['room'];
     chatMessage['messageType'] = 100;
-    chatMessage['message'] = jsonEncode(response);
+    chatMessage['message'] = jsonEncode(response).encrypted();
     chatMessage['created_by'] = response['userIdActiondBy'];
     chatMessage['created_at'] = response['created_at'];
 
     ChatMessageModel message = ChatMessageModel.fromJson(chatMessage);
-    _chatController.newMessageReceived(message);
-    _chatDetailController.newMessageReceived(message);
+    // _chatController.newMessageReceived(message);
+    // _chatDetailController.newMessageReceived(message);
+    getIt<DBManager>().newMessageReceived(message);
   }
 
   removeUserFromGroupChat(dynamic response) {
-    response['action'] =
-        2; // 1 for added, 2 for removed , 3 for made admin ,4 left
+    response['action'] = 2; // 1 for added, 2 for removed , 3 for make admin ,4 left
     Map<String, dynamic> chatMessage = {};
     chatMessage['id'] = 0;
     chatMessage['local_message_id'] = randomId();
     chatMessage['room'] = response['room'];
     chatMessage['messageType'] = 100;
-    chatMessage['message'] = jsonEncode(response);
+    chatMessage['message'] = jsonEncode(response).encrypted();
     chatMessage['created_by'] = response['userIdActiondBy'];
     chatMessage['created_at'] = response['created_at'];
 
     ChatMessageModel message = ChatMessageModel.fromJson(chatMessage);
-    _chatController.newMessageReceived(message);
-    _chatDetailController.newMessageReceived(message);
+    // _chatController.newMessageReceived(message);
+    // _chatDetailController.newMessageReceived(message);
+    getIt<DBManager>().newMessageReceived(message);
   }
 
   makeUserAdmin(dynamic response) {
@@ -319,13 +323,14 @@ class SocketManager {
     chatMessage['local_message_id'] = randomId();
     chatMessage['room'] = response['room'];
     chatMessage['messageType'] = 100;
-    chatMessage['message'] = jsonEncode(response);
+    chatMessage['message'] = jsonEncode(response).encrypted();
     chatMessage['created_by'] = response['userIdActiondBy'];
     chatMessage['created_at'] = response['created_at'];
 
     ChatMessageModel message = ChatMessageModel.fromJson(chatMessage);
-    _chatController.newMessageReceived(message);
-    _chatDetailController.newMessageReceived(message);
+    // _chatController.newMessageReceived(message);
+    // _chatDetailController.newMessageReceived(message);
+    getIt<DBManager>().newMessageReceived(message);
   }
 
   updateChatAccessGroup(dynamic response) {

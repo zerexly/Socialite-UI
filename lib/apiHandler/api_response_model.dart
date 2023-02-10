@@ -7,6 +7,9 @@ import '../model/club_invitation.dart';
 import '../model/club_join_request.dart';
 import '../model/faq_model.dart';
 import '../model/live_tv_model.dart';
+import '../model/get_relationship_model.dart';
+import '../model/myRelations/my_invitation_model.dart';
+import '../model/myRelations/my_relations_model.dart';
 import '../model/podcast_model.dart';
 import '../model/tv_banner_model.dart';
 import '../model/tv_show_model.dart';
@@ -92,6 +95,10 @@ class ApiResponseModel {
   List<UserModel> likeUsers = [];
   List<UserModel> datingUsers = [];
 
+  List<RelationshipName> relationshipNames = [];
+  List<MyRelationsModel> relationships = [];
+  List<MyInvitationsModel> myInvitations = [];
+
   List<VerificationRequest> verificationRequests = [];
 
   //FAQ
@@ -125,7 +132,7 @@ class ApiResponseModel {
     dynamic data = json['data'];
     model.isInvalidLogin = json['isInvalidLogin'] == null ? false : true;
 
-    log(json.toString());
+    // log(json.toString());
     // log(url);
 
     if (model.success) {
@@ -151,8 +158,12 @@ class ApiResponseModel {
             // model.metaData = APIMetaData.fromJson(data['user']['_meta']);
           }
           if (data['auth_key'] != null) {
+            String username = data['user']['username'] ?? '';
             model.authKey = data['auth_key'];
-            if (data['user']['username'] == null) {
+            if (data['is_login_first_time'] == 1) {
+              model.isLoginFirstTime = true;
+            }
+            if (username.isEmpty) {
               model.isLoginFirstTime = true;
             } else {
               model.isLoginFirstTime = data['user']['is_login_first_time'] == 1;
@@ -200,20 +211,50 @@ class ApiResponseModel {
             model.metaData = APIMetaData.fromJson(data['club']['_meta']);
           }
         } else if (data['invitation'] != null) {
-          var items = data['invitation']['items'];
-          if (items != null && items.length > 0) {
-            model.clubInvitations = List<ClubInvitation>.from(
-                items.map((x) => ClubInvitation.fromJson(x)));
-            model.metaData = APIMetaData.fromJson(data['invitation']['_meta']);
+          if (url == NetworkConstantsUtil.clubJoinInvites) {
+            var items = data['invitation']['items'];
+            if (items != null && items.length > 0) {
+              model.clubInvitations = List<ClubInvitation>.from(
+                  items.map((x) => ClubInvitation.fromJson(x)));
+              model.metaData =
+                  APIMetaData.fromJson(data['invitation']['_meta']);
+            }
+          } else if (url == NetworkConstantsUtil.getRelationbyUser) {
+            var items = data['invitation'];
+            if (items != null && items.length > 0) {
+              model.relationships = List<MyRelationsModel>.from(
+                  items.map((x) => MyRelationsModel.fromJson(x)));
+            }
+          } else if (url == NetworkConstantsUtil.myInvitations) {
+            var items = data['invitation']['items'];
+            if (items != null && items.length > 0) {
+              model.myInvitations = List<MyInvitationsModel>.from(
+                  items.map((x) => MyInvitationsModel.fromJson(x)));
+            }
+          }
+        } else if (data['relations'] != null) {
+          if (url == NetworkConstantsUtil.myRelations ||
+              url == NetworkConstantsUtil.getRelationbyUser) {
+            var items = data['relations']['items'];
+            if (items != null && items.length > 0) {
+              model.relationships = List<MyRelationsModel>.from(
+                  items.map((x) => MyRelationsModel.fromJson(x)));
+              model.metaData = APIMetaData.fromJson(data['relations']['_meta']);
+            }
+          } else if (url == NetworkConstantsUtil.relationshipNames) {
+            var items = data['relations'];
+            if (url == NetworkConstantsUtil.relationshipNames) {
+              model.relationshipNames = List<RelationshipName>.from(
+                  items.map((x) => RelationshipName.fromJson(x)));
+            }
           }
         } else if (data['join_request'] != null) {
           var items = data['join_request']['items'];
-          if (items != null && items.length > 0) {
-            model.clubJoinRequests = List<ClubJoinRequest>.from(
-                items.map((x) => ClubJoinRequest.fromJson(x)));
-            model.metaData =
-                APIMetaData.fromJson(data['join_request']['_meta']);
-          }
+          // if (items != null && items.length > 0) {
+          model.clubJoinRequests = List<ClubJoinRequest>.from(
+              items.map((x) => ClubJoinRequest.fromJson(x)));
+          model.metaData = APIMetaData.fromJson(data['join_request']['_meta']);
+          // }
         } else if (data['club_id'] != null) {
           model.clubId = data['club_id'];
         } else if (data['audio'] != null) {
@@ -310,6 +351,10 @@ class ApiResponseModel {
             model.metaData =
                 APIMetaData.fromJson(data['eventBooking']['_meta']);
           }
+        } else if (data['profileCategoryType'] != null) {
+          var items = data['profileCategoryType'];
+          model.categories = List<CategoryModel>.from(
+              items.map((x) => CategoryModel.fromJson(x)));
         } else if (data['category'] != null) {
           var items = data['category'];
 
@@ -323,8 +368,7 @@ class ApiResponseModel {
             } else if (url == NetworkConstantsUtil.giftsCategories) {
               model.giftCategories = List<GiftCategoryModel>.from(
                   items.map((x) => GiftCategoryModel.fromJson(x)));
-            }
-            if (url == NetworkConstantsUtil.eventsCategories) {
+            } else if (url == NetworkConstantsUtil.eventsCategories) {
               model.eventCategories = List<EventCategoryModel>.from(
                   items.map((x) => EventCategoryModel.fromJson(x)));
             } else {
@@ -578,6 +622,9 @@ class ApiResponseModel {
               var roomData = data['room'];
               model.room = ChatRoomModel.fromJson(roomData);
             }
+          } else if (url == NetworkConstantsUtil.updateGroupChatRoom) {
+            var room = data['room'] as Map<String, dynamic>?;
+            model.roomId = room!['id'];
           }
         } else if (data['chatMessage'] != null) {
           var items = data['chatMessage']['items'];

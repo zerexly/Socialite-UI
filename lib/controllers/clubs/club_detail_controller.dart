@@ -135,6 +135,12 @@ class ClubDetailController extends GetxController {
     posts.refresh();
   }
 
+  removeUsersAllPostFromList(PostModel post) {
+    posts.removeWhere((element) => element.user.id == post.user.id);
+
+    posts.refresh();
+  }
+
   joinClub() {
     if (club.value!.isRequestBased == true) {
       club.value!.isRequested = true;

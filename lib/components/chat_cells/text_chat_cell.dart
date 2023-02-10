@@ -10,8 +10,6 @@ class TextChatTile extends StatelessWidget {
   Widget build(BuildContext context) {
     String messageString = message.textMessage;
 
-    print('messageString $messageString');
-
     bool validURL = messageString.isValidUrl;
     return validURL == true
         ? Column(

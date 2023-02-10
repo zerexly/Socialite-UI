@@ -122,56 +122,32 @@ class _RequestVerificationState extends State<RequestVerification> {
         SingleChildScrollView(
           child: Column(
             children: [
+              Text(
+                LocalizationString.applyVerification,
+                style: Theme.of(context)
+                    .textTheme
+                    .headlineSmall!
+                    .copyWith(fontWeight: FontWeight.w700),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              Text(
+                LocalizationString.verifiedAccountSubtitle,
+                style: Theme.of(context).textTheme.bodyLarge,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(
+                height: 40,
+              ),
               Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    LocalizationString.applyVerification,
-                    style: Theme.of(context)
-                        .textTheme
-                        .headlineSmall!
-                        .copyWith(fontWeight: FontWeight.w700),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Text(
-                    LocalizationString.verifiedAccountSubtitle,
-                    style: Theme.of(context).textTheme.bodyLarge,
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(
-                    height: 40,
-                  ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            LocalizationString.messageToReviewer,
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyLarge!
-                                .copyWith(fontWeight: FontWeight.w700),
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          Obx(() => InputField(
-                                controller: _requestVerificationController
-                                    .messageTf.value,
-                                backgroundColor: Theme.of(context).cardColor,
-                                cornerRadius: 10,
-                                maxLines: 5,
-                              )),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
                       Text(
-                        LocalizationString.documentType,
+                        LocalizationString.messageToReviewer,
                         style: Theme.of(context)
                             .textTheme
                             .bodyLarge!
@@ -180,95 +156,118 @@ class _RequestVerificationState extends State<RequestVerification> {
                       const SizedBox(
                         height: 10,
                       ),
-                      Obx(() => DropDownField(
-                            controller: _requestVerificationController
-                                .documentType.value,
+                      Obx(() => InputField(
+                            controller:
+                                _requestVerificationController.messageTf.value,
                             backgroundColor: Theme.of(context).cardColor,
-                            onTap: () {
-                              chooseDocumentType();
-                            },
+                            cornerRadius: 10,
+                            maxLines: 5,
                           )),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      SizedBox(
-                        width: Get.width - 32,
-                        height: 40,
-                        child: FilledButtonType1(
-                            text: LocalizationString.chooseImage,
-                            onPress: () {
-                              chooseImage();
-                            }),
-                      ),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      Text(
-                        LocalizationString.uploadFrontAndBack,
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodySmall!
-                            .copyWith(fontWeight: FontWeight.w400),
-                      ),
-                      const SizedBox(
-                        height: 15,
-                      ),
                     ],
-                  ).hP16,
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Text(
+                    LocalizationString.documentType,
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyLarge!
+                        .copyWith(fontWeight: FontWeight.w700),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Obx(() => DropDownField(
+                        controller:
+                            _requestVerificationController.documentType.value,
+                        backgroundColor: Theme.of(context).cardColor,
+                        onTap: () {
+                          chooseDocumentType();
+                        },
+                      )),
+                  const SizedBox(
+                    height: 20,
+                  ),
                   SizedBox(
-                    height: 80,
-                    child: Obx(() => ListView.separated(
-                          padding: const EdgeInsets.only(left: 16, right: 16),
-                          scrollDirection: Axis.horizontal,
-                          itemCount: _requestVerificationController
-                              .selectedImages.length,
-                          itemBuilder: (ctx, index) {
-                            return SizedBox(
-                              height: 80,
-                              width: 80,
-                              child: Stack(
-                                children: [
-                                  Image.file(
-                                    _requestVerificationController
-                                        .selectedImages[index],
-                                    height: 80,
-                                    width: 80,
-                                    fit: BoxFit.cover,
-                                  ).overlay(Colors.black38),
-                                  Positioned(
-                                      right: 5,
-                                      top: 5,
-                                      child: Container(
-                                        color: Theme.of(context).primaryColor,
-                                        child: const ThemeIconWidget(
-                                                ThemeIcon.delete)
-                                            .p4,
-                                      ).circular.ripple(() {
-                                        _requestVerificationController
-                                            .deleteDocument(
-                                                _requestVerificationController
-                                                    .selectedImages[index]);
-                                      }))
-                                ],
-                              ).round(10),
-                            );
-                          },
-                          separatorBuilder: (ctx, index) {
-                            return const SizedBox(
-                              width: 20,
-                            );
-                          },
-                        )),
+                    width: Get.width - 32,
+                    height: 40,
+                    child: FilledButtonType1(
+                        text: LocalizationString.chooseImage,
+                        onPress: () {
+                          chooseImage();
+                        }),
+                  ),
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  Text(
+                    LocalizationString.uploadFrontAndBack,
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodySmall!
+                        .copyWith(fontWeight: FontWeight.w400),
+                  ),
+                  const SizedBox(
+                    height: 15,
                   ),
                 ],
+              ).hP16,
+              SizedBox(
+                height: 80,
+                child: Obx(() => ListView.separated(
+                      padding: const EdgeInsets.only(left: 16, right: 16),
+                      scrollDirection: Axis.horizontal,
+                      itemCount:
+                          _requestVerificationController.selectedImages.length,
+                      itemBuilder: (ctx, index) {
+                        return SizedBox(
+                          height: 80,
+                          width: 80,
+                          child: Stack(
+                            children: [
+                              Image.file(
+                                _requestVerificationController
+                                    .selectedImages[index],
+                                height: 80,
+                                width: 80,
+                                fit: BoxFit.cover,
+                              ).overlay(Colors.black38),
+                              Positioned(
+                                  right: 5,
+                                  top: 5,
+                                  child: Container(
+                                    color: Theme.of(context).primaryColor,
+                                    child:
+                                        const ThemeIconWidget(ThemeIcon.delete)
+                                            .p4,
+                                  ).circular.ripple(() {
+                                    _requestVerificationController
+                                        .deleteDocument(
+                                            _requestVerificationController
+                                                .selectedImages[index]);
+                                  }))
+                            ],
+                          ).round(10),
+                        );
+                      },
+                      separatorBuilder: (ctx, index) {
+                        return const SizedBox(
+                          width: 20,
+                        );
+                      },
+                    )),
               ),
+              const SizedBox(
+                height: 50,
+              )
             ],
           ),
         ),
         Positioned(
             left: 16,
             right: 16,
-            bottom: 25,
+            bottom: 0,
             child: SizedBox(
               width: Get.width - 32,
               height: 40,
