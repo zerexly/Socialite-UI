@@ -241,5 +241,6 @@ class NetworkConstantsUtil {
   static String profileSkip = 'datings/profile-action-skip';
   static String undoProfileLike = 'datings/profile-action-remove';
   static String matchedProfiles = 'datings/profile-matching';
+  static String likeProfiles = 'datings/profile-like-by-other-users';
   static String getLanguages = 'languages';
 }

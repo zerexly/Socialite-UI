@@ -89,6 +89,7 @@ class ApiResponseModel {
 
   List<InterestModel> interests = [];
   List<UserModel> matchedUsers = [];
+  List<UserModel> likeUsers = [];
   List<UserModel> datingUsers = [];
 
   List<VerificationRequest> verificationRequests = [];
@@ -616,6 +617,13 @@ class ApiResponseModel {
             url == NetworkConstantsUtil.getUserPreference) {
           var settings = data['preferenceSetting'];
           model.preference = AddPreferenceModel.fromJson(settings);
+        } else if (data['profileLikeByOtherUsers'] != null &&
+            url == NetworkConstantsUtil.likeProfiles) {
+          var items = data['profileLikeByOtherUsers'];
+          if (items != null && items.length > 0) {
+            model.likeUsers =
+                List<UserModel>.from(items.map((x) => UserModel.fromJson(x)));
+          }
         }
       }
     } else {

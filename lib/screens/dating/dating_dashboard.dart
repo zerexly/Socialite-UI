@@ -1,6 +1,7 @@
 import 'package:foap/helper/common_import.dart';
 import 'package:get/get.dart';
 import 'dating_card.dart';
+import 'like_list.dart';
 import 'matched_list.dart';
 import 'set_dating_preference.dart';
 
@@ -30,7 +31,8 @@ class DatingDashboardState extends State<DatingDashboard> {
     items = [
       const DatingCard(),
       const MatchedList(),
-      const SetDatingPreference()
+      const LikeList(),
+      const SetDatingPreference(),
     ];
     super.initState();
   }
@@ -68,9 +70,16 @@ class DatingDashboardState extends State<DatingDashboard> {
                           : Theme.of(context).disabledColor),
                   label: ''),
               BottomNavigationBarItem(
+                  icon: ThemeIconWidget(ThemeIcon.thumbsUp,
+                      size: 20,
+                      color: _dashboardController.currentIndex.value == 2
+                          ? Theme.of(context).primaryColor
+                          : Theme.of(context).disabledColor),
+                  label: ''),
+              BottomNavigationBarItem(
                 icon: ThemeIconWidget(ThemeIcon.filterIcon,
                     size: 20,
-                    color: _dashboardController.currentIndex.value == 2
+                    color: _dashboardController.currentIndex.value == 3
                         ? Theme.of(context).primaryColor
                         : Theme.of(context).disabledColor),
                 label: '',

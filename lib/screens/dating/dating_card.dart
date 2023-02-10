@@ -474,7 +474,7 @@ class ProfileCard extends StatelessWidget {
                       fontSize: 16,
                       color: Colors.black,
                     ),
-                  ),
+                  ).bP4,
                   Text(
                     profile.gender == '2'
                         ? 'Female'

@@ -2698,6 +2698,20 @@ class ApiController {
     });
   }
 
+  Future<ApiResponseModel> getLikeProfilesApi() async {
+    String? authKey = await SharedPrefs().getAuthorizationKey();
+    var url =
+        NetworkConstantsUtil.baseUrl + NetworkConstantsUtil.likeProfiles;
+
+    return await http.get(Uri.parse(url), headers: {
+      "Authorization": "Bearer ${authKey!}"
+    }).then((http.Response response) async {
+      final ApiResponseModel parsedResponse = await getResponse(
+          response.body, NetworkConstantsUtil.likeProfiles);
+      return parsedResponse;
+    });
+  }
+
   Future<ApiResponseModel> getLanguages() async {
     String? authKey = await SharedPrefs().getAuthorizationKey();
     var url = NetworkConstantsUtil.baseUrl + NetworkConstantsUtil.getLanguages;

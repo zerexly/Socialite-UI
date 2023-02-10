@@ -403,6 +403,7 @@ class LocalizationString {
 
   static String follow = 'Follow'.tr;
   static String followBack = 'Follow back'.tr;
+  static String likeBack = 'Like back'.tr;
 
   static String unFollow = 'UnFollow'.tr;
 
@@ -939,6 +940,7 @@ class LocalizationString {
 
   static String dating = 'Dating'.tr;
   static String matched = 'Matched'.tr;
+  static String likedBy = 'Liked By'.tr;
   static String preferences = 'Set Preferences'.tr;
   static String set = 'Set'.tr;
   static String currentLocation = 'Current location'.tr;
@@ -953,6 +955,9 @@ class LocalizationString {
 
   static String noMatchedProfilesFound = 'No matching profiles found'.tr;
   static String datingExploreForMatched = 'Explore more dating profiles and get matched'.tr;
+
+  static String noLikeProfilesFound = 'No profiles found'.tr;
+  static String noLikeProfiles = 'Explore more dating profiles'.tr;
 
   static String locationMainHeader = 'Set location'.tr;
   static String locationHeader = 'Set your location services'.tr;

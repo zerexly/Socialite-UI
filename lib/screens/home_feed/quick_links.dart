@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import '../chat/random_chat/choose_profile_ctageory.dart';
 import '../podcast/podcast_list_dashboard.dart';
 import '../tvs/tv_dashboard.dart';
-import '../dating/DatingDashboard.dart';
+import '../dating/dating_dashboard.dart';
 
 enum QuickLinkType {
   live,

@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import '../model/polls_model.dart';
 import '../screens/podcast/podcast_list_dashboard.dart';
 import '../screens/tvs/tv_dashboard.dart';
-import '../screens/dating/DatingDashboard.dart';
+import '../screens/dating/dating_dashboard.dart';
 
 class HomeController extends GetxController {
   final SettingsController _settingsController = Get.find();
@@ -131,7 +131,7 @@ class HomeController extends GetxController {
     }
     if (_settingsController.setting.value!.enableDating) {
       quickLinks.add(QuickLink(
-          icon: 'assets/podcast.png',
+          icon: 'assets/dating-app.png',
           heading: LocalizationString.dating,
           subHeading: LocalizationString.dating,
           linkType: QuickLinkType.dating));

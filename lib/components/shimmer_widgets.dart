@@ -704,7 +704,8 @@ class _CardsStackShimmerWidgetState extends State<CardsStackShimmerWidget> {
                           color: Colors.black,
                         ),
                       ),
-                      Text('101 Km',
+                      Text(
+                        '101 Km',
                         style: TextStyle(
                           fontWeight: FontWeight.w400,
                           fontSize: 14,
@@ -745,5 +746,47 @@ class _CardsStackShimmerWidgetState extends State<CardsStackShimmerWidget> {
         ),
       ],
     ).addShimmer(context);
+  }
+}
+
+class ShimmerMatchedList extends StatelessWidget {
+  const ShimmerMatchedList({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return GridView.builder(
+        itemCount: 10,
+        padding:
+            const EdgeInsets.only(top: 15, bottom: 15, left: 30, right: 30),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 15.0,
+            mainAxisSpacing: 15.0,
+            mainAxisExtent: 210),
+        itemBuilder: (ctx, index) {
+          return Container(
+                  color: Theme.of(context).cardColor,
+                  height: 210,
+                  width: (MediaQuery.of(context).size.width - 75) / 2)
+              .round(10);
+        }).addShimmer(context);
+  }
+}
+
+class ShimmerLikeList extends StatelessWidget {
+  const ShimmerLikeList({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+        padding: const EdgeInsets.only(top: 15, bottom: 15),
+        shrinkWrap: true,
+        itemCount: 10,
+        itemBuilder: (BuildContext context, int index) {
+          return Container(
+            height: 80,
+            color: Theme.of(context).cardColor,
+          ).round(10).paddingOnly(bottom: 15, left: 15, right: 15);
+        }).addShimmer(context);
   }
 }

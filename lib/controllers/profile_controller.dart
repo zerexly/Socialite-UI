@@ -315,8 +315,13 @@ class ProfileController extends GetxController {
                 isSuccess: true);
             getMyProfile();
             if (isSigningUp == true) {
-              getIt<LocationManager>().postLocation();
-              Get.offAll(() => const DashboardScreen());
+              if (isLoginFirstTime) {
+                Get.to(() => const SetLocation())!.then((value) {});
+              } else {
+                isLoginFirstTime = false;
+                getIt<LocationManager>().postLocation();
+                Get.offAll(() => const DashboardScreen());
+              }
             } else {
               Future.delayed(const Duration(milliseconds: 1200), () {
                 Get.back();

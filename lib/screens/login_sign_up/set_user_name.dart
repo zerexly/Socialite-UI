@@ -60,17 +60,17 @@ class _SetUserNameState extends State<SetUserName> {
                 top: 0,
                 child: Center(
                   child:
-                  Obx(() => profileController.userNameCheckStatus.value == 1
-                      ? ThemeIconWidget(
-                    ThemeIcon.checkMark,
-                    color: Theme.of(context).primaryColor,
-                  )
-                      : profileController.userNameCheckStatus.value == 0
-                      ? ThemeIconWidget(
-                    ThemeIcon.close,
-                    color: Theme.of(context).errorColor,
-                  )
-                      : Container()),
+                      Obx(() => profileController.userNameCheckStatus.value == 1
+                          ? ThemeIconWidget(
+                              ThemeIcon.checkMark,
+                              color: Theme.of(context).primaryColor,
+                            )
+                          : profileController.userNameCheckStatus.value == 0
+                              ? ThemeIconWidget(
+                                  ThemeIcon.close,
+                                  color: Theme.of(context).errorColor,
+                                )
+                              : Container()),
                 ),
               ),
             ],
@@ -82,7 +82,9 @@ class _SetUserNameState extends State<SetUserName> {
               text: LocalizationString.submit,
               onPress: () {
                 profileController.updateUserName(
-                    userName: userName.text, isSigningUp: true, context: context);
+                    userName: userName.text,
+                    isSigningUp: true,
+                    context: context);
               })
         ],
       ).hP16,

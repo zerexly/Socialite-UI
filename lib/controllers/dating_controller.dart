@@ -6,6 +6,7 @@ class DatingController extends GetxController {
   RxList<InterestModel> interests = <InterestModel>[].obs;
   RxList<UserModel> datingUsers = <UserModel>[].obs;
   RxList<UserModel> matchedUsers = <UserModel>[].obs;
+  RxList<UserModel> likeUsers = <UserModel>[].obs;
   RxList<LanguageModel> languages = <LanguageModel>[].obs;
   Rx isLoading = false.obs;
   AddPreferenceModel? preferenceModel;
@@ -76,6 +77,15 @@ class DatingController extends GetxController {
     ApiController().getMatchedProfilesApi().then((response) {
       isLoading.value = false;
       matchedUsers.value = response.matchedUsers;
+      update();
+    });
+  }
+
+  getLikeProfilesApi() {
+    isLoading.value = true;
+    ApiController().getLikeProfilesApi().then((response) {
+      isLoading.value = false;
+      likeUsers.value = response.likeUsers;
       update();
     });
   }
