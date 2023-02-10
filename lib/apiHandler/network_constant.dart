@@ -259,4 +259,16 @@ class NetworkConstantsUtil {
   static String redeemCoins = 'payments/redeem-coin';
 
   static String rewardedAdCoins = 'posts/promotion-ad-view';
+
+  //***********Dating***********//
+  static String addUserPreference = 'datings/add-user-preference';
+  static String getUserPreference =
+      'datings/preference-profile?expand=preferenceInterest,preferenceLanguage';
+  static String getDatingProfiles = 'datings/preference-profile-match';
+  static String profileLike = 'datings/profile-action-like';
+  static String profileSkip = 'datings/profile-action-skip';
+  static String undoProfileLike = 'datings/profile-action-remove';
+  static String matchedProfiles = 'datings/profile-matching';
+  static String likeProfiles = 'datings/profile-like-by-other-users';
+  static String getLanguages = 'languages';
 }

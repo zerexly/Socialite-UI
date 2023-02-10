@@ -1,7 +1,4 @@
 import 'package:foap/helper/common_import.dart';
-
-import 'package:foap/screens/chat/random_chat/choose_profile_ctageory.dart';
-
 import 'package:foap/screens/chat/random_chat/choose_profile_category.dart';
 import 'package:get/get.dart';
 

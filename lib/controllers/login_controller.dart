@@ -2,6 +2,8 @@ import 'package:get/get.dart';
 import 'package:foap/helper/common_import.dart';
 import '../screens/login_sign_up/set_profile_category_type.dart';
 
+bool isLoginFirstTime = false;
+
 class LoginController extends GetxController {
   final SettingsController _settingsController = Get.find();
   bool passwordReset = false;
@@ -42,10 +44,10 @@ class LoginController extends GetxController {
               // Get.to(() => const SetLocation())!.then((value) {});
 
               if (response.isLoginFirstTime) {
-                isLoginFirstTime = true;
+                // isLoginFirstTime = true;
                 Get.to(() => const SetLocation())!.then((value) {});
               } else {
-                isLoginFirstTime = false;
+                // isLoginFirstTime = false;
                 Get.offAll(() => const DashboardScreen());
                 getIt<SocketManager>().connect();
               // getIt<LocationManager>().postLocation();

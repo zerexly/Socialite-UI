@@ -104,6 +104,10 @@ class UserModel {
   List<InterestModel>? interests;
   List<LanguageModel>? languages;
 
+  int profileCategoryTypeId = 0;
+  String profileCategoryTypeName = 'Other';
+  List<UserSetting>? userSetting;
+
   UserModel();
 
   factory UserModel.fromJson(dynamic json) {
@@ -171,10 +175,23 @@ class UserModel {
     model.experienceMonth = json['work_experience_month'];
     model.experienceYear = json['work_experience_year'];
 
-    model.interests = json['interest'] != null ? List<InterestModel>.from(
-        json['interest'].map((x) => InterestModel.fromJson(x))) : null;
-    model.languages = json['language'] != null ? List<LanguageModel>.from(
-        json['language'].map((x) => LanguageModel.fromJson(x))) : null;
+    model.interests = json['interest'] != null
+        ? List<InterestModel>.from(
+            json['interest'].map((x) => InterestModel.fromJson(x)))
+        : null;
+    model.languages = json['language'] != null
+        ? List<LanguageModel>.from(
+            json['language'].map((x) => LanguageModel.fromJson(x)))
+        : null;
+
+    model.profileCategoryTypeId = json['profile_category_type'] ?? 0;
+    model.profileCategoryTypeName = json['profileCategoryName'] ?? 'Other';
+
+    model.userSetting = json['userSetting'] != null
+        ? List<UserSetting>.from(
+            json['userSetting'].map((x) => UserSetting.fromJson(x)))
+        : null;
+
     return model;
   }
 
@@ -256,6 +273,28 @@ class UserModel {
     return ChatRoomMember(
         id: id, isAdmin: 0, roomId: 0, userDetail: this, userId: id);
   }
+
+  RelationsRevealSetting get relationsRevealSetting {
+    if (userSetting == null || (userSetting ?? []).isEmpty) {
+      return RelationsRevealSetting.none;
+    } else if (userSetting?.first.relationSetting == 1) {
+      return RelationsRevealSetting.all;
+    } else if (userSetting?.first.relationSetting == 2) {
+      return RelationsRevealSetting.followers;
+    }
+    return RelationsRevealSetting.none;
+  }
+
+  bool get canViewRelations {
+    if (relationsRevealSetting == RelationsRevealSetting.none) {
+      return false;
+    } else if (relationsRevealSetting == RelationsRevealSetting.followers &&
+        isFollowing) {
+      return true;
+    } else {
+      return true;
+    }
+  }
 }
 
 class InterestModel {
@@ -282,7 +321,29 @@ class LanguageModel {
   });
 
   factory LanguageModel.fromJson(Map<String, dynamic> json) => LanguageModel(
-    id: json["id"] ?? json["language_id"],
-    name: json["name"],
-  );
+        id: json["id"] ?? json["language_id"],
+        name: json["name"],
+      );
+}
+
+class UserSetting {
+  int? id;
+  int? userId;
+  int? relationSetting;
+
+  UserSetting({this.id, this.userId, this.relationSetting});
+
+  UserSetting.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    userId = json['user_id'];
+    relationSetting = json['relation_setting'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['user_id'] = userId;
+    data['relation_setting'] = relationSetting;
+    return data;
+  }
 }

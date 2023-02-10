@@ -1020,10 +1020,6 @@ class LocalizationString {
 
   static String followFriendsToSendPost = 'Follow friends to send post.'.tr;
 
-  static String requested = 'Requested'.tr;
-  static String requestJoin = 'Request to join'.tr;
-
-
   static String setUserName = 'Set username'.tr;
   static String setUserNameSubHeading =
       'This username will be shown to all user. Choose a wise user name like it_mike_here'
