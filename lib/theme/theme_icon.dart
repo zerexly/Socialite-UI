@@ -421,6 +421,12 @@ class ThemeIconWidget extends StatelessWidget {
           size: size ?? 20,
           color: color ?? Theme.of(context).iconTheme.color,
         );
+      case ThemeIcon.chatBordered:
+        return Icon(
+          Icons.messenger_outline,
+          size: size ?? 20,
+          color: color ?? Theme.of(context).iconTheme.color,
+        );
       case ThemeIcon.closeCircle:
         return Icon(
           Icons.highlight_remove_outlined,
@@ -703,6 +709,12 @@ class ThemeIconWidget extends StatelessWidget {
       case ThemeIcon.gift:
         return Icon(
           Icons.card_giftcard,
+          size: size ?? 20,
+          color: color ?? Theme.of(context).iconTheme.color,
+        );
+      case ThemeIcon.dating:
+        return Icon(
+          Icons.local_fire_department_outlined,
           size: size ?? 20,
           color: color ?? Theme.of(context).iconTheme.color,
         );

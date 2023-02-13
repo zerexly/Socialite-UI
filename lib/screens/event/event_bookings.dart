@@ -56,7 +56,7 @@ class _EventBookingScreenState extends State<EventBookingScreen> {
                             ? emptyData(
                                 title: LocalizationString.noBookingFound,
                                 subTitle: LocalizationString.goToEventAndBook,
-                                context: context)
+                               )
                             : ListView.separated(
                                 padding: const EdgeInsets.only(
                                     top: 16, left: 16, right: 16, bottom: 16),

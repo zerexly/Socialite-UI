@@ -1,5 +1,6 @@
 import 'package:foap/helper/common_import.dart';
 import 'package:get/get.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class CompetitionsScreen extends StatefulWidget {
   const CompetitionsScreen({Key? key}) : super(key: key);
@@ -16,11 +17,19 @@ class CompetitionsState extends State<CompetitionsScreen> {
   ];
 
   final CompetitionController competitionController = Get.find();
+  final RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
 
   @override
   void initState() {
-    competitionController.getCompetitions();
+    competitionController.getCompetitions(() {});
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    competitionController.clear();
+    super.dispose();
   }
 
   @override
@@ -82,7 +91,7 @@ class CompetitionsState extends State<CompetitionsScreen> {
 
   addCompetitionsList(List<CompetitionModel> arr) {
     return ListView.separated(
-      padding: const EdgeInsets.only(top: 20),
+      padding: const EdgeInsets.only(top: 20, bottom: 100),
       itemCount: arr.length,
       itemBuilder: (context, index) {
         CompetitionModel model = arr[index];
@@ -95,7 +104,7 @@ class CompetitionsState extends State<CompetitionsScreen> {
                   : Get.to(() => CompetitionDetailScreen(
                       competitionId: model.id,
                       refreshPreviousScreen: () {
-                        competitionController.getCompetitions();
+                        competitionController.getCompetitions(() {});
                       }));
             });
       },
@@ -104,6 +113,18 @@ class CompetitionsState extends State<CompetitionsScreen> {
           height: 20,
         );
       },
-    );
+    ).addPullToRefresh(
+        refreshController: _refreshController,
+        onRefresh: () {
+          competitionController.getCompetitions(() {
+            _refreshController.refreshCompleted();
+          });
+        },
+        onLoading: () {
+          competitionController.getCompetitions(() {
+            _refreshController.loadComplete();
+          });
+        },
+        enablePullUp: true);
   }
 }

@@ -776,3 +776,115 @@ class _RoundedInputDateTimeFieldState extends State<RoundedInputDateTimeField> {
     );
   }
 }
+
+class DropdownBorderedField extends StatefulWidget {
+  final String? hintText;
+  final TextEditingController? controller;
+  final ThemeIcon? icon;
+  final Color? iconColor;
+  final bool? iconOnRightSide;
+  final Color? backgroundColor;
+  final bool? showBorder;
+  final Color? borderColor;
+  final double? cornerRadius;
+  final VoidCallback? onTap;
+
+  final TextStyle? textStyle;
+
+  const DropdownBorderedField({
+    Key? key,
+    this.hintText,
+    this.controller,
+    this.icon,
+    this.iconColor,
+    this.iconOnRightSide = false,
+    this.backgroundColor,
+    this.showBorder = false,
+    this.borderColor,
+    this.cornerRadius = 0,
+    this.textStyle,
+    this.onTap
+  }) : super(key: key);
+
+  @override
+  State<DropdownBorderedField> createState() => _DropdownBorderedState();
+}
+
+class _DropdownBorderedState extends State<DropdownBorderedField> {
+  late String? hintText;
+  late TextEditingController? controller;
+  late ThemeIcon? icon;
+  late Color? iconColor;
+  late bool? iconOnRightSide;
+  late Color? backgroundColor;
+  late bool? showBorder;
+  late Color? borderColor;
+  late double? cornerRadius;
+
+  @override
+  void initState() {
+    hintText = widget.hintText;
+    controller = widget.controller;
+    icon = widget.icon;
+    iconColor = widget.iconColor;
+    iconOnRightSide = widget.iconOnRightSide;
+    backgroundColor = widget.backgroundColor;
+    showBorder = widget.showBorder;
+    borderColor = widget.borderColor;
+    cornerRadius = widget.cornerRadius;
+
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(cornerRadius ?? 0),
+        border: showBorder == true
+            ? Border.all(
+                width: 0.5,
+                color: borderColor ?? Theme.of(context).dividerColor)
+            : null,
+      ),
+      height: 60,
+      child: Row(children: [
+        Expanded(
+          child: AbsorbPointer(
+              absorbing: true,
+              child: TextField(
+                readOnly: true,
+                controller: controller,
+                keyboardType: hintText == hintText
+                    ? TextInputType.emailAddress
+                    : TextInputType.text,
+                textAlign: TextAlign.left,
+                style:
+                    widget.textStyle ?? Theme.of(context).textTheme.bodyMedium!,
+                decoration: InputDecoration(
+                    floatingLabelBehavior: FloatingLabelBehavior.never,
+                    border: InputBorder.none,
+                    contentPadding: const EdgeInsets.only(left: 10, right: 10),
+                    counterText: "",
+                    // labelText: hintText,
+                    labelStyle: Theme.of(context).textTheme.bodyLarge,
+                    hintStyle: widget.textStyle ??
+                        Theme.of(context).textTheme.bodyMedium!,
+                    hintText: hintText),
+              )),
+        ),
+        iconOnRightSide == true ? iconView() : Container(),
+      ]),
+    ).ripple(() {
+      widget.onTap!();
+    });
+  }
+
+  Widget iconView() {
+    return icon != null
+        ? ThemeIconWidget(icon!,
+                color: iconColor ?? Theme.of(context).primaryColor, size: 20)
+            .rP16
+        : Container();
+  }
+}

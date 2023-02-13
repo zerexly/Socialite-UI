@@ -167,7 +167,7 @@ class MyProfileState extends State<MyProfile> {
                       Container(
                         color: Theme.of(context).cardColor,
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
@@ -246,21 +246,21 @@ class MyProfileState extends State<MyProfile> {
                               }
                             }),
 
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Text(
-                                  _profileController.user.value!.giftSummary!
-                                      .totalCoin.formatNumber
-                                      .toString(),
-                                  style: Theme.of(context).textTheme.titleLarge,
-                                ).bP8,
-                                Text(
-                                  LocalizationString.coins,
-                                  style: Theme.of(context).textTheme.bodySmall,
-                                ),
-                              ],
-                            ),
+                            // Column(
+                            //   crossAxisAlignment: CrossAxisAlignment.center,
+                            //   children: [
+                            //     Text(
+                            //       _profileController.user.value!.giftSummary!
+                            //           .totalCoin.formatNumber
+                            //           .toString(),
+                            //       style: Theme.of(context).textTheme.titleLarge,
+                            //     ).bP8,
+                            //     Text(
+                            //       LocalizationString.gift,
+                            //       style: Theme.of(context).textTheme.bodySmall,
+                            //     ),
+                            //   ],
+                            // ),
                           ],
                         ).p16,
                       ).round(15),

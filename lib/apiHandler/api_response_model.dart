@@ -1,6 +1,6 @@
 import 'dart:developer';
 import 'package:foap/helper/common_import.dart';
-import 'package:foap/model/podcast_banner_model.dart';
+import 'package:foap/model/preference_model.dart';
 import 'package:get/get.dart';
 import '../model/club_invitation.dart';
 import '../model/club_join_request.dart';
@@ -9,8 +9,6 @@ import '../model/live_tv_model.dart';
 import '../model/get_relationship_model.dart';
 import '../model/myRelations/my_invitation_model.dart';
 import '../model/myRelations/my_relations_model.dart';
-import '../model/podcast_model.dart';
-import '../model/tv_banner_model.dart';
 import '../model/tv_show_model.dart';
 import '../model/polls_model.dart';
 
@@ -90,6 +88,9 @@ class ApiResponseModel {
   List<ReelMusicModel> audios = [];
 
   List<InterestModel> interests = [];
+  List<UserModel> matchedUsers = [];
+  List<UserModel> likeUsers = [];
+  List<UserModel> datingUsers = [];
 
   List<RelationshipName> relationshipNames = [];
   List<MyRelationsModel> relationships = [];
@@ -104,12 +105,15 @@ class ApiResponseModel {
   List<ChatRoomModel> chatRooms = [];
   List<ChatMessageModel> messages = [];
 
+  List<LanguageModel> languages = [];
+
   ChatRoomModel? room;
 
   APIMetaData? metaData;
   SettingModel? settings;
   PostModel? post;
   EventModel? event;
+  AddPreferenceModel? preference;
 
   int roomId = 0;
   String? stripePaymentIntentClientSecret;
@@ -148,7 +152,6 @@ class ApiResponseModel {
 
             model.randomOnlineUsers =
                 List<UserModel>.from(items.map((x) => UserModel.fromJson(x)));
-            // model.metaData = APIMetaData.fromJson(data['user']['_meta']);
           }
           if (data['auth_key'] != null) {
             String username = data['user']['username'] ?? '';
@@ -158,6 +161,8 @@ class ApiResponseModel {
             }
             if (username.isEmpty) {
               model.isLoginFirstTime = true;
+            } else {
+              model.isLoginFirstTime = data['user']['is_login_first_time'] == 1;
             }
           }
         } else if (data['competition'] != null) {
@@ -178,6 +183,9 @@ class ApiResponseModel {
 
           model.verificationRequests = List<VerificationRequest>.from(
               items.map((x) => VerificationRequest.fromJson(x)));
+
+          model.metaData = APIMetaData.fromJson(data['verification']['_meta']);
+
         } else if (data['results'] != null) {
           var items = data['results'];
           if (items != null && items.length > 0) {
@@ -221,6 +229,7 @@ class ApiResponseModel {
             if (items != null && items.length > 0) {
               model.myInvitations = List<MyInvitationsModel>.from(
                   items.map((x) => MyInvitationsModel.fromJson(x)));
+              model.metaData = APIMetaData.fromJson(data['invitation']['_meta']);
             }
           }
         } else if (data['relations'] != null) {
@@ -631,6 +640,36 @@ class ApiResponseModel {
               model.faqs =
                   List<FAQModel>.from(items.map((x) => FAQModel.fromJson(x)));
             }
+          }
+        } else if (data['language'] != null &&
+            url == NetworkConstantsUtil.getLanguages) {
+          var items = data['language'];
+          model.languages = List<LanguageModel>.from(
+              items.map((x) => LanguageModel.fromJson(x)));
+        } else if (data['userMatch'] != null &&
+            url == NetworkConstantsUtil.matchedProfiles) {
+          var items = data['userMatch'];
+          if (items != null && items.length > 0) {
+            model.matchedUsers =
+                List<UserModel>.from(items.map((x) => UserModel.fromJson(x)));
+          }
+        } else if (data['preferenceMatchProfile'] != null &&
+            url == NetworkConstantsUtil.getDatingProfiles) {
+          var items = data['preferenceMatchProfile'];
+          if (items != null && items.length > 0) {
+            model.datingUsers =
+                List<UserModel>.from(items.map((x) => UserModel.fromJson(x)));
+          }
+        } else if (data['preferenceSetting'] != null &&
+            url == NetworkConstantsUtil.getUserPreference) {
+          var settings = data['preferenceSetting'];
+          model.preference = AddPreferenceModel.fromJson(settings);
+        } else if (data['profileLikeByOtherUsers'] != null &&
+            url == NetworkConstantsUtil.likeProfiles) {
+          var items = data['profileLikeByOtherUsers'];
+          if (items != null && items.length > 0) {
+            model.likeUsers =
+                List<UserModel>.from(items.map((x) => UserModel.fromJson(x)));
           }
         }
       }

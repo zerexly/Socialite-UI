@@ -295,6 +295,7 @@ class LocalizationString {
   static String addPhoto = 'Add photo'.tr;
   static String takePhoto = 'Take photo'.tr;
   static String chooseFromGallery = 'Choose from gallery'.tr;
+  static String removePhoto = 'Remove photo'.tr;
 
   static String chooseCoverImage = 'Choose cover image'.tr;
 
@@ -408,6 +409,7 @@ class LocalizationString {
 
   static String follow = 'Follow'.tr;
   static String followBack = 'Follow back'.tr;
+  static String likeBack = 'Like back'.tr;
 
   static String unInvite = 'Cancel'.tr;
   static String pendingApproval = 'Pending'.tr;
@@ -838,6 +840,7 @@ class LocalizationString {
   static String dateAndTime = 'Date and Time'.tr;
   static String eventLocation = 'Event Location'.tr;
   static String eventOrganizer = 'Event Organizer'.tr;
+  static String noEventFound = 'No event found'.tr;
 
   static String going = "Going".tr;
   static String buyTicket = 'Buy Ticket'.tr;
@@ -954,9 +957,26 @@ class LocalizationString {
 
   static String dating = 'Dating'.tr;
   static String matched = 'Matched'.tr;
+  static String likedBy = 'Liked By'.tr;
   static String preferences = 'Set Preferences'.tr;
-  static String datingProfile = 'Dating Profile'.tr;
+  static String set = 'Set'.tr;
+  static String currentLocation = 'Current location'.tr;
+  static String dob = 'DOB'.tr;
+  static String gender = 'Gender'.tr;
+  static String personalDetails = 'Personal details'.tr;
+  static String interests = 'Interests'.tr;
+  static String professional = 'Professional details'.tr;
 
+  static String noDatingProfilesFound = 'No dating profiles found'.tr;
+  static String datingExplore = 'Change your preferences and explore more'.tr;
+
+  static String noMatchedProfilesFound = 'No matching profiles found'.tr;
+  static String datingExploreForMatched = 'Explore more dating profiles and get matched'.tr;
+
+  static String noLikeProfilesFound = 'No profiles found'.tr;
+  static String noLikeProfiles = 'Explore more dating profiles'.tr;
+
+  static String locationMainHeader = 'Set location'.tr;
   static String locationHeader = 'Set your location services'.tr;
   static String locationSubHeader =
       'We use your location to show you potential matches in your area'.tr;
@@ -968,6 +988,7 @@ class LocalizationString {
   static String allowNotification = 'Allow notifications'.tr;
   static String notNow = 'Not now'.tr;
 
+  static String nameMainHeader = 'Add name'.tr;
   static String nameHeader = 'What\'s your first name?'.tr;
   static String nameSubHeader = 'You won\'t be able to change this later'.tr;
 
@@ -976,10 +997,12 @@ class LocalizationString {
       'Profile with more good photos are getting more matches, so add your best photos'
           .tr;
 
+  static String birthdayMainHeader = 'Add DOB'.tr;
   static String birthdayHeader = 'When\'s your birthday?'.tr;
   static String birthdaySubHeader =
       'Be accurate to specify this to get genuine matches'.tr;
 
+  static String genderMainHeader = 'Add gender'.tr;
   static String genderHeader = 'Mention your gender'.tr;
 
   static String likeToDateHeader = 'Who would you like to date?'.tr;
@@ -992,6 +1015,7 @@ class LocalizationString {
 
   static String addInterestsHeader = 'Add Interests.'.tr;
   static String addInterestsSubHeader = 'Add your interests and habits'.tr;
+  static String chooseInterests = 'Choose your interests'.tr;
 
   static String addProfessionalHeader = 'Add Professional Details.'.tr;
 
@@ -1014,6 +1038,7 @@ class LocalizationString {
   static String favourite = 'Favourite'.tr;
   static String subscribed = 'Subscribed'.tr;
 
+
   static String profileCategoryTypeSaved = 'Profile category type is saved'.tr;
   static String installThisCoolApp = 'Install this cool app from'.tr;
   static String accountIsDeleted = 'Account is deleted successfully'.tr;
@@ -1023,5 +1048,24 @@ class LocalizationString {
   static String areYouSureToBlockUser = 'Are you sure to block this user?'.tr;
 
   static String requestPending = 'Request Pending'.tr;
+
+
+  // dating
+  static String male = 'Male'.tr;
+  static String female = 'Female'.tr;
+  static String age = 'Age'.tr;
+  static String height = 'Height'.tr;
+  static String color = 'Color'.tr;
+  static String religion = 'Religion'.tr;
+  static String language = 'Language'.tr;
+  static String smokingHabit = 'Smoking habit'.tr;
+  static String drinkingHabit = 'Drinking habit'.tr;
+  static String select = 'Select'.tr;
+  static String disLike = 'Dislike'.tr;
+
+
+  static String leaveGroupConfirmation = "Are you sure, you want to leave group?".tr;
+  static String deleteGroupConfirmation = "Are you sure, you want to delete group?".tr;
+
 
 }

@@ -1,4 +1,5 @@
 import 'package:foap/helper/common_import.dart';
+import 'package:foap/model/preference_model.dart';
 import 'package:get_it/get_it.dart';
 
 GetIt getIt = GetIt.instance;

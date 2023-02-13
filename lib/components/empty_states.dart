@@ -1,4 +1,5 @@
 import 'package:foap/helper/common_import.dart';
+import 'package:get/get.dart';
 
 Widget noUserFound(BuildContext context) {
   return Column(
@@ -68,7 +69,7 @@ Widget emptyUser({required String title, required String subTitle, required Buil
   );
 }
 
-Widget emptyData({required String title, required String subTitle, required BuildContext context}) {
+Widget emptyData({required String title, required String subTitle}) {
   return Column(
     mainAxisAlignment: MainAxisAlignment.center,
     children: [
@@ -78,14 +79,14 @@ Widget emptyData({required String title, required String subTitle, required Buil
       ),
       Text(
         title,
-        style: Theme.of(context).textTheme.titleSmall!.copyWith(fontWeight: FontWeight.w900),
+        style: Theme.of(Get.context!).textTheme.titleSmall!.copyWith(fontWeight: FontWeight.w900),
       ),
       const SizedBox(
         height: 10,
       ),
       Text(
         subTitle,
-        style: Theme.of(context).textTheme.bodyLarge,
+        style: Theme.of(Get.context!).textTheme.bodyLarge,
       ),
     ],
   );

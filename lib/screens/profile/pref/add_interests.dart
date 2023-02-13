@@ -2,6 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:foap/helper/common_import.dart';
 
+import '../../../components/segmented_control.dart';
+import '../../../controllers/dating_controller.dart';
+import '../../../model/preference_model.dart';
 import 'add_profesional_details.dart';
 
 class AddInterests extends StatefulWidget {
@@ -14,82 +17,178 @@ class AddInterests extends StatefulWidget {
 class AddInterestsState extends State<AddInterests> {
   int smoke = 0;
 
+  TextEditingController drinkHabitController = TextEditingController();
+  List<String> drinkHabitList = ['Regular', 'Planning to quit', 'Socially'];
+
+  final DatingController datingController = Get.find();
+  TextEditingController interestsController = TextEditingController();
+  List<InterestModel> selectedInterests = [];
+
+  TextEditingController languageController = TextEditingController();
+  List<LanguageModel> selectedLanguages = [];
+
+  @override
+  void initState() {
+    super.initState();
+    datingController.getInterests();
+    datingController.getLanguages();
+
+    if (!isLoginFirstTime) {
+      if (getIt<UserProfileManager>().user?.smoke != null) {
+        smoke = (getIt<UserProfileManager>().user?.smoke ?? 1) - 1;
+      }
+      if (getIt<UserProfileManager>().user?.drink != null) {
+        int drink =
+            int.parse(getIt<UserProfileManager>().user?.drink ?? '1') - 1;
+        drinkHabitController.text = drinkHabitList[drink];
+      }
+      if (getIt<UserProfileManager>().user?.interests != null) {
+        selectedInterests = getIt<UserProfileManager>().user!.interests!;
+        String result = selectedInterests
+            .map((val) => val.name)
+            .join(', ');
+        interestsController.text = result;
+      }
+      if (getIt<UserProfileManager>().user?.languages != null) {
+        selectedLanguages = getIt<UserProfileManager>().user!.languages!;
+        String result = selectedLanguages
+            .map((val) => val.name)
+            .join(', ');
+        languageController.text = result;
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).backgroundColor,
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Text(
-              LocalizationString.addInterestsHeader,
-              style: Theme.of(context)
-                  .textTheme
-                  .displaySmall!
-                  .copyWith(fontWeight: FontWeight.w600),
-            ).paddingOnly(top: 100),
-            Text(
-              LocalizationString.addInterestsSubHeader,
-              style: Theme.of(context).textTheme.titleSmall,
-            ).paddingOnly(top: 20),
-            addHeader('Do you smoke?').paddingOnly(top: 30, bottom: 8),
-            addSegmentedBar(["Yes", "No"]),
-            addHeader('Drinking habit').paddingOnly(top: 30, bottom: 8),
-            InputField(
-              hintText: 'Select',
-              // controller: _requestVerificationController
-              //     .messageTf.value,
-              showBorder: true,
-              borderColor: Theme.of(context).disabledColor,
-              cornerRadius: 10,
-              iconOnRightSide: true,
-              icon: ThemeIcon.downArrow,
-              iconColor: Theme.of(context).disabledColor,
-              isDisabled: true,
-            ),
-            addHeader('Interests').paddingOnly(top: 30, bottom: 8),
-            InputField(
-              hintText: 'Select',
-              // controller: _requestVerificationController
-              //     .messageTf.value,
-              showBorder: true,
-              borderColor: Theme.of(context).disabledColor,
-              cornerRadius: 10,
-              iconOnRightSide: true,
-              icon: ThemeIcon.downArrow,
-              iconColor: Theme.of(context).disabledColor,
-              isDisabled: true,
-            ),
-            addHeader('Language').paddingOnly(top: 30, bottom: 8),
-            InputField(
-              hintText: 'Select',
-              // controller: _requestVerificationController
-              //     .messageTf.value,
-              showBorder: true,
-              borderColor: Theme.of(context).disabledColor,
-              cornerRadius: 10,
-              iconOnRightSide: true,
-              icon: ThemeIcon.downArrow,
-              iconColor: Theme.of(context).disabledColor,
-              isDisabled: true,
-            ),
-            Center(
-              child: SizedBox(
-                  height: 50,
-                  width: MediaQuery.of(context).size.width - 50,
-                  child: FilledButtonType1(
-                      cornerRadius: 25,
-                      text: LocalizationString.next,
-                      onPress: () {
-                        Get.to(() => const AddProfessionalDetails());
-                      })),
-            ).paddingOnly(top: 100),
-          ],
-        ).paddingAll(25),
-      ),
-    );
+        backgroundColor: Theme.of(context).backgroundColor,
+        body: Column(children: [
+          const SizedBox(height: 50),
+          profileScreensNavigationBar(
+              context: context,
+              rightBtnTitle: isLoginFirstTime ? LocalizationString.skip : null,
+              title: LocalizationString.addInterestsHeader,
+              completion: () {
+                Get.to(() => const AddProfessionalDetails());
+              }),
+          divider(context: context).tP8,
+          Expanded(
+              child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(
+                  LocalizationString.addInterestsHeader,
+                  style: Theme.of(context)
+                      .textTheme
+                      .displaySmall!
+                      .copyWith(fontWeight: FontWeight.w600),
+                ).setPadding(top: 20),
+                Text(
+                  LocalizationString.addInterestsSubHeader,
+                  style: Theme.of(context).textTheme.titleSmall,
+                ).setPadding(top: 20),
+                addHeader('Do you smoke?').setPadding(top: 30, bottom: 8),
+                SegmentedControl(
+                    segments: const ["Yes", "No"],
+                    value: smoke,
+                    onValueChanged: (value) {
+                      setState(() => smoke = value);
+                    }),
+                addHeader('Drinking habit').setPadding(top: 30, bottom: 8),
+                DropdownBorderedField(
+                  hintText: 'Select',
+                  controller: drinkHabitController,
+                  showBorder: true,
+                  borderColor: Theme.of(context).disabledColor,
+                  cornerRadius: 10,
+                  iconOnRightSide: true,
+                  icon: ThemeIcon.downArrow,
+                  iconColor: Theme.of(context).disabledColor,
+                  onTap: () {
+                    openDrinkHabitListPopup();
+                  },
+                ),
+                addHeader('Interests').setPadding(top: 30, bottom: 8),
+                DropdownBorderedField(
+                  hintText: 'Select',
+                  controller: interestsController,
+                  showBorder: true,
+                  borderColor: Theme.of(context).disabledColor,
+                  cornerRadius: 10,
+                  iconOnRightSide: true,
+                  icon: ThemeIcon.downArrow,
+                  iconColor: Theme.of(context).disabledColor,
+                  onTap: () {
+                    openInterestsPopup();
+                  },
+                ),
+                addHeader('Language').setPadding(top: 30, bottom: 8),
+                DropdownBorderedField(
+                  hintText: 'Select',
+                  controller: languageController,
+                  showBorder: true,
+                  borderColor: Theme.of(context).disabledColor,
+                  cornerRadius: 10,
+                  iconOnRightSide: true,
+                  icon: ThemeIcon.downArrow,
+                  iconColor: Theme.of(context).disabledColor,
+                  onTap: () {
+                    openLanguagePopup();
+                  },
+                ),
+                Center(
+                  child: SizedBox(
+                      height: 50,
+                      width: MediaQuery.of(context).size.width - 50,
+                      child: FilledButtonType1(
+                          cornerRadius: 25,
+                          text: LocalizationString.send,
+                          onPress: () {
+                            AddDatingDataModel dataModel = AddDatingDataModel();
+                            dataModel.smoke = smoke + 1;
+                            getIt<UserProfileManager>().user?.smoke =
+                                dataModel.smoke;
+
+                            if (drinkHabitController.text.isNotEmpty) {
+                              int drink = drinkHabitList
+                                  .indexOf(drinkHabitController.text);
+                              dataModel.drink = drink + 1;
+                              getIt<UserProfileManager>().user?.drink =
+                                  dataModel.drink.toString();
+                            }
+                            if (selectedInterests.isNotEmpty) {
+                              dataModel.interests = selectedInterests;
+                              getIt<UserProfileManager>().user?.interests =
+                                  selectedInterests;
+                            }
+                            if (selectedLanguages.isNotEmpty) {
+                              dataModel.languages = selectedLanguages;
+                              getIt<UserProfileManager>().user?.languages =
+                                  selectedLanguages;
+                            }
+                            datingController.updateDatingProfile(dataModel,
+                                (msg) {
+                              if (msg != null &&
+                                  msg != '' &&
+                                  !isLoginFirstTime) {
+                                AppUtil.showToast(
+                                    context: context,
+                                    message: msg,
+                                    isSuccess: true);
+                              }
+                            });
+                            if (isLoginFirstTime) {
+                              Get.to(() => const AddProfessionalDetails());
+                            }
+                          })),
+                ).setPadding(top: 100),
+              ],
+            ).paddingAll(25),
+          )),
+        ]));
   }
 
   Text addHeader(String header) {
@@ -102,34 +201,105 @@ class AddInterestsState extends State<AddInterests> {
     );
   }
 
-  addSegmentedBar(List<String> segments) {
-    return CupertinoSegmentedControl<int>(
-      padding: EdgeInsets.zero,
-      selectedColor: Theme.of(context).primaryColor,
-      unselectedColor: Theme.of(context).backgroundColor,
-      borderColor: Theme.of(context).disabledColor,
-      children: addSegmentedChips(segments),
-      groupValue: smoke,
-      onValueChanged: (value) {
-        setState(() => smoke = value);
-      },
-    );
+  void openDrinkHabitListPopup() {
+    showModalBottomSheet(
+        context: context,
+        builder: (context) => StatefulBuilder(// this is new
+                builder: (BuildContext context, StateSetter setState) {
+              return ListView.builder(
+                  itemCount: drinkHabitList.length,
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  itemBuilder: (_, int index) {
+                    return ListTile(
+                        title: Text(drinkHabitList[index]),
+                        onTap: () {
+                          setState(() {
+                            drinkHabitController.text = drinkHabitList[index];
+                          });
+                        },
+                        trailing: ThemeIconWidget(
+                            drinkHabitList[index] == drinkHabitController.text
+                                ? ThemeIcon.selectedCheckbox
+                                : ThemeIcon.emptyCheckbox,
+                            color: Theme.of(context).iconTheme.color));
+                  }).setPadding(top: 30);
+            }));
   }
 
-  addSegmentedChips(List<String> segments) {
-    Map<int, Widget> hashmap = {};
-    for (int i = 0; i < segments.length; i++) {
-      hashmap[i] = SizedBox(
-          width: (MediaQuery.of(context).size.width - 40) / segments.length,
-          height: 36,
-          child: Text(
-            segments[i],
-            style: Theme.of(context)
-                .textTheme
-                .bodySmall!
-                .copyWith(fontWeight: FontWeight.w300),
-          ).alignCenter);
-    }
-    return hashmap;
+  void openInterestsPopup() {
+    showModalBottomSheet(
+        context: context,
+        builder: (context) => StatefulBuilder(// this is new
+                builder: (BuildContext context, StateSetter setState) {
+              return ListView.builder(
+                  itemCount: datingController.interests.length,
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  itemBuilder: (_, int index) {
+                    InterestModel model =
+                        datingController.interests.value[index];
+                    var anySelection = selectedInterests
+                        .where((element) => element.id == model.id);
+                    bool isAdded = anySelection.isNotEmpty;
+
+                    return ListTile(
+                        title: Text(model.name),
+                        onTap: () {
+                          isAdded
+                              ? selectedInterests.remove(model)
+                              : selectedInterests.add(model);
+
+                          String result = selectedInterests
+                              .map((val) => val.name)
+                              .join(', ');
+                          interestsController.text = result;
+                          setState(() {});
+                        },
+                        trailing: ThemeIconWidget(
+                            isAdded
+                                ? ThemeIcon.selectedCheckbox
+                                : ThemeIcon.emptyCheckbox,
+                            color: Theme.of(context).iconTheme.color));
+                  }).setPadding(top: 30);
+            }));
+  }
+
+  void openLanguagePopup() {
+    showModalBottomSheet(
+        context: context,
+        builder: (context) => StatefulBuilder(// this is new
+                builder: (BuildContext context, StateSetter setState) {
+              return ListView.builder(
+                  itemCount: datingController.languages.value.length,
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  itemBuilder: (_, int index) {
+                    LanguageModel model =
+                        datingController.languages.value[index];
+                    var anySelection = selectedLanguages
+                        .where((element) => element.id == model.id);
+                    bool isAdded = anySelection.isNotEmpty;
+
+                    return ListTile(
+                        title: Text(model.name ?? ''),
+                        onTap: () {
+                          isAdded
+                              ? selectedLanguages.remove(model)
+                              : selectedLanguages.add(model);
+
+                          String result = selectedLanguages
+                              .map((val) => val.name)
+                              .join(', ');
+                          languageController.text = result;
+                          setState(() {});
+                        },
+                        trailing: ThemeIconWidget(
+                            isAdded
+                                ? ThemeIcon.selectedCheckbox
+                                : ThemeIcon.emptyCheckbox,
+                            color: Theme.of(context).iconTheme.color));
+                  }).setPadding(top: 30);
+            }));
   }
 }

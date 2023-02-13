@@ -312,7 +312,7 @@ class OtherUserProfileState extends State<OtherUserProfile> {
     return Container(
       color: Theme.of(context).cardColor,
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           Column(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -379,23 +379,23 @@ class OtherUserProfileState extends State<OtherUserProfile> {
               });
             }
           }),
-          _profileController.user.value?.giftSummary == null
-              ? Container()
-              : Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      _profileController
-                          .user.value!.giftSummary!.totalCoin.formatNumber
-                          .toString(),
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ).bP8,
-                    Text(
-                      LocalizationString.coins,
-                      style: Theme.of(context).textTheme.bodySmall,
-                    ),
-                  ],
-                ),
+          // _profileController.user.value?.giftSummary == null
+          //     ? Container()
+          //     : Column(
+          //         crossAxisAlignment: CrossAxisAlignment.center,
+          //         children: [
+          //           Text(
+          //             _profileController
+          //                 .user.value!.giftSummary!.totalCoin.formatNumber
+          //                 .toString(),
+          //             style: Theme.of(context).textTheme.titleLarge,
+          //           ).bP8,
+          //           Text(
+          //             LocalizationString.coins,
+          //             style: Theme.of(context).textTheme.bodySmall,
+          //           ),
+          //         ],
+          //       ),
         ],
       ).p16,
     ).round(15);

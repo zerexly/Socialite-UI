@@ -30,6 +30,7 @@ class _ChangePaypalIdState extends State<ChangePaypalId> {
           profileScreensNavigationBar(
               context: context,
               title: LocalizationString.paymentDetail,
+              rightBtnTitle: LocalizationString.done,
               completion: () {
                 profileController.updatePaypalId(
                     paypalId: paypalId.text, context: context);

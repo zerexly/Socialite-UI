@@ -1,4 +1,5 @@
 import 'package:foap/helper/common_import.dart';
+import 'package:foap/model/preference_model.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class UserLiveCallDetail {
@@ -43,8 +44,9 @@ class GiftSummary {
 class UserModel {
   int id = 0;
 
-  // String? name;
+  String? name;
   String userName = '';
+  String category = '';
 
   String? email = '';
   String? picture;
@@ -82,21 +84,41 @@ class UserModel {
 
   UserLiveCallDetail? liveCallDetail;
   GiftSummary? giftSummary;
-  List<UserSetting>? userSetting;
 
   // next release
   int isDatingEnabled = 0;
   int chatDeleteTime = 0;
 
+  String? dob;
+  String? height;
+  String? color;
+  String? religion;
+  int? maritalStatus;
+  int? smoke;
+  String? drink;
+  String? qualification;
+  String? occupation;
+
+  int? experienceYear;
+  int? experienceMonth;
+  List<InterestModel>? interests;
+  List<LanguageModel>? languages;
+
   int profileCategoryTypeId = 0;
   String profileCategoryTypeName = 'Other';
+  List<UserSetting>? userSetting;
+
+  GenderType? genderType;
 
   UserModel();
 
   factory UserModel.fromJson(dynamic json) {
     UserModel model = UserModel();
     model.id = json['id'];
+    model.name = json['name'];
     model.userName = json['username'].toString().toLowerCase();
+    model.category = json['category'] ?? 'Other';
+
     model.email = json['email'];
     model.picture = json['picture'];
     model.bio = json['bio'];
@@ -110,7 +132,12 @@ class UserModel {
     model.country = json['country'];
     model.countryCode = json['country_code'];
     model.city = json['city'];
-    model.gender = json['sex'] == null ? 'Male' : json['sex'].toString();
+    model.gender = json['sex'] == null ? '1' : json['sex'].toString();
+    model.genderType = model.gender == ''
+        ? GenderType.male
+        : model.gender == '2'
+            ? GenderType.female
+            : GenderType.other;
 
     model.totalPost = json['totalActivePost'] ?? json['totalPost'] ?? 0;
     model.totalFollower = json['totalFollower'] ?? 0;
@@ -139,6 +166,31 @@ class UserModel {
     model.giftSummary = json['giftSummary'] != null
         ? GiftSummary.fromJson(json['giftSummary'])
         : null;
+
+    model.dob = json['dob'] ?? '';
+    model.height = json['height'] ?? '121.0';
+    model.color = json['color'] ?? '';
+    model.religion = json['religion'] ?? '';
+    model.maritalStatus = json['marital_status'];
+
+    model.smoke = json['smoke_id'];
+    model.drink = json['drinking_habit'];
+
+    model.qualification = json['qualification'] ?? '';
+    model.occupation = json['occupation'] ?? '';
+
+    model.experienceMonth = json['work_experience_month'];
+    model.experienceYear = json['work_experience_year'];
+
+    model.interests = json['interest'] != null
+        ? List<InterestModel>.from(
+            json['interest'].map((x) => InterestModel.fromJson(x)))
+        : null;
+    model.languages = json['language'] != null
+        ? List<LanguageModel>.from(
+            json['language'].map((x) => LanguageModel.fromJson(x)))
+        : null;
+
     model.profileCategoryTypeId = json['profile_category_type'] ?? 0;
     model.profileCategoryTypeName = json['profileCategoryName'] ?? 'Other';
 
@@ -146,6 +198,7 @@ class UserModel {
         ? List<UserSetting>.from(
             json['userSetting'].map((x) => UserSetting.fromJson(x)))
         : null;
+
     return model;
   }
 
@@ -216,7 +269,7 @@ class UserModel {
 
     DateTime dateTime =
         DateTime.fromMillisecondsSinceEpoch(chatLastTimeOnline! * 1000).toUtc();
-    return '${LocalizationString.lastSeen}${timeago.format(dateTime)}';
+    return '${LocalizationString.lastSeen} ${timeago.format(dateTime)}';
   }
 
   bool get isMe {
@@ -254,18 +307,30 @@ class UserModel {
 class InterestModel {
   int id = 0;
   String name = "";
-  int status = 0;
 
   InterestModel();
 
   factory InterestModel.fromJson(dynamic json) {
     InterestModel model = InterestModel();
-    model.id = json['id'];
+    model.id = json['id'] ?? json['interest_id'];
     model.name = json['name'];
-    model.status = json['status'];
-
     return model;
   }
+}
+
+class LanguageModel {
+  int? id;
+  String? name;
+
+  LanguageModel({
+    required this.id,
+    required this.name,
+  });
+
+  factory LanguageModel.fromJson(Map<String, dynamic> json) => LanguageModel(
+        id: json["id"] ?? json["language_id"],
+        name: json["name"],
+      );
 }
 
 class UserSetting {

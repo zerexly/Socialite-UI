@@ -20,7 +20,8 @@ class _ChatRoomDetailState extends State<ChatRoomDetail> {
     if (_settingsController.setting.value!.enableStarMessage) {
       _chatRoomDetailController.getStarredMessages(widget.chatRoom);
     }
-    _chatDetailController.getUpdatedChatRoomDetail(widget.chatRoom);
+    _chatDetailController.getUpdatedChatRoomDetail(
+        room: widget.chatRoom, callback: () {});
     super.initState();
   }
 
@@ -56,7 +57,9 @@ class _ChatRoomDetailState extends State<ChatRoomDetail> {
                             .copyWith(fontWeight: FontWeight.w600),
                       )),
                 Obx(() => _chatDetailController.chatRoom.value?.amIGroupAdmin ==
-                        true && _chatDetailController.chatRoom.value?.isGroupChat == true
+                            true &&
+                        _chatDetailController.chatRoom.value?.isGroupChat ==
+                            true
                     ? ThemeIconWidget(
                         ThemeIcon.edit,
                         color: Theme.of(context).iconTheme.color,
@@ -65,8 +68,8 @@ class _ChatRoomDetailState extends State<ChatRoomDetail> {
                         Get.to(() => UpdateGroupInfo(
                                 group: _chatDetailController.chatRoom.value!))!
                             .then((value) {
-                          _chatDetailController
-                              .getUpdatedChatRoomDetail(widget.chatRoom);
+                          _chatDetailController.getUpdatedChatRoomDetail(
+                              room: widget.chatRoom, callback: () {});
                         });
                       })
                     : const SizedBox(
@@ -135,10 +138,15 @@ class _ChatRoomDetailState extends State<ChatRoomDetail> {
                           ],
                         )
                       : Container(),
-                  extraOptionsWidget(),
-                  const SizedBox(
-                    height: 50,
-                  ),
+                  if (_chatDetailController.messages.isNotEmpty)
+                    Column(
+                      children: [
+                        extraOptionsWidget(),
+                        const SizedBox(
+                          height: 50,
+                        ),
+                      ],
+                    ),
                   widget.chatRoom.isGroupChat
                       ? Column(children: [
                           exitAndDeleteGroup(),
@@ -422,9 +430,25 @@ class _ChatRoomDetailState extends State<ChatRoomDetail> {
           ),
         ).ripple(() {
           if (widget.chatRoom.amIMember) {
+            print('test 1');
+
+            // AppUtil.showConfirmationAlert(
+            //     title: LocalizationString.leaveGroup,
+            //     subTitle: LocalizationString.leaveGroupConfirmation,
+            //     cxt: context,
+            //     okHandler: () {
             _chatRoomDetailController.leaveGroup(widget.chatRoom);
+            // });
           } else {
+            // print('test 2');
+            //
+            // AppUtil.showConfirmationAlert(
+            //     title: LocalizationString.deleteGroup,
+            //     subTitle: LocalizationString.deleteGroupConfirmation,
+            //     cxt: context,
+            //     okHandler: () {
             _chatRoomDetailController.deleteGroup(widget.chatRoom);
+            // });
           }
           Get.back();
         }),
@@ -635,7 +659,8 @@ class _ChatRoomDetailState extends State<ChatRoomDetail> {
                                     invitedUserCallback: () {
                                       _chatDetailController
                                           .getUpdatedChatRoomDetail(
-                                              widget.chatRoom);
+                                              room: widget.chatRoom,
+                                              callback: () {});
                                     },
                                   )));
                         });

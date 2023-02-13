@@ -96,6 +96,7 @@ enum ThemeIcon {
   delete,
   message,
   chat,
+  chatBordered,
   randomChat,
   closeCircle,
 
@@ -122,6 +123,6 @@ enum ThemeIcon {
   request,
   unSelectedRadio,
   diamond,
-  music
-
+  music,
+  dating
 }

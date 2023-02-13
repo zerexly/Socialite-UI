@@ -25,20 +25,36 @@ class CompetitionCardState extends State<CompetitionCard> {
     return InkWell(
         onTap: () => widget.handler(),
         child: SizedBox(
-          height: 200,
+          height: 250,
           child: Column(children: [
             Stack(
+              fit: StackFit.loose,
               children: [
-                CachedNetworkImage(
-                  imageUrl: model.photo,
-                  fit: BoxFit.cover,
-                  width: MediaQuery.of(context).size.width,
-                  height: 200,
-                  placeholder: (context, url) =>
-                      AppUtil.addProgressIndicator(context,100),
-                  errorWidget: (context, url, error) => const Icon(Icons.error),
-                ).round(20),
-                CompetitionHighlightBar(model: model)
+                SizedBox(
+                  height: 250,
+                  child: CachedNetworkImage(
+                    imageUrl: model.photo,
+                    fit: BoxFit.cover,
+                    width: MediaQuery.of(context).size.width,
+                    height: 200,
+                    placeholder: (context, url) =>
+                        AppUtil.addProgressIndicator(context, 100),
+                    errorWidget: (context, url, error) =>
+                        const Icon(Icons.error),
+                  ).overlay(Colors.black38).round(20).bP25,
+                ),
+                CompetitionHighlightBar(model: model),
+                Positioned(
+                    left: 16,
+                    right: 16,
+                    bottom: 80,
+                    child: Text(
+                      model.title,
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleLarge!
+                          .copyWith(fontWeight: FontWeight.w700),
+                    ))
               ],
             ),
           ]),
@@ -69,7 +85,7 @@ class _CompetitionHighlightBarState extends State<CompetitionHighlightBar> {
   @override
   Widget build(BuildContext context) {
     return Positioned(
-      bottom: 10,
+      bottom: 0,
       left: 30,
       right: 30,
       child: Container(

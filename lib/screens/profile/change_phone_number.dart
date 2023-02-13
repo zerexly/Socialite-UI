@@ -37,6 +37,7 @@ class ChangePhoneNumberState extends State<ChangePhoneNumber> {
             profileScreensNavigationBar(
                 context: context,
                 title: LocalizationString.changePhoneNumber,
+                rightBtnTitle: LocalizationString.done,
                 completion: () {
                   profileController.updateMobile(
                       countryCode: countryCode,

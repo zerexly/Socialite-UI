@@ -119,6 +119,10 @@ class _ChatDetailState extends State<ChatDetail> {
               );
             }),
             Obx(() {
+              print(_chatDetailController.chatRoom.value?.name);
+              print(_chatDetailController.chatRoom.value?.roomMembers
+                  .map((e) => e.userDetail.userName));
+
               return _chatDetailController.chatRoom.value?.amIMember == true
                   ? _chatDetailController.actionMode.value ==
                               ChatMessageActionMode.none ||

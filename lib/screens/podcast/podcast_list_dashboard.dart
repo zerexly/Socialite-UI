@@ -4,9 +4,6 @@ import 'package:foap/screens/podcast/podcast_show_detail.dart';
 import 'package:foap/screens/podcast/podcasts_by_category.dart';
 import 'package:get/get.dart';
 
-import '../../controllers/podcast_streaming_controller.dart';
-import '../../model/podcast_banner_model.dart';
-
 class PodcastListDashboard extends StatefulWidget {
   const PodcastListDashboard({Key? key}) : super(key: key);
 
@@ -16,7 +13,7 @@ class PodcastListDashboard extends StatefulWidget {
 
 class _PodcastListDashboardState extends State<PodcastListDashboard> {
   final PodcastStreamingController _podcastStreamingController =
-  PodcastStreamingController();
+      PodcastStreamingController();
   final CarouselController _controller = CarouselController();
   int _current = 0;
 
@@ -42,7 +39,7 @@ class _PodcastListDashboardState extends State<PodcastListDashboard> {
           mainAxisSize: MainAxisSize.min,
           children: [
             backNavigationBar(
-                context: context, title: LocalizationString.podcast)
+                    context: context, title: LocalizationString.podcast)
                 .tp(50),
             divider(context: context).tP8,
             Expanded(
@@ -52,20 +49,25 @@ class _PodcastListDashboardState extends State<PodcastListDashboard> {
                       return CustomScrollView(slivers: [
                         SliverList(
                             delegate: SliverChildListDelegate([
-                              if (_podcastStreamingController.banners.isNotEmpty)
-                                banner(),
-                              ListView.builder(
+                          if (_podcastStreamingController.banners.isNotEmpty)
+                            banner(),
+                          _podcastStreamingController.categories.isEmpty
+                              ? emptyData(
+                                  title: LocalizationString.noData,
+                                  subTitle: '')
+                              : ListView.builder(
                                   physics: const NeverScrollableScrollPhysics(),
                                   padding: EdgeInsets.zero,
                                   shrinkWrap: true,
-                                  itemCount:
-                                  _podcastStreamingController.categories.length,
-                                  itemBuilder: (BuildContext context, int index) {
+                                  itemCount: _podcastStreamingController
+                                      .categories.length,
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
                                     return podcastByCategory(
                                         _podcastStreamingController
                                             .categories[index]);
                                   })
-                            ]))
+                        ]))
                       ]);
                     })),
           ],
@@ -75,76 +77,76 @@ class _PodcastListDashboardState extends State<PodcastListDashboard> {
   banner() {
     return _podcastStreamingController.banners.length == 1
         ? CachedNetworkImage(
-      imageUrl: _podcastStreamingController.banners[0].coverImageUrl!,
-      fit: BoxFit.cover,
-      width: MediaQuery.of(context).size.width,
-      height: 200,
-    )
-        .round(10)
-        .setPadding(top: 10, bottom: 15, left: 15, right: 15)
-        .ripple(() {
-      bannerClickAction(_podcastStreamingController.banners.first);
-      //2 Show
-      // int? showId = _podcastStreamingController.banners[0].referenceId;
-    })
+            imageUrl: _podcastStreamingController.banners[0].coverImageUrl!,
+            fit: BoxFit.cover,
+            width: MediaQuery.of(context).size.width,
+            height: 200,
+          )
+            .round(10)
+            .setPadding(top: 10, bottom: 15, left: 15, right: 15)
+            .ripple(() {
+            bannerClickAction(_podcastStreamingController.banners.first);
+            //2 Show
+            // int? showId = _podcastStreamingController.banners[0].referenceId;
+          })
         : Stack(children: [
-      CarouselSlider(
-        items: [
-          for (PodcastBannerModel banner
-          in _podcastStreamingController.banners)
-            CachedNetworkImage(
-              imageUrl: banner.coverImageUrl!,
-              fit: BoxFit.cover,
-              width: MediaQuery.of(context).size.width,
-              height: 200,
-            )
-                .round(10)
-                .setPadding(top: 10, bottom: 0, left: 10, right: 10)
-                .ripple(() {
-              bannerClickAction(banner);
-            })
-        ],
-        options: CarouselOptions(
-          autoPlayInterval: const Duration(seconds: 4),
-          autoPlay: true,
-          enlargeCenterPage: false,
-          enableInfiniteScroll: true,
-          height: 200,
-          viewportFraction: 1,
-          onPageChanged: (index, reason) {
-            setState(() {
-              _current = index;
-            });
-          },
-        ),
-      ),
-      Positioned.fill(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: _podcastStreamingController.banners
-              .asMap()
-              .entries
-              .map((entry) {
-            return GestureDetector(
-              onTap: () => _controller.animateToPage(entry.key),
-              child: Container(
-                width: 12.0,
-                height: 12.0,
-                margin: const EdgeInsets.symmetric(
-                    vertical: 8.0, horizontal: 4.0),
-                decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: (Theme.of(context).brightness ==
-                        Brightness.dark
-                        ? Theme.of(context).primaryColor
-                        : Colors.grey)
-                        .withOpacity(_current == entry.key ? 0.9 : 0.4)),
+            CarouselSlider(
+              items: [
+                for (PodcastBannerModel banner
+                    in _podcastStreamingController.banners)
+                  CachedNetworkImage(
+                    imageUrl: banner.coverImageUrl!,
+                    fit: BoxFit.cover,
+                    width: MediaQuery.of(context).size.width,
+                    height: 200,
+                  )
+                      .round(10)
+                      .setPadding(top: 10, bottom: 0, left: 10, right: 10)
+                      .ripple(() {
+                    bannerClickAction(banner);
+                  })
+              ],
+              options: CarouselOptions(
+                autoPlayInterval: const Duration(seconds: 4),
+                autoPlay: true,
+                enlargeCenterPage: false,
+                enableInfiniteScroll: true,
+                height: 200,
+                viewportFraction: 1,
+                onPageChanged: (index, reason) {
+                  setState(() {
+                    _current = index;
+                  });
+                },
               ),
-            );
-          }).toList(),
-        ).alignBottomCenter,
-      ),
-    ]);
+            ),
+            Positioned.fill(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: _podcastStreamingController.banners
+                    .asMap()
+                    .entries
+                    .map((entry) {
+                  return GestureDetector(
+                    onTap: () => _controller.animateToPage(entry.key),
+                    child: Container(
+                      width: 12.0,
+                      height: 12.0,
+                      margin: const EdgeInsets.symmetric(
+                          vertical: 8.0, horizontal: 4.0),
+                      decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: (Theme.of(context).brightness ==
+                                      Brightness.dark
+                                  ? Theme.of(context).primaryColor
+                                  : Colors.grey)
+                              .withOpacity(_current == entry.key ? 0.9 : 0.4)),
+                    ),
+                  );
+                }).toList(),
+              ).alignBottomCenter,
+            ),
+          ]);
   }
 
   podcastByCategory(PodcastCategoryModel model) {
@@ -182,8 +184,8 @@ class _PodcastListDashboardState extends State<PodcastListDashboard> {
             width: 180,
           ).round(10).ripple(() {
             Get.to(() => PodcastHostDetail(
-              podcastModel: model.podcasts[index],
-            ));
+                  podcastModel: model.podcasts[index],
+                ));
           }),
           separatorBuilder: (BuildContext context, int index) {
             return const SizedBox(width: 8);
@@ -198,14 +200,14 @@ class _PodcastListDashboardState extends State<PodcastListDashboard> {
       _podcastStreamingController.getPodcastShowById(banner.referenceId!, () {
         _podcastStreamingController.getHostById(
             _podcastStreamingController.showDetail.value!.podcastChannelId,
-                () => {
-              if (_podcastStreamingController.hostDetail.value != null)
-                {
-                  Get.to(() => PodcastShowDetail(
-                      podcastShowModel:
-                      _podcastStreamingController.showDetail.value!))
-                }
-            });
+            () => {
+                  if (_podcastStreamingController.hostDetail.value != null)
+                    {
+                      Get.to(() => PodcastShowDetail(
+                          podcastShowModel:
+                              _podcastStreamingController.showDetail.value!))
+                    }
+                });
         //find channel id in array
       });
     }

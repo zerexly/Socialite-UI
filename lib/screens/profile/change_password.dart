@@ -34,6 +34,7 @@ class ChangePasswordState extends State<ChangePassword> {
           profileScreensNavigationBar(
               context: context,
               title: LocalizationString.changePwd,
+              rightBtnTitle: LocalizationString.done,
               completion: () {
                 profileController.resetPassword(
                     oldPassword: oldPassword.text,

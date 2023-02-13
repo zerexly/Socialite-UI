@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:foap/helper/common_import.dart';
 import 'package:get/get.dart';
 
@@ -153,33 +154,83 @@ class SignUpScreenState extends State<SignUpScreen> {
             SizedBox(
               height: MediaQuery.of(context).size.height * 0.015,
             ),
-            Wrap(
-              alignment: WrapAlignment.center,
-              children: [
-                Text(LocalizationString.signingInTerms,
-                    style: Theme.of(context).textTheme.bodyMedium),
-                Text(LocalizationString.termsOfService,
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyMedium!
-                            .copyWith(color: Theme.of(context).primaryColor))
-                    .ripple(() {
-                  loginController
-                      .launchUrlInBrowser(settingsController.setting.value!.termsOfServiceUrl!);
-                }),
-                Text(LocalizationString.and,
-                    style: Theme.of(context).textTheme.bodyMedium),
-                Text(LocalizationString.privacyPolicy,
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyMedium!
-                            .copyWith(color: Theme.of(context).primaryColor))
-                    .ripple(() {
-                  loginController
-                      .launchUrlInBrowser(settingsController.setting.value!.privacyPolicyUrl!);
-                }),
-              ],
+
+            RichText(
+              text: TextSpan(
+                children: <TextSpan>[
+                  TextSpan(
+                      text: LocalizationString.signingInTerms,
+                      style: Theme.of(context).textTheme.bodyMedium),
+                  TextSpan(
+                      text: ' ${LocalizationString.termsOfService}',
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () {
+                          loginController.launchUrlInBrowser(settingsController
+                              .setting.value!.termsOfServiceUrl!);
+                        },
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyMedium!
+                          .copyWith(color: Theme.of(context).primaryColor)),
+                  TextSpan(
+                      text: ' ${LocalizationString.and}',
+                      style: Theme.of(context).textTheme.bodyMedium),
+                  TextSpan(
+                      text: ' ${LocalizationString.privacyPolicy}',
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () {
+                          loginController.launchUrlInBrowser(settingsController
+                              .setting.value!.privacyPolicyUrl!);
+                        },
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyMedium!
+                          .copyWith(color: Theme.of(context).primaryColor)),
+                ],
+              ),
             ),
+
+            // Wrap(
+            //   alignment: WrapAlignment.center,
+            //   children: [
+            //     Text(LocalizationString.signingInTerms,
+            //         style: Theme
+            //             .of(context)
+            //             .textTheme
+            //             .bodyMedium),
+            //     Text(LocalizationString.termsOfService,
+            //         style: Theme
+            //             .of(context)
+            //             .textTheme
+            //             .bodyMedium!
+            //             .copyWith(color: Theme
+            //             .of(context)
+            //             .primaryColor))
+            //         .ripple(() {
+            //       loginController
+            //           .launchUrlInBrowser(
+            //           settingsController.setting.value!.termsOfServiceUrl!);
+            //     }),
+            //     Text(LocalizationString.and,
+            //         style: Theme
+            //             .of(context)
+            //             .textTheme
+            //             .bodyMedium),
+            //     Text(LocalizationString.privacyPolicy,
+            //         style: Theme
+            //             .of(context)
+            //             .textTheme
+            //             .bodyMedium!
+            //             .copyWith(color: Theme
+            //             .of(context)
+            //             .primaryColor))
+            //         .ripple(() {
+            //       loginController
+            //           .launchUrlInBrowser(
+            //           settingsController.setting.value!.privacyPolicyUrl!);
+            //     }),
+            //   ],
+            // ),
             SizedBox(
               height: MediaQuery.of(context).size.height * 0.04,
             ),

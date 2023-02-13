@@ -1,5 +1,6 @@
 import 'package:foap/helper/common_import.dart';
 import 'package:get/get.dart';
+import '../../controllers/dating_controller.dart';
 
 class DatingCard extends StatefulWidget {
   const DatingCard({Key? key}) : super(key: key);
@@ -37,24 +38,7 @@ class CardsStackWidget extends StatefulWidget {
 
 class _CardsStackWidgetState extends State<CardsStackWidget>
     with SingleTickerProviderStateMixin {
-  List<Profile> draggableItems = [
-    const Profile(
-        name: 'Rohini',
-        distance: '10 miles away',
-        imageAsset: 'assets/images/avatar_1.jpg'),
-    const Profile(
-        name: 'Rohini',
-        distance: '10 miles away',
-        imageAsset: 'assets/images/avatar_2.jpg'),
-    const Profile(
-        name: 'Rohini',
-        distance: '10 miles away',
-        imageAsset: 'assets/images/avatar_3.jpeg'),
-    const Profile(
-        name: 'Rohini',
-        distance: '10 miles away',
-        imageAsset: 'assets/images/avatar_4.jpeg'),
-  ];
+  final DatingController datingController = Get.find();
 
   ValueNotifier<Swipe> swipeNotifier = ValueNotifier(Swipe.none);
   late final AnimationController _animationController;
@@ -62,13 +46,16 @@ class _CardsStackWidgetState extends State<CardsStackWidget>
   @override
   void initState() {
     super.initState();
+    datingController.getDatingProfiles();
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 500),
       vsync: this,
     );
     _animationController.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
-        draggableItems.removeLast();
+        setState(() {
+          datingController.datingUsers.removeLast();
+        });
         _animationController.reset();
         swipeNotifier.value = Swipe.none;
       }
@@ -77,146 +64,187 @@ class _CardsStackWidgetState extends State<CardsStackWidget>
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      clipBehavior: Clip.none,
-      children: [
-        ValueListenableBuilder(
-          valueListenable: swipeNotifier,
-          builder: (context, swipe, _) => Stack(
-            clipBehavior: Clip.none,
-            children: List.generate(draggableItems.length, (index) {
-              if (index == draggableItems.length - 1) {
-                return PositionedTransition(
-                  rect: RelativeRectTween(
-                    begin: RelativeRect.fromSize(
-                        const Rect.fromLTWH(0, 0, 580, 340),
-                        const Size(580, 340)),
-                    end: RelativeRect.fromSize(
-                        Rect.fromLTWH(
-                            swipe != Swipe.none
-                                ? swipe == Swipe.left
-                                    ? -300
-                                    : 300
-                                : 0,
-                            0,
-                            580,
-                            340),
-                        const Size(580, 340)),
-                  ).animate(CurvedAnimation(
-                    parent: _animationController,
-                    curve: Curves.easeInOut,
-                  )),
-                  child: RotationTransition(
-                    turns: Tween<double>(
-                            begin: 0,
-                            end: swipe != Swipe.none
-                                ? swipe == Swipe.left
-                                    ? -0.1 * 0.3
-                                    : 0.1 * 0.3
-                                : 0.0)
-                        .animate(
-                      CurvedAnimation(
-                        parent: _animationController,
-                        curve: const Interval(0, 0.4, curve: Curves.easeInOut),
-                      ),
-                    ),
-                    child: DragWidget(
-                      profile: draggableItems[index],
-                      index: index,
-                      swipeNotifier: swipeNotifier,
-                      isLastCard: true,
-                    ),
-                  ),
-                );
-              } else {
-                return DragWidget(
-                  profile: draggableItems[index],
-                  index: index,
-                  swipeNotifier: swipeNotifier,
-                );
-              }
-            }),
-          ),
-        ).round(10),
-        Positioned(
-          left: 0,
-          child: DragTarget<int>(
-            builder: (
-              BuildContext context,
-              List<dynamic> accepted,
-              List<dynamic> rejected,
-            ) {
-              return IgnorePointer(
-                child: Container(
-                  height: 700,
-                  width: 80.0,
-                  color: Colors.transparent,
-                ),
-              );
-            },
-            onAccept: (int index) {
-              setState(() {
-                draggableItems.removeAt(index);
-              });
-            },
-          ),
-        ),
-        Positioned(
-          bottom: 10,
-          left: 0,
-          right: 0,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ActionButtonWidget(
-                onPressed: () {
-                  swipeNotifier.value = Swipe.left;
-                  _animationController.forward();
-                },
-                icon: const Icon(
-                  Icons.close,
-                  color: Colors.grey,
-                ),
-              ),
-              const SizedBox(width: 20),
-              ActionButtonWidget(
-                onPressed: () {
-                  swipeNotifier.value = Swipe.right;
-                  _animationController.forward();
-                },
-                icon: const Icon(
-                  Icons.favorite,
-                  color: Colors.red,
-                ),
-              ),
-            ],
-          ),
-        ),
-        Positioned(
-          right: 0,
-          child: DragTarget<int>(
-            builder: (
-              BuildContext context,
-              List<dynamic> accepted,
-              List<dynamic> rejected,
-            ) {
-              return IgnorePointer(
-                child: Container(
-                  height: 700,
-                  width: 80.0,
-                  color: Colors.transparent,
-                ),
-              );
-            },
-            onAccept: (int index) {
-              setState(() {
-                draggableItems.removeAt(index);
-              });
-            },
-          ),
-        ),
-      ],
-    );
+    return GetBuilder<DatingController>(
+        init: datingController,
+        builder: (ctx) {
+          return datingController.isLoading.value
+              ? const CardsStackShimmerWidget()
+              : datingController.datingUsers.isEmpty
+                  ? emptyData(
+                      title: LocalizationString.noDatingProfilesFound,
+                      subTitle: LocalizationString.datingExplore,
+                    )
+                  : Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        ValueListenableBuilder(
+                          valueListenable: swipeNotifier,
+                          builder: (context, swipe, _) => Stack(
+                            clipBehavior: Clip.none,
+                            children: List.generate(
+                                datingController.datingUsers.length, (index) {
+                              if (index ==
+                                  datingController.datingUsers.length - 1) {
+                                return PositionedTransition(
+                                  rect: RelativeRectTween(
+                                    begin: RelativeRect.fromSize(
+                                        const Rect.fromLTWH(0, 0, 580, 340),
+                                        const Size(580, 340)),
+                                    end: RelativeRect.fromSize(
+                                        Rect.fromLTWH(
+                                            swipe != Swipe.none
+                                                ? swipe == Swipe.left
+                                                    ? -300
+                                                    : 300
+                                                : 0,
+                                            0,
+                                            580,
+                                            340),
+                                        const Size(580, 340)),
+                                  ).animate(CurvedAnimation(
+                                    parent: _animationController,
+                                    curve: Curves.easeInOut,
+                                  )),
+                                  child: RotationTransition(
+                                    turns: Tween<double>(
+                                            begin: 0,
+                                            end: swipe != Swipe.none
+                                                ? swipe == Swipe.left
+                                                    ? -0.1 * 0.3
+                                                    : 0.1 * 0.3
+                                                : 0.0)
+                                        .animate(
+                                      CurvedAnimation(
+                                        parent: _animationController,
+                                        curve: const Interval(0, 0.4,
+                                            curve: Curves.easeInOut),
+                                      ),
+                                    ),
+                                    child: DragWidget(
+                                      profile:
+                                          datingController.datingUsers[index],
+                                      index: index,
+                                      swipeNotifier: swipeNotifier,
+                                      isLastCard: true,
+                                    ),
+                                  ),
+                                );
+                              } else {
+                                return DragWidget(
+                                  profile: datingController.datingUsers[index],
+                                  index: index,
+                                  swipeNotifier: swipeNotifier,
+                                );
+                              }
+                            }),
+                          ),
+                        ).round(10),
+                        Positioned(
+                          left: 0,
+                          child: DragTarget<int>(
+                            builder: (
+                              BuildContext context,
+                              List<dynamic> accepted,
+                              List<dynamic> rejected,
+                            ) {
+                              return IgnorePointer(
+                                child: Container(
+                                  height: 700,
+                                  width: 80.0,
+                                  color: Colors.transparent,
+                                ),
+                              );
+                            },
+                            onAccept: (int index) {
+                              setState(() {
+                                //dislike
+                                datingController.likeUnlikeProfile(
+                                    DatingActions.rejected,
+                                    datingController.datingUsers[index].id
+                                        .toString());
+                                datingController.datingUsers.removeAt(index);
+                              });
+                            },
+                          ),
+                        ),
+                        if (datingController.datingUsers.isNotEmpty)
+                          Positioned(
+                            bottom: 10,
+                            left: 0,
+                            right: 0,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                ActionButtonWidget(
+                                  onPressed: () {
+                                    int index =
+                                        datingController.datingUsers.length - 1;
+                                    datingController.likeUnlikeProfile(
+                                        DatingActions.rejected,
+                                        datingController.datingUsers[index].id
+                                            .toString());
+                                    swipeNotifier.value = Swipe.right;
+                                    _animationController.forward();
+                                    swipeNotifier.value = Swipe.left;
+                                    _animationController.forward();
+                                  },
+                                  icon: const Icon(
+                                    Icons.close,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                                const SizedBox(width: 20),
+                                ActionButtonWidget(
+                                  onPressed: () {
+                                    //like
+                                    int index =
+                                        datingController.datingUsers.length - 1;
+                                    datingController.likeUnlikeProfile(
+                                        DatingActions.liked,
+                                        datingController.datingUsers[index].id
+                                            .toString());
+                                    swipeNotifier.value = Swipe.right;
+                                    _animationController.forward();
+                                  },
+                                  icon: const Icon(
+                                    Icons.favorite,
+                                    color: Colors.red,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        Positioned(
+                          right: 0,
+                          child: DragTarget<int>(
+                            builder: (
+                              BuildContext context,
+                              List<dynamic> accepted,
+                              List<dynamic> rejected,
+                            ) {
+                              return IgnorePointer(
+                                child: Container(
+                                  height: 700,
+                                  width: 80.0,
+                                  color: Colors.transparent,
+                                ),
+                              );
+                            },
+                            onAccept: (int index) {
+                              setState(() {
+                                //like
+                                datingController.likeUnlikeProfile(
+                                    DatingActions.liked,
+                                    datingController.datingUsers[index].id
+                                        .toString());
+                                datingController.datingUsers.removeAt(index);
+                              });
+                            },
+                          ),
+                        ),
+                      ],
+                    );
+        });
   }
 }
 
@@ -228,7 +256,7 @@ class DragWidget extends StatefulWidget {
       required this.swipeNotifier,
       this.isLastCard = false})
       : super(key: key);
-  final Profile profile;
+  final UserModel profile;
   final int index;
   final ValueNotifier<Swipe> swipeNotifier;
   final bool isLastCard;
@@ -267,7 +295,7 @@ class _DragWidgetState extends State<DragWidget> {
                               child: Transform.rotate(
                                 angle: 12,
                                 child: TagWidget(
-                                  text: 'LIKE',
+                                  text: LocalizationString.like.toLowerCase(),
                                   color: Colors.green[400]!,
                                 ),
                               ),
@@ -278,7 +306,8 @@ class _DragWidgetState extends State<DragWidget> {
                               child: Transform.rotate(
                                 angle: -12,
                                 child: TagWidget(
-                                  text: 'DISLIKE',
+                                  text:
+                                      LocalizationString.disLike.toUpperCase(),
                                   color: Colors.red[400]!,
                                 ),
                               ),
@@ -327,7 +356,7 @@ class _DragWidgetState extends State<DragWidget> {
                             child: Transform.rotate(
                               angle: 12,
                               child: TagWidget(
-                                text: 'LIKE',
+                                text: LocalizationString.like.toUpperCase(),
                                 color: Colors.green[400]!,
                               ),
                             ),
@@ -338,7 +367,7 @@ class _DragWidgetState extends State<DragWidget> {
                             child: Transform.rotate(
                               angle: -12,
                               child: TagWidget(
-                                text: 'DISLIKE',
+                                text: LocalizationString.disLike.toUpperCase(),
                                 color: Colors.red[400]!,
                               ),
                             ),
@@ -347,7 +376,7 @@ class _DragWidgetState extends State<DragWidget> {
               ],
             );
           }),
-    ).paddingOnly(top: 15);
+    ).setPadding(top: 15);
   }
 }
 
@@ -386,7 +415,7 @@ class TagWidget extends StatelessWidget {
 
 class ProfileCard extends StatelessWidget {
   const ProfileCard({Key? key, required this.profile}) : super(key: key);
-  final Profile profile;
+  final UserModel profile;
 
   @override
   Widget build(BuildContext context) {
@@ -396,10 +425,24 @@ class ProfileCard extends StatelessWidget {
       child: Stack(
         children: [
           Positioned.fill(
-            child: Image.asset(
-              profile.imageAsset,
-              fit: BoxFit.cover,
-            ).round(10),
+            child: profile.picture != null
+                ? CachedNetworkImage(
+                    imageUrl: profile.picture!,
+                    fit: BoxFit.cover,
+                    placeholder: (context, url) => SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: const CircularProgressIndicator().p16),
+                    errorWidget: (context, url, error) => const SizedBox(
+                        child: Icon(
+                      Icons.error,
+                      // size: size / 2,
+                    )),
+                  ).round(10)
+                : Image.asset(
+                    'assets/images/avatar_1.jpg',
+                    fit: BoxFit.cover,
+                  ).round(10),
           ),
           Positioned(
             bottom: 0,
@@ -423,15 +466,21 @@ class ProfileCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    profile.name,
+                    profile.name == null
+                        ? profile.userName
+                        : profile.name ?? '',
                     style: const TextStyle(
                       fontWeight: FontWeight.w800,
                       fontSize: 16,
                       color: Colors.black,
                     ),
-                  ),
+                  ).bP4,
                   Text(
-                    profile.distance,
+                    profile.genderType == GenderType.female
+                        ? LocalizationString.female
+                        : profile.genderType == GenderType.other
+                            ? LocalizationString.other
+                            : LocalizationString.male,
                     style: const TextStyle(
                       fontWeight: FontWeight.w400,
                       fontSize: 14,
@@ -439,12 +488,12 @@ class ProfileCard extends StatelessWidget {
                     ),
                   ),
                 ],
-              ).paddingOnly(left: 20),
+              ).setPadding(left: 20),
             ),
           ),
         ],
       ),
-    );
+    ).setPadding(left: 20, right: 20);
   }
 }
 
@@ -468,17 +517,6 @@ class ActionButtonWidget extends StatelessWidget {
       ),
     );
   }
-}
-
-class Profile {
-  const Profile({
-    required this.name,
-    required this.distance,
-    required this.imageAsset,
-  });
-  final String name;
-  final String distance;
-  final String imageAsset;
 }
 
 enum Swipe { left, right, none }

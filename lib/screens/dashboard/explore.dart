@@ -279,7 +279,6 @@ class _ExploreState extends State<Explore> {
             : SizedBox(
                 height: MediaQuery.of(context).size.height * 0.5,
                 child: emptyData(
-                    context: context,
                     title: LocalizationString.noHashtagFound,
                     subTitle: ''),
               );

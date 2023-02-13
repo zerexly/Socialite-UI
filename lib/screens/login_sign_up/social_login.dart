@@ -182,10 +182,11 @@ class _SocialLoginState extends State<SocialLogin> {
 
             if (getIt<UserProfileManager>().user != null) {
               if (response.isLoginFirstTime) {
+                isLoginFirstTime = true;
                 Get.offAll(() => const SetUserName());
               } else {
                 // ask for location
-
+                isLoginFirstTime = false;
                 getIt<LocationManager>().postLocation();
                 Get.offAll(() => const DashboardScreen());
               }

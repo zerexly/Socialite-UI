@@ -39,6 +39,7 @@ class _ChangeLocationState extends State<ChangeLocation> {
           profileScreensNavigationBar(
               context: context,
               title: LocalizationString.changeLocation,
+              rightBtnTitle: LocalizationString.done,
               completion: () {
                 updateLocation();
               }),

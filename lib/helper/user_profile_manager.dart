@@ -16,6 +16,10 @@ class UserProfileManager {
     Get.offAll(() => const LoginScreen());
     getIt<SocketManager>().disconnect();
     getIt<DBManager>().clearAllUnreadCount();
+    getIt<DBManager>().deleteAllChatHistory();
+
+    GoogleSignIn googleSignIn = GoogleSignIn();
+    googleSignIn.disconnect();
 
     Future.delayed(const Duration(seconds: 2), () {
       _dashboardController.indexChanged(0);

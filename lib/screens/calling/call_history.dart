@@ -82,7 +82,7 @@ class _CallHistoryState extends State<CallHistory> {
                             : emptyData(
                                 title: LocalizationString.noCallFound,
                                 subTitle: LocalizationString.makeSomeCalls,
-                                context: context);
+                               );
                   }).hP16,
             ),
           ],

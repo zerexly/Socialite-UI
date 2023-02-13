@@ -1,7 +1,8 @@
 import 'package:get/get.dart';
 import 'package:foap/helper/common_import.dart';
-
 import '../screens/login_sign_up/set_profile_category_type.dart';
+
+bool isLoginFirstTime = false;
 
 class LoginController extends GetxController {
   final SettingsController _settingsController = Get.find();
@@ -36,14 +37,27 @@ class LoginController extends GetxController {
               await _settingsController.getSettings();
               getIt<SocketManager>().connect();
               // ask for location
-              getIt<LocationManager>().postLocation();
+              // getIt<LocationManager>().postLocation();
+
+              //For Testing Dating Flow
+              // isLoginFirstTime = true;
+              // Get.to(() => const SetLocation())!.then((value) {});
+
               if (response.isLoginFirstTime) {
-                Get.offAll(() => const SetProfileCategoryType(
-                      isFromSignup: false,
-                    ));
+                // isLoginFirstTime = true;
+                Get.to(() => const SetLocation())!.then((value) {});
               } else {
-                SharedPrefs().setUserLoggedIn(true);
+                // isLoginFirstTime = false;
                 Get.offAll(() => const DashboardScreen());
+                getIt<SocketManager>().connect();
+              // getIt<LocationManager>().postLocation();
+              // if (response.isLoginFirstTime) {
+              //   Get.offAll(() => const SetProfileCategoryType(
+              //         isFromSignup: false,
+              //       ));
+              // } else {
+              //   SharedPrefs().setUserLoggedIn(true);
+              //   Get.offAll(() => const DashboardScreen());
               }
             } else {
               EasyLoading.dismiss();

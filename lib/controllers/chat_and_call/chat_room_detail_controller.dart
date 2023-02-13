@@ -6,44 +6,60 @@ class ChatRoomDetailController extends GetxController {
   RxList<ChatMessageModel> videos = <ChatMessageModel>[].obs;
   RxList<ChatMessageModel> starredMessages = <ChatMessageModel>[].obs;
   final ChatDetailController _chatDetailController = Get.find();
+
   // Rx<ChatRoomModel?> room = Rx<ChatRoomModel?>(null);
 
   RxInt selectedSegment = 0.obs;
 
-
   makeUserAsAdmin(UserModel user, ChatRoomModel chatRoom) {
     getIt<SocketManager>().emit(SocketConstants.makeUserAdmin,
         {'room': chatRoom.id, 'userId': user.id});
-    _chatDetailController.getUpdatedChatRoomDetail(chatRoom);
+    _chatDetailController.getUpdatedChatRoomDetail(
+        room: chatRoom, callback: () {});
   }
 
   removeUserAsAdmin(UserModel user, ChatRoomModel chatRoom) {
     getIt<SocketManager>().emit(SocketConstants.removeUserAdmin,
         {'room': chatRoom.id, 'userId': user.id});
-    _chatDetailController.getUpdatedChatRoomDetail(chatRoom);
+    _chatDetailController.getUpdatedChatRoomDetail(
+        room: chatRoom, callback: () {});
   }
 
   removeUserFormGroup(UserModel user, ChatRoomModel chatRoom) {
     getIt<SocketManager>().emit(SocketConstants.removeUserFromGroupChat,
         {'room': chatRoom.id, 'userId': user.id});
 
-    _chatDetailController.getUpdatedChatRoomDetail(chatRoom);
+    _chatDetailController.getUpdatedChatRoomDetail(
+        room: chatRoom, callback: () {});
   }
 
   leaveGroup(ChatRoomModel chatRoom) {
     getIt<SocketManager>()
         .emit(SocketConstants.leaveGroupChat, {'room': chatRoom.id});
+    _chatDetailController.getUpdatedChatRoomDetail(
+        room: chatRoom,
+        callback: () {
+          Get.back();
+        });
   }
 
   updateGroupAccess(int access) {
-    getIt<SocketManager>().emit(SocketConstants.updateChatAccessGroup,
-        {'room': _chatDetailController.chatRoom.value!.id, 'chatAccessGroup': access});
+    getIt<SocketManager>().emit(SocketConstants.updateChatAccessGroup, {
+      'room': _chatDetailController.chatRoom.value!.id,
+      'chatAccessGroup': access
+    });
 
-    _chatDetailController.getUpdatedChatRoomDetail(_chatDetailController.chatRoom.value!);
+    _chatDetailController.getUpdatedChatRoomDetail(
+        room: _chatDetailController.chatRoom.value!, callback: () {});
   }
 
   deleteGroup(ChatRoomModel chatRoom) {
-    getIt<DBManager>().deleteRoom(chatRoom);
+    getIt<DBManager>().deleteRooms([chatRoom]);
+    _chatDetailController.getUpdatedChatRoomDetail(
+        room: chatRoom,
+        callback: () {
+          Get.back();
+        });
   }
 
   getStarredMessages(ChatRoomModel room) async {

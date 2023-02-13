@@ -87,9 +87,8 @@ class _ChooseStoryForHighlightsState extends State<ChooseStoryForHighlights> {
                               }).hP16
                           : emptyData(
                               title: LocalizationString.noStoryFound,
-                              subTitle:
-                              LocalizationString.postSomeStories,
-                              context: context);
+                              subTitle: LocalizationString.postSomeStories,
+                            );
                 }).hP4,
           )
         ],
@@ -135,8 +134,7 @@ class _ChooseStoryForHighlightsState extends State<ChooseStoryForHighlights> {
             child: Stack(
               children: [
                 CachedNetworkImage(
-  imageUrl:
-                  _highlightsController.stories[index].image!,
+                  imageUrl: _highlightsController.stories[index].image!,
                   fit: BoxFit.cover,
                   height: double.infinity,
                   width: double.infinity,

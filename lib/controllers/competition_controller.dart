@@ -5,29 +5,57 @@ class CompetitionController extends GetxController {
   RxList<CompetitionModel> current = <CompetitionModel>[].obs;
   RxList<CompetitionModel> completed = <CompetitionModel>[].obs;
   RxList<CompetitionModel> winners = <CompetitionModel>[].obs;
-  late ApiResponseModel competitionResponse;
+  RxList<CompetitionModel> allCompetitions = <CompetitionModel>[].obs;
+
+  // late ApiResponseModel competitionResponse;
   final picker = ImagePicker();
 
   Rx<CompetitionModel?> competition = Rx<CompetitionModel?>(null);
 
-  Future<ApiResponseModel> getCompetitions() async {
-    await ApiController().getCompetitions().then((value) {
-      competitionResponse = value;
+  int page = 1;
+  bool canLoadMoreCompetition = true;
+  RxBool isLoadingCompetition = false.obs;
 
-      current.value = competitionResponse.competitions
-          .where((element) => element.isOngoing)
-          .toList();
-      completed.value = competitionResponse.competitions
-          .where((element) => element.isPast)
-          .toList();
-      winners.value = competitionResponse.competitions
-          .where((element) => element.winnerAnnounced())
-          .toList();
+  clear() {
+    current.clear();
+    completed.clear();
+    winners.clear();
+    allCompetitions.clear();
 
-      update();
-    });
+    page = 1;
+    canLoadMoreCompetition = true;
+    isLoadingCompetition.value = false;
+  }
 
-    return competitionResponse;
+  getCompetitions(VoidCallback callback) async {
+    if (canLoadMoreCompetition) {
+      await ApiController().getCompetitions(page: page).then((response) {
+        allCompetitions.addAll(response.competitions);
+        allCompetitions.value = allCompetitions.toSet().toList();
+
+        current.value =
+            allCompetitions.where((element) => element.isOngoing).toList();
+        completed.value =
+            allCompetitions.where((element) => element.isPast).toList();
+        winners.value = allCompetitions
+            .where((element) => element.winnerAnnounced())
+            .toList();
+
+        isLoadingCompetition.value = false;
+
+        if (response.competitions.length == response.metaData?.perPage) {
+          canLoadMoreCompetition = true;
+          page += 1;
+        } else {
+          canLoadMoreCompetition = false;
+        }
+        callback();
+
+        update();
+      });
+    } else {
+      callback();
+    }
   }
 
   // Future<String> loadVideoThumbnail(String videoPath) async {
@@ -51,15 +79,17 @@ class CompetitionController extends GetxController {
   loadCompetitionDetail({required int id}) {
     ApiController().getCompetitionsDetail(id).then((response) {
       competition.value = response.competition;
+      print(
+          'modal.competitionPositions ${competition.value!.competitionPositions}');
+
       update();
     });
   }
 
-
   void joinCompetition(CompetitionModel competition, BuildContext context) {
     int coin = getIt<UserProfileManager>().user!.coins;
 
-    if (coin > competition.joiningFee) {
+    if (coin >= competition.joiningFee) {
       AppUtil.checkInternet().then((value) {
         if (value) {
           EasyLoading.show(status: LocalizationString.loading);
@@ -71,6 +101,7 @@ class CompetitionController extends GetxController {
                 context: context, message: response.message, isSuccess: true);
             competition.isJoined = 1;
             update();
+            getIt<UserProfileManager>().refreshProfile();
           });
         } else {
           AppUtil.showToast(

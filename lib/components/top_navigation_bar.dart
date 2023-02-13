@@ -149,7 +149,7 @@ Widget backNavigationBarWithIconBadge(
 
 Widget profileScreensNavigationBar(
     {required BuildContext context,
-    required String title,
+    required String title, String? rightBtnTitle,
     required VoidCallback completion}) {
   return Stack(
     alignment: AlignmentDirectional.center,
@@ -164,15 +164,16 @@ Widget profileScreensNavigationBar(
           ).ripple(() {
             Get.back();
           }),
-          Text(
-            LocalizationString.done.tr,
-            style: Theme.of(context)
-                .textTheme
-                .bodyLarge!
-                .copyWith(fontWeight: FontWeight.w600),
-          ).ripple(() {
-            completion();
-          }),
+          if (rightBtnTitle != null)
+            Text(
+              rightBtnTitle.tr,
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyLarge!
+                  .copyWith(fontWeight: FontWeight.w600),
+            ).ripple(() {
+              completion();
+            }),
         ],
       ).setPadding(left: 16, right: 16),
       Positioned(

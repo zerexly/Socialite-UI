@@ -1,5 +1,7 @@
 import 'package:foap/helper/common_import.dart';
 
+import '../model/preference_model.dart';
+
 class ApiParamModel {
   dynamic getLoginParam(String email, String password) async {
     String? fcmToken = await SharedPrefs().getFCMToken();
@@ -210,7 +212,6 @@ class ApiParamModel {
     };
   }
 
-
   dynamic removeFromClub({
     required int userId,
     required int clubId,
@@ -237,7 +238,8 @@ class ApiParamModel {
     };
   }
 
-  dynamic getPollAnswerParam(int? pollId, int? pollQuestionId, int? questionOptionId) async {
+  dynamic getPollAnswerParam(
+      int? pollId, int? pollQuestionId, int? questionOptionId) async {
     return {
       "poll_id": pollId.toString(),
       "poll_question_id": pollQuestionId.toString(),
@@ -286,5 +288,111 @@ class ApiParamModel {
       'payment_method_nonce': nonce,
       'device_data': deviceData,
     };
+  }
+
+  dynamic addUserPreferenceParam(AddPreferenceModel? preferenceModel) {
+    dynamic param = {
+      'profile_category_type': '2',
+      "work_experience_from": "2",
+      "work_experience_to": "4",
+    };
+    if (preferenceModel?.languages != null) {
+      String? result =
+          preferenceModel?.languages!.map((val) => val.id).join(',');
+      param['language'] = result;
+    }
+    if (preferenceModel?.religion != null) {
+      param['religion'] = preferenceModel?.religion;
+    }
+    if (preferenceModel?.status != null) {
+      param['marital_status'] = preferenceModel?.status.toString();
+    }
+    if (preferenceModel?.smoke != null) {
+      param['smoke_id'] = preferenceModel?.smoke.toString();
+    }
+    if (preferenceModel?.drink != null) {
+      param['drinking_habit'] = preferenceModel?.drink.toString();
+    }
+    if (preferenceModel?.interests != null) {
+      String? result =
+          preferenceModel?.interests!.map((val) => val.id).join(',');
+      param['interest'] = result;
+    }
+    if (preferenceModel?.gender != null) {
+      param['gander'] = preferenceModel?.gender.toString();
+    }
+    if (preferenceModel?.selectedColor != null) {
+      param['color'] = preferenceModel?.selectedColor;
+    }
+    if (preferenceModel?.ageFrom != null) {
+      param['age_from'] = preferenceModel?.ageFrom.toString();
+    }
+    if (preferenceModel?.ageTo != null) {
+      param['age_to'] = preferenceModel?.ageTo.toString();
+    }
+
+    if (preferenceModel?.heightTo != null) {
+      param['height'] = preferenceModel?.heightTo.toString();
+    }
+    return param;
+  }
+
+  dynamic updateDatingProfileParam(AddDatingDataModel? dataModel) {
+    dynamic param = {
+      'profile_category_type': '2',
+      "work_experience_month": "9",
+    };
+    if (dataModel?.latitude != null) {
+      param['latitude'] = dataModel?.latitude.toString();
+      param['longitude'] = dataModel?.longitude.toString();
+    }
+    if (dataModel?.name != null) {
+      param['name'] = dataModel?.name;
+    }
+    if (dataModel?.dob != null) {
+      param['dob'] = dataModel?.dob;
+    }
+    if (dataModel?.gender != null) {
+      param['sex'] = dataModel?.gender.toString();
+    }
+    if (dataModel?.selectedColor != null) {
+      param['color'] = dataModel?.selectedColor;
+    }
+    if (dataModel?.height != null) {
+      param['height'] = dataModel?.height.toString();
+    }
+    if (dataModel?.religion != null) {
+      param['religion'] = dataModel?.religion;
+    }
+    if (dataModel?.status != null) {
+      param['marital_status'] = dataModel?.status.toString();
+    }
+    if (dataModel?.smoke != null) {
+      param['smoke_id'] = dataModel?.smoke.toString();
+    }
+    if (dataModel?.drink != null) {
+      param['drinking_habit'] = dataModel?.drink.toString();
+    }
+    if (dataModel?.interests != null) {
+      String result = dataModel!.interests!.map((val) => val.id).join(',');
+      param['interest_id'] = result;
+    }
+    if (dataModel?.languages != null) {
+      String result = dataModel!.languages!.map((val) => val.id).join(',');
+      param['language_id'] = result;
+    }
+    if (dataModel?.qualification != null) {
+      param['qualification'] = dataModel?.qualification;
+    }
+    if (dataModel?.occupation != null) {
+      param['occupation'] = dataModel?.occupation;
+    }
+    if (dataModel?.experienceYear != null) {
+      param['work_experience_year'] = dataModel?.experienceYear;
+    }
+    if (dataModel?.experienceMonth != null) {
+      param['work_experience_month'] = dataModel?.experienceMonth;
+    }
+    return param;
   }
 }

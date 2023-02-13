@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:foap/helper/common_import.dart';
 
+import '../../../model/preference_model.dart';
 import 'add_personal_info.dart';
 
 class ChooseWhomToDate extends StatefulWidget {
@@ -11,7 +12,8 @@ class ChooseWhomToDate extends StatefulWidget {
 }
 
 class _ChooseWhomToDateState extends State<ChooseWhomToDate> {
-  TextEditingController nameController = TextEditingController();
+  List<String> genders = ['Open to all', 'Male', 'Female'];
+  int? selectedGender;
 
   @override
   Widget build(BuildContext context) {
@@ -28,17 +30,21 @@ class _ChooseWhomToDateState extends State<ChooseWhomToDate> {
                   .textTheme
                   .displaySmall!
                   .copyWith(fontWeight: FontWeight.w600),
-            ).paddingOnly(top: 100),
+            ).setPadding(top: 100),
             Text(
               LocalizationString.likeToDateSubHeader,
               style: Theme.of(context)
                   .textTheme
                   .titleSmall!
                   .copyWith(fontWeight: FontWeight.w600),
-            ).paddingOnly(top: 20),
-            addOption('Open to all').paddingOnly(top: 50),
-            addOption('Male').paddingOnly(top: 10),
-            addOption('Female').paddingOnly(top: 10),
+            ).setPadding(top: 20),
+            ListView.builder(
+              itemCount: 3,
+              physics: const NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              itemBuilder: (_, int index) =>
+                  addOption(index).setPadding(top: 15),
+            ).setPadding(top: 30),
             Center(
               child: SizedBox(
                   height: 50,
@@ -48,29 +54,36 @@ class _ChooseWhomToDateState extends State<ChooseWhomToDate> {
                       text: LocalizationString.next,
                       onPress: () {
                         Get.to(() => const AddPersonalInfo());
-                        // Get.to(() => const ChooseGoal());
                       })),
-            ).paddingOnly(top: 110),
+            ).setPadding(top: 100),
           ],
         ).hP25,
       ),
     );
   }
 
-  Widget addOption(String option) {
+  Widget addOption(int index) {
     return SizedBox(
       height: 60,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(option,
+          Text(genders[index],
               style: Theme.of(context)
                   .textTheme
                   .titleSmall!
                   .copyWith(fontWeight: FontWeight.w600, color: Colors.white)),
-          const Icon(Icons.circle_outlined),
+          ThemeIconWidget(
+              selectedGender == index
+                  ? ThemeIcon.circle
+                  : ThemeIcon.circleOutline,
+              color: Theme.of(context).iconTheme.color),
         ],
-      ).hP25,
+      ).hP25.ripple(() {
+        setState(() {
+          selectedGender = index;
+        });
+      }),
     ).borderWithRadius(
         context: context,
         color: Theme.of(context).disabledColor,

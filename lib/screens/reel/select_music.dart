@@ -182,7 +182,7 @@ class _SelectMusicState extends State<SelectMusic> {
             : emptyData(
                 title: 'No audio found',
                 subTitle: 'Please search another audio',
-                context: context);
+                );
   }
 
   void openCropAudio(ReelMusicModel audio) async {

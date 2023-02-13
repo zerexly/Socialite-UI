@@ -82,14 +82,15 @@ class ChatDetailController extends GetxController {
     update();
   }
 
-  getUpdatedChatRoomDetail(ChatRoomModel room) {
-    ApiController().getChatRoomDetail(room.id).then((response) {
+  getUpdatedChatRoomDetail(
+      {required ChatRoomModel room, required VoidCallback callback}) {
+    ApiController().getChatRoomDetail(room.id).then((response) async {
       chatRoom.value = response.room;
       chatRoom.refresh();
 
       // update room in local storage
-      getIt<DBManager>().updateRoom(chatRoom.value!);
-
+      await getIt<DBManager>().updateRoom(chatRoom.value!);
+      callback();
       // update();
     });
   }
@@ -1419,7 +1420,9 @@ class ChatDetailController extends GetxController {
         });
       }
     } else {
-      showNewMessageBanner(message, message.roomId);
+      if (message.messageContentType != MessageContentType.groupAction) {
+        showNewMessageBanner(message, message.roomId);
+      }
     }
 
     update();

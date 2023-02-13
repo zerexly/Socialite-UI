@@ -106,3 +106,5 @@ enum TvBannerType { tv, show }
 enum PodcastBannerType { host, show }
 
 enum RelationsRevealSetting { none, followers, all }
+
+enum GenderType { male, female, other }

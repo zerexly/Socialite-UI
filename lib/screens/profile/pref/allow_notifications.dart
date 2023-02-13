@@ -21,10 +21,8 @@ class _AllowNotificationState extends State<AllowNotification> {
             height: 60,
             width: 60,
             color: Theme.of(context).cardColor,
-            child: Icon(
-              Icons.notifications,
-              color: Theme.of(context).primaryColor,
-            ),
+            child: ThemeIconWidget(ThemeIcon.notification,
+                color: Theme.of(context).primaryColor),
           ).round(30),
           Text(
             LocalizationString.notificationHeader,
@@ -32,11 +30,11 @@ class _AllowNotificationState extends State<AllowNotification> {
                 .textTheme
                 .displaySmall!
                 .copyWith(fontWeight: FontWeight.w600),
-          ).paddingOnly(top: 40),
+          ).setPadding(top: 40),
           Text(
             LocalizationString.notificationSubHeader,
             style: Theme.of(context).textTheme.titleSmall,
-          ).paddingOnly(top: 20),
+          ).setPadding(top: 20),
           Center(
             child: SizedBox(
                 height: 50,
@@ -47,7 +45,7 @@ class _AllowNotificationState extends State<AllowNotification> {
                     onPress: () {
                       Get.to(() => const AddName());
                     })),
-          ).paddingOnly(top: 150),
+          ).setPadding(top: 150),
           Center(
             child: SizedBox(
                 height: 50,
@@ -62,7 +60,7 @@ class _AllowNotificationState extends State<AllowNotification> {
                     onPress: () {
                       Get.to(() => const AddName());
                     })),
-          ).paddingOnly(top: 20),
+          ).setPadding(top: 20),
         ],
       ).hP25,
     );

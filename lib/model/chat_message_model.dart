@@ -21,10 +21,11 @@ class FileModel {
   String name;
   int size;
 
-  FileModel({required this.path,
-    required this.type,
-    required this.name,
-    required this.size});
+  FileModel(
+      {required this.path,
+      required this.type,
+      required this.name,
+      required this.size});
 }
 
 class ChatMedia {
@@ -52,10 +53,10 @@ class ChatMedia {
 
     model.file = (data["file"] as Map<String, dynamic>?) != null
         ? FileModel(
-        path: data["file"]["path"],
-        type: data["file"]["type"],
-        name: data["file"]["name"],
-        size: data["file"]["size"] ?? 0)
+            path: data["file"]["path"],
+            type: data["file"]["type"],
+            name: data["file"]["name"],
+            size: data["file"]["size"] ?? 0)
         : null;
     model.contact = (data["contactCard"] as String?) != null
         ? Contact.fromVCard(data["contactCard"] as String)
@@ -64,8 +65,7 @@ class ChatMedia {
     return model;
   }
 
-  Map<String, dynamic> toJson() =>
-      {
+  Map<String, dynamic> toJson() => {
         'image': image,
         'video': video,
         'audio': audio,
@@ -89,11 +89,11 @@ class ChatPost {
     model.title = "Title";
     model.postOwnerName = "Adam";
     model.postOwnerImage =
-    "https://images.unsplash.com/photo-1656528049647-c82eb8174d04?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw3fHx8ZW58MHx8fHw%3D&auto=format&fit=crop&w=800&q=60";
+        "https://images.unsplash.com/photo-1656528049647-c82eb8174d04?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw3fHx8ZW58MHx8fHw%3D&auto=format&fit=crop&w=800&q=60";
     model.image =
-    "https://images.unsplash.com/photo-1656533819629-2e386fafb6d5?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwzfHx8ZW58MHx8fHw%3D&auto=format&fit=crop&w=800&q=60";
+        "https://images.unsplash.com/photo-1656533819629-2e386fafb6d5?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwzfHx8ZW58MHx8fHw%3D&auto=format&fit=crop&w=800&q=60";
     model.video =
-    "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
+        "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
     return model;
   }
 }
@@ -215,7 +215,7 @@ class ChatMessageModel {
     ChatMessageModel model = ChatMessageModel();
     model.id = jsonMap['id'] ?? 0;
     model.sender =
-    jsonMap['user'] == null ? null : UserModel.fromJson(jsonMap['user']);
+        jsonMap['user'] == null ? null : UserModel.fromJson(jsonMap['user']);
     model.localMessageId =
         jsonMap['local_message_id'] ?? jsonMap['localMessageId'];
     model.roomId =
@@ -241,13 +241,12 @@ class ChatMessageModel {
     model.chatMessageUser = jsonMap['chatMessageUser'] == null
         ? []
         : List<ChatMessageUser>.from(
-        jsonMap['chatMessageUser'].map((x) => ChatMessageUser.fromJson(x)));
+            jsonMap['chatMessageUser'].map((x) => ChatMessageUser.fromJson(x)));
 
     return model;
   }
 
-  Map<String, dynamic> toJson() =>
-      {
+  Map<String, dynamic> toJson() => {
         'id': id,
         'local_message_id': localMessageId,
         'room_id': roomId,
@@ -263,9 +262,7 @@ class ChatMessageModel {
       };
 
   int get originalMessageId {
-    return ChatContentJson
-        .fromJson(decrypt)
-        .originalMessageId;
+    return ChatContentJson.fromJson(decrypt).originalMessageId;
   }
 
   ChatMedia get mediaContent {
@@ -491,10 +488,7 @@ class ChatMessageModel {
   String get messageTime {
     DateTime createDate = DateTime.fromMillisecondsSinceEpoch(createdAt * 1000);
 
-    final difference = DateTime
-        .now()
-        .difference(createDate)
-        .inDays;
+    final difference = DateTime.now().difference(createDate).inDays;
 
     if (createDate.isToday()) {
       return DateFormat('hh:mm a').format(createDate);
@@ -536,28 +530,24 @@ class ChatMessageModel {
     } else if (messageType == 14) {
       return LocalizationString.sentAProfile;
     } else if (messageType == 100) {
-      Map<String, dynamic> actionMessage = json.decode(decrypt);
+      Map<String, dynamic> actionMessage =
+          json.decode(messageContent.decrypted());
       int action = actionMessage['action'] as int;
 
       if (action == 1) {
         String userName = actionMessage['username'] as String;
-
         return '$userName ${LocalizationString.addedToGroup}';
       } else if (action == 2) {
         String userName = actionMessage['username'] as String;
-
         return '$userName ${LocalizationString.removedFromGroup}';
       } else if (action == 3) {
         String userName = actionMessage['username'] as String;
-
         return '$userName ${LocalizationString.madeAdmin}';
       } else if (action == 4) {
         String userName = actionMessage['username'] as String;
-
         return '$userName ${LocalizationString.removedFromAdmins}';
       } else if (action == 5) {
         String userName = actionMessage['username'] as String;
-
         return '$userName ${LocalizationString.leftTheGroup}';
       }
     }
