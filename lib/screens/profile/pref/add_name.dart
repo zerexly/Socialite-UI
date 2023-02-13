@@ -54,7 +54,7 @@ class _AddNameState extends State<AddName> {
                   style: Theme.of(context).textTheme.titleSmall,
                 ).setPadding(top: 20),
                 InputField(
-                  hintText: 'Enter',
+                  hintText: 'e.g Alex',
                   controller: nameController,
                   showBorder: true,
                   borderColor: Theme.of(context).disabledColor,
@@ -76,8 +76,7 @@ class _AddNameState extends State<AddName> {
                                   dataModel.name;
                               datingController.updateDatingProfile(dataModel,
                                   (msg) {
-                                if (msg != null &&
-                                    msg != '' &&
+                                if (msg != '' &&
                                     !isLoginFirstTime) {
                                   AppUtil.showToast(
                                       context: context,

@@ -14,15 +14,15 @@ class AddPersonalInfo extends StatefulWidget {
 
 class AddPersonalInfoState extends State<AddPersonalInfo> {
   final DatingController datingController = Get.find();
-  List<String> colors = ["Black", "White", "Brown"];
+  List<String> colors = DatingProfileConstants.colors;
   int? selectedColor;
 
   double _valueForHeight = 176.0;
 
-  List<String> religions = ["Hindu", "Christian", "Muslim"];
+  List<String> religions =  DatingProfileConstants.religions;
   TextEditingController religionController = TextEditingController();
 
-  List<String> status = ["Single", "Married", "Divorced"];
+  List<String> status =  DatingProfileConstants.maritalStatus;
   int? selectedStatus;
 
   @override
@@ -80,14 +80,14 @@ class AddPersonalInfoState extends State<AddPersonalInfo> {
                     LocalizationString.personalInfoSubHeader,
                     style: Theme.of(context).textTheme.titleSmall,
                   ).setPadding(top: 20),
-                  addHeader('Color').setPadding(top: 30, bottom: 8),
+                  addHeader(LocalizationString.color).setPadding(top: 30, bottom: 8),
                   SegmentedControl(
                       segments: colors,
                       value: selectedColor,
                       onValueChanged: (value) {
                         setState(() => selectedColor = value);
                       }),
-                  addHeader('Height (cm)').setPadding(top: 30),
+                  addHeader(LocalizationString.height).setPadding(top: 30),
                   Slider(
                     min: 121.0,
                     max: 243.0,
@@ -102,9 +102,9 @@ class AddPersonalInfoState extends State<AddPersonalInfo> {
                       });
                     },
                   ),
-                  addHeader('Religion').setPadding(top: 15, bottom: 8),
+                  addHeader(LocalizationString.religion).setPadding(top: 15, bottom: 8),
                   DropdownBorderedField(
-                    hintText: 'Select',
+                    hintText: LocalizationString.select,
                     controller: religionController,
                     showBorder: true,
                     borderColor: Theme.of(context).disabledColor,
@@ -116,7 +116,7 @@ class AddPersonalInfoState extends State<AddPersonalInfo> {
                       openReligionPopup();
                     },
                   ),
-                  addHeader('Status').setPadding(top: 30, bottom: 8),
+                  addHeader(LocalizationString.status).setPadding(top: 30, bottom: 8),
                   SegmentedControl(
                       segments: status,
                       value: selectedStatus,
@@ -159,8 +159,7 @@ class AddPersonalInfoState extends State<AddPersonalInfo> {
                               }
                               datingController.updateDatingProfile(dataModel,
                                   (msg) {
-                                if (msg != null &&
-                                    msg != '' &&
+                                if (msg != '' &&
                                     !isLoginFirstTime) {
                                   AppUtil.showToast(
                                       context: context,
@@ -191,28 +190,26 @@ class AddPersonalInfoState extends State<AddPersonalInfo> {
   }
 
   void openReligionPopup() {
-    showModalBottomSheet(
-        context: context,
-        builder: (context) => StatefulBuilder(// this is new
-                builder: (BuildContext context, StateSetter setState) {
-              return ListView.builder(
-                  itemCount: religions.length,
-                  physics: const NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemBuilder: (_, int index) {
-                    return ListTile(
-                        title: Text(religions[index]),
-                        onTap: () {
-                          setState(() {
-                            religionController.text = religions[index];
-                          });
-                        },
-                        trailing: ThemeIconWidget(
-                            religions[index] == religionController.text
-                                ? ThemeIcon.selectedCheckbox
-                                : ThemeIcon.emptyCheckbox,
-                            color: Theme.of(context).iconTheme.color));
-                  }).setPadding(top: 30);
-            }));
+    Get.bottomSheet(Container(
+            color: Theme.of(context).cardColor.darken(0.07),
+            child: ListView.builder(
+                itemCount: religions.length,
+                physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                itemBuilder: (_, int index) {
+                  return ListTile(
+                      title: Text(religions[index]),
+                      onTap: () {
+                        setState(() {
+                          religionController.text = religions[index];
+                        });
+                      },
+                      trailing: ThemeIconWidget(
+                          religions[index] == religionController.text
+                              ? ThemeIcon.selectedCheckbox
+                              : ThemeIcon.emptyCheckbox,
+                          color: Theme.of(context).iconTheme.color));
+                }).p16)
+        .topRounded(40));
   }
 }

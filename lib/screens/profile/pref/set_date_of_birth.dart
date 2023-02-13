@@ -59,11 +59,11 @@ class _SetDateOfBirthState extends State<SetDateOfBirth> {
               ).setPadding(top: 10),
               Row(
                 children: [
-                  addTextField('Day', 'dd', day),
+                  addTextField(LocalizationString.day, 'dd', day),
                   const SizedBox(width: 10),
-                  addTextField('Month', 'MM', month),
+                  addTextField(LocalizationString.month, 'MM', month),
                   const SizedBox(width: 10),
-                  addTextField('Year', 'YYYY', year),
+                  addTextField(LocalizationString.year, 'YYYY', year),
                 ],
               ).setPadding(top: 50),
               Center(
@@ -84,8 +84,7 @@ class _SetDateOfBirthState extends State<SetDateOfBirth> {
                                 dataModel.dob;
                             datingController.updateDatingProfile(dataModel,
                                 (msg) {
-                              if (msg != null &&
-                                  msg != '' &&
+                              if (msg != '' &&
                                   !isLoginFirstTime) {
                                 AppUtil.showToast(
                                     context: context,

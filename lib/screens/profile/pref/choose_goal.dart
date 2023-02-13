@@ -58,7 +58,7 @@ class _ChooseGoalState extends State<ChooseGoal> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Date',
+                          Text(LocalizationString.date,
                               style: Theme.of(context)
                                   .textTheme
                                   .titleMedium!
@@ -161,7 +161,7 @@ class _ChooseGoalState extends State<ChooseGoal> {
                             color: Theme.of(context).primaryColor),
                     enabledBackgroundColor: Colors.white,
                     cornerRadius: 25,
-                    text: 'Next',
+                    text: LocalizationString.next,
                     onPress: () {
                       Get.to(() => const WhatYouHope());
                     })),

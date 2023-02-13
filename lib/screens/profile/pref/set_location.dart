@@ -72,8 +72,7 @@ class _SetLocationState extends State<SetLocation> {
                                 getIt<UserProfileManager>().user?.longitude = location.longitude.toString();
                                 datingController.updateDatingProfile(dataModel,
                                     (msg) {
-                                  if (msg != null &&
-                                      msg != '' &&
+                                  if (msg != '' &&
                                       !isLoginFirstTime) {
                                     AppUtil.showToast(
                                         context: context,

@@ -14,7 +14,7 @@ class SetYourGender extends StatefulWidget {
 
 class _SetYourGenderState extends State<SetYourGender> {
   final DatingController datingController = Get.find();
-  List<String> genders = ['Male', 'Female', 'Other'];
+  List<String> genders = DatingProfileConstants.genders;
   int? selectedGender;
 
   @override

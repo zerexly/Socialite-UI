@@ -69,28 +69,31 @@ class AddProfessionalDetailsState extends State<AddProfessionalDetails> {
                       .displaySmall!
                       .copyWith(fontWeight: FontWeight.w600),
                 ).setPadding(top: 20),
-                addHeader('Qualification').setPadding(top: 30, bottom: 8),
+                addHeader(LocalizationString.qualification)
+                    .setPadding(top: 30, bottom: 8),
                 InputField(
-                    hintText: 'Add',
+                    hintText: 'Master in computer',
                     controller: qualificationController,
                     showBorder: true,
                     borderColor: Theme.of(context).disabledColor,
                     cornerRadius: 10),
-                addHeader('Occupation').setPadding(top: 30, bottom: 8),
+                addHeader(LocalizationString.occupation)
+                    .setPadding(top: 30, bottom: 8),
                 InputField(
-                    hintText: 'Add',
+                    hintText: 'Entrepreneur',
                     controller: occupationController,
                     showBorder: true,
                     borderColor: Theme.of(context).disabledColor,
                     cornerRadius: 10),
-                addHeader('Work experience').setPadding(top: 30, bottom: 8),
+                addHeader(LocalizationString.workExperience)
+                    .setPadding(top: 30, bottom: 8),
                 Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Flexible(
                         child: InputField(
-                                hintText: 'Month',
-                                controller: experienceMonthController,
+                                hintText: '1900',
+                                controller: experienceYearController,
                                 showBorder: true,
                                 borderColor: Theme.of(context).disabledColor,
                                 cornerRadius: 10)
@@ -98,8 +101,8 @@ class AddProfessionalDetailsState extends State<AddProfessionalDetails> {
                       ),
                       Flexible(
                         child: InputField(
-                                hintText: 'Year',
-                                controller: experienceYearController,
+                                hintText: '10',
+                                controller: experienceMonthController,
                                 showBorder: true,
                                 borderColor: Theme.of(context).disabledColor,
                                 cornerRadius: 10)
@@ -163,7 +166,7 @@ class AddProfessionalDetailsState extends State<AddProfessionalDetails> {
                           })),
                 ).setPadding(top: 50),
               ],
-            ).paddingAll(25),
+            ).p(25),
           )),
         ]));
   }

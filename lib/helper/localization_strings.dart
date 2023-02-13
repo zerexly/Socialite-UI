@@ -966,6 +966,12 @@ class LocalizationString {
   static String personalDetails = 'Personal details'.tr;
   static String interests = 'Interests'.tr;
   static String professional = 'Professional details'.tr;
+  static String qualification = 'Qualification'.tr;
+  static String occupation = 'Occupation'.tr;
+  static String workExperience = 'Work experience'.tr;
+  static String day = "Day".tr;
+  static String month = "Month".tr;
+  static String year = "Year".tr;
 
   static String noDatingProfilesFound = 'No dating profiles found'.tr;
   static String datingExplore = 'Change your preferences and explore more'.tr;
@@ -1054,7 +1060,7 @@ class LocalizationString {
   static String male = 'Male'.tr;
   static String female = 'Female'.tr;
   static String age = 'Age'.tr;
-  static String height = 'Height'.tr;
+  static String height = 'Height (in cm)'.tr;
   static String color = 'Color'.tr;
   static String religion = 'Religion'.tr;
   static String language = 'Language'.tr;

@@ -18,7 +18,7 @@ class AddInterestsState extends State<AddInterests> {
   int smoke = 0;
 
   TextEditingController drinkHabitController = TextEditingController();
-  List<String> drinkHabitList = ['Regular', 'Planning to quit', 'Socially'];
+  List<String> drinkHabitList = DatingProfileConstants.drinkHabits;
 
   final DatingController datingController = Get.find();
   TextEditingController interestsController = TextEditingController();
@@ -44,16 +44,12 @@ class AddInterestsState extends State<AddInterests> {
       }
       if (getIt<UserProfileManager>().user?.interests != null) {
         selectedInterests = getIt<UserProfileManager>().user!.interests!;
-        String result = selectedInterests
-            .map((val) => val.name)
-            .join(', ');
+        String result = selectedInterests.map((val) => val.name).join(', ');
         interestsController.text = result;
       }
       if (getIt<UserProfileManager>().user?.languages != null) {
         selectedLanguages = getIt<UserProfileManager>().user!.languages!;
-        String result = selectedLanguages
-            .map((val) => val.name)
-            .join(', ');
+        String result = selectedLanguages.map((val) => val.name).join(', ');
         languageController.text = result;
       }
     }
@@ -92,14 +88,14 @@ class AddInterestsState extends State<AddInterests> {
                 ).setPadding(top: 20),
                 addHeader('Do you smoke?').setPadding(top: 30, bottom: 8),
                 SegmentedControl(
-                    segments: const ["Yes", "No"],
+                    segments: [LocalizationString.yes, LocalizationString.no],
                     value: smoke,
                     onValueChanged: (value) {
                       setState(() => smoke = value);
                     }),
-                addHeader('Drinking habit').setPadding(top: 30, bottom: 8),
+                addHeader(LocalizationString.drinkingHabit).setPadding(top: 30, bottom: 8),
                 DropdownBorderedField(
-                  hintText: 'Select',
+                  hintText: LocalizationString.select,
                   controller: drinkHabitController,
                   showBorder: true,
                   borderColor: Theme.of(context).disabledColor,
@@ -111,9 +107,9 @@ class AddInterestsState extends State<AddInterests> {
                     openDrinkHabitListPopup();
                   },
                 ),
-                addHeader('Interests').setPadding(top: 30, bottom: 8),
+                addHeader(LocalizationString.interests).setPadding(top: 30, bottom: 8),
                 DropdownBorderedField(
-                  hintText: 'Select',
+                  hintText: LocalizationString.select,
                   controller: interestsController,
                   showBorder: true,
                   borderColor: Theme.of(context).disabledColor,
@@ -125,9 +121,9 @@ class AddInterestsState extends State<AddInterests> {
                     openInterestsPopup();
                   },
                 ),
-                addHeader('Language').setPadding(top: 30, bottom: 8),
+                addHeader(LocalizationString.language).setPadding(top: 30, bottom: 8),
                 DropdownBorderedField(
-                  hintText: 'Select',
+                  hintText: LocalizationString.select,
                   controller: languageController,
                   showBorder: true,
                   borderColor: Theme.of(context).disabledColor,
@@ -171,8 +167,7 @@ class AddInterestsState extends State<AddInterests> {
                             }
                             datingController.updateDatingProfile(dataModel,
                                 (msg) {
-                              if (msg != null &&
-                                  msg != '' &&
+                              if (msg != '' &&
                                   !isLoginFirstTime) {
                                 AppUtil.showToast(
                                     context: context,
@@ -202,104 +197,94 @@ class AddInterestsState extends State<AddInterests> {
   }
 
   void openDrinkHabitListPopup() {
-    showModalBottomSheet(
-        context: context,
-        builder: (context) => StatefulBuilder(// this is new
-                builder: (BuildContext context, StateSetter setState) {
-              return ListView.builder(
-                  itemCount: drinkHabitList.length,
-                  physics: const NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemBuilder: (_, int index) {
-                    return ListTile(
-                        title: Text(drinkHabitList[index]),
-                        onTap: () {
-                          setState(() {
-                            drinkHabitController.text = drinkHabitList[index];
-                          });
-                        },
-                        trailing: ThemeIconWidget(
-                            drinkHabitList[index] == drinkHabitController.text
-                                ? ThemeIcon.selectedCheckbox
-                                : ThemeIcon.emptyCheckbox,
-                            color: Theme.of(context).iconTheme.color));
-                  }).setPadding(top: 30);
-            }));
+    Get.bottomSheet(Container(
+            color: Theme.of(context).cardColor.darken(0.07),
+            child: ListView.builder(
+                itemCount: drinkHabitList.length,
+                physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                itemBuilder: (_, int index) {
+                  return ListTile(
+                      title: Text(drinkHabitList[index]),
+                      onTap: () {
+                        setState(() {
+                          drinkHabitController.text = drinkHabitList[index];
+                        });
+                      },
+                      trailing: ThemeIconWidget(
+                          drinkHabitList[index] == drinkHabitController.text
+                              ? ThemeIcon.selectedCheckbox
+                              : ThemeIcon.emptyCheckbox,
+                          color: Theme.of(context).iconTheme.color));
+                }).p16)
+        .topRounded(40));
   }
 
   void openInterestsPopup() {
-    showModalBottomSheet(
-        context: context,
-        builder: (context) => StatefulBuilder(// this is new
-                builder: (BuildContext context, StateSetter setState) {
-              return ListView.builder(
-                  itemCount: datingController.interests.length,
-                  physics: const NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemBuilder: (_, int index) {
-                    InterestModel model =
-                        datingController.interests.value[index];
-                    var anySelection = selectedInterests
-                        .where((element) => element.id == model.id);
-                    bool isAdded = anySelection.isNotEmpty;
+    Get.bottomSheet(Container(
+            color: Theme.of(context).cardColor.darken(0.07),
+            child: ListView.builder(
+                itemCount: datingController.interests.length,
+                physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                itemBuilder: (_, int index) {
+                  InterestModel model = datingController.interests.value[index];
+                  var anySelection = selectedInterests
+                      .where((element) => element.id == model.id);
+                  bool isAdded = anySelection.isNotEmpty;
 
-                    return ListTile(
-                        title: Text(model.name),
-                        onTap: () {
+                  return ListTile(
+                      title: Text(model.name),
+                      onTap: () {
+                        isAdded
+                            ? selectedInterests.remove(model)
+                            : selectedInterests.add(model);
+
+                        String result =
+                            selectedInterests.map((val) => val.name).join(', ');
+                        interestsController.text = result;
+                        setState(() {});
+                      },
+                      trailing: ThemeIconWidget(
                           isAdded
-                              ? selectedInterests.remove(model)
-                              : selectedInterests.add(model);
-
-                          String result = selectedInterests
-                              .map((val) => val.name)
-                              .join(', ');
-                          interestsController.text = result;
-                          setState(() {});
-                        },
-                        trailing: ThemeIconWidget(
-                            isAdded
-                                ? ThemeIcon.selectedCheckbox
-                                : ThemeIcon.emptyCheckbox,
-                            color: Theme.of(context).iconTheme.color));
-                  }).setPadding(top: 30);
-            }));
+                              ? ThemeIcon.selectedCheckbox
+                              : ThemeIcon.emptyCheckbox,
+                          color: Theme.of(context).iconTheme.color));
+                }).p16)
+        .topRounded(40));
   }
 
   void openLanguagePopup() {
-    showModalBottomSheet(
-        context: context,
-        builder: (context) => StatefulBuilder(// this is new
-                builder: (BuildContext context, StateSetter setState) {
-              return ListView.builder(
-                  itemCount: datingController.languages.value.length,
-                  physics: const NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemBuilder: (_, int index) {
-                    LanguageModel model =
-                        datingController.languages.value[index];
-                    var anySelection = selectedLanguages
-                        .where((element) => element.id == model.id);
-                    bool isAdded = anySelection.isNotEmpty;
+    Get.bottomSheet(Container(
+            color: Theme.of(context).cardColor.darken(0.07),
+            child: ListView.builder(
+                itemCount: datingController.languages.value.length,
+                physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                itemBuilder: (_, int index) {
+                  LanguageModel model = datingController.languages.value[index];
+                  var anySelection = selectedLanguages
+                      .where((element) => element.id == model.id);
+                  bool isAdded = anySelection.isNotEmpty;
 
-                    return ListTile(
-                        title: Text(model.name ?? ''),
-                        onTap: () {
+                  return ListTile(
+                      title: Text(model.name ?? ''),
+                      onTap: () {
+                        isAdded
+                            ? selectedLanguages.remove(model)
+                            : selectedLanguages.add(model);
+
+                        String result =
+                            selectedLanguages.map((val) => val.name).join(', ');
+                        languageController.text = result;
+                        setState(() {});
+                      },
+                      trailing: ThemeIconWidget(
                           isAdded
-                              ? selectedLanguages.remove(model)
-                              : selectedLanguages.add(model);
-
-                          String result = selectedLanguages
-                              .map((val) => val.name)
-                              .join(', ');
-                          languageController.text = result;
-                          setState(() {});
-                        },
-                        trailing: ThemeIconWidget(
-                            isAdded
-                                ? ThemeIcon.selectedCheckbox
-                                : ThemeIcon.emptyCheckbox,
-                            color: Theme.of(context).iconTheme.color));
-                  }).setPadding(top: 30);
-            }));
+                              ? ThemeIcon.selectedCheckbox
+                              : ThemeIcon.emptyCheckbox,
+                          color: Theme.of(context).iconTheme.color));
+                }).p16)
+        .topRounded(40));
   }
 }

@@ -55,8 +55,8 @@ class _WhatYouHopeState extends State<WhatYouHope> {
                             .textTheme
                             .titleMedium!
                             .copyWith(
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black)),
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black)),
                     const Icon(Icons.circle_outlined),
                   ],
                 ).hP25,
@@ -75,8 +75,8 @@ class _WhatYouHopeState extends State<WhatYouHope> {
                             .textTheme
                             .titleMedium!
                             .copyWith(
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black)),
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black)),
                     const Icon(Icons.circle_outlined),
                   ],
                 ).hP25,
@@ -95,8 +95,8 @@ class _WhatYouHopeState extends State<WhatYouHope> {
                             .textTheme
                             .titleMedium!
                             .copyWith(
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black)),
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black)),
                     const Icon(Icons.circle_outlined),
                   ],
                 ).hP25,
@@ -115,8 +115,8 @@ class _WhatYouHopeState extends State<WhatYouHope> {
                             .textTheme
                             .titleMedium!
                             .copyWith(
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black)),
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black)),
                     const Icon(Icons.circle_outlined),
                   ],
                 ).hP25,
@@ -135,11 +135,11 @@ class _WhatYouHopeState extends State<WhatYouHope> {
                         .textTheme
                         .titleLarge!
                         .copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: Theme.of(context).primaryColor),
+                            fontWeight: FontWeight.w600,
+                            color: Theme.of(context).primaryColor),
                     enabledBackgroundColor: Colors.white,
                     cornerRadius: 25,
-                    text: 'Next',
+                    text: LocalizationString.next,
                     onPress: () {
                       Get.to(() => const ChooseWhomToDate());
                     })),

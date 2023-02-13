@@ -25,7 +25,7 @@ class SetDatingPreferenceState extends State<SetDatingPreference> {
   List<InterestModel> selectedInterests = [];
 
   List<String> colors = DatingProfileConstants.colors;
-  int? selectedColor;
+  int selectedColor = 1;
 
   List<String> religions = DatingProfileConstants.religions;
   TextEditingController religionController = TextEditingController();
@@ -80,8 +80,7 @@ class SetDatingPreferenceState extends State<SetDatingPreference> {
       }
 
       if (datingController.preferenceModel?.selectedColor != null) {
-        selectedColor =
-            colors.indexOf(datingController.preferenceModel!.selectedColor!);
+        selectedColor = colors.indexOf(datingController.preferenceModel!.selectedColor!);
       }
 
       if (datingController.preferenceModel?.religion != null) {
@@ -254,7 +253,6 @@ class SetDatingPreferenceState extends State<SetDatingPreference> {
     );
   }
 
-
   Text addHeader(String header) {
     return Text(header,
         style: Theme.of(context)
@@ -278,171 +276,149 @@ class SetDatingPreferenceState extends State<SetDatingPreference> {
   }
 
   void openInterestsPopup() {
-    showModalBottomSheet(
-        context: context,
-        builder: (context) => StatefulBuilder(// this is new
-                builder: (BuildContext context, StateSetter setState) {
-              return ListView.builder(
-                  itemCount: datingController.interests.length,
-                  physics: const NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemBuilder: (_, int index) {
-                    InterestModel model =
-                        datingController.interests.value[index];
-                    var anySelection = selectedInterests
-                        .where((element) => element.id == model.id);
-                    bool isAdded = anySelection.isNotEmpty;
+    Get.bottomSheet(Container(
+      color: Theme.of(context).cardColor.darken(0.07),
+      child: ListView.builder(
+          itemCount: datingController.interests.length,
+          physics: const NeverScrollableScrollPhysics(),
+          shrinkWrap: true,
+          itemBuilder: (_, int index) {
+            InterestModel model = datingController.interests.value[index];
+            var anySelection =
+                selectedInterests.where((element) => element.id == model.id);
+            bool isAdded = anySelection.isNotEmpty;
 
-                    return ListTile(
-                        title: Text(model.name),
-                        onTap: () {
-                          int index = selectedInterests
-                              .indexWhere((element) => element.id == model.id);
-                          index != -1
-                              ? selectedInterests.removeAt(index)
-                              : selectedInterests.add(model);
+            return ListTile(
+                title: Text(model.name),
+                onTap: () {
+                  int index = selectedInterests
+                      .indexWhere((element) => element.id == model.id);
+                  index != -1
+                      ? selectedInterests.removeAt(index)
+                      : selectedInterests.add(model);
 
-                          String result = selectedInterests
-                              .map((val) => val.name)
-                              .join(', ');
-                          interestsController.text = result;
-                          setState(() {});
-                        },
-                        trailing: Icon(
-                            isAdded
-                                ? Icons.check_box
-                                : Icons.check_box_outline_blank,
-                            color: Theme.of(context).iconTheme.color));
-                  }).setPadding(top: 30);
-            }));
+                  String result =
+                      selectedInterests.map((val) => val.name).join(', ');
+                  interestsController.text = result;
+                  setState(() {});
+                },
+                trailing: Icon(
+                    isAdded ? Icons.check_box : Icons.check_box_outline_blank,
+                    color: Theme.of(context).iconTheme.color));
+          }).p16,
+    ).topRounded(40));
   }
 
   void openReligionPopup() {
-    showModalBottomSheet(
-        context: context,
-        builder: (context) => StatefulBuilder(// this is new
-                builder: (BuildContext context, StateSetter setState) {
-              return ListView.builder(
-                  itemCount: religions.length,
-                  physics: const NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemBuilder: (_, int index) {
-                    return ListTile(
-                        title: Text(religions[index]),
-                        onTap: () {
-                          setState(() {
-                            religionController.text = religions[index];
-                          });
-                        },
-                        trailing: Icon(
-                            religions[index] == religionController.text
-                                ? Icons.check_box
-                                : Icons.check_box_outline_blank,
-                            color: Theme.of(context).iconTheme.color));
-                  }).setPadding(top: 30);
-            }));
+    Get.bottomSheet(Container(
+            color: Theme.of(context).cardColor.darken(0.07),
+            child: ListView.builder(
+                itemCount: religions.length,
+                physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                itemBuilder: (_, int index) {
+                  return ListTile(
+                      title: Text(religions[index]),
+                      onTap: () {
+                        setState(() {
+                          religionController.text = religions[index];
+                        });
+                      },
+                      trailing: Icon(
+                          religions[index] == religionController.text
+                              ? Icons.check_box
+                              : Icons.check_box_outline_blank,
+                          color: Theme.of(context).iconTheme.color));
+                }).p16)
+        .topRounded(40));
   }
 
   void openLanguagePopup() {
-    showModalBottomSheet(
-        context: context,
-        builder: (context) => StatefulBuilder(// this is new
-                builder: (BuildContext context, StateSetter setState) {
-              return ListView.builder(
-                  itemCount: datingController.languages.value.length,
-                  physics: const NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemBuilder: (_, int index) {
-                    LanguageModel model =
-                        datingController.languages.value[index];
-                    var anySelection = selectedLanguages
-                        .where((element) => element.id == model.id);
-                    bool isAdded = anySelection.isNotEmpty;
+    Get.bottomSheet(Container(
+            color: Theme.of(context).cardColor.darken(0.07),
+            child: ListView.builder(
+                itemCount: datingController.languages.value.length,
+                physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                itemBuilder: (_, int index) {
+                  LanguageModel model = datingController.languages.value[index];
+                  var anySelection = selectedLanguages
+                      .where((element) => element.id == model.id);
+                  bool isAdded = anySelection.isNotEmpty;
 
-                    return ListTile(
-                        title: Text(model.name ?? ''),
-                        onTap: () {
-                          int index = selectedLanguages
-                              .indexWhere((element) => element.id == model.id);
-                          index != -1
-                              ? selectedLanguages.removeAt(index)
-                              : selectedLanguages.add(model);
+                  return ListTile(
+                      title: Text(model.name ?? ''),
+                      onTap: () {
+                        int index = selectedLanguages
+                            .indexWhere((element) => element.id == model.id);
+                        index != -1
+                            ? selectedLanguages.removeAt(index)
+                            : selectedLanguages.add(model);
 
-                          String result = selectedLanguages
-                              .map((val) => val.name)
-                              .join(', ');
-                          languageController.text = result;
-                          setState(() {});
-                        },
-                        trailing: Icon(
-                            isAdded
-                                ? Icons.check_box
-                                : Icons.check_box_outline_blank,
-                            color: Theme.of(context).iconTheme.color));
-                  }).setPadding(top: 30);
-            }));
+                        String result =
+                            selectedLanguages.map((val) => val.name).join(', ');
+                        languageController.text = result;
+                        setState(() {});
+                      },
+                      trailing: Icon(
+                          isAdded
+                              ? Icons.check_box
+                              : Icons.check_box_outline_blank,
+                          color: Theme.of(context).iconTheme.color));
+                }).p16)
+        .topRounded(40));
   }
 
   void openDrinkHabitListPopup() {
-    showModalBottomSheet(
-        context: context,
-        builder: (context) => StatefulBuilder(// this is new
-                builder: (BuildContext context, StateSetter setState) {
-              return ListView.builder(
-                  itemCount: drinkHabitList.length,
-                  physics: const NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemBuilder: (_, int index) {
-                    return ListTile(
-                        title: Text(drinkHabitList[index]),
-                        onTap: () {
-                          setState(() {
-                            drinkHabitController.text = drinkHabitList[index];
-                          });
-                        },
-                        trailing: Icon(
-                            drinkHabitList[index] == drinkHabitController.text
-                                ? Icons.check_box
-                                : Icons.check_box_outline_blank,
-                            color: Theme.of(context).iconTheme.color));
-                  }).setPadding(top: 30);
-            }));
+    Get.bottomSheet(Container(
+            color: Theme.of(context).cardColor.darken(0.07),
+            child: ListView.builder(
+                itemCount: drinkHabitList.length,
+                physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                itemBuilder: (_, int index) {
+                  return ListTile(
+                      title: Text(drinkHabitList[index]),
+                      onTap: () {
+                        setState(() {
+                          drinkHabitController.text = drinkHabitList[index];
+                        });
+                      },
+                      trailing: Icon(
+                          drinkHabitList[index] == drinkHabitController.text
+                              ? Icons.check_box
+                              : Icons.check_box_outline_blank,
+                          color: Theme.of(context).iconTheme.color));
+                }).p16)
+        .topRounded(40));
   }
 
-  setPref(){
-    AddPreferenceModel preferences =
-    AddPreferenceModel();
+  setPref() {
+    AddPreferenceModel preferences = AddPreferenceModel();
     if (selectedGender != null) {
       preferences.gender = selectedGender! + 1;
     }
 
-    preferences.ageFrom =
-        _valuesForAge.start.toInt();
-    preferences.ageTo =
-        _valuesForAge.end.toInt();
+    preferences.ageFrom = _valuesForAge.start.toInt();
+    preferences.ageTo = _valuesForAge.end.toInt();
 
-    preferences.heightFrom =
-        _valuesForHeight.start.toInt();
-    preferences.heightTo =
-        _valuesForHeight.end.toInt();
+    preferences.heightFrom = _valuesForHeight.start.toInt();
+    preferences.heightTo = _valuesForHeight.end.toInt();
 
     if (selectedInterests.isNotEmpty) {
       preferences.interests = selectedInterests;
     }
 
     if (selectedColor != null) {
-      preferences.selectedColor =
-      colors[selectedColor!];
+      preferences.selectedColor = colors[selectedColor!];
     }
 
     if (religionController.text.isNotEmpty) {
-      preferences.religion =
-          religionController.text;
+      preferences.religion = religionController.text;
     }
 
     if (selectedMaritalStatus != null) {
-      preferences.status =
-          selectedMaritalStatus! + 1;
+      preferences.status = selectedMaritalStatus! + 1;
     }
 
     if (selectedLanguages.isNotEmpty) {
@@ -452,11 +428,9 @@ class SetDatingPreferenceState extends State<SetDatingPreference> {
     preferences.smoke = smoke + 1;
 
     if (drinkHabitController.text.isNotEmpty) {
-      int drink = drinkHabitList
-          .indexOf(drinkHabitController.text);
+      int drink = drinkHabitList.indexOf(drinkHabitController.text);
       preferences.drink = drink + 1;
     }
-    datingController
-        .setPreferencesApi(preferences);
+    datingController.setPreferencesApi(preferences);
   }
 }
