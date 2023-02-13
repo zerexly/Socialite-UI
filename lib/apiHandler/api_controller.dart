@@ -168,12 +168,12 @@ class ApiController {
     });
   }
 
-
   Future<ApiResponseModel> getProfileCategoryType() async {
     var url =
         '${NetworkConstantsUtil.baseUrl}${NetworkConstantsUtil.profileCategoryTypes}';
 
     String? authKey = await SharedPrefs().getAuthorizationKey();
+
 
     return http.get(Uri.parse(url), headers: {
       "Authorization": "Bearer ${authKey!}"
@@ -561,9 +561,6 @@ class ApiController {
     String? authKey = await SharedPrefs().getAuthorizationKey();
     url = url.replaceFirst('{{id}}', userId.toString());
 
-    print(url);
-    print("Bearer ${authKey!}");
-
     return http.get(Uri.parse(url), headers: {
       "Authorization": "Bearer ${authKey!}"
     }).then((http.Response response) async {
@@ -839,9 +836,6 @@ class ApiController {
     var url =
         NetworkConstantsUtil.baseUrl + NetworkConstantsUtil.relationshipNames;
 
-    print(url);
-    print("Bearer ${authKey!}");
-
     return await http.get(Uri.parse(url), headers: {
       "Authorization": "Bearer ${authKey!}"
     }).then((http.Response response) async {
@@ -854,10 +848,7 @@ class ApiController {
   Future<ApiResponseModel> getUsersRelationships(int userId) async {
     String? authKey = await SharedPrefs().getAuthorizationKey();
     var url =
-        '${NetworkConstantsUtil.baseUrl}${NetworkConstantsUtil.getRelationbyUser}?user_id=${userId}&expand=user,realationShip';
-
-    print(url);
-    print("Bearer ${authKey!}");
+        '${NetworkConstantsUtil.baseUrl}${NetworkConstantsUtil.getRelationbyUser}?user_id=$userId&expand=user,realationShip';
 
     return await http.get(Uri.parse(url), headers: {
       "Authorization": "Bearer ${authKey!}"
@@ -1070,16 +1061,16 @@ class ApiController {
     return parsedResponse;
   }
 
-  Future<ApiResponseModel> getCompetitions() async {
+  Future<ApiResponseModel> getCompetitions({int? page = 1}) async {
     String? authKey = await SharedPrefs().getAuthorizationKey();
     var url =
-        NetworkConstantsUtil.baseUrl + NetworkConstantsUtil.getCompetitions;
+        '${NetworkConstantsUtil.baseUrl + NetworkConstantsUtil.getCompetitions}&page=$page';
 
-    // print(url);
-    // print("Bearer ${authKey!}");
+    print(url);
+    print("Bearer ${authKey!}");
 
     return await http.get(Uri.parse(url), headers: {
-      "Authorization": "Bearer ${authKey!}"
+      "Authorization": "Bearer $authKey"
     }).then((http.Response response) async {
       final ApiResponseModel parsedResponse = await getResponse(
           response.body, NetworkConstantsUtil.getCompetitions);
@@ -1448,8 +1439,8 @@ class ApiController {
     return http.post(Uri.parse(url), body: param, headers: {
       "Authorization": "Bearer ${authKey!}"
     }).then((http.Response response) async {
-      final ApiResponseModel parsedResponse =
-          await getResponse(response.body, NetworkConstantsUtil.updateGroupChatRoom);
+      final ApiResponseModel parsedResponse = await getResponse(
+          response.body, NetworkConstantsUtil.updateGroupChatRoom);
       return parsedResponse;
     });
   }
@@ -2722,7 +2713,7 @@ class ApiController {
     });
   }
 
-  /// **************** Reel *****************/
+  // **************** Reel *****************//
   Future<ApiResponseModel> getReelCategories() async {
     String? authKey = await SharedPrefs().getAuthorizationKey();
     var url =
@@ -2757,7 +2748,8 @@ class ApiController {
   }
 
   //*********************** Dating ************************//
-  Future<ApiResponseModel> addUserPreference(AddPreferenceModel selectedPreferences) async {
+  Future<ApiResponseModel> addUserPreference(
+      AddPreferenceModel selectedPreferences) async {
     String? authKey = await SharedPrefs().getAuthorizationKey();
     var url =
         NetworkConstantsUtil.baseUrl + NetworkConstantsUtil.addUserPreference;
@@ -2786,7 +2778,8 @@ class ApiController {
     });
   }
 
-  Future<ApiResponseModel> updateDatingProfile(AddDatingDataModel dataModel) async {
+  Future<ApiResponseModel> updateDatingProfile(
+      AddDatingDataModel dataModel) async {
     var url =
         NetworkConstantsUtil.baseUrl + NetworkConstantsUtil.updateUserProfile;
     String? authKey = await SharedPrefs().getAuthorizationKey();
@@ -2806,7 +2799,6 @@ class ApiController {
     String? authKey = await SharedPrefs().getAuthorizationKey();
     var url =
         NetworkConstantsUtil.baseUrl + NetworkConstantsUtil.getDatingProfiles;
-
     return await http.get(Uri.parse(url), headers: {
       "Authorization": "Bearer ${authKey!}"
     }).then((http.Response response) async {
@@ -2853,14 +2845,13 @@ class ApiController {
 
   Future<ApiResponseModel> getLikeProfilesApi() async {
     String? authKey = await SharedPrefs().getAuthorizationKey();
-    var url =
-        NetworkConstantsUtil.baseUrl + NetworkConstantsUtil.likeProfiles;
+    var url = NetworkConstantsUtil.baseUrl + NetworkConstantsUtil.likeProfiles;
 
     return await http.get(Uri.parse(url), headers: {
       "Authorization": "Bearer ${authKey!}"
     }).then((http.Response response) async {
-      final ApiResponseModel parsedResponse = await getResponse(
-          response.body, NetworkConstantsUtil.likeProfiles);
+      final ApiResponseModel parsedResponse =
+          await getResponse(response.body, NetworkConstantsUtil.likeProfiles);
       return parsedResponse;
     });
   }

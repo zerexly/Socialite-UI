@@ -36,14 +36,15 @@ class AddPersonalInfoState extends State<AddPersonalInfo> {
       }
       if (getIt<UserProfileManager>().user?.height != null) {
         _valueForHeight =
-            double.parse(getIt<UserProfileManager>().user?.height ?? '');
+            double.parse(getIt<UserProfileManager>().user?.height ?? '0');
       }
       if (getIt<UserProfileManager>().user?.religion != null) {
         religionController.text =
             getIt<UserProfileManager>().user?.religion ?? '';
       }
       if (getIt<UserProfileManager>().user?.maritalStatus != null) {
-        selectedStatus = (getIt<UserProfileManager>().user?.maritalStatus ?? 1) - 1;
+        selectedStatus =
+            (getIt<UserProfileManager>().user?.maritalStatus ?? 1) - 1;
       }
     }
   }
@@ -74,19 +75,19 @@ class AddPersonalInfoState extends State<AddPersonalInfo> {
                         .textTheme
                         .displaySmall!
                         .copyWith(fontWeight: FontWeight.w600),
-                  ).paddingOnly(top: 20),
+                  ).setPadding(top: 20),
                   Text(
                     LocalizationString.personalInfoSubHeader,
                     style: Theme.of(context).textTheme.titleSmall,
-                  ).paddingOnly(top: 20),
-                  addHeader('Color').paddingOnly(top: 30, bottom: 8),
+                  ).setPadding(top: 20),
+                  addHeader('Color').setPadding(top: 30, bottom: 8),
                   SegmentedControl(
                       segments: colors,
                       value: selectedColor,
                       onValueChanged: (value) {
                         setState(() => selectedColor = value);
                       }),
-                  addHeader('Height (cm)').paddingOnly(top: 30),
+                  addHeader('Height (cm)').setPadding(top: 30),
                   Slider(
                     min: 121.0,
                     max: 243.0,
@@ -101,7 +102,7 @@ class AddPersonalInfoState extends State<AddPersonalInfo> {
                       });
                     },
                   ),
-                  addHeader('Religion').paddingOnly(top: 15, bottom: 8),
+                  addHeader('Religion').setPadding(top: 15, bottom: 8),
                   DropdownBorderedField(
                     hintText: 'Select',
                     controller: religionController,
@@ -115,7 +116,7 @@ class AddPersonalInfoState extends State<AddPersonalInfo> {
                       openReligionPopup();
                     },
                   ),
-                  addHeader('Status').paddingOnly(top: 30, bottom: 8),
+                  addHeader('Status').setPadding(top: 30, bottom: 8),
                   SegmentedControl(
                       segments: status,
                       value: selectedStatus,
@@ -136,20 +137,25 @@ class AddPersonalInfoState extends State<AddPersonalInfo> {
                               if (selectedColor != null) {
                                 dataModel.selectedColor =
                                     colors[selectedColor!];
-                                getIt<UserProfileManager>().user?.color = dataModel.selectedColor;
+                                getIt<UserProfileManager>().user?.color =
+                                    dataModel.selectedColor;
                               }
 
                               dataModel.height = _valueForHeight.toInt();
-                              getIt<UserProfileManager>().user?.height = dataModel.height.toString();
+                              getIt<UserProfileManager>().user?.height =
+                                  dataModel.height.toString();
 
                               if (religionController.text.isNotEmpty) {
                                 dataModel.religion = religionController.text;
-                                getIt<UserProfileManager>().user?.religion = religionController.text;
+                                getIt<UserProfileManager>().user?.religion =
+                                    religionController.text;
                               }
 
                               if (selectedStatus != null) {
                                 dataModel.status = selectedStatus! + 1;
-                                getIt<UserProfileManager>().user?.maritalStatus = dataModel.status;
+                                getIt<UserProfileManager>()
+                                    .user
+                                    ?.maritalStatus = dataModel.status;
                               }
                               datingController.updateDatingProfile(dataModel,
                                   (msg) {
@@ -166,9 +172,9 @@ class AddPersonalInfoState extends State<AddPersonalInfo> {
                                 Get.to(() => const AddInterests());
                               }
                             })),
-                  ).paddingOnly(top: 100),
+                  ).setPadding(top: 100),
                 ],
-              ).paddingAll(25),
+              ).p(25),
             ),
           ),
         ]));
@@ -206,7 +212,7 @@ class AddPersonalInfoState extends State<AddPersonalInfo> {
                                 ? ThemeIcon.selectedCheckbox
                                 : ThemeIcon.emptyCheckbox,
                             color: Theme.of(context).iconTheme.color));
-                  }).paddingOnly(top: 30);
+                  }).setPadding(top: 30);
             }));
   }
 }

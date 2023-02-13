@@ -1,6 +1,5 @@
 import 'package:foap/helper/common_import.dart';
 import 'package:get/get.dart';
-
 import '../../controllers/dating_controller.dart';
 
 class DatingCard extends StatefulWidget {
@@ -74,7 +73,7 @@ class _CardsStackWidgetState extends State<CardsStackWidget>
                   ? emptyData(
                       title: LocalizationString.noDatingProfilesFound,
                       subTitle: LocalizationString.datingExplore,
-                      context: context)
+                    )
                   : Stack(
                       clipBehavior: Clip.none,
                       children: [
@@ -296,7 +295,7 @@ class _DragWidgetState extends State<DragWidget> {
                               child: Transform.rotate(
                                 angle: 12,
                                 child: TagWidget(
-                                  text: 'LIKE',
+                                  text: LocalizationString.like.toLowerCase(),
                                   color: Colors.green[400]!,
                                 ),
                               ),
@@ -307,7 +306,8 @@ class _DragWidgetState extends State<DragWidget> {
                               child: Transform.rotate(
                                 angle: -12,
                                 child: TagWidget(
-                                  text: 'DISLIKE',
+                                  text:
+                                      LocalizationString.disLike.toUpperCase(),
                                   color: Colors.red[400]!,
                                 ),
                               ),
@@ -356,7 +356,7 @@ class _DragWidgetState extends State<DragWidget> {
                             child: Transform.rotate(
                               angle: 12,
                               child: TagWidget(
-                                text: 'LIKE',
+                                text: LocalizationString.like.toUpperCase(),
                                 color: Colors.green[400]!,
                               ),
                             ),
@@ -367,7 +367,7 @@ class _DragWidgetState extends State<DragWidget> {
                             child: Transform.rotate(
                               angle: -12,
                               child: TagWidget(
-                                text: 'DISLIKE',
+                                text: LocalizationString.disLike.toUpperCase(),
                                 color: Colors.red[400]!,
                               ),
                             ),
@@ -376,7 +376,7 @@ class _DragWidgetState extends State<DragWidget> {
               ],
             );
           }),
-    ).paddingOnly(top: 15);
+    ).setPadding(top: 15);
   }
 }
 
@@ -476,11 +476,11 @@ class ProfileCard extends StatelessWidget {
                     ),
                   ).bP4,
                   Text(
-                    profile.gender == '2'
-                        ? 'Female'
-                        : profile.gender == '3'
-                            ? 'Other'
-                            : 'Male',
+                    profile.genderType == GenderType.female
+                        ? LocalizationString.female
+                        : profile.genderType == GenderType.other
+                            ? LocalizationString.other
+                            : LocalizationString.male,
                     style: const TextStyle(
                       fontWeight: FontWeight.w400,
                       fontSize: 14,
@@ -488,12 +488,12 @@ class ProfileCard extends StatelessWidget {
                     ),
                   ),
                 ],
-              ).paddingOnly(left: 20),
+              ).setPadding(left: 20),
             ),
           ),
         ],
       ),
-    ).paddingOnly(left: 20, right: 20);
+    ).setPadding(left: 20, right: 20);
   }
 }
 

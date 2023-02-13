@@ -85,19 +85,19 @@ class AddInterestsState extends State<AddInterests> {
                       .textTheme
                       .displaySmall!
                       .copyWith(fontWeight: FontWeight.w600),
-                ).paddingOnly(top: 20),
+                ).setPadding(top: 20),
                 Text(
                   LocalizationString.addInterestsSubHeader,
                   style: Theme.of(context).textTheme.titleSmall,
-                ).paddingOnly(top: 20),
-                addHeader('Do you smoke?').paddingOnly(top: 30, bottom: 8),
+                ).setPadding(top: 20),
+                addHeader('Do you smoke?').setPadding(top: 30, bottom: 8),
                 SegmentedControl(
                     segments: const ["Yes", "No"],
                     value: smoke,
                     onValueChanged: (value) {
                       setState(() => smoke = value);
                     }),
-                addHeader('Drinking habit').paddingOnly(top: 30, bottom: 8),
+                addHeader('Drinking habit').setPadding(top: 30, bottom: 8),
                 DropdownBorderedField(
                   hintText: 'Select',
                   controller: drinkHabitController,
@@ -111,7 +111,7 @@ class AddInterestsState extends State<AddInterests> {
                     openDrinkHabitListPopup();
                   },
                 ),
-                addHeader('Interests').paddingOnly(top: 30, bottom: 8),
+                addHeader('Interests').setPadding(top: 30, bottom: 8),
                 DropdownBorderedField(
                   hintText: 'Select',
                   controller: interestsController,
@@ -125,7 +125,7 @@ class AddInterestsState extends State<AddInterests> {
                     openInterestsPopup();
                   },
                 ),
-                addHeader('Language').paddingOnly(top: 30, bottom: 8),
+                addHeader('Language').setPadding(top: 30, bottom: 8),
                 DropdownBorderedField(
                   hintText: 'Select',
                   controller: languageController,
@@ -184,7 +184,7 @@ class AddInterestsState extends State<AddInterests> {
                               Get.to(() => const AddProfessionalDetails());
                             }
                           })),
-                ).paddingOnly(top: 100),
+                ).setPadding(top: 100),
               ],
             ).paddingAll(25),
           )),
@@ -223,7 +223,7 @@ class AddInterestsState extends State<AddInterests> {
                                 ? ThemeIcon.selectedCheckbox
                                 : ThemeIcon.emptyCheckbox,
                             color: Theme.of(context).iconTheme.color));
-                  }).paddingOnly(top: 30);
+                  }).setPadding(top: 30);
             }));
   }
 
@@ -261,7 +261,7 @@ class AddInterestsState extends State<AddInterests> {
                                 ? ThemeIcon.selectedCheckbox
                                 : ThemeIcon.emptyCheckbox,
                             color: Theme.of(context).iconTheme.color));
-                  }).paddingOnly(top: 30);
+                  }).setPadding(top: 30);
             }));
   }
 
@@ -299,7 +299,7 @@ class AddInterestsState extends State<AddInterests> {
                                 ? ThemeIcon.selectedCheckbox
                                 : ThemeIcon.emptyCheckbox,
                             color: Theme.of(context).iconTheme.color));
-                  }).paddingOnly(top: 30);
+                  }).setPadding(top: 30);
             }));
   }
 }

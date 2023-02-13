@@ -45,7 +45,7 @@ class MatchedListState extends State<MatchedList> {
                                     LocalizationString.noMatchedProfilesFound,
                                 subTitle:
                                     LocalizationString.datingExploreForMatched,
-                                context: context)
+                                )
                             : GridView.builder(
                                 itemCount: datingController.matchedUsers.length,
                                 padding: const EdgeInsets.only(
@@ -137,7 +137,7 @@ class MatchedListState extends State<MatchedList> {
                     .textTheme
                     .bodySmall!
                     .copyWith(fontWeight: FontWeight.w600),
-              ).paddingOnly(left: 15, bottom: 10),
+              ).setPadding(left: 15, bottom: 10),
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                 Flexible(
                     child: Container(
@@ -177,7 +177,7 @@ class MatchedListState extends State<MatchedList> {
                             ));
                       });
                 }))
-              ]).paddingOnly(left: 4, right: 4, bottom: 4)
+              ]).setPadding(left: 4, right: 4, bottom: 4)
             ]),
       ))
     ]);

@@ -90,7 +90,7 @@ class _ViewRelationshipState extends State<ViewRelationship> {
                                         .copyWith(
                                             fontWeight: FontWeight.w300,
                                             color: Colors.white),
-                                  ).paddingOnly(top: 15, bottom: 2),
+                                  ).setPadding(top: 15, bottom: 2),
                                   Text(
                                     getRelationFromId(_relationshipController
                                             .relationships[index]
@@ -115,7 +115,7 @@ class _ViewRelationshipState extends State<ViewRelationship> {
                                               fontWeight: FontWeight.w500,
                                               color: Theme.of(context)
                                                   .primaryColor),
-                                    ).paddingOnly(top: 10),
+                                    ).setPadding(top: 10),
                                 ],
                               ),
                             ),

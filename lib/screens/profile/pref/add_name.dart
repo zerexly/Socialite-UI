@@ -48,18 +48,18 @@ class _AddNameState extends State<AddName> {
                       .textTheme
                       .displaySmall!
                       .copyWith(fontWeight: FontWeight.w600),
-                ).paddingOnly(top: 100),
+                ).setPadding(top: 100),
                 Text(
                   LocalizationString.nameSubHeader,
                   style: Theme.of(context).textTheme.titleSmall,
-                ).paddingOnly(top: 20),
+                ).setPadding(top: 20),
                 InputField(
                   hintText: 'Enter',
                   controller: nameController,
                   showBorder: true,
                   borderColor: Theme.of(context).disabledColor,
                   cornerRadius: 10,
-                ).paddingOnly(top: 20),
+                ).setPadding(top: 20),
                 Center(
                   child: SizedBox(
                       height: 50,
@@ -90,7 +90,7 @@ class _AddNameState extends State<AddName> {
                               Get.to(() => const SetDateOfBirth());
                             }
                           })),
-                ).paddingOnly(top: 150),
+                ).setPadding(top: 150),
               ]).hP25
         ],
       ),

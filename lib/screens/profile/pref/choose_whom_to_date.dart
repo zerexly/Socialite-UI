@@ -30,21 +30,21 @@ class _ChooseWhomToDateState extends State<ChooseWhomToDate> {
                   .textTheme
                   .displaySmall!
                   .copyWith(fontWeight: FontWeight.w600),
-            ).paddingOnly(top: 100),
+            ).setPadding(top: 100),
             Text(
               LocalizationString.likeToDateSubHeader,
               style: Theme.of(context)
                   .textTheme
                   .titleSmall!
                   .copyWith(fontWeight: FontWeight.w600),
-            ).paddingOnly(top: 20),
+            ).setPadding(top: 20),
             ListView.builder(
               itemCount: 3,
               physics: const NeverScrollableScrollPhysics(),
               shrinkWrap: true,
               itemBuilder: (_, int index) =>
-                  addOption(index).paddingOnly(top: 15),
-            ).paddingOnly(top: 30),
+                  addOption(index).setPadding(top: 15),
+            ).setPadding(top: 30),
             Center(
               child: SizedBox(
                   height: 50,
@@ -55,7 +55,7 @@ class _ChooseWhomToDateState extends State<ChooseWhomToDate> {
                       onPress: () {
                         Get.to(() => const AddPersonalInfo());
                       })),
-            ).paddingOnly(top: 100),
+            ).setPadding(top: 100),
           ],
         ).hP25,
       ),

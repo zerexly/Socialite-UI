@@ -703,7 +703,7 @@ class _CardsStackShimmerWidgetState extends State<CardsStackShimmerWidget> {
                         ),
                       ),
                     ],
-                  ).paddingOnly(left: 20),
+                  ).setPadding(left: 20),
                 ),
               ),
             ],
@@ -776,7 +776,7 @@ class ShimmerLikeList extends StatelessWidget {
           return Container(
             height: 80,
             color: Theme.of(context).cardColor,
-          ).round(10).paddingOnly(bottom: 15, left: 15, right: 15);
+          ).round(10).setPadding(bottom: 15, left: 15, right: 15);
         }).addShimmer(context);
   }
 }

@@ -840,6 +840,7 @@ class LocalizationString {
   static String dateAndTime = 'Date and Time'.tr;
   static String eventLocation = 'Event Location'.tr;
   static String eventOrganizer = 'Event Organizer'.tr;
+  static String noEventFound = 'No event found'.tr;
 
   static String going = "Going".tr;
   static String buyTicket = 'Buy Ticket'.tr;
@@ -1047,6 +1048,24 @@ class LocalizationString {
   static String areYouSureToBlockUser = 'Are you sure to block this user?'.tr;
 
   static String requestPending = 'Request Pending'.tr;
+
+
+  // dating
+  static String male = 'Male'.tr;
+  static String female = 'Female'.tr;
+  static String age = 'Age'.tr;
+  static String height = 'Height'.tr;
+  static String color = 'Color'.tr;
+  static String religion = 'Religion'.tr;
+  static String language = 'Language'.tr;
+  static String smokingHabit = 'Smoking habit'.tr;
+  static String drinkingHabit = 'Drinking habit'.tr;
+  static String select = 'Select'.tr;
+  static String disLike = 'Dislike'.tr;
+
+
+  static String leaveGroupConfirmation = "Are you sure, you want to leave group?".tr;
+  static String deleteGroupConfirmation = "Are you sure, you want to delete group?".tr;
 
 
 }

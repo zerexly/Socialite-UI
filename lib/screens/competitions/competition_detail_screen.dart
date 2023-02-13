@@ -170,36 +170,6 @@ class CompetitionDetailState extends State<CompetitionDetailScreen> {
                   .copyWith(fontWeight: FontWeight.w900),
             ).hP16
           : Container(),
-      // commented because of VTImageView library not working
-      // MasonryGridView.count(
-      //   shrinkWrap: true,
-      //   crossAxisCount: 3,
-      //   itemCount: model.exampleImages.length,
-      //   physics: const NeverScrollableScrollPhysics(),
-      //   itemBuilder: (BuildContext context, int index) => InkWell(
-      //       onTap: () async {
-      //         //Get.to(() => VideoPlayerScreen(url: model!.exampleImages[index]));
-      //       },
-      //       child: VTImageView(
-      //         assetPlaceHolder: 'assest/placeholder.png',
-      //         videoUrl: model.exampleImages[index],
-      //         width: 200.0,
-      //         height: 200.0,
-      //         errorBuilder: (context, error, stack) {
-      //           return Container(
-      //             width: 200.0,
-      //             height: 200.0,
-      //             color: Colors.green,
-      //             child: const Center(
-      //               child: Text("error loading Image"),
-      //             ),
-      //           );
-      //         },
-      //       )),
-      //   // staggeredTileBuilder: (int index) => new StaggeredTile.count(1, 1),
-      //   mainAxisSpacing: 4.0,
-      //   crossAxisSpacing: 4.0,
-      // ),
       const SizedBox(height: 65)
     ]).hP16;
   }

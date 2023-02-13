@@ -61,6 +61,7 @@ class AppUtil {
       required String subTitle,
       required BuildContext cxt,
       required VoidCallback okHandler}) {
+    print('showDialog');
     showDialog(
       context: cxt,
       builder: (BuildContext context) {

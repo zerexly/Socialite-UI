@@ -32,9 +32,9 @@ class _ChatHistoryState extends State<ChatHistory> {
           ThemeIcon.edit,
           size: 25,
         ),
-      ).circular.bP16.ripple(() {
+      ).circular.ripple(() {
         selectUsers();
-      }),
+      }).bP16,
       body: KeyboardDismissOnTap(
           child: Column(
         children: [
@@ -127,7 +127,7 @@ class _ChatHistoryState extends State<ChatHistory> {
                   : emptyData(
                       title: LocalizationString.noChatFound,
                       subTitle: LocalizationString.followSomeUserToChat,
-                      context: context);
+                    );
         });
   }
 

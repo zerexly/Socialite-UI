@@ -89,6 +89,7 @@ class DatingController extends GetxController {
       update();
     });
   }
+
 }
 
 enum DatingActions {

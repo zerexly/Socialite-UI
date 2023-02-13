@@ -52,14 +52,14 @@ class _SetYourGenderState extends State<SetYourGender> {
                       .textTheme
                       .displaySmall!
                       .copyWith(fontWeight: FontWeight.w600),
-                ).paddingOnly(top: 20),
+                ).setPadding(top: 20),
                 ListView.builder(
                   itemCount: 3,
                   physics: const NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
                   itemBuilder: (_, int index) =>
-                      addOption(index).paddingOnly(top: 15),
-                ).paddingOnly(top: 35),
+                      addOption(index).setPadding(top: 15),
+                ).setPadding(top: 35),
                 Center(
                   child: SizedBox(
                       height: 50,
@@ -91,7 +91,7 @@ class _SetYourGenderState extends State<SetYourGender> {
                               Get.to(() => const AddPersonalInfo());
                             }
                           })),
-                ).paddingOnly(top: 150),
+                ).setPadding(top: 150),
               ],
             ).hP25,
           )),

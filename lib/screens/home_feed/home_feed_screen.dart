@@ -105,7 +105,7 @@ class HomeFeedState extends State<HomeFeedScreen> {
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            menuView(),
+            // menuView(),
             const SizedBox(
               height: 55,
             ),
@@ -168,17 +168,17 @@ class HomeFeedState extends State<HomeFeedScreen> {
         ));
   }
 
-  Widget menuView() {
-    return Obx(() => AnimatedContainer(
-          height: _homeController.openQuickLinks.value == true ? 450 : 0,
-          width: Get.width,
-          color: Theme.of(context).primaryColor,
-          duration: const Duration(milliseconds: 500),
-          child: QuickLinkWidget(callback: () {
-            _homeController.closeQuickLinks();
-          }),
-        ));
-  }
+  // Widget menuView() {
+  //   return Obx(() => AnimatedContainer(
+  //         height: _homeController.openQuickLinks.value == true ? 450 : 0,
+  //         width: Get.width,
+  //         color: Theme.of(context).primaryColor,
+  //         duration: const Duration(milliseconds: 500),
+  //         child: QuickLinkWidget(callback: () {
+  //           _homeController.closeQuickLinks();
+  //         }),
+  //       ));
+  // }
 
   Widget postingView() {
     return Obx(() => _addPostController.isPosting.value
@@ -348,7 +348,7 @@ class HomeFeedState extends State<HomeFeedScreen> {
                     removePostHandler: () {
                       _homeController.removePostFromList(model);
                     },
-                    blockUserHandler: (){
+                    blockUserHandler: () {
                       _homeController.removeUsersAllPostFromList(model);
                     },
                   );
@@ -464,4 +464,5 @@ class HomeFeedState extends State<HomeFeedScreen> {
       );
     }
   }
+
 }

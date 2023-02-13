@@ -52,11 +52,11 @@ class _SetDateOfBirthState extends State<SetDateOfBirth> {
                     .textTheme
                     .displaySmall!
                     .copyWith(fontWeight: FontWeight.w600),
-              ).paddingOnly(top: 20),
+              ).setPadding(top: 20),
               Text(
                 LocalizationString.birthdaySubHeader,
                 style: Theme.of(context).textTheme.titleSmall,
-              ).paddingOnly(top: 10),
+              ).setPadding(top: 10),
               Row(
                 children: [
                   addTextField('Day', 'dd', day),
@@ -65,7 +65,7 @@ class _SetDateOfBirthState extends State<SetDateOfBirth> {
                   const SizedBox(width: 10),
                   addTextField('Year', 'YYYY', year),
                 ],
-              ).paddingOnly(top: 50),
+              ).setPadding(top: 50),
               Center(
                 child: SizedBox(
                     height: 50,
@@ -98,7 +98,7 @@ class _SetDateOfBirthState extends State<SetDateOfBirth> {
                             Get.to(() => const SetYourGender());
                           }
                         })),
-              ).paddingOnly(top: 150),
+              ).setPadding(top: 150),
             ],
           ).hP25,
         ]));

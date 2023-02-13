@@ -104,14 +104,12 @@ class DBManager {
         await getIt<DBManager>().getRoomById(message.roomId);
     if (existingRoom == null) {
       // save room in database
-      print('1');
 
       _chatDetailController.getRoomDetail(message.roomId, (chatroom) async {
         await getIt<DBManager>().saveRooms([chatroom]);
         await getIt<DBManager>().saveMessage(chatMessages: [message]);
       });
     } else {
-      print('2');
       await getIt<DBManager>().saveMessage(chatMessages: [message]);
     }
 
@@ -176,10 +174,10 @@ class DBManager {
         'chat_access_group = ${chatRoom.groupAccess},'
         'last_message_id = "${lastMessage?.localMessageId}" '
         'WHERE id = ${chatRoom.id}');
-    for (ChatRoomMember member in chatRoom.roomMembers) {
-      batch.rawDelete(
-          'DELETE  FROM ChatRoomMembers WHERE room_id = ${member.roomId} AND user_id = ${member.userId}');
 
+    batch.rawDelete(
+        'DELETE  FROM ChatRoomMembers WHERE room_id = ${chatRoom.id}');
+    for (ChatRoomMember member in chatRoom.roomMembers) {
       batch.rawInsert(
         'INSERT INTO ChatRoomMembers(id, room_id, user_id,is_admin) VALUES(${member.id}, ${member.roomId}, ${member.userId},${member.isAdmin})',
       );
@@ -264,6 +262,8 @@ class DBManager {
     List<Map> list = await txn
         .rawQuery('SELECT * FROM ChatRoomMembers WHERE room_id = $roomId');
 
+    print('list ${list.length}');
+
     for (var user in list) {
       List<Map> userData = await txn
           .rawQuery('SELECT * FROM UsersCache WHERE id = ${user["user_id"]}');
@@ -325,21 +325,23 @@ class DBManager {
         Map<String, dynamic> updateAbleRoomJson =
             Map<String, dynamic>.from(roomJson);
 
-        updateAbleRoomJson['createdByUser'] = userData.first;
-        ChatRoomModel room = ChatRoomModel.fromJson(updateAbleRoomJson);
-        List<ChatRoomMember> usersInRoom =
-            await fetchAllMembersInRoom(room.id, txn);
+        if (userData.isNotEmpty) {
+          updateAbleRoomJson['createdByUser'] = userData.first;
+          ChatRoomModel room = ChatRoomModel.fromJson(updateAbleRoomJson);
+          List<ChatRoomMember> usersInRoom =
+              await fetchAllMembersInRoom(room.id, txn);
 
-        List<ChatMessageModel> lastMessages =
-            await getLastMessageFromRoom(roomId: room.id, txn: txn);
-        if (lastMessages.isNotEmpty) {
-          room.lastMessage = lastMessages.first;
-        }
+          List<ChatMessageModel> lastMessages =
+              await getLastMessageFromRoom(roomId: room.id, txn: txn);
+          if (lastMessages.isNotEmpty) {
+            room.lastMessage = lastMessages.first;
+          }
 
-        room.roomMembers = usersInRoom;
+          room.roomMembers = usersInRoom;
 
-        if (room.amIMember) {
+          // if (room.amIMember) {
           rooms.add(room);
+          // }
         }
       }
     });
@@ -670,14 +672,18 @@ class DBManager {
     getIt<FileManager>().deleteRoomMedia(chatRoom);
   }
 
-  deleteRoom(ChatRoomModel chatRoom) async {
+  deleteRooms(List<ChatRoomModel> chatRooms) async {
     await database.transaction((txn) async {
-      await txn.rawDelete('DELETE FROM ChatRooms WHERE id = ${chatRoom.id}');
-      await txn
-          .rawDelete('DELETE FROM Messages WHERE room_id = ${chatRoom.id}');
+      for (ChatRoomModel chatRoom in chatRooms) {
+        await txn.rawDelete('DELETE FROM ChatRooms WHERE id = ${chatRoom.id}');
+        await txn
+            .rawDelete('DELETE FROM Messages WHERE room_id = ${chatRoom.id}');
+      }
     });
 
-    getIt<FileManager>().deleteRoomMedia(chatRoom);
+    for (ChatRoomModel chatRoom in chatRooms) {
+      await getIt<FileManager>().deleteRoomMedia(chatRoom);
+    }
   }
 
   hardDeleteMessages({required List<ChatMessageModel> messages}) async {
@@ -747,5 +753,11 @@ class DBManager {
           'SET '
           'unread_messages_count = 0');
     });
+  }
+
+  deleteAllChatHistory() async {
+    List<ChatRoomModel> allRooms = await getAllRooms();
+
+    deleteRooms(allRooms);
   }
 }

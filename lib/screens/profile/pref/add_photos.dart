@@ -27,11 +27,11 @@ class _AddPhotosState extends State<AddPhotos> {
                   .textTheme
                   .displaySmall!
                   .copyWith(fontWeight: FontWeight.w600),
-            ).paddingOnly(top: 100),
+            ).setPadding(top: 100),
             Text(
               LocalizationString.addPhotoSubHeader,
               style: Theme.of(context).textTheme.titleSmall,
-            ).paddingOnly(top: 20),
+            ).setPadding(top: 20),
             GridView.builder(
                 itemCount: 6,
                 physics: const NeverScrollableScrollPhysics(),
@@ -44,7 +44,7 @@ class _AddPhotosState extends State<AddPhotos> {
                     mainAxisExtent: 100),
                 itemBuilder: (ctx, index) {
                   return addImagePickingView(index);
-                }).paddingOnly(top: 50),
+                }).setPadding(top: 50),
             Center(
               child: SizedBox(
                   height: 50,
@@ -55,7 +55,7 @@ class _AddPhotosState extends State<AddPhotos> {
                       onPress: () {
                         Get.to(() => const SetDateOfBirth());
                       })),
-            ).paddingOnly(top: 110),
+            ).setPadding(top: 110),
           ],
         ).hP25,
       ),

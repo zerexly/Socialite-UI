@@ -305,7 +305,7 @@ class ProfileController extends GetxController {
       if (value) {
         EasyLoading.show(status: LocalizationString.loading);
         ApiController()
-            .updateUserName(profileCategoryType.toString())
+            .updateProfileCategoryType(profileCategoryType)
             .then((response) {
           if (response.success == true) {
             EasyLoading.dismiss();
@@ -408,8 +408,7 @@ class ProfileController extends GetxController {
 
   //////////////********** other user profile **************/////////////////
 
-  void getOtherUserDetail(
-      {required int userId}) {
+  void getOtherUserDetail({required int userId}) {
     AppUtil.checkInternet().then((value) {
       if (value) {
         ApiController().getOtherUser(userId.toString()).then((response) async {
@@ -418,7 +417,9 @@ class ProfileController extends GetxController {
             update();
           } else {
             AppUtil.showToast(
-                context: Get.context!, message: response.message, isSuccess: false);
+                context: Get.context!,
+                message: response.message,
+                isSuccess: false);
           }
         });
       }

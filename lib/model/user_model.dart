@@ -108,6 +108,8 @@ class UserModel {
   String profileCategoryTypeName = 'Other';
   List<UserSetting>? userSetting;
 
+  GenderType? genderType;
+
   UserModel();
 
   factory UserModel.fromJson(dynamic json) {
@@ -131,6 +133,11 @@ class UserModel {
     model.countryCode = json['country_code'];
     model.city = json['city'];
     model.gender = json['sex'] == null ? '1' : json['sex'].toString();
+    model.genderType = model.gender == ''
+        ? GenderType.male
+        : model.gender == '2'
+            ? GenderType.female
+            : GenderType.other;
 
     model.totalPost = json['totalActivePost'] ?? json['totalPost'] ?? 0;
     model.totalFollower = json['totalFollower'] ?? 0;
@@ -161,7 +168,7 @@ class UserModel {
         : null;
 
     model.dob = json['dob'] ?? '';
-    model.height = json['height'] ?? '';
+    model.height = json['height'] ?? '121.0';
     model.color = json['color'] ?? '';
     model.religion = json['religion'] ?? '';
     model.maritalStatus = json['marital_status'];

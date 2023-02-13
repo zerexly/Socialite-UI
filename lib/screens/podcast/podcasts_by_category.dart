@@ -2,9 +2,6 @@ import 'package:foap/helper/common_import.dart';
 import 'package:foap/screens/podcast/podcast_host_detail.dart';
 import 'package:get/get.dart';
 
-import '../../controllers/podcast_streaming_controller.dart';
-import '../../model/podcast_model.dart';
-
 class PodcastListByCategory extends StatefulWidget {
   final PodcastCategoryModel category;
 

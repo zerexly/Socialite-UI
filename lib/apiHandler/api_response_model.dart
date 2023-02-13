@@ -1,6 +1,5 @@
 import 'dart:developer';
 import 'package:foap/helper/common_import.dart';
-import 'package:foap/model/podcast_banner_model.dart';
 import 'package:foap/model/preference_model.dart';
 import 'package:get/get.dart';
 import '../model/club_invitation.dart';
@@ -10,8 +9,6 @@ import '../model/live_tv_model.dart';
 import '../model/get_relationship_model.dart';
 import '../model/myRelations/my_invitation_model.dart';
 import '../model/myRelations/my_relations_model.dart';
-import '../model/podcast_model.dart';
-import '../model/tv_banner_model.dart';
 import '../model/tv_show_model.dart';
 import '../model/polls_model.dart';
 
@@ -155,7 +152,6 @@ class ApiResponseModel {
 
             model.randomOnlineUsers =
                 List<UserModel>.from(items.map((x) => UserModel.fromJson(x)));
-            // model.metaData = APIMetaData.fromJson(data['user']['_meta']);
           }
           if (data['auth_key'] != null) {
             String username = data['user']['username'] ?? '';
@@ -187,6 +183,9 @@ class ApiResponseModel {
 
           model.verificationRequests = List<VerificationRequest>.from(
               items.map((x) => VerificationRequest.fromJson(x)));
+
+          model.metaData = APIMetaData.fromJson(data['verification']['_meta']);
+
         } else if (data['results'] != null) {
           var items = data['results'];
           if (items != null && items.length > 0) {
@@ -230,6 +229,7 @@ class ApiResponseModel {
             if (items != null && items.length > 0) {
               model.myInvitations = List<MyInvitationsModel>.from(
                   items.map((x) => MyInvitationsModel.fromJson(x)));
+              model.metaData = APIMetaData.fromJson(data['invitation']['_meta']);
             }
           }
         } else if (data['relations'] != null) {

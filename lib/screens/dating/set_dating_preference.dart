@@ -24,14 +24,14 @@ class SetDatingPreferenceState extends State<SetDatingPreference> {
   TextEditingController interestsController = TextEditingController();
   List<InterestModel> selectedInterests = [];
 
-  List<String> colors = ["Black", "White", "Brown"];
+  List<String> colors = DatingProfileConstants.colors;
   int? selectedColor;
 
-  List<String> religions = ["Hindu", "Christian", "Muslim"];
+  List<String> religions = DatingProfileConstants.religions;
   TextEditingController religionController = TextEditingController();
 
-  List<String> status = ["Single", "Married", "Divorced"];
-  int? selectedStatus;
+  List<String> maritalStatus = DatingProfileConstants.maritalStatus;
+  int? selectedMaritalStatus;
 
   TextEditingController languageController = TextEditingController();
   List<LanguageModel> selectedLanguages = [];
@@ -39,7 +39,7 @@ class SetDatingPreferenceState extends State<SetDatingPreference> {
   int smoke = 0;
 
   TextEditingController drinkHabitController = TextEditingController();
-  List<String> drinkHabitList = ['Regular', 'Planning to quit', 'Socially'];
+  List<String> drinkHabitList = DatingProfileConstants.drinkHabits;
 
   @override
   void initState() {
@@ -91,7 +91,7 @@ class SetDatingPreferenceState extends State<SetDatingPreference> {
       }
 
       if (datingController.preferenceModel?.status != null) {
-        selectedStatus = datingController.preferenceModel!.status! - 1;
+        selectedMaritalStatus = datingController.preferenceModel!.status! - 1;
       }
 
       if (datingController.preferenceModel?.languages != null) {
@@ -133,14 +133,19 @@ class SetDatingPreferenceState extends State<SetDatingPreference> {
                       child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                        addHeader('Gender').paddingOnly(bottom: 8),
+                        addHeader(LocalizationString.gender)
+                            .setPadding(bottom: 8),
                         SegmentedControl(
-                            segments: const ["Male", "Female", "Other"],
+                            segments: [
+                              LocalizationString.male,
+                              LocalizationString.female,
+                              LocalizationString.other
+                            ],
                             value: selectedGender,
                             onValueChanged: (value) {
                               setState(() => selectedGender = value);
                             }),
-                        addHeader('Age').paddingOnly(top: 30),
+                        addHeader(LocalizationString.age).setPadding(top: 30),
                         SfRangeSlider(
                           min: 16.0,
                           max: 100.0,
@@ -163,7 +168,8 @@ class SetDatingPreferenceState extends State<SetDatingPreference> {
                             return '${actualValue.round()}Y';
                           },
                         ),
-                        addHeader('Height').paddingOnly(top: 30),
+                        addHeader(LocalizationString.height)
+                            .setPadding(top: 30),
                         SfRangeSlider(
                           min: 121.0,
                           max: 243.0,
@@ -186,39 +192,47 @@ class SetDatingPreferenceState extends State<SetDatingPreference> {
                             return '${actualValue.round()} cm';
                           },
                         ),
-                        addHeader('Interests').paddingOnly(top: 30, bottom: 8),
+                        addHeader(LocalizationString.interests)
+                            .setPadding(top: 30, bottom: 8),
                         addInputField(
                             interestsController, () => openInterestsPopup()),
-                        addHeader('Color').paddingOnly(top: 30, bottom: 8),
+                        addHeader(LocalizationString.color)
+                            .setPadding(top: 30, bottom: 8),
                         SegmentedControl(
                             segments: colors,
                             value: selectedColor,
                             onValueChanged: (value) {
                               setState(() => selectedColor = value);
                             }),
-                        addHeader('Religion').paddingOnly(top: 30, bottom: 8),
+                        addHeader(LocalizationString.religion)
+                            .setPadding(top: 30, bottom: 8),
                         addInputField(
                             religionController, () => openReligionPopup()),
-                        addHeader('Status').paddingOnly(top: 30, bottom: 8),
+                        addHeader(LocalizationString.status)
+                            .setPadding(top: 30, bottom: 8),
                         SegmentedControl(
-                            segments: status,
-                            value: selectedStatus,
+                            segments: maritalStatus,
+                            value: selectedMaritalStatus,
                             onValueChanged: (value) {
-                              setState(() => selectedStatus = value);
+                              setState(() => selectedMaritalStatus = value);
                             }),
-                        addHeader('Language').paddingOnly(top: 30, bottom: 8),
+                        addHeader(LocalizationString.language)
+                            .setPadding(top: 30, bottom: 8),
                         addInputField(
                             languageController, () => openLanguagePopup()),
-                        addHeader('Do you smoke')
-                            .paddingOnly(top: 30, bottom: 8),
+                        addHeader(LocalizationString.smokingHabit)
+                            .setPadding(top: 30, bottom: 8),
                         SegmentedControl(
-                            segments: const ["Yes", "No"],
+                            segments: [
+                              LocalizationString.yes,
+                              LocalizationString.no
+                            ],
                             value: smoke,
                             onValueChanged: (value) {
                               setState(() => smoke = value);
                             }),
-                        addHeader('Drinking habit')
-                            .paddingOnly(top: 30, bottom: 8),
+                        addHeader(LocalizationString.drinkingHabit)
+                            .setPadding(top: 30, bottom: 8),
                         addInputField(drinkHabitController,
                             () => openDrinkHabitListPopup()),
                         Center(
@@ -229,55 +243,9 @@ class SetDatingPreferenceState extends State<SetDatingPreference> {
                                   cornerRadius: 25,
                                   text: LocalizationString.set,
                                   onPress: () {
-                                    AddPreferenceModel preferences =
-                                        AddPreferenceModel();
-                                    if (selectedGender != null) {
-                                      preferences.gender = selectedGender! + 1;
-                                    }
-
-                                    preferences.ageFrom =
-                                        _valuesForAge.start.toInt();
-                                    preferences.ageTo =
-                                        _valuesForAge.end.toInt();
-
-                                    preferences.heightFrom =
-                                        _valuesForHeight.start.toInt();
-                                    preferences.heightTo =
-                                        _valuesForHeight.end.toInt();
-
-                                    if (selectedInterests.isNotEmpty) {
-                                      preferences.interests = selectedInterests;
-                                    }
-
-                                    if (selectedColor != null) {
-                                      preferences.selectedColor =
-                                          colors[selectedColor!];
-                                    }
-
-                                    if (religionController.text.isNotEmpty) {
-                                      preferences.religion =
-                                          religionController.text;
-                                    }
-
-                                    if (selectedStatus != null) {
-                                      preferences.status = selectedStatus! + 1;
-                                    }
-
-                                    if (selectedLanguages.isNotEmpty) {
-                                      preferences.languages = selectedLanguages;
-                                    }
-
-                                    preferences.smoke = smoke + 1;
-
-                                    if (drinkHabitController.text.isNotEmpty) {
-                                      int drink = drinkHabitList
-                                          .indexOf(drinkHabitController.text);
-                                      preferences.drink = drink + 1;
-                                    }
-                                    datingController
-                                        .setPreferencesApi(preferences);
+                                    setPref();
                                   })),
-                        ).paddingOnly(top: 30),
+                        ).setPadding(top: 30),
                       ]).paddingAll(20)),
                 );
               }),
@@ -285,6 +253,7 @@ class SetDatingPreferenceState extends State<SetDatingPreference> {
       ),
     );
   }
+
 
   Text addHeader(String header) {
     return Text(header,
@@ -296,7 +265,7 @@ class SetDatingPreferenceState extends State<SetDatingPreference> {
 
   addInputField(TextEditingController controller, VoidCallback? onTap) {
     return DropdownBorderedField(
-      hintText: 'Select',
+      hintText: LocalizationString.select,
       controller: controller,
       showBorder: true,
       borderColor: Theme.of(context).disabledColor,
@@ -344,7 +313,7 @@ class SetDatingPreferenceState extends State<SetDatingPreference> {
                                 ? Icons.check_box
                                 : Icons.check_box_outline_blank,
                             color: Theme.of(context).iconTheme.color));
-                  }).paddingOnly(top: 30);
+                  }).setPadding(top: 30);
             }));
   }
 
@@ -370,7 +339,7 @@ class SetDatingPreferenceState extends State<SetDatingPreference> {
                                 ? Icons.check_box
                                 : Icons.check_box_outline_blank,
                             color: Theme.of(context).iconTheme.color));
-                  }).paddingOnly(top: 30);
+                  }).setPadding(top: 30);
             }));
   }
 
@@ -410,7 +379,7 @@ class SetDatingPreferenceState extends State<SetDatingPreference> {
                                 ? Icons.check_box
                                 : Icons.check_box_outline_blank,
                             color: Theme.of(context).iconTheme.color));
-                  }).paddingOnly(top: 30);
+                  }).setPadding(top: 30);
             }));
   }
 
@@ -436,7 +405,58 @@ class SetDatingPreferenceState extends State<SetDatingPreference> {
                                 ? Icons.check_box
                                 : Icons.check_box_outline_blank,
                             color: Theme.of(context).iconTheme.color));
-                  }).paddingOnly(top: 30);
+                  }).setPadding(top: 30);
             }));
+  }
+
+  setPref(){
+    AddPreferenceModel preferences =
+    AddPreferenceModel();
+    if (selectedGender != null) {
+      preferences.gender = selectedGender! + 1;
+    }
+
+    preferences.ageFrom =
+        _valuesForAge.start.toInt();
+    preferences.ageTo =
+        _valuesForAge.end.toInt();
+
+    preferences.heightFrom =
+        _valuesForHeight.start.toInt();
+    preferences.heightTo =
+        _valuesForHeight.end.toInt();
+
+    if (selectedInterests.isNotEmpty) {
+      preferences.interests = selectedInterests;
+    }
+
+    if (selectedColor != null) {
+      preferences.selectedColor =
+      colors[selectedColor!];
+    }
+
+    if (religionController.text.isNotEmpty) {
+      preferences.religion =
+          religionController.text;
+    }
+
+    if (selectedMaritalStatus != null) {
+      preferences.status =
+          selectedMaritalStatus! + 1;
+    }
+
+    if (selectedLanguages.isNotEmpty) {
+      preferences.languages = selectedLanguages;
+    }
+
+    preferences.smoke = smoke + 1;
+
+    if (drinkHabitController.text.isNotEmpty) {
+      int drink = drinkHabitList
+          .indexOf(drinkHabitController.text);
+      preferences.drink = drink + 1;
+    }
+    datingController
+        .setPreferencesApi(preferences);
   }
 }

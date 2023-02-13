@@ -68,22 +68,22 @@ class AddProfessionalDetailsState extends State<AddProfessionalDetails> {
                       .textTheme
                       .displaySmall!
                       .copyWith(fontWeight: FontWeight.w600),
-                ).paddingOnly(top: 20),
-                addHeader('Qualification').paddingOnly(top: 30, bottom: 8),
+                ).setPadding(top: 20),
+                addHeader('Qualification').setPadding(top: 30, bottom: 8),
                 InputField(
                     hintText: 'Add',
                     controller: qualificationController,
                     showBorder: true,
                     borderColor: Theme.of(context).disabledColor,
                     cornerRadius: 10),
-                addHeader('Occupation').paddingOnly(top: 30, bottom: 8),
+                addHeader('Occupation').setPadding(top: 30, bottom: 8),
                 InputField(
                     hintText: 'Add',
                     controller: occupationController,
                     showBorder: true,
                     borderColor: Theme.of(context).disabledColor,
                     cornerRadius: 10),
-                addHeader('Work experience').paddingOnly(top: 30, bottom: 8),
+                addHeader('Work experience').setPadding(top: 30, bottom: 8),
                 Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -161,7 +161,7 @@ class AddProfessionalDetailsState extends State<AddProfessionalDetails> {
                               getIt<SocketManager>().connect();
                             }
                           })),
-                ).paddingOnly(top: 50),
+                ).setPadding(top: 50),
               ],
             ).paddingAll(25),
           )),

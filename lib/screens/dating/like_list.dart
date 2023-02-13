@@ -43,7 +43,7 @@ class LikeListState extends State<LikeList> {
                             ? emptyData(
                                 title: LocalizationString.noLikeProfilesFound,
                                 subTitle: LocalizationString.noLikeProfiles,
-                                context: context)
+                              )
                             : ListView.builder(
                                 padding:
                                     const EdgeInsets.only(top: 15, bottom: 15),
@@ -97,11 +97,11 @@ class LikeListState extends State<LikeList> {
                                 .copyWith(fontWeight: FontWeight.w900),
                           ).bP4,
                           Text(
-                            profile.gender == '2'
-                                ? 'Female'
-                                : profile.gender == '3'
-                                    ? 'Other'
-                                    : 'Male',
+                            profile.genderType == GenderType.female
+                                ? LocalizationString.female
+                                : profile.genderType == GenderType.other
+                                    ? LocalizationString.other
+                                    : LocalizationString.male,
                             style: Theme.of(context).textTheme.bodySmall,
                           )
                         ],
@@ -141,7 +141,7 @@ class LikeListState extends State<LikeList> {
               ],
             ).paddingSymmetric(horizontal: 15, vertical: 20))
         .round(10)
-        .paddingOnly(bottom: 15, left: 15, right: 15);
+        .setPadding(bottom: 15, left: 15, right: 15);
   }
 
   Widget userPictureView(UserModel user, double size) {

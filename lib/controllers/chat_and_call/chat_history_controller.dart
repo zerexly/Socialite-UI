@@ -68,7 +68,7 @@ class ChatHistoryController extends GetxController {
 
   deleteRoom(ChatRoomModel chatRoom) {
     allRooms.removeWhere((element) => element.id == chatRoom.id);
-    getIt<DBManager>().deleteRoom(chatRoom);
+    getIt<DBManager>().deleteRooms([chatRoom]);
     update();
     ApiController().deleteChatRoom(chatRoom.id);
   }

@@ -24,6 +24,12 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen> {
   }
 
   @override
+  void dispose() {
+    controller.passwordReset = false;
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
@@ -35,7 +41,7 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen> {
           children: [
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               const SizedBox(
-                height: 55,
+                height: 120,
               ),
               // Center(
               //     child: Image.asset(
@@ -44,9 +50,6 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen> {
               //   height: 25,
               // )),
 
-              const SizedBox(
-                height: 70,
-              ),
               Text(
                 LocalizationString.resetPwd,
                 style: Theme.of(context)
@@ -67,14 +70,9 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen> {
               //       .copyWith(fontWeight: FontWeight.w600),
               //   textAlign: TextAlign.start,
               // ).setPadding(top: 10, bottom: 80),
-              Padding(
-                  padding: const EdgeInsets.only(top: 30),
-                  child: addTextField(
-                      newPassword, LocalizationString.newPassword)),
-              Padding(
-                  padding: const EdgeInsets.only(top: 30, bottom: 25),
-                  child: addTextField(
-                      confirmPassword, LocalizationString.confirmPassword)),
+              addTextField(newPassword, LocalizationString.newPassword),
+              addTextField(confirmPassword, LocalizationString.confirmPassword)
+                  .tP25,
               const Spacer(),
               addSubmitBtn(),
               const SizedBox(
@@ -102,7 +100,7 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen> {
     );
   }
 
-  addTextField(TextEditingController controller, String hint) {
+  Widget addTextField(TextEditingController controller, String hint) {
     return SizedBox(
       height: 48,
       child: PasswordField(

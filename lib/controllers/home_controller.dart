@@ -44,6 +44,15 @@ class HomeController extends GetxController {
 
   quickLinkSwitchToggle() {
     openQuickLinks.value = !openQuickLinks.value;
+
+    if (openQuickLinks.value == true) {
+      Get.bottomSheet(QuickLinkWidget(callback: () {
+        closeQuickLinks();
+        Get.back();
+      })).then((value) {
+        closeQuickLinks();
+      });
+    }
   }
 
   closeQuickLinks() {
@@ -109,11 +118,11 @@ class HomeController extends GetxController {
     //       linkType: QuickLinkType.competition));
     // }
     // if (_settingsController.setting.value!.enableReel) {
-      quickLinks.add(QuickLink(
-          icon: 'assets/reel.png',
-          heading: LocalizationString.reel,
-          subHeading: LocalizationString.reel,
-          linkType: QuickLinkType.reel));
+    quickLinks.add(QuickLink(
+        icon: 'assets/reel.png',
+        heading: LocalizationString.reel,
+        subHeading: LocalizationString.reel,
+        linkType: QuickLinkType.reel));
     // }
     if (_settingsController.setting.value!.enableWatchTv) {
       quickLinks.add(QuickLink(
@@ -180,32 +189,23 @@ class HomeController extends GetxController {
   }
 
   void getPolls() async {
-
     AppUtil.checkInternet().then((value) async {
       if (value) {
-        ApiController()
-            .getPolls()
-            .then((response) async {
-          polls.addAll(response.success
-              ? response.polls
-              .toList()
-              : []);
+        ApiController().getPolls().then((response) async {
+          polls.addAll(response.success ? response.polls.toList() : []);
         });
       }
     });
   }
 
-  void postPollAnswer(int? pollId, int? pollQuestionId, int? questionOptionId) async {
-
+  void postPollAnswer(
+      int? pollId, int? pollQuestionId, int? questionOptionId) async {
     AppUtil.checkInternet().then((value) async {
       if (value) {
         ApiController()
             .postPollAnswer(pollId, pollQuestionId, questionOptionId)
             .then((response) async {
-          polls.addAll(response.success
-              ? response.polls
-              .toList()
-              : []);
+          polls.addAll(response.success ? response.polls.toList() : []);
         });
       }
     });
@@ -233,21 +233,21 @@ class HomeController extends GetxController {
         if (value) {
           ApiController()
               .getPosts(
-              userId: postSearchQuery.userId,
-              isPopular: postSearchQuery.isPopular,
-              isFollowing: postSearchQuery.isFollowing,
-              isSold: postSearchQuery.isSold,
-              isMine: postSearchQuery.isMine,
-              isRecent: postSearchQuery.isRecent,
-              title: postSearchQuery.title,
-              hashtag: postSearchQuery.hashTag,
-              clubId: postSearchQuery.clubId,
-              page: _postsCurrentPage)
+                  userId: postSearchQuery.userId,
+                  isPopular: postSearchQuery.isPopular,
+                  isFollowing: postSearchQuery.isFollowing,
+                  isSold: postSearchQuery.isSold,
+                  isMine: postSearchQuery.isMine,
+                  isRecent: postSearchQuery.isRecent,
+                  title: postSearchQuery.title,
+                  hashtag: postSearchQuery.hashTag,
+                  clubId: postSearchQuery.clubId,
+                  page: _postsCurrentPage)
               .then((response) async {
             posts.addAll(response.success
                 ? response.posts
-                .where((element) => element.gallery.isNotEmpty)
-                .toList()
+                    .where((element) => element.gallery.isNotEmpty)
+                    .toList()
                 : []);
             posts.sort((a, b) => b.createDate!.compareTo(a.createDate!));
             isRefreshingPosts.value = false;
@@ -284,15 +284,12 @@ class HomeController extends GetxController {
     } else if (option == LocalizationString.liveTv) {
       Get.to(() => const TvDashboardScreen());
       // Get.to(() => const LiveTVStreaming());
-
     } else if (option == LocalizationString.podcast) {
       Get.to(() => const PodcastListDashboard());
-
     } else if (option == LocalizationString.reel) {
       Get.to(() => const CreateReelScreen());
       // Get.to(() => const LiveTVStreaming());
-    }
-    else if (option == LocalizationString.dating) {
+    } else if (option == LocalizationString.dating) {
       Get.to(() => const DatingDashboard());
     }
   }
@@ -369,11 +366,10 @@ class HomeController extends GetxController {
 
   postTextTapHandler({required PostModel post, required String text}) {
     if (text.startsWith('#')) {
-      Get.to(() =>
-          Posts(
-            hashTag: text.replaceAll('#', ''),
-            source: PostSource.posts,
-          ))!
+      Get.to(() => Posts(
+                hashTag: text.replaceAll('#', ''),
+                source: PostSource.posts,
+              ))!
           .then((value) {
         getPosts(isRecent: false, callback: () {});
         getStories();
